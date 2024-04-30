@@ -59,4 +59,6 @@ func (s *Server) Shutdown() error {
 
 func (s *Server) SetupChatAPI(chat Chat) {
 	s.router.Post("/api/messages", PostChatMessages(chat))
+	// s.router.Post("/api/chats", PostChats(chat))
+	// s.router.Get("/api/chats/{chat_id}/messages", GetChatMessages(chat))
 }

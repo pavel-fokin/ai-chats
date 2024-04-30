@@ -3,8 +3,8 @@ package db
 import (
 	"log"
 
-	"pavel-fokin/ai/apps/ai-bot/internal/app"
-	"pavel-fokin/ai/apps/ai-bot/internal/db/sqlite"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/db/sqlite"
 )
 
 type Config struct {
@@ -20,6 +20,7 @@ func New(config Config) (app.ChatDB, closeFunc) {
 	switch config.DATABASE_TYPE {
 	case "sqlite":
 		return sqlite.New(config.DATABASE_URL)
+		// return sqlite.New("/tmp/aibots.db")
 	default:
 		log.Fatalf("unsupported database type: %s", config.DATABASE_TYPE)
 		return nil, nil

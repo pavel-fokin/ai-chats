@@ -7,8 +7,8 @@ import (
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/ollama"
 
-	"pavel-fokin/ai/apps/ai-bot/internal/app"
-	"pavel-fokin/ai/apps/ai-bot/internal/app/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
 )
 
 type ChatModel struct {
@@ -55,6 +55,9 @@ func (c *ChatModel) ChatMessage(ctx context.Context, history []domain.Message, m
 		return app.Message{}, err
 	}
 
+	if len(completion.Choices) == 0 {
+		return app.Message{}, fmt.Errorf("no completion choices")
+	}
 	text := completion.Choices[0].Content
 
 	return app.Message{

@@ -2,11 +2,12 @@ package server
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 
 	"github.com/google/uuid"
 
-	"pavel-fokin/ai/apps/ai-bot/internal/app"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 )
 
 type Message struct {
@@ -29,14 +30,17 @@ type Chat interface {
 // PostMessages handles the POST /api/chats/{uuid}/messages endpoint.
 func PostChatMessages(chat Chat) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
 		var req PostMessagesRequest
 		if err := ParseJSON(r, &req); err != nil {
 			AsErrorResponse(w, err, http.StatusBadRequest)
 			return
 		}
 
-		answer, err := chat.SendMessage(r.Context(), uuid.Nil, uuid.Nil, req.Message.Text)
+		answer, err := chat.SendMessage(ctx, uuid.Nil, uuid.Nil, req.Message.Text)
 		if err != nil {
+			slog.ErrorContext(ctx, "failed to send a message", "err", err)
 			AsErrorResponse(w, err, http.StatusInternalServerError)
 			return
 		}

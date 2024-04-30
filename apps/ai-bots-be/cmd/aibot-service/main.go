@@ -8,10 +8,10 @@ import (
 
 	"github.com/caarlos0/env/v6"
 
-	"pavel-fokin/ai/apps/ai-bot/internal/app"
-	"pavel-fokin/ai/apps/ai-bot/internal/db"
-	"pavel-fokin/ai/apps/ai-bot/internal/llm"
-	"pavel-fokin/ai/apps/ai-bot/internal/server"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/db"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/llm"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
 )
 
 // Config is the server configuration.

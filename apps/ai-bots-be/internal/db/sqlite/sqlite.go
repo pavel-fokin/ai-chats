@@ -1,40 +1,31 @@
 package sqlite
 
 import (
+	"database/sql"
 	"log"
 
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	_ "modernc.org/sqlite"
 
-	"pavel-fokin/ai/apps/ai-bot/internal/app"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 )
 
 type Sqlite struct {
-	db *gorm.DB
+	db *sql.DB
 }
 
 func New(url string) (app.ChatDB, func() error) {
-	db, err := gorm.Open(sqlite.Open(url), &gorm.Config{})
+	db, err := sql.Open("sqlite", url)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(Actor{}, Chat{}, Message{}, ChatToActor{})
-
-	// aiActor := Actor{Type: "ai"}
-	// userActor := Actor{Type: "user"}
-	// db.Create(&aiActor)
-	// db.Create(&userActor)
-
-	// chat := Chat{Actors: []Actor{aiActor, userActor}}
-	// db.Create(&chat)
-
-	db_, err := db.DB()
+	// Create initial DB.
+	_, err = db.Exec(SchemaSqlite)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	return &Sqlite{
 		db: db,
-	}, db_.Close
+	}, db.Close
 }

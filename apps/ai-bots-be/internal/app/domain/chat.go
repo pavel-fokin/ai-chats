@@ -9,11 +9,11 @@ type Actor struct {
 
 type Message struct {
 	ID    uuid.UUID
-	Actor *Actor
+	Actor Actor
 	Text  string
 }
 
-func NewMessage(id uuid.UUID, actor *Actor, text string) Message {
+func NewMessage(id uuid.UUID, actor Actor, text string) Message {
 	return Message{
 		ID:    id,
 		Actor: actor,

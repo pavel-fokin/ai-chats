@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"pavel-fokin/ai/apps/ai-bot/internal/app/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
 
 	"github.com/google/uuid"
 )
@@ -15,18 +15,19 @@ type ChatBot interface {
 }
 
 type ChatDB interface {
-	CreateChat(ctx context.Context, actors []domain.Actor) (*domain.Chat, error)
-	FindChat(ctx context.Context, chatID uuid.UUID) (*domain.Chat, error)
-	AddMessage(ctx context.Context, chat *domain.Chat, actor *domain.Actor, message string) error
+	CreateChat(ctx context.Context, actors []domain.Actor) (domain.Chat, error)
+	AllChats(ctx context.Context) ([]domain.Chat, error)
+	FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, error)
+	AddMessage(ctx context.Context, chat domain.Chat, actor domain.Actor, message string) error
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
-	CreateActor(ctx context.Context, actorType string) (*domain.Actor, error)
-	FindActor(ctx context.Context, actorID uuid.UUID) (*domain.Actor, error)
+	CreateActor(ctx context.Context, actorType string) (domain.Actor, error)
+	FindActor(ctx context.Context, actorID uuid.UUID) (domain.Actor, error)
 }
 
 type App struct {
 	chatbot ChatBot
 	db      ChatDB
-	chat    *domain.Chat
+	chat    domain.Chat
 }
 
 func New(chatbot ChatBot, db ChatDB) *App {
@@ -34,12 +35,13 @@ func New(chatbot ChatBot, db ChatDB) *App {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	userActor, err := db.CreateActor(context.Background(), "user")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	chat, err := db.CreateChat(context.Background(), []domain.Actor{*aiActor, *userActor})
+	chat, err := db.CreateChat(context.Background(), []domain.Actor{aiActor, userActor})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,7 +80,7 @@ func (a *App) SendMessage(ctx context.Context, userID uuid.UUID, chatID uuid.UUI
 	}
 
 	aiActor := a.chat.Actors[0]
-	if err := a.db.AddMessage(ctx, chat, &aiActor, aiMessage.Text); err != nil {
+	if err := a.db.AddMessage(ctx, chat, aiActor, aiMessage.Text); err != nil {
 		return Message{}, err
 	}
 
