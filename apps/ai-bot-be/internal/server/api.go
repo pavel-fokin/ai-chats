@@ -10,8 +10,8 @@ import (
 )
 
 type Message struct {
-	Who  string `json:"who"`
-	Text string `json:"text"`
+	Sender string `json:"sender"`
+	Text   string `json:"text"`
 }
 
 type PostMessagesRequest struct {
@@ -43,8 +43,8 @@ func PostChatMessages(chat Chat) http.HandlerFunc {
 
 		AsSuccessResponse(w, PostMessagesResponse{
 			Message{
-				Who:  "AI",
-				Text: answer.Text,
+				Sender: "AI",
+				Text:   answer.Text,
 			},
 		}, http.StatusOK)
 	}

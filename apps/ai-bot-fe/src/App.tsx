@@ -1,94 +1,50 @@
 import '@mantine/core/styles.css';
 
-import React, { useState, useRef } from 'react';
 
 import {
-  ActionIcon,
-  Avatar,
-  Container,
+  AppShell,
+  Burger,
   Group,
-  MantineProvider,
-  ScrollArea,
-  Stack,
+  NavLink,
   Text,
-  Textarea,
+  MantineProvider,
   createTheme,
 } from '@mantine/core';
-import { IconSend } from '@tabler/icons-react';
-import Markdown from 'react-markdown';
+import { useDisclosure } from '@mantine/hooks';
+import { IconRobotFace, IconMessageChatbot } from '@tabler/icons-react';
 
-import * as api from './api';
-import type { Message } from './api';
+
+import { Chat } from './pages/Chat';
 
 const theme = createTheme({
   /** Put your mantine theme override here */
 });
 
-const Message = (props: { sender: string; text: string }) => {
-  return (
-    <Stack gap="2px">
-      <Group gap="4px">
-        <Avatar size="sm" radius="xl" />
-        <Text fw={500}>{props.sender}</Text>
-      </Group>
-      <Text component='span'><Markdown>{props.text}</Markdown></Text>
-    </Stack>
-  );
-};
 
 function App() {
-  const [inputMessage, setInputMessage] = useState<Message>({ who: '', text: '' });
-  const [messages, setMessages] = useState<Message[]>([]);
-
-  const viewport = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () =>
-    viewport.current!.scrollTo({ top: viewport.current!.scrollHeight, behavior: 'smooth' });
-
-  const onSendClick = async () => {
-    if (inputMessage) {
-      const response = await api.SendMessage(inputMessage);
-      setMessages([...messages, inputMessage, response.data]);
-      setInputMessage({ who: '', text: '' });
-      scrollToBottom();
-    }
-  };
-
-  const onInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputMessage({
-      who: 'You',
-      text: event.target.value
-    });
-  };
+  const [opened, { toggle }] = useDisclosure();
 
   return (
     <MantineProvider theme={theme}>
-      <Container size="md" style={{ paddingInline: '0' }}>
-        <Stack p="md" gap="xl" justify="flex-end" style={{ height: '100vh' }}>
-          <ScrollArea type="scroll" viewportRef={viewport}>
-            <Stack gap="xl" style={{ marginBottom: 'auto' }}>
-            {messages.map((message, index) => (
-              <Message
-                key={index}
-                sender={message.who}
-                text={message.text}
-              />
-            ))}
-            </Stack>
-          </ScrollArea>
-          <Group gap="xs">
-            <Textarea
-              autosize
-              style={{ flexGrow: '1' }}
-              onChange={onInputChange}
-              value={inputMessage.text}
-            />
-            <ActionIcon size="input-sm" onClick={onSendClick}>
-              <IconSend size={16} />
-            </ActionIcon>
+      <AppShell
+        header={{ height: 60 }}
+        navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+        padding="md"
+      >
+        <AppShell.Header>
+          <Group h="100%" px="md">
+            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+            <Text>AI Bots</Text>
           </Group>
-        </Stack>
-      </Container>
+        </AppShell.Header>
+        <AppShell.Navbar p="md">
+          <NavLink label="Bots" leftSection={<IconRobotFace size="1rem" stroke={1.5}/>}/>
+          <NavLink label="Chats" leftSection={<IconMessageChatbot size="1rem" stroke={1.5}/>}/>
+        </AppShell.Navbar>
+        <AppShell.Main style={{display: 'flex', flexDirection: 'column-reverse'}}>
+            <Chat />
+        </AppShell.Main>
+      </AppShell>
     </MantineProvider>
   );
 }

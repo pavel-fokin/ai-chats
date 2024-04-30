@@ -1,5 +1,5 @@
 export type Message = {
-  who: string;
+  sender: string;
   text: string;
 };
 
