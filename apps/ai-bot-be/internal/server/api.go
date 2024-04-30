@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"net/http"
 
 	"pavel-fokin/ai/apps/ai-bot/internal/app"
@@ -14,17 +15,20 @@ type PostMessagesResponse struct {
 	app.Message
 }
 
-// PostMessages handles the POST /api/messages endpoint.
-func PostMessages() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+type Chat interface {
+	SendMessage(ctx context.Context, chatId, message string) (app.Message, error)
+}
 
+// PostMessages handles the POST /api/messages endpoint.
+func PostMessages(chat Chat) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		var req PostMessagesRequest
 		if err := ParseJSON(r, &req); err != nil {
 			AsErrorResponse(w, err, http.StatusBadRequest)
 			return
 		}
 
-		message, err := app.SendMessage(r.Context(), req.Message.Text)
+		message, err := chat.SendMessage(r.Context(), "id", req.Message.Text)
 		if err != nil {
 			AsErrorResponse(w, err, http.StatusInternalServerError)
 			return

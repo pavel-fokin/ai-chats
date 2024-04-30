@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -18,17 +19,25 @@ type Config struct {
 
 // Server is the main server struct.
 type Server struct {
+	router *chi.Mux
 	server *http.Server
 }
 
 // NewServer creates a new server.
-func New(config Config, router chi.Router) *Server {
+func New(config Config) *Server {
+
+	router := chi.NewRouter()
+
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+
 	server := &http.Server{
 		Addr:    ":" + config.Port,
 		Handler: router,
 	}
 
 	return &Server{
+		router: router,
 		server: server,
 	}
 }
@@ -46,4 +55,8 @@ func (s *Server) Shutdown() error {
 	defer cancel()
 
 	return s.server.Shutdown(ctx)
+}
+
+func (s *Server) SetupChatAPI(chat Chat) {
+	s.router.Post("/api/messages", PostMessages(chat))
 }

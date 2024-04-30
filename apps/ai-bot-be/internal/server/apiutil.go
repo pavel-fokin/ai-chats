@@ -3,7 +3,6 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -49,8 +48,6 @@ func AsSuccessResponse[T any](
 
 	res := SuccessResponse{}
 	res.Data = payload
-
-	log.Println(res)
 
 	json.NewEncoder(w).Encode(res)
 }

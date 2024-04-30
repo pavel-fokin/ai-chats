@@ -8,6 +8,8 @@ import (
 
 	"github.com/caarlos0/env/v6"
 
+	"pavel-fokin/ai/apps/ai-bot/internal/app"
+	"pavel-fokin/ai/apps/ai-bot/internal/llm"
 	"pavel-fokin/ai/apps/ai-bot/internal/server"
 )
 
@@ -31,11 +33,15 @@ func main() {
 
 	config := NewConfig()
 
-	router, err := server.NewRouter()
+	chatBot, err := llm.NewChatModel("llama3")
 	if err != nil {
-		log.Fatalf("Failed to create router: %v", err)
+		log.Fatalf("Failed to create chat bot: %v", err)
 	}
-	server := server.New(config.Server, router)
+
+	app := app.New(chatBot)
+
+	server := server.New(config.Server)
+	server.SetupChatAPI(app)
 
 	log.Println("Starting LikeIt HTTP server... ", config.Server.Port)
 	go server.Start()
