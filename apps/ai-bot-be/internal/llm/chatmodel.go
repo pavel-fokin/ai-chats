@@ -2,33 +2,30 @@ package llm
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/ollama"
 
 	"pavel-fokin/ai/apps/ai-bot/internal/app"
+	"pavel-fokin/ai/apps/ai-bot/internal/app/domain"
 )
 
-type ChatBot struct {
+type ChatModel struct {
 	llm llms.Model
 }
 
-func NewChatModel(model string) (*ChatBot, error) {
+func NewChatModel(model string) (*ChatModel, error) {
 	llm, err := ollama.New(ollama.WithModel(model))
 	if err != nil {
 		return nil, err
 	}
 
-	return &ChatBot{llm: llm}, nil
+	return &ChatModel{llm: llm}, nil
 }
 
-func (c *ChatBot) SingleMessage(ctx context.Context, prompt string) (app.Message, error) {
-	llm, err := ollama.New(ollama.WithModel("llama3"))
-	if err != nil {
-		return app.Message{}, err
-	}
-
-	completion, err := llms.GenerateFromSinglePrompt(ctx, llm, prompt)
+func (c *ChatModel) SingleMessage(ctx context.Context, prompt string) (app.Message, error) {
+	completion, err := llms.GenerateFromSinglePrompt(ctx, c.llm, prompt)
 	if err != nil {
 		return app.Message{}, err
 	}
@@ -38,20 +35,22 @@ func (c *ChatBot) SingleMessage(ctx context.Context, prompt string) (app.Message
 	}, nil
 }
 
-func (c *ChatBot) ChatMessage(ctx context.Context, history []string, prompt string) (app.Message, error) {
-	llm, err := ollama.New(ollama.WithModel("llama3"))
-	if err != nil {
-		return app.Message{}, err
-	}
-
+func (c *ChatModel) ChatMessage(ctx context.Context, history []domain.Message, message string) (app.Message, error) {
 	content := []llms.MessageContent{}
 	for _, message := range history {
-		content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, message))
+		switch message.Actor.Type {
+		case "ai":
+			content = append(content, llms.TextParts(llms.ChatMessageTypeAI, message.Text))
+		case "user":
+			content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, message.Text))
+		default:
+			return app.Message{}, fmt.Errorf("unknown actor type: %s", message.Actor.Type)
+		}
 	}
 
-	content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, prompt))
+	content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, message))
 
-	completion, err := llm.GenerateContent(ctx, content)
+	completion, err := c.llm.GenerateContent(ctx, content)
 	if err != nil {
 		return app.Message{}, err
 	}

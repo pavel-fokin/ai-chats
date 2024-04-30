@@ -9,6 +9,7 @@ import (
 	"github.com/caarlos0/env/v6"
 
 	"pavel-fokin/ai/apps/ai-bot/internal/app"
+	"pavel-fokin/ai/apps/ai-bot/internal/db"
 	"pavel-fokin/ai/apps/ai-bot/internal/llm"
 	"pavel-fokin/ai/apps/ai-bot/internal/server"
 )
@@ -16,6 +17,7 @@ import (
 // Config is the server configuration.
 type Config struct {
 	Server server.Config
+	DB     db.Config
 }
 
 // NewConfig creates a new configuration.
@@ -38,7 +40,10 @@ func main() {
 		log.Fatalf("Failed to create chat bot: %v", err)
 	}
 
-	app := app.New(chatBot)
+	appDB, closeDB := db.New(config.DB)
+	defer closeDB()
+
+	app := app.New(chatBot, appDB)
 
 	server := server.New(config.Server)
 	server.SetupChatAPI(app)

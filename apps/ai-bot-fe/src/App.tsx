@@ -18,6 +18,7 @@ import { IconSend } from '@tabler/icons-react';
 import Markdown from 'react-markdown';
 
 import * as api from './api';
+import type { Message } from './api';
 
 const theme = createTheme({
   /** Put your mantine theme override here */
@@ -36,8 +37,8 @@ const Message = (props: { sender: string; text: string }) => {
 };
 
 function App() {
-  const [inputMessage, setInputMessage] = useState('');
-  const [messages, setMessages] = useState<string[]>([]);
+  const [inputMessage, setInputMessage] = useState<Message>({ who: '', text: '' });
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const viewport = useRef<HTMLDivElement>(null);
 
@@ -47,27 +48,30 @@ function App() {
   const onSendClick = async () => {
     if (inputMessage) {
       const response = await api.SendMessage(inputMessage);
-      setMessages([...messages, inputMessage, response.data.text]);
-      setInputMessage('');
+      setMessages([...messages, inputMessage, response.data]);
+      setInputMessage({ who: '', text: '' });
       scrollToBottom();
     }
   };
 
   const onInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputMessage(event.target.value);
+    setInputMessage({
+      who: 'You',
+      text: event.target.value
+    });
   };
 
   return (
     <MantineProvider theme={theme}>
-      <Container size="xs" style={{ paddingInline: '0' }}>
+      <Container size="md" style={{ paddingInline: '0' }}>
         <Stack p="md" gap="xl" justify="flex-end" style={{ height: '100vh' }}>
           <ScrollArea type="scroll" viewportRef={viewport}>
-            <Stack gap="md" style={{ marginBottom: 'auto' }}>
+            <Stack gap="xl" style={{ marginBottom: 'auto' }}>
             {messages.map((message, index) => (
               <Message
                 key={index}
-                sender={index % 2 === 0 ? 'You' : 'Bot'}
-                text={message}
+                sender={message.who}
+                text={message.text}
               />
             ))}
             </Stack>
@@ -77,6 +81,7 @@ function App() {
               autosize
               style={{ flexGrow: '1' }}
               onChange={onInputChange}
+              value={inputMessage.text}
             />
             <ActionIcon size="input-sm" onClick={onSendClick}>
               <IconSend size={16} />

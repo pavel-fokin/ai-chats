@@ -58,5 +58,5 @@ func (s *Server) Shutdown() error {
 }
 
 func (s *Server) SetupChatAPI(chat Chat) {
-	s.router.Post("/api/messages", PostMessages(chat))
+	s.router.Post("/api/messages", PostChatMessages(chat))
 }
