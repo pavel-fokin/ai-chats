@@ -1,3 +1,3 @@
-# AI
+# AI Bots
 
-This is repo to try AI LLM models.
+This is a repo to try AI LLM models.
