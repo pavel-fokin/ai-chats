@@ -20,7 +20,7 @@ type ChatDB interface {
 	FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, error)
 	AddMessage(ctx context.Context, chat domain.Chat, actor domain.Actor, message string) error
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
-	CreateActor(ctx context.Context, actorType string) (domain.Actor, error)
+	CreateActor(ctx context.Context, actorType domain.ActorType) (domain.Actor, error)
 	FindActor(ctx context.Context, actorID uuid.UUID) (domain.Actor, error)
 }
 
@@ -65,12 +65,12 @@ func (a *App) SendMessage(ctx context.Context, userID uuid.UUID, chatID uuid.UUI
 		return Message{}, err
 	}
 
-	if err := a.db.AddMessage(ctx, chat, userActor, message); err != nil {
+	history, err := a.db.AllMessages(ctx, chat.ID)
+	if err != nil {
 		return Message{}, err
 	}
 
-	history, err := a.db.AllMessages(ctx, chat.ID)
-	if err != nil {
+	if err := a.db.AddMessage(ctx, chat, userActor, message); err != nil {
 		return Message{}, err
 	}
 

@@ -2,9 +2,16 @@ package domain
 
 import "github.com/google/uuid"
 
+type ActorType string
+
+const (
+	AI    ActorType = "ai"
+	Human ActorType = "human"
+)
+
 type Actor struct {
 	ID   uuid.UUID
-	Type string
+	Type ActorType
 }
 
 type Message struct {

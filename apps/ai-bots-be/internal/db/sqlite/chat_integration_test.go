@@ -2,7 +2,6 @@ package sqlite
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
@@ -40,7 +39,7 @@ func TestSqlite_CreateActor(t *testing.T) {
 	defer close()
 
 	// Call the CreateActor method
-	actorType := "User"
+	actorType := domain.ActorType("User")
 	actor, err := db.CreateActor(context.Background(), actorType)
 	assert.NoError(t, err)
 	assert.NotNil(t, actor)
@@ -55,11 +54,11 @@ func TestAddMessages(t *testing.T) {
 	actors := []domain.Actor{
 		{
 			ID:   uuid.New(),
-			Type: "User",
+			Type: domain.Human,
 		},
 		{
 			ID:   uuid.New(),
-			Type: "Bot",
+			Type: domain.AI,
 		},
 	}
 
@@ -94,31 +93,26 @@ func TestAllMessages(t *testing.T) {
 	defer close()
 
 	// Create some test actors
-	actors := []domain.Actor{
-		{
-			ID:   uuid.New(),
-			Type: "User",
-		},
-		{
-			ID:   uuid.New(),
-			Type: "Bot",
-		},
-	}
+	ai, err := db.CreateActor(context.Background(), domain.AI)
+	assert.NoError(t, err)
+
+	human, err := db.CreateActor(context.Background(), domain.Human)
+	assert.NoError(t, err)
 
 	// Create a new chat
-	chat, err := db.CreateChat(context.Background(), actors)
+	chat, err := db.CreateChat(context.Background(), []domain.Actor{ai, human})
 	assert.NoError(t, err)
 
 	// Create some test messages
 	messages := []domain.Message{
 		{
 			ID:    uuid.New(),
-			Actor: actors[0],
+			Actor: human,
 			Text:  "Hello, bot!",
 		},
 		{
 			ID:    uuid.New(),
-			Actor: actors[1],
+			Actor: ai,
 			Text:  "Hello, user!",
 		},
 	}
@@ -130,9 +124,7 @@ func TestAllMessages(t *testing.T) {
 	}
 
 	// Call the AllMessages method
-	fmt.Println(messages)
 	allMessages, err := db.AllMessages(context.Background(), chat.ID)
-	fmt.Println(allMessages)
 	assert.NoError(t, err)
 	assert.Equal(t, len(messages), len(allMessages))
 }

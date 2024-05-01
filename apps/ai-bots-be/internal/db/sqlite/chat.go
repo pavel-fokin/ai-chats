@@ -65,7 +65,7 @@ func (db *Sqlite) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, 
 	return chat, nil
 }
 
-func (db *Sqlite) CreateActor(ctx context.Context, actorType string) (domain.Actor, error) {
+func (db *Sqlite) CreateActor(ctx context.Context, actorType domain.ActorType) (domain.Actor, error) {
 	actor := domain.Actor{
 		ID:   uuid.New(),
 		Type: actorType,
@@ -107,10 +107,10 @@ func (db *Sqlite) AddMessage(ctx context.Context, chat domain.Chat, actor domain
 func (db *Sqlite) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
 	rows, err := db.db.QueryContext(
 		ctx,
-		`SELECT actor_id, actor.type, text
+		`SELECT message.id, actor_id, actor.type, text
 		FROM message
 		JOIN actor ON message.actor_id = actor.id
-		WHERE chat_id = '?'`,
+		WHERE chat_id = ?`,
 		chatID,
 	)
 	if err != nil {
@@ -120,13 +120,14 @@ func (db *Sqlite) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.M
 
 	var messages []domain.Message
 	for rows.Next() {
-		message := new(domain.Message)
-		err := rows.Scan(message.Actor.ID, message.Actor.Type, message.Text)
-		if err != nil {
+		var message domain.Message
+		if err := rows.Scan(&message.ID, &message.Actor.ID, &message.Actor.Type, &message.Text); err != nil {
 			return nil, err
 		}
-
-		messages = append(messages, *message)
+		messages = append(messages, message)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return messages, nil
