@@ -10,6 +10,7 @@ import (
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/db"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/db/sqlite"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/llm"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
 )
@@ -40,7 +41,7 @@ func main() {
 		log.Fatalf("Failed to create chat bot: %v", err)
 	}
 
-	appDB, closeDB := db.New(config.DB)
+	appDB, closeDB := sqlite.New(config.DB.DATABASE_URL)
 	defer closeDB()
 
 	app := app.New(chatBot, appDB)
@@ -48,14 +49,14 @@ func main() {
 	server := server.New(config.Server)
 	server.SetupChatAPI(app)
 
-	log.Println("Starting LikeIt HTTP server... ", config.Server.Port)
+	log.Println("Starting AIBots HTTP server... ", config.Server.Port)
 	go server.Start()
 
 	<-ctx.Done()
 
-	log.Println("Shutting down the LikeIt HTTP server...")
+	log.Println("Shutting down the AIBots HTTP server...")
 	if err := server.Shutdown(); err != nil {
 		log.Fatalf("Failed to shutdown the server: %v", err)
 	}
-	log.Println("LikeIt HTTP server shutdown successfully")
+	log.Println("AIBots HTTP server shutdown successfully")
 }

@@ -5,15 +5,13 @@ import (
 	"log"
 
 	_ "modernc.org/sqlite"
-
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 )
 
 type Sqlite struct {
 	db *sql.DB
 }
 
-func New(url string) (app.ChatDB, func() error) {
+func New(url string) (*Sqlite, func() error) {
 	db, err := sql.Open("sqlite", url)
 	if err != nil {
 		log.Fatal(err)

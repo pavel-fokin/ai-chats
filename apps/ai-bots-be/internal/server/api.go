@@ -28,7 +28,7 @@ type Chat interface {
 }
 
 // PostMessages handles the POST /api/chats/{uuid}/messages endpoint.
-func PostChatMessages(chat Chat) http.HandlerFunc {
+func PostMessages(chat Chat) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 

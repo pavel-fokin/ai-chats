@@ -24,29 +24,35 @@ type ChatDB interface {
 	FindActor(ctx context.Context, actorID uuid.UUID) (domain.Actor, error)
 }
 
+type AuthDB interface {
+	CreateUser(ctx context.Context, username, password string) (User, error)
+	FindUser(ctx context.Context, username string) (User, error)
+}
+
 type App struct {
 	chatbot ChatBot
-	db      ChatDB
+	authDB  AuthDB
+	chatDB  ChatDB
 	chat    domain.Chat
 }
 
-func New(chatbot ChatBot, db ChatDB) *App {
-	aiActor, err := db.CreateActor(context.Background(), "ai")
+func New(chatbot ChatBot, chatDB ChatDB) *App {
+	aiActor, err := chatDB.CreateActor(context.Background(), "ai")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	userActor, err := db.CreateActor(context.Background(), "user")
+	userActor, err := chatDB.CreateActor(context.Background(), "user")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	chat, err := db.CreateChat(context.Background(), []domain.Actor{aiActor, userActor})
+	chat, err := chatDB.CreateChat(context.Background(), []domain.Actor{aiActor, userActor})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return &App{chatbot: chatbot, db: db, chat: chat}
+	return &App{chatbot: chatbot, chatDB: chatDB, chat: chat}
 }
 
 type Message struct {
@@ -55,22 +61,22 @@ type Message struct {
 }
 
 func (a *App) SendMessage(ctx context.Context, userID uuid.UUID, chatID uuid.UUID, message string) (Message, error) {
-	chat, err := a.db.FindChat(ctx, a.chat.ID)
+	chat, err := a.chatDB.FindChat(ctx, a.chat.ID)
 	if err != nil {
 		return Message{}, err
 	}
 
-	userActor, err := a.db.FindActor(ctx, a.chat.Actors[1].ID)
+	userActor, err := a.chatDB.FindActor(ctx, a.chat.Actors[1].ID)
 	if err != nil {
 		return Message{}, err
 	}
 
-	history, err := a.db.AllMessages(ctx, chat.ID)
+	history, err := a.chatDB.AllMessages(ctx, chat.ID)
 	if err != nil {
 		return Message{}, err
 	}
 
-	if err := a.db.AddMessage(ctx, chat, userActor, message); err != nil {
+	if err := a.chatDB.AddMessage(ctx, chat, userActor, message); err != nil {
 		return Message{}, err
 	}
 
@@ -80,7 +86,7 @@ func (a *App) SendMessage(ctx context.Context, userID uuid.UUID, chatID uuid.UUI
 	}
 
 	aiActor := a.chat.Actors[0]
-	if err := a.db.AddMessage(ctx, chat, aiActor, aiMessage.Text); err != nil {
+	if err := a.chatDB.AddMessage(ctx, chat, aiActor, aiMessage.Text); err != nil {
 		return Message{}, err
 	}
 
