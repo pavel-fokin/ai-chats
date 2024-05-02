@@ -5,13 +5,13 @@ import {
   AppShell,
   Burger,
   Group,
+  MantineProvider,
   NavLink,
   Text,
-  MantineProvider,
   createTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconRobotFace, IconMessageChatbot } from '@tabler/icons-react';
+import { IconMessageChatbot, IconRobotFace } from '@tabler/icons-react';
 
 
 import { Chat } from './pages/Chat';
@@ -38,11 +38,16 @@ function App() {
           </Group>
         </AppShell.Header>
         <AppShell.Navbar p="md">
-          <NavLink label="Bots" leftSection={<IconRobotFace size="1rem" stroke={1.5}/>}/>
-          <NavLink label="Chats" leftSection={<IconMessageChatbot size="1rem" stroke={1.5}/>}/>
+        <Group p="xs" gap="xs">
+            <IconMessageChatbot size="1.125rem" stroke={1.5} />
+            <Text size="md" fw={500}>
+              Chats
+            </Text>
+          </Group>
+          <NavLink label="Chat Title" />
         </AppShell.Navbar>
-        <AppShell.Main style={{display: 'flex', flexDirection: 'column-reverse'}}>
-            <Chat />
+        <AppShell.Main style={{ display: 'flex', flexDirection: 'column-reverse' }}>
+          <Chat />
         </AppShell.Main>
       </AppShell>
     </MantineProvider>

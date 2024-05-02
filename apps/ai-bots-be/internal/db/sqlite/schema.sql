@@ -34,3 +34,6 @@ CREATE TABLE IF NOT EXISTS message (
     FOREIGN KEY (chat_id) REFERENCES chat(id),
     FOREIGN KEY (actor_id) REFERENCES actor(id)
 );
+
+INSERT OR IGNORE INTO actor (id, type) VALUES ('c74dd8d0-d52f-413b-8534-946dad471dba', 'ai');
+INSERT OR IGNORE INTO actor (id, type) VALUES ('3337e802-918e-4930-96c0-bb312b842467', 'human');

@@ -29,7 +29,7 @@ func TestSignUp(t *testing.T) {
 	db.On("CreateUser", context.Background(), "username", mock.Anything).Return(User{}, nil)
 
 	app := &App{
-		authDB: db,
+		userDB: db,
 	}
 
 	user, err := app.SignUp(context.Background(), "username", "password")
@@ -46,7 +46,7 @@ func TestSignIn(t *testing.T) {
 		db.On("FindUser", context.Background(), mock.Anything).Return(User{}, errors.New("user not found"))
 
 		app := &App{
-			authDB: db,
+			userDB: db,
 		}
 
 		user, err := app.SignIn(context.Background(), "username", "password")
@@ -62,7 +62,7 @@ func TestSignIn(t *testing.T) {
 		db.On("FindUser", context.Background(), mock.Anything).Return(User{Password: hashedPassword}, nil)
 
 		app := &App{
-			authDB: db,
+			userDB: db,
 		}
 
 		user, err := app.SignIn(context.Background(), "username", "password")

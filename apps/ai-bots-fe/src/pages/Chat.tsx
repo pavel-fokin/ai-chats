@@ -30,7 +30,9 @@ export function Chat() {
 
     const onSendClick = async () => {
         if (inputMessage) {
-            const response = await api.SendMessage(inputMessage);
+            const chat = await api.CreateChat();
+
+            const response = await api.SendMessage(chat.data.ID, inputMessage);
             setMessages([...messages, inputMessage, response.data]);
             setInputMessage({ sender: '', text: '' });
             scrollToBottom();
@@ -43,7 +45,6 @@ export function Chat() {
             text: event.target.value
         });
     };
-
 
     return (
         <Stack p="md" gap="0" justify="flex-end">

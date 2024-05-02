@@ -8,6 +8,8 @@ import (
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+
+	"pavel-fokin/ai/apps/ai-bots-be/internal/server/api"
 )
 
 const maxShutdownTimeout = 10
@@ -60,8 +62,9 @@ func (s *Server) Shutdown() error {
 }
 
 // SetupChatAPI sets up the chat API.
-func (s *Server) SetupChatAPI(chat Chat) {
-	s.router.Post("/api/messages", PostMessages(chat))
+func (s *Server) SetupChatAPI(chat api.Chat) {
+	s.router.Post("/api/chats", api.PostChats(chat))
+	s.router.Post("/api/chats/{uuid}/messages", api.PostMessages(chat))
 	// s.router.Post("/api/chats", PostChats(chat))
-	// s.router.Get("/api/chats/{chat_id}/messages", GetChatMessages(chat))
+	// s.router.Get("/api/chats/{uuid}/messages", GetChatMessages(chat))
 }

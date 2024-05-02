@@ -1,4 +1,4 @@
-package server
+package api
 
 type UserCredentials struct {
 	Username string `json:"username" validate:"required"`
@@ -11,4 +11,8 @@ type SignInRequest struct {
 
 type SignUpRequest struct {
 	UserCredentials
+}
+
+type PostMessagesResponse struct {
+	Message
 }

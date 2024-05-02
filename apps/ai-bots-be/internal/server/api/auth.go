@@ -1,4 +1,4 @@
-package server
+package api
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
 type Auth interface {
@@ -20,27 +21,27 @@ func SignIn(app Auth, tokenSigningKey string) http.HandlerFunc {
 		ctx := r.Context()
 
 		var req SignInRequest
-		if err := ParseJSON(r, &req); err != nil {
+		if err := apiutil.ParseJSON(r, &req); err != nil {
 			slog.ErrorContext(ctx, "failed to parse request body", "err", err)
-			AsErrorResponse(w, err, http.StatusBadRequest)
+			apiutil.AsErrorResponse(w, err, http.StatusBadRequest)
 			return
 		}
 
 		user, err := app.SignIn(ctx, req.Username, req.Password)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to sign in user", "err", err)
-			AsErrorResponse(w, err, http.StatusInternalServerError)
+			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
 			return
 		}
 
-		accessToken, err := NewAccessToken(user.ID)
+		accessToken, err := apiutil.NewAccessToken(user.ID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create access token", "err", err)
-			AsErrorResponse(w, err, http.StatusInternalServerError)
+			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
 			return
 		}
 
-		AsSuccessResponse(w, &SignInResponse{
+		apiutil.AsSuccessResponse(w, &SignInResponse{
 			AccessToken: accessToken,
 		}, http.StatusOK)
 	}
@@ -52,9 +53,9 @@ func SignUp(app Auth, tokenSigningKey string) http.HandlerFunc {
 		ctx := r.Context()
 
 		var req SignUpRequest
-		if err := ParseJSON(r, &req); err != nil {
+		if err := apiutil.ParseJSON(r, &req); err != nil {
 			slog.ErrorContext(ctx, "failed to parse request body", "err", err)
-			AsErrorResponse(w, err, http.StatusBadRequest)
+			apiutil.AsErrorResponse(w, err, http.StatusBadRequest)
 			return
 		}
 
@@ -65,14 +66,14 @@ func SignUp(app Auth, tokenSigningKey string) http.HandlerFunc {
 			return
 		}
 
-		accessToken, err := NewAccessToken(user.ID)
+		accessToken, err := apiutil.NewAccessToken(user.ID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create access token", "err", err)
-			AsErrorResponse(w, err, http.StatusInternalServerError)
+			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
 			return
 		}
 
-		AsSuccessResponse(w, SignInResponse{
+		apiutil.AsSuccessResponse(w, SignInResponse{
 			AccessToken: accessToken,
 		}, http.StatusOK)
 	}

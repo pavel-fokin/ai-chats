@@ -1,4 +1,4 @@
-package server
+package api
 
 type SignInResponse struct {
 	AccessToken string `json:"accessToken"`
@@ -6,4 +6,8 @@ type SignInResponse struct {
 
 type SignUpResponse struct {
 	AccessToken string `json:"accessToken"`
+}
+
+type PostMessagesRequest struct {
+	Message
 }

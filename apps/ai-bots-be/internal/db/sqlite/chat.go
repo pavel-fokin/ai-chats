@@ -89,6 +89,16 @@ func (db *Sqlite) FindActor(ctx context.Context, actorID uuid.UUID) (domain.Acto
 	return actor, nil
 }
 
+func (db *Sqlite) FindActorByType(ctx context.Context, actorType domain.ActorType) (domain.Actor, error) {
+	var actor domain.Actor
+	err := db.db.QueryRowContext(ctx, "SELECT id, type FROM actor WHERE type = ?", actorType).Scan(&actor.ID, &actor.Type)
+	if err != nil {
+		return domain.Actor{}, err
+	}
+
+	return actor, nil
+}
+
 func (db *Sqlite) AddMessage(ctx context.Context, chat domain.Chat, actor domain.Actor, message string) error {
 	messageID := uuid.New()
 

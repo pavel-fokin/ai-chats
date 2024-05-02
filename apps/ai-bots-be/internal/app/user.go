@@ -18,7 +18,7 @@ type User struct {
 
 // SignIn signs in a user.
 func (a *App) SignIn(ctx context.Context, username, password string) (User, error) {
-	user, err := a.authDB.FindUser(ctx, username)
+	user, err := a.userDB.FindUser(ctx, username)
 	if err != nil {
 		return User{}, fmt.Errorf("failed to sign in user: %w", err)
 	}
@@ -37,7 +37,7 @@ func (a *App) SignUp(ctx context.Context, username, password string) (User, erro
 		return User{}, fmt.Errorf("failed to sign up user: %w", err)
 	}
 
-	user, err := a.authDB.CreateUser(ctx, username, hashedPassword)
+	user, err := a.userDB.CreateUser(ctx, username, hashedPassword)
 	if err != nil {
 		return User{}, fmt.Errorf("failed to sign up user: %w", err)
 	}
