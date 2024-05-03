@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -14,6 +15,7 @@ import (
 )
 
 type Message struct {
+	ID     string `json:"id"`
 	Sender string `json:"sender"`
 	Text   string `json:"text"`
 }
@@ -21,6 +23,7 @@ type Message struct {
 type ChatApp interface {
 	CreateChat(ctx context.Context) (domain.Chat, error)
 	AllChats(ctx context.Context) ([]domain.Chat, error)
+	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
 	SendMessage(ctx context.Context, chatId uuid.UUID, message string) (app.Message, error)
 }
 
@@ -54,6 +57,26 @@ func PostChats(chat ChatApp) http.HandlerFunc {
 		}
 
 		apiutil.AsSuccessResponse(w, chat, http.StatusOK)
+	}
+}
+
+// GetMessages handles the GET /api/chats/{uuid}/messages endpoint.
+func GetMessages(chat ChatApp) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		fmt.Println("GetMessages", r.URL.Path)
+		chatID := chi.URLParam(r, "uuid")
+		fmt.Println("chatID", chatID)
+
+		messages, err := chat.AllMessages(ctx, uuid.MustParse(chatID))
+		if err != nil {
+			slog.ErrorContext(ctx, "failed to get messages", "err", err)
+			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		apiutil.AsSuccessResponse(w, NewGetMessagesResponse(messages), http.StatusOK)
 	}
 }
 

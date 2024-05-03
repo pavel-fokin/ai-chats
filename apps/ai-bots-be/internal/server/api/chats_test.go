@@ -3,15 +3,18 @@ package api
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
 	"testing"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
 )
 
 type ChatMock struct {
@@ -31,6 +34,16 @@ func (m *ChatMock) CreateChat(ctx context.Context) (domain.Chat, error) {
 func (m *ChatMock) SendMessage(ctx context.Context, chatID uuid.UUID, message string) (app.Message, error) {
 	args := m.Called(ctx, chatID, message)
 	return args.Get(0).(app.Message), args.Error(1)
+}
+
+func (m *ChatMock) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
+	args := m.Called(ctx, chatID)
+	return args.Get(0).([]domain.Message), args.Error(1)
+}
+
+func matchChiContext(ctx context.Context) bool {
+	key := ctx.Value(chi.RouteCtxKey)
+	return key != nil
 }
 
 func TestCreateChat(t *testing.T) {
@@ -87,6 +100,44 @@ func TestGetChats(t *testing.T) {
 		chat.On("AllChats", context.Background()).Return([]domain.Chat{}, errors.New("failed to get chats"))
 
 		GetChats(chat)(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 500, resp.StatusCode)
+	})
+}
+
+func TestGetMessages(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		chatID := uuid.New()
+
+		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/messages", chatID), nil)
+		w := httptest.NewRecorder()
+
+		chat := &ChatMock{}
+		chat.On("AllMessages", mock.MatchedBy(matchChiContext), chatID).Return([]domain.Message{}, nil)
+
+		router := chi.NewRouter()
+		router.Get("/api/chats/{uuid}/messages", GetMessages(chat))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 200, resp.StatusCode)
+	})
+
+	t.Run("Failure", func(t *testing.T) {
+		chatID := uuid.New()
+
+		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/messages", chatID), nil)
+		w := httptest.NewRecorder()
+
+		chat := &ChatMock{}
+		chat.On(
+			"AllMessages", mock.MatchedBy(matchChiContext), chatID,
+		).Return([]domain.Message{}, errors.New("failed to get messages")).Once()
+
+		router := chi.NewRouter()
+		router.Get("/api/chats/{uuid}/messages", GetMessages(chat))
+		router.ServeHTTP(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 500, resp.StatusCode)

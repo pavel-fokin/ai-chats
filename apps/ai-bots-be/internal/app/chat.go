@@ -67,3 +67,7 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, message string)
 
 	return aiMessage, nil
 }
+
+func (a *App) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
+	return a.chatDB.AllMessages(ctx, chatID)
+}

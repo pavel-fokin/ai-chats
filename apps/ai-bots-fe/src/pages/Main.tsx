@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 
 import {
     AppShell,
@@ -9,7 +10,6 @@ import {
 } from '@mantine/core';
 import { IconMessageChatbot } from '@tabler/icons-react';
 
-import { Chat } from 'pages';
 import { useChats } from 'hooks';
 
 export function Main() {
@@ -36,11 +36,11 @@ export function Main() {
                     <Text fw={500}>Chats</Text>
                 </Group>
                 {chats.map((chat) => {
-                    return <NavLink key={chat.id} label={chat.id} />;
+                    return <NavLink href={`/chat/${chat.id}`} key={chat.id} label={chat.id} />;
                 })}
             </AppShell.Navbar>
             <AppShell.Main style={{ display: 'flex', flexDirection: 'column-reverse' }}>
-                <Chat />
+                <Outlet />
             </AppShell.Main>
         </AppShell>
     )

@@ -12,6 +12,7 @@ export default defineConfig({
   resolve: {
     alias: {
       'api': '/src/api',
+      'components': '/src/components',
       'types': '/src/types',
       'hooks': '/src/hooks',
       'pages': '/src/pages',

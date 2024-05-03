@@ -1,8 +1,21 @@
-import { Chat } from 'types';
+import { Chat, Message } from 'types';
 
-export type Message = {
-  sender: string;
-  text: string;
+type GetChatsResponse = {
+  data: {
+    chats: Chat[];
+  };
+};
+
+export type GetMessagesResponse = {
+  data: {
+    messages: Message[];
+  };
+};
+
+export type PostMessagesResponse = {
+  data: {
+    message: Message;
+  };
 };
 
 const CreateChat = async () => {
@@ -14,16 +27,18 @@ const CreateChat = async () => {
   return await resp.json();
 }
 
-type GetChatsResponse = {
-  data: {
-    chats: Chat[];
-  };
-};
-
 const GetChats = async () => {
   const resp = await fetch('/api/chats');
   const payload: GetChatsResponse = await resp.json();
   return payload.data.chats || [];
+}
+
+const fetchMessages = async (chatID: string): Promise<GetMessagesResponse> => {
+  const resp = await fetch(`/api/chats/${chatID}/messages`);
+  if (!resp.ok) {
+    throw new Error('Failed to fetch messages');
+  }
+  return await resp.json();
 }
 
 const SendMessage = async (chatID: string, msg: Message) => {
@@ -35,4 +50,4 @@ const SendMessage = async (chatID: string, msg: Message) => {
   return await resp.json();
 }
 
-export { GetChats, CreateChat, SendMessage };
+export { GetChats, CreateChat, SendMessage, fetchMessages };

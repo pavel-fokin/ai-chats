@@ -66,6 +66,5 @@ func (s *Server) SetupChatAPI(chat api.ChatApp) {
 	s.router.Get("/api/chats", api.GetChats(chat))
 	s.router.Post("/api/chats", api.PostChats(chat))
 	s.router.Post("/api/chats/{uuid}/messages", api.PostMessages(chat))
-	// s.router.Post("/api/chats", PostChats(chat))
-	// s.router.Get("/api/chats/{uuid}/messages", GetChatMessages(chat))
+	s.router.Get("/api/chats/{uuid}/messages", api.GetMessages(chat))
 }

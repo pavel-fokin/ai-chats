@@ -14,7 +14,8 @@ import {
 
 import '@mantine/core/styles.css';
 
-import { Main } from './pages/Main';
+import { Main, NewChat } from 'pages';
+import { ExistingChat } from 'pages/ExistingChat';
 
 const router = createBrowserRouter([
   {
@@ -22,12 +23,12 @@ const router = createBrowserRouter([
     element: <Main />,
     children: [
       {
-        path: "/chat",
-        element: <Main />,
+        path: "/",
+        element: <NewChat />,
       },
       {
         path: "/chat/:chatId",
-        element: <Main />,
+        element: <ExistingChat />,
       },
     ],
   },
