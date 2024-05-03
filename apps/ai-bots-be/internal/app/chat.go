@@ -27,6 +27,10 @@ func (a *App) CreateChat(ctx context.Context) (domain.Chat, error) {
 	return a.chatDB.CreateChat(ctx, []domain.Actor{ai, human})
 }
 
+func (a *App) AllChats(ctx context.Context) ([]domain.Chat, error) {
+	return a.chatDB.AllChats(ctx)
+}
+
 func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, message string) (Message, error) {
 	chat, err := a.chatDB.FindChat(ctx, chatID)
 	if err != nil {

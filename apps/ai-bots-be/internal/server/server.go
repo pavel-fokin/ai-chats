@@ -62,7 +62,8 @@ func (s *Server) Shutdown() error {
 }
 
 // SetupChatAPI sets up the chat API.
-func (s *Server) SetupChatAPI(chat api.Chat) {
+func (s *Server) SetupChatAPI(chat api.ChatApp) {
+	s.router.Get("/api/chats", api.GetChats(chat))
 	s.router.Post("/api/chats", api.PostChats(chat))
 	s.router.Post("/api/chats/{uuid}/messages", api.PostMessages(chat))
 	// s.router.Post("/api/chats", PostChats(chat))

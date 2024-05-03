@@ -1,1 +1,2 @@
-export * from '.';
+export * from './Chat';
+export * from './Main';

@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "imports": {
+    "@aibots": "./src/*"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -13,9 +16,11 @@
     "@mantine/core": "^7.8.1",
     "@mantine/hooks": "^7.8.1",
     "@tabler/icons-react": "^3.2.0",
+    "@tanstack/react-query": "^5.32.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-markdown": "^9.0.1"
+    "react-markdown": "^9.0.1",
+    "react-router-dom": "^6.23.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

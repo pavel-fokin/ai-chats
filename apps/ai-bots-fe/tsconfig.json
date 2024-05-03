@@ -15,10 +15,15 @@
     "jsx": "react-jsx",
 
     /* Linting */
+    "baseUrl": "src",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "api/*": ["api/*"],
+      "hooks/*": ["hooks/*"],
+    },
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

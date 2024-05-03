@@ -18,13 +18,31 @@ type Message struct {
 	Text   string `json:"text"`
 }
 
-type Chat interface {
+type ChatApp interface {
 	CreateChat(ctx context.Context) (domain.Chat, error)
+	AllChats(ctx context.Context) ([]domain.Chat, error)
 	SendMessage(ctx context.Context, chatId uuid.UUID, message string) (app.Message, error)
 }
 
+// GetChats handles the GET /api/chats endpoint.
+func GetChats(chat ChatApp) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		chats, err := chat.AllChats(ctx)
+		slog.InfoContext(ctx, "get chats", "chats", chats)
+		if err != nil {
+			slog.ErrorContext(ctx, "failed to get chats", "err", err)
+			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		apiutil.AsSuccessResponse(w, NewGetChatsResponse(chats), http.StatusOK)
+	}
+}
+
 // PostChats handles the POST /api/chats endpoint.
-func PostChats(chat Chat) http.HandlerFunc {
+func PostChats(chat ChatApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -40,7 +58,7 @@ func PostChats(chat Chat) http.HandlerFunc {
 }
 
 // PostMessages handles the POST /api/chats/{uuid}/messages endpoint.
-func PostMessages(chat Chat) http.HandlerFunc {
+func PostMessages(chat ChatApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 

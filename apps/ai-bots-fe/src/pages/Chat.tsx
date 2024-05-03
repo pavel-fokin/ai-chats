@@ -31,7 +31,6 @@ export function Chat() {
     const onSendClick = async () => {
         if (inputMessage) {
             const chat = await api.CreateChat();
-
             const response = await api.SendMessage(chat.data.ID, inputMessage);
             setMessages([...messages, inputMessage, response.data]);
             setInputMessage({ sender: '', text: '' });

@@ -1,55 +1,50 @@
-import '@mantine/core/styles.css';
 
 
 import {
-  AppShell,
-  Burger,
-  Group,
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import {
   MantineProvider,
-  NavLink,
-  Text,
   createTheme,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconMessageChatbot, IconRobotFace } from '@tabler/icons-react';
 
+import '@mantine/core/styles.css';
 
-import { Chat } from './pages/Chat';
+import { Main } from './pages/Main';
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Main />,
+    children: [
+      {
+        path: "/chat",
+        element: <Main />,
+      },
+      {
+        path: "/chat/:chatId",
+        element: <Main />,
+      },
+    ],
+  },
+]);
 
 const theme = createTheme({
   /** Put your mantine theme override here */
 });
 
+const queryClient = new QueryClient()
 
 function App() {
-  const [opened, { toggle }] = useDisclosure();
-
   return (
     <MantineProvider theme={theme}>
-      <AppShell
-        header={{ height: 60 }}
-        navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
-        padding="md"
-      >
-        <AppShell.Header>
-          <Group h="100%" px="md">
-            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-            <Text>AI Bots</Text>
-          </Group>
-        </AppShell.Header>
-        <AppShell.Navbar p="md">
-        <Group p="xs" gap="xs">
-            <IconMessageChatbot size="1.125rem" stroke={1.5} />
-            <Text size="md" fw={500}>
-              Chats
-            </Text>
-          </Group>
-          <NavLink label="Chat Title" />
-        </AppShell.Navbar>
-        <AppShell.Main style={{ display: 'flex', flexDirection: 'column-reverse' }}>
-          <Chat />
-        </AppShell.Main>
-      </AppShell>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
     </MantineProvider>
   );
 }

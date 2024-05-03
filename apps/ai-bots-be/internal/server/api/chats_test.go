@@ -18,6 +18,11 @@ type ChatMock struct {
 	mock.Mock
 }
 
+func (m *ChatMock) AllChats(ctx context.Context) ([]domain.Chat, error) {
+	args := m.Called(ctx)
+	return args.Get(0).([]domain.Chat), args.Error(1)
+}
+
 func (m *ChatMock) CreateChat(ctx context.Context) (domain.Chat, error) {
 	args := m.Called(ctx)
 	return args.Get(0).(domain.Chat), args.Error(1)
@@ -57,5 +62,33 @@ func TestCreateChat(t *testing.T) {
 		assert.Equal(t, 500, resp.StatusCode)
 
 		chat.AssertNumberOfCalls(t, "CreateChat", 1)
+	})
+}
+
+func TestGetChats(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		req, _ := http.NewRequest("", "", nil)
+		w := httptest.NewRecorder()
+
+		chat := &ChatMock{}
+		chat.On("AllChats", context.Background()).Return([]domain.Chat{}, nil)
+
+		GetChats(chat)(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 200, resp.StatusCode)
+	})
+
+	t.Run("Failure", func(t *testing.T) {
+		req, _ := http.NewRequest("", "", nil)
+		w := httptest.NewRecorder()
+
+		chat := &ChatMock{}
+		chat.On("AllChats", context.Background()).Return([]domain.Chat{}, errors.New("failed to get chats"))
+
+		GetChats(chat)(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 500, resp.StatusCode)
 	})
 }
