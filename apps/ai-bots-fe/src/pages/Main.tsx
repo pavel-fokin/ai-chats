@@ -1,49 +1,23 @@
-import { useState } from 'react';
+
 import { Outlet } from 'react-router-dom';
 
-import {
-    AppShell,
-    Burger,
-    Group,
-    NavLink,
-    Text,
-} from '@mantine/core';
-import { IconMessageChatbot } from '@tabler/icons-react';
+import { Box, Container, Flex } from '@radix-ui/themes';
 
-import { useChats } from 'hooks';
+import { NavBar } from 'components';
 
 export function Main() {
-    const [opened, setOpened] = useState(false);
-    const toggle = () => setOpened(!opened);
-
-    const chats = useChats();
-
     return (
-        <AppShell
-            header={{ height: 60 }}
-            navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
-            padding="md"
-        >
-            <AppShell.Header>
-                <Group h="100%" px="md">
-                    <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-                    <Text>AI Bots</Text>
-                </Group>
-            </AppShell.Header>
-            <AppShell.Navbar p="md">
-                <Group p="xs" gap="xs">
-                    <IconMessageChatbot size="1.125rem" stroke={1.5} />
-                    <Text fw={500}>Chats</Text>
-                </Group>
-                {chats.map((chat) => {
-                    return <NavLink href={`/chat/${chat.id}`} key={chat.id} label={chat.id} />;
-                })}
-            </AppShell.Navbar>
-            <AppShell.Main style={{ display: 'flex', flexDirection: 'column-reverse' }}>
-                <Outlet />
-            </AppShell.Main>
-        </AppShell>
+        <Flex direction="row" minHeight="100vh">
+            <Box display={{ initial: "none", sm: "inline" }}>
+                <NavBar />
+            </Box>
+            <main style={{ display: "flex", width: "100%" }}>
+                <Container asChild size="2" mx="2" my={{ initial: "4", sm: "6" }}>
+                    <Flex direction="column-reverse">
+                        <Outlet />
+                    </Flex>
+                </Container>
+            </main>
+        </Flex>
     )
-
-
 }

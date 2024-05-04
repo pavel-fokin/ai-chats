@@ -7,15 +7,11 @@ import {
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import {
-  MantineProvider,
-  createTheme,
-} from '@mantine/core';
+import { Theme } from '@radix-ui/themes';
 
-import '@mantine/core/styles.css';
+import '@radix-ui/themes/styles.css';
 
-import { Main, NewChat } from 'pages';
-import { ExistingChat } from 'pages/ExistingChat';
+import { Main, Chat } from 'pages';
 
 const router = createBrowserRouter([
   {
@@ -24,29 +20,25 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <NewChat />,
+        element: <Chat />,
       },
       {
-        path: "/chat/:chatId",
-        element: <ExistingChat />,
+        path: "/chats/:chatId",
+        element: <Chat />,
       },
     ],
   },
 ]);
 
-const theme = createTheme({
-  /** Put your mantine theme override here */
-});
-
 const queryClient = new QueryClient()
 
 function App() {
   return (
-    <MantineProvider theme={theme}>
+    <Theme appearance="light" accentColor="gray" grayColor="slate">
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>
-    </MantineProvider>
+    </Theme>
   );
 }
 

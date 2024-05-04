@@ -1,15 +1,15 @@
-import { Avatar, Group, Stack, Text } from "@mantine/core";
+import { Flex, Avatar, Text } from "@radix-ui/themes";
 import Markdown from 'react-markdown';
 
 const Message = (props: { sender: string; text: string }) => {
     return (
-        <Stack gap="2px">
-            <Group gap="4px">
-                <Avatar size="sm" radius="xl" />
-                <Text fw={500}>{props.sender}</Text>
-            </Group>
-            <Text component='span'><Markdown>{props.text}</Markdown></Text>
-        </Stack>
+        <Flex direction="column" gap="1">
+            <Flex>
+                <Avatar size="1" fallback="A"/>
+                <Text>{props.sender}</Text>
+            </Flex>
+            <Markdown>{props.text}</Markdown>
+        </Flex>
     );
 };
 

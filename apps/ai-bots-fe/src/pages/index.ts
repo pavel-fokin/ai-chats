@@ -1,3 +1,3 @@
-export * from './ExistingChat';
+export * from './Chat';
 export * from './Main';
-export * from './NewChat';
+
