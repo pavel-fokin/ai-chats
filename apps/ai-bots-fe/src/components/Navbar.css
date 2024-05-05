@@ -1,6 +1,6 @@
 .NavigationMenuRoot {
     position: relative;
-    display: flex;
+    /* display: flex; */
     z-index: 1;
 }
 
@@ -27,6 +27,9 @@
     font-size: var(--font-size-3);
     text-decoration: none;
     color: var(--accent-11);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .NavigationMenuLink:focus {

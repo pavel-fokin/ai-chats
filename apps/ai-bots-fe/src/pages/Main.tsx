@@ -10,7 +10,7 @@ export function Main() {
     const [isOpen, setOpen] = useState(false);
 
     return (
-        <Flex direction={{ initial: "column", md: "row" }} minHeight="100vh">
+        <Flex direction={{ initial: "column", sm: "row" }} minHeight="100vh">
             <Box asChild display={{ initial: "block", sm: "none" }} style={{ zIndex: "2" }}>
                 <header>
                     <Hamburger onToggle={() => setOpen(!isOpen)} />
@@ -26,12 +26,14 @@ export function Main() {
                     initial: "100vw",
                     sm: "300px",
                 }}
+                minWidth="300px"
                 position={{
                     initial: "fixed",
                     sm: "static",
                 }}
                 style={{
                     padding: "48px 0",
+                    borderInlineEnd: "1px solid var(--accent-6)",
                     backgroundColor: "var(--color-background)",
                     zIndex: "1",
                 }}
