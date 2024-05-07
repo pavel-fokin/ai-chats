@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -65,9 +64,7 @@ func GetMessages(chat ChatApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		fmt.Println("GetMessages", r.URL.Path)
 		chatID := chi.URLParam(r, "uuid")
-		fmt.Println("chatID", chatID)
 
 		messages, err := chat.AllMessages(ctx, uuid.MustParse(chatID))
 		if err != nil {

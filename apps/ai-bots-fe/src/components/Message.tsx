@@ -1,4 +1,5 @@
 import { Flex, Avatar, Text } from "@radix-ui/themes";
+// import { IconRobotFace } from '@tabler/icons-react';
 import Markdown from 'react-markdown';
 
 const Message = (props: { sender: string; text: string }) => {

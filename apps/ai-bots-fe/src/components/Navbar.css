@@ -1,8 +1,6 @@
-.NavigationMenuRoot {
+/* .NavigationMenuRoot {
     position: relative;
-    /* display: flex; */
-    z-index: 1;
-}
+} */
 
 .NavigationMenuList {
     display: flex;

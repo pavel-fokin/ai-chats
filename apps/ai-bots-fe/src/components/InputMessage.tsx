@@ -5,7 +5,11 @@ import { IconSend } from '@tabler/icons-react';
 
 import * as types from 'types';
 
-function InputMessage() {
+type InputMessageProps = {
+    handleSend: (msg: types.Message) => void;
+};
+
+function InputMessage({ handleSend }: InputMessageProps) {
     const [inputMessage, setInputMessage] = useState<types.Message>({ sender: '', text: '' });
 
     const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -14,6 +18,7 @@ function InputMessage() {
 
     const onSendClick = async () => {
         if (inputMessage) {
+            handleSend({ sender: 'user', text: inputMessage.text});
             setInputMessage({ sender: '', text: '' });
         }
     };
@@ -24,7 +29,6 @@ function InputMessage() {
                 <TextField.Root
                     value={inputMessage.text}
                     placeholder="Type a message"
-                    style={{ resize: 'none' }}
                     onChange={onInputChange}
                     size="3"
                 />

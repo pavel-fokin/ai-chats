@@ -1,22 +1,34 @@
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
+import { Flex } from '@radix-ui/themes';
+import { IconMessagePlus } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 
 import { useChats } from 'hooks';
 
 import './Navbar.css';
-import { Flex } from '@radix-ui/themes';
-import { IconMessagePlus } from '@tabler/icons-react';
 
 export function Navbar() {
-    const chats = useChats();
+    const { chats } = useChats();
+    const { createChat } = useChats();
+    const navigate = useNavigate();
+
+    const handleNewChat = async () => {
+        createChat.mutateAsync().then((data) => {
+            navigate(`/chats/${data.data.id}`);
+        }).catch((error) => {
+            console.error('Failed to create a chat', error);
+        });
+    }
 
     return (
-        <Flex direction="column" gap="2" pl="4">
-            <NavigationMenu.Root orientation="vertical" className="NavigationMenuRoot">
+        <Flex direction="column" gap="2" px="4">
+            <NavigationMenu.Root orientation="vertical">
                 <NavigationMenu.List className="NavigationMenuList">
                     <NavigationMenu.Item >
                         <NavigationMenu.Link
-                            href="/"
+                            // href="/"
                             className='NavigationMenuLink'
+                            onClick={handleNewChat}
                         >
                             <Flex gap="3">
                                 <IconMessagePlus size={16} /> Start a new chat

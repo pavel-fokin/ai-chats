@@ -39,9 +39,9 @@ func (c *ChatModel) ChatMessage(ctx context.Context, history []domain.Message, m
 	content := []llms.MessageContent{}
 	for _, message := range history {
 		switch message.Actor.Type {
-		case "ai":
+		case domain.AI:
 			content = append(content, llms.TextParts(llms.ChatMessageTypeAI, message.Text))
-		case "user":
+		case domain.Human:
 			content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, message.Text))
 		default:
 			return app.Message{}, fmt.Errorf("unknown actor type: %s", message.Actor.Type)

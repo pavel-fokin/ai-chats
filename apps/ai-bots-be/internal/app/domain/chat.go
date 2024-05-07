@@ -10,18 +10,18 @@ const (
 )
 
 type Actor struct {
-	ID   uuid.UUID
-	Type ActorType
+	ID   uuid.UUID `json:"id"`
+	Type ActorType `json:"type"`
 }
 
 type Message struct {
-	ID    uuid.UUID
-	Actor Actor
-	Text  string
+	ID    uuid.UUID `json:"id"`
+	Actor Actor     `json:"actor"`
+	Text  string    `json:"text"`
 }
 
 type Chat struct {
-	ID       uuid.UUID
-	Actors   []Actor
-	Messages []Message
+	ID       uuid.UUID `json:"id"`
+	Actors   []Actor   `json:"actors"`
+	Messages []Message `json:"messages"`
 }

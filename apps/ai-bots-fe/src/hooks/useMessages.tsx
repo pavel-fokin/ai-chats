@@ -1,13 +1,30 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { fetchMessages } from 'api';
+import { fetchMessages, postMessages } from 'api';
 import { Message } from 'types';
 
-export function useMessages(chatID: string): Message[] {
+
+export function useMessages(chatId: string) {
+    const queryClient = useQueryClient();
+
     const { data: payload = [] } = useQuery({
-        queryKey: ['messages', chatID],
-        queryFn: () => fetchMessages(chatID),
+        queryKey: ['messages', chatId],
+        queryFn: () => fetchMessages(chatId),
     });
 
-    return Array.isArray(payload) ? payload : payload.data.messages || [];
+    const mutation = useMutation({
+        mutationFn: (msg: Message) => {
+            return postMessages(chatId, msg);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['messages', chatId],
+            });
+        }
+    });
+
+    return {
+        messages: Array.isArray(payload) ? payload : payload.data.messages || [],
+        sendMessage: mutation,
+    }
 }

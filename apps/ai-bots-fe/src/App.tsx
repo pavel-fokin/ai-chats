@@ -11,7 +11,7 @@ import { Theme } from '@radix-ui/themes';
 
 import '@radix-ui/themes/styles.css';
 
-import { Main, Chat } from 'pages';
+import { Main, Chat, Empty } from 'pages';
 
 const router = createBrowserRouter([
   {
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Chat />,
+        element: <Empty />,
       },
       {
         path: "/chats/:chatId",
