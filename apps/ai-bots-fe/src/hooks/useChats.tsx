@@ -5,7 +5,7 @@ import { fetchChats, postChats } from 'api';
 export function useChats() {
     const queryClient = useQueryClient();
 
-    const { data: chats = [] } = useQuery({
+    const { data: chats } = useQuery({
         queryKey: ['chats'],
         queryFn: fetchChats,
     });

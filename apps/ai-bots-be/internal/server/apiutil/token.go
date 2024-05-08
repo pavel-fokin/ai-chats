@@ -52,9 +52,9 @@ func NewAccessToken(userID uuid.UUID) (string, error) {
 
 // VerifyAccessToken verifies the given access token.
 // It returns the claims of the access token and any error encountered during the process.
-func VerifyAccessToken(tokenString string, signingKey string) (*JWTClaims, error) {
+func VerifyAccessToken(tokenString string) (*JWTClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
+		return []byte(signingKey), nil
 	})
 	if err != nil {
 		return nil, err

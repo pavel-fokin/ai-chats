@@ -35,12 +35,13 @@ export function Navbar() {
     return (
         <Flex direction="column" gap="2" height="100%" justify="between">
             <Flex direction="column">
+
                 <Button size="3" variant="ghost" m="3" onClick={handleNewChat}>
                     <IconMessagePlus size={16} />Start a new chat
                 </Button>
                 <NavigationMenu.Root orientation="vertical">
                     <NavigationMenu.List className={styles.NavigationMenuList}>
-                        {chats.map((chat) => (
+                        {!!chats && chats.data.chats?.map((chat) => (
                             <NavigationMenu.Item key={chat.id}>
                                 <NavigationMenu.Link
                                     href={`/app/chats/${chat.id}`}
@@ -61,7 +62,7 @@ export function Navbar() {
             <Flex direction="column" gap="2">
                 <Separator size="4" />
                 <Button size="3" variant="ghost" m="3" onClick={handleSignOut}>
-                    <IconLogout size={16} />Sign Out
+                    <IconLogout size={16} />Sign out
                 </Button>
             </Flex>
         </Flex>
