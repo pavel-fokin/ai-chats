@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
+/// <reference types="vitest" />
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tsconfigPaths()],
   server: {
     proxy: {
       '/api': 'http://localhost:8080'
@@ -17,5 +19,10 @@ export default defineConfig({
       'hooks': '/src/hooks',
       'pages': '/src/pages',
     }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './vitest.setup.js',
   }
 })
