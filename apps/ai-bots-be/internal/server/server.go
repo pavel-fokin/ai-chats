@@ -10,13 +10,15 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/api"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
 const maxShutdownTimeout = 10
 
 // Config is the server configuration.
 type Config struct {
-	Port string `env:"AIBOTS_SERVER_PORT" envDefault:"8080"`
+	Port            string `env:"AIBOTS_SERVER_PORT" envDefault:"8080"`
+	tokenSigningKey string `env:"AIBOTS_TOKEN_SIGNING_KEY" envDefault:"secret"`
 }
 
 // Server is the main server struct.
@@ -32,6 +34,9 @@ func New(config Config) *Server {
 
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
+
+	// Initialize the token signing key and validator.
+	apiutil.InitSigningKey(config.tokenSigningKey)
 
 	server := &http.Server{
 		Addr:    ":" + config.Port,
@@ -59,6 +64,11 @@ func (s *Server) Shutdown() error {
 	defer cancel()
 
 	return s.server.Shutdown(ctx)
+}
+
+func (s *Server) SetupAuthAPI(auth api.Auth) {
+	s.router.Post("/api/auth/signin", api.SignIn(auth))
+	s.router.Post("/api/auth/signup", api.SignUp(auth))
 }
 
 // SetupChatAPI sets up the chat API.

@@ -17,24 +17,14 @@ type AuthMock struct {
 	mock.Mock
 }
 
-func (m *AuthMock) SignIn(ctx context.Context, username, password string) (*app.User, error) {
+func (m *AuthMock) SignIn(ctx context.Context, username, password string) (app.User, error) {
 	args := m.Called(ctx, username, password)
-
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-
-	return args.Get(0).(*app.User), args.Error(1)
+	return args.Get(0).(app.User), args.Error(1)
 }
 
-func (m *AuthMock) SignUp(ctx context.Context, username, password string) (*app.User, error) {
+func (m *AuthMock) SignUp(ctx context.Context, username, password string) (app.User, error) {
 	args := m.Called(ctx, username, password)
-
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-
-	return args.Get(0).(*app.User), args.Error(1)
+	return args.Get(0).(app.User), args.Error(1)
 }
 
 func TestSignIn(t *testing.T) {
@@ -44,9 +34,9 @@ func TestSignIn(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		auth := &AuthMock{}
-		auth.On("SignIn", context.Background(), "username", "password").Return(&app.User{}, nil)
+		auth.On("SignIn", context.Background(), "username", "password").Return(app.User{}, nil)
 
-		SignIn(auth, "token")(w, req)
+		SignIn(auth)(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 200, resp.StatusCode)
@@ -61,10 +51,10 @@ func TestSignIn(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		auth := &AuthMock{}
-		auth.On("SignIn", context.Background(), "username", "password").Return(nil, fmt.Errorf("some error"))
+		auth.On("SignIn", context.Background(), "username", "password").Return(app.User{}, fmt.Errorf("some error"))
 
 		// Test.
-		SignIn(auth, "token")(w, req)
+		SignIn(auth)(w, req)
 
 		// Assert.
 		resp := w.Result()
@@ -82,7 +72,7 @@ func TestSignIn(t *testing.T) {
 		auth := &AuthMock{}
 
 		// Test.
-		SignIn(auth, "token")(w, req)
+		SignIn(auth)(w, req)
 
 		// Assert.
 		resp := w.Result()

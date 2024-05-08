@@ -35,6 +35,6 @@ type App struct {
 	chatDB  ChatDB
 }
 
-func New(chatbot ChatBot, chatDB ChatDB) *App {
-	return &App{chatbot: chatbot, chatDB: chatDB}
+func New(chatbot ChatBot, chatDB ChatDB, userDB UserDB) *App {
+	return &App{chatbot: chatbot, chatDB: chatDB, userDB: userDB}
 }

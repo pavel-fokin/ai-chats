@@ -20,11 +20,11 @@ type User struct {
 func (a *App) SignIn(ctx context.Context, username, password string) (User, error) {
 	user, err := a.userDB.FindUser(ctx, username)
 	if err != nil {
-		return User{}, fmt.Errorf("failed to sign in user: %w", err)
+		return User{}, fmt.Errorf("failed to sign in a user: %w", err)
 	}
 
 	if err := apputil.VerifyPassword(user.Password, password); err != nil {
-		return User{}, fmt.Errorf("failed to sign in user: %w", err)
+		return User{}, fmt.Errorf("failed to sign in a user: %w", err)
 	}
 
 	return user, nil
@@ -34,12 +34,12 @@ func (a *App) SignIn(ctx context.Context, username, password string) (User, erro
 func (a *App) SignUp(ctx context.Context, username, password string) (User, error) {
 	hashedPassword, err := apputil.HashPassword(password)
 	if err != nil {
-		return User{}, fmt.Errorf("failed to sign up user: %w", err)
+		return User{}, fmt.Errorf("failed to sign up a user: %w", err)
 	}
 
 	user, err := a.userDB.CreateUser(ctx, username, hashedPassword)
 	if err != nil {
-		return User{}, fmt.Errorf("failed to sign up user: %w", err)
+		return User{}, fmt.Errorf("failed to sign up a user: %w", err)
 	}
 
 	return user, nil

@@ -44,9 +44,10 @@ func main() {
 	appDB, closeDB := sqlite.New(config.DB.DATABASE_URL)
 	defer closeDB()
 
-	app := app.New(chatBot, appDB)
+	app := app.New(chatBot, appDB, appDB)
 
 	server := server.New(config.Server)
+	server.SetupAuthAPI(app)
 	server.SetupChatAPI(app)
 
 	log.Println("Starting AIBots HTTP server... ", config.Server.Port)

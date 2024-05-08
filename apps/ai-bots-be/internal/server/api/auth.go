@@ -11,12 +11,12 @@ import (
 )
 
 type Auth interface {
-	SignIn(ctx context.Context, username, password string) (*app.User, error)
-	SignUp(ctx context.Context, username, password string) (*app.User, error)
+	SignIn(ctx context.Context, username, password string) (app.User, error)
+	SignUp(ctx context.Context, username, password string) (app.User, error)
 }
 
 // SignIn signs in a user.
-func SignIn(app Auth, tokenSigningKey string) http.HandlerFunc {
+func SignIn(app Auth) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -48,7 +48,7 @@ func SignIn(app Auth, tokenSigningKey string) http.HandlerFunc {
 }
 
 // SignUp signs up a user.
-func SignUp(app Auth, tokenSigningKey string) http.HandlerFunc {
+func SignUp(app Auth) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 

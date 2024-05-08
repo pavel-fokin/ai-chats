@@ -1,9 +1,8 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
-/// <reference types="vitest" />
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   server: {
@@ -15,6 +14,7 @@ export default defineConfig({
     alias: {
       'api': '/src/api',
       'components': '/src/components',
+      'contexts': '/src/contexts',
       'types': '/src/types',
       'hooks': '/src/hooks',
       'pages': '/src/pages',

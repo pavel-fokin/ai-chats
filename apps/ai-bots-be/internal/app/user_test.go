@@ -50,7 +50,7 @@ func TestSignIn(t *testing.T) {
 		}
 
 		user, err := app.SignIn(context.Background(), "username", "password")
-		assert.ErrorContains(t, err, "failed to sign in user: user not found")
+		assert.ErrorContains(t, err, "failed to sign in a user: user not found")
 		assert.Equal(t, User{}, user)
 	})
 
