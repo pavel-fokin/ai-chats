@@ -20,6 +20,7 @@ export function Chat() {
     }
 
     return (
+        <Flex direction="column-reverse" flexGrow="1">
         <Flex direction="column" gap="6">
             {messages.map((message, index) => (
                 <Message
@@ -30,5 +31,7 @@ export function Chat() {
             ))}
             <InputMessage handleSend={handleSend} />
         </Flex>
+        </Flex>
+
     );
 }

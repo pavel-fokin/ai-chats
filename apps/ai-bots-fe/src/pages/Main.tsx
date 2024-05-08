@@ -6,62 +6,28 @@ import Hamburger from 'hamburger-react'
 
 import { Navbar } from 'components';
 
+import styles from './Main.module.css';
+
 export function Main() {
     const [isOpen, setOpen] = useState(false);
 
+    let asideStyles = styles.Aside;
+
+    if (isOpen) {
+        asideStyles += ` ${styles.AsideOpen}`;
+    }
+
     return (
-        <Flex direction={{ initial: "column", sm: "row" }} minHeight="100vh">
-            <Box asChild display={{ initial: "block", sm: "none" }} style={{ zIndex: "2" }}>
-                <header>
-                    <Hamburger onToggle={() => setOpen(!isOpen)} />
-                </header>
-            </Box>
-            <Box
-                display={{ initial: isOpen ? "block" : "none", sm: "block" }}
-                height={{
-                    initial: "100vh",
-                    sm: "auto",
-                }}
-                width={{
-                    initial: "100vw",
-                    sm: "300px",
-                }}
-                minWidth="300px"
-                position={{
-                    initial: "fixed",
-                    sm: "static",
-                }}
-                style={{
-                    padding: "48px 0",
-                    borderInlineEnd: "1px solid var(--accent-6)",
-                    backgroundColor: "var(--color-background)",
-                    zIndex: "1",
-                }}
-
-            >
+        <div className={styles.Root}>
+            <header className={styles.Header}>
+                <Hamburger onToggle={() => setOpen(!isOpen)} />
+            </header>
+            <aside className={asideStyles}>
                 <Navbar />
-            </Box>
-            <Flex
-                asChild
-                direction={{
-                    initial: "column",
-                    sm: "row",
-                }}
-                width="100%"
-                flexGrow={{
-                    initial: "1",
-                    sm: "0",
-                }}
-            >
-                <main>
-                    <Container asChild size="2" mx="2" my={{ initial: "4", sm: "6" }}>
-                        <Flex direction="column-reverse">
-                            <Outlet />
-                        </Flex>
-                    </Container>
-                </main>
-            </Flex>
-
-        </Flex>
+            </aside>
+            <main className={styles.Main}>
+                <Outlet />
+            </main>
+        </div>
     )
 }

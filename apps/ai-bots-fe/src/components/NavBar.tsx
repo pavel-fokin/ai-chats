@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useChats } from 'hooks';
 
-import './Navbar.css';
+import styles from './Navbar.module.css';
 
 export function Navbar() {
     const { chats } = useChats();
@@ -23,11 +23,11 @@ export function Navbar() {
     return (
         <Flex direction="column" gap="2" px="4">
             <NavigationMenu.Root orientation="vertical">
-                <NavigationMenu.List className="NavigationMenuList">
+                <NavigationMenu.List className={styles.NavigationMenuList}>
                     <NavigationMenu.Item >
                         <NavigationMenu.Link
                             // href="/"
-                            className='NavigationMenuLink'
+                            className={styles.NavigationMenuLink}
                             onClick={handleNewChat}
                         >
                             <Flex gap="3">
@@ -39,7 +39,7 @@ export function Navbar() {
                         <NavigationMenu.Item key={chat.id}>
                             <NavigationMenu.Link
                                 href={`/chats/${chat.id}`}
-                                className='NavigationMenuLink'
+                                className={styles.NavigationMenuLink}
                             >
                                 {chat.id}
                             </NavigationMenu.Link>

@@ -1,0 +1,53 @@
+@media only screen and (min-width: 768px) {
+    .Root {
+        --root-flex-direction: row;
+    }
+
+    .Header {
+        --header-display: none;
+    }
+
+    .Aside {
+        --sidebar-display: block;
+        --sidebar-height: auto;
+        --sidebar-width: 300px;
+        --sidebar-position: static;
+    }
+}
+
+.Root {
+    display: flex;
+    flex-direction: var(--root-flex-direction, column);
+    min-height: 100vh;
+}
+
+.Header {
+    display: var(--header-display, block);
+    padding: var(--space-2) var(--space-2);
+    z-index: 2;
+}
+
+.Aside {
+    display: var(--sidebar-display, none);
+    position: var(--sidebar-position, fixed);
+    height: var(--sidebar-height, 100vh);
+    width: var(--sidebar-width, 100vw);
+    padding: var(--space-8) 0;
+    min-width: 300px;
+    background-color: var(--color-background);
+    border-inline-end: 1px solid var(--accent-6);
+    z-index: 1;
+}
+
+.AsideOpen {
+    --sidebar-display: block;
+}
+
+.Main {
+    display: flex;
+    flex-grow: 1;
+    padding: var(--space-4);
+    width: 100%;
+    max-width: 688px;
+    margin: 0 auto;
+}
