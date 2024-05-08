@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { Box, Container, Flex } from '@radix-ui/themes';
-import Hamburger from 'hamburger-react'
+import Hamburger from 'hamburger-react';
 
 import { Navbar } from 'components';
 

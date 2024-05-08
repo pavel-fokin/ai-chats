@@ -16,7 +16,7 @@
 
 .NavigationMenuLink {
     display: block;
-    padding: var(--space-3) var(--space-2);
+    padding: var(--space-3);
     outline: none;
     user-select: none;
     font-weight: var(--font-weight-medium);
@@ -35,5 +35,9 @@
 }
 
 .NavigationMenuLink:hover {
+    background-color: var(--accent-3);
+}
+
+.NavigationMenuLinkActive {
     background-color: var(--accent-3);
 }

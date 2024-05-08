@@ -12,6 +12,7 @@
         --sidebar-height: auto;
         --sidebar-width: 300px;
         --sidebar-position: static;
+        --sidebar-padding: var(--space-3);
     }
 }
 
@@ -32,7 +33,7 @@
     position: var(--sidebar-position, fixed);
     height: var(--sidebar-height, 100vh);
     width: var(--sidebar-width, 100vw);
-    padding: var(--space-8) 0;
+    padding: var(--sidebar-padding, var(--space-8)) var(--space-3);
     min-width: 300px;
     background-color: var(--color-background);
     border-inline-end: 1px solid var(--accent-6);
