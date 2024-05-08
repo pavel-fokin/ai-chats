@@ -13,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
 )
 
@@ -31,9 +30,9 @@ func (m *ChatMock) CreateChat(ctx context.Context) (domain.Chat, error) {
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
-func (m *ChatMock) SendMessage(ctx context.Context, chatID uuid.UUID, message string) (app.Message, error) {
+func (m *ChatMock) SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error) {
 	args := m.Called(ctx, chatID, message)
-	return args.Get(0).(app.Message), args.Error(1)
+	return args.Get(0).(domain.Message), args.Error(1)
 }
 
 func (m *ChatMock) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {

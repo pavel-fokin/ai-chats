@@ -8,7 +8,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
@@ -23,7 +22,7 @@ type ChatApp interface {
 	CreateChat(ctx context.Context) (domain.Chat, error)
 	AllChats(ctx context.Context) ([]domain.Chat, error)
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
-	SendMessage(ctx context.Context, chatId uuid.UUID, message string) (app.Message, error)
+	SendMessage(ctx context.Context, chatId uuid.UUID, message string) (domain.Message, error)
 }
 
 // GetChats handles the GET /api/chats endpoint.

@@ -9,8 +9,8 @@ import (
 )
 
 type ChatBot interface {
-	SingleMessage(ctx context.Context, message string) (Message, error)
-	ChatMessage(ctx context.Context, history []domain.Message, message string) (Message, error)
+	SingleMessage(ctx context.Context, message string) (domain.Message, error)
+	ChatMessage(ctx context.Context, history []domain.Message, message string) (domain.Message, error)
 }
 
 type ChatDB interface {

@@ -7,7 +7,6 @@ import (
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/ollama"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
 )
 
@@ -24,18 +23,21 @@ func NewChatModel(model string) (*ChatModel, error) {
 	return &ChatModel{llm: llm}, nil
 }
 
-func (c *ChatModel) SingleMessage(ctx context.Context, prompt string) (app.Message, error) {
+func (c *ChatModel) SingleMessage(ctx context.Context, prompt string) (domain.Message, error) {
 	completion, err := llms.GenerateFromSinglePrompt(ctx, c.llm, prompt)
 	if err != nil {
-		return app.Message{}, err
+		return domain.Message{}, err
 	}
 
-	return app.Message{
+	return domain.Message{
+		Actor: domain.Actor{
+			Type: domain.AI,
+		},
 		Text: completion,
 	}, nil
 }
 
-func (c *ChatModel) ChatMessage(ctx context.Context, history []domain.Message, message string) (app.Message, error) {
+func (c *ChatModel) ChatMessage(ctx context.Context, history []domain.Message, message string) (domain.Message, error) {
 	content := []llms.MessageContent{}
 	for _, message := range history {
 		switch message.Actor.Type {
@@ -44,7 +46,7 @@ func (c *ChatModel) ChatMessage(ctx context.Context, history []domain.Message, m
 		case domain.Human:
 			content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, message.Text))
 		default:
-			return app.Message{}, fmt.Errorf("unknown actor type: %s", message.Actor.Type)
+			return domain.Message{}, fmt.Errorf("unknown actor type: %s", message.Actor.Type)
 		}
 	}
 
@@ -52,15 +54,18 @@ func (c *ChatModel) ChatMessage(ctx context.Context, history []domain.Message, m
 
 	completion, err := c.llm.GenerateContent(ctx, content)
 	if err != nil {
-		return app.Message{}, err
+		return domain.Message{}, err
 	}
 
 	if len(completion.Choices) == 0 {
-		return app.Message{}, fmt.Errorf("no completion choices")
+		return domain.Message{}, fmt.Errorf("no completion choices")
 	}
 	text := completion.Choices[0].Content
 
-	return app.Message{
+	return domain.Message{
+		Actor: domain.Actor{
+			Type: domain.AI,
+		},
 		Text: text,
 	}, nil
 }
