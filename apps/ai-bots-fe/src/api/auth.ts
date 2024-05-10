@@ -6,7 +6,6 @@ type SignUpResponse = {
   accessToken: string;
 }
 
-
 export const SignIn = async (username: string, password: string): Promise<SignInResponse> => {
   const resp = await fetch('/api/auth/signin', {
     method: 'POST',
