@@ -17,13 +17,10 @@ export const SignIn = () => {
 
     const onSignIn = async () => {
         const response = await signIn(username, password);
-        console.log(response)
         if (response) {
-            console.log('Signed in');
             setIsAuthenticated(true);
             navigate('/app');
         }
-        console.log('Failed to sign in');
     }
 
     return (
