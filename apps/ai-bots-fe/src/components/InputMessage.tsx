@@ -24,7 +24,10 @@ function InputMessage({ handleSend }: InputMessageProps) {
     };
 
     return (
-        <Flex gap="2" justify="center">
+        <Flex gap="2" justify="center" p={{
+            initial: '2',
+            sm: '4',
+        }}>
             <Box flexGrow="1">
                 <TextField.Root
                     value={inputMessage.text}

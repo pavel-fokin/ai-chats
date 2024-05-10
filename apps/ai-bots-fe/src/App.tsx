@@ -48,7 +48,7 @@ const queryClient = new QueryClient()
 
 function App() {
   return (
-    <Theme appearance="dark" accentColor="gray" grayColor="slate">
+    <Theme appearance="light" accentColor="gray" grayColor="slate">
       <QueryClientProvider client={queryClient}>
         <AuthContextProvider>
           <RouterProvider router={router} />

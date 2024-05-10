@@ -5,38 +5,44 @@
 
     .Header {
         --header-display: none;
+
+
     }
 
     .Aside {
         --sidebar-display: block;
         --sidebar-height: auto;
-        --sidebar-width: 300px;
-        --sidebar-position: static;
         --sidebar-padding: var(--space-3);
+        --sidebar-position: static;
+        --sidebar-width: 300px;
     }
 }
 
 .Root {
     display: flex;
     flex-direction: var(--root-flex-direction, column);
-    min-height: 100vh;
+    height: 100vh;
 }
 
 .Header {
+    background-color: var(--color-panel-translucent);
     display: var(--header-display, block);
     padding: var(--space-2) var(--space-2);
+    position: absolute;
+    top: 0;
+    width: 100%;
     z-index: 2;
 }
 
 .Aside {
-    display: var(--sidebar-display, none);
-    position: var(--sidebar-position, fixed);
-    height: var(--sidebar-height, 100vh);
-    width: var(--sidebar-width, 100vw);
-    padding: var(--sidebar-padding, var(--space-8)) var(--space-3);
-    min-width: 300px;
     background-color: var(--color-background);
     border-inline-end: 1px solid var(--accent-6);
+    display: var(--sidebar-display, none);
+    height: var(--sidebar-height, 100vh);
+    min-width: 300px;
+    padding: var(--sidebar-padding, var(--space-8)) var(--space-3);
+    position: var(--sidebar-position, fixed);
+    width: var(--sidebar-width, 100vw);
     z-index: 1;
 }
 
@@ -47,8 +53,6 @@
 .Main {
     display: flex;
     flex-grow: 1;
-    padding: var(--space-4);
+    height: 100%;
     width: 100%;
-    max-width: 688px;
-    margin: 0 auto;
 }

@@ -1,33 +1,29 @@
-/* .NavigationMenuRoot {
-    position: relative;
-} */
-
 .NavigationMenuList {
+    background-color: var(--color-background);
+    border-radius: var(--radius-3);
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
     justify-content: center;
-    background-color: var(--color-background);
-    padding: var(--space-1);
-    border-radius: var(--radius-3);
     list-style: none;
     margin: 0;
+    padding: var(--space-1);
 }
 
 .NavigationMenuLink {
+    border-radius: var(--radius-3);
+    color: var(--accent-11);
     display: block;
-    padding: var(--space-3);
-    outline: none;
-    user-select: none;
+    font-size: var(--font-size-3);
     font-weight: var(--font-weight-medium);
     line-height: 1;
-    border-radius: var(--radius-3);
-    font-size: var(--font-size-3);
-    text-decoration: none;
-    color: var(--accent-11);
-    white-space: nowrap;
+    outline: none;
     overflow: hidden;
+    padding: var(--space-3);
+    text-decoration: none;
     text-overflow: ellipsis;
+    user-select: none;
+    white-space: nowrap;
 }
 
 .NavigationMenuLink:focus {
@@ -39,5 +35,5 @@
 }
 
 .NavigationMenuLinkActive {
-    background-color: var(--accent-3);
+    background-color: var(--accent-4);
 }
