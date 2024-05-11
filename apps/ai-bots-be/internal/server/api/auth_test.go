@@ -51,7 +51,12 @@ func TestSignIn(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		auth := &AuthMock{}
-		auth.On("SignIn", context.Background(), "username", "password").Return(app.User{}, fmt.Errorf("some error"))
+		auth.On(
+			"SignIn",
+			context.Background(), "username", "password",
+		).Return(
+			app.User{}, fmt.Errorf("some error"),
+		)
 
 		// Test.
 		SignIn(auth)(w, req)

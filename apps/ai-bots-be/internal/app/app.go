@@ -14,8 +14,8 @@ type ChatBot interface {
 }
 
 type ChatDB interface {
-	CreateChat(ctx context.Context, actors []domain.Actor) (domain.Chat, error)
-	AllChats(ctx context.Context) ([]domain.Chat, error)
+	CreateChat(ctx context.Context, userID uuid.UUID, actors []domain.Actor) (domain.Chat, error)
+	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
 	FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, error)
 	AddMessage(ctx context.Context, chat domain.Chat, actor domain.Actor, message string) error
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)

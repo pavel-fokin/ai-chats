@@ -20,13 +20,13 @@ type ChatMock struct {
 	mock.Mock
 }
 
-func (m *ChatMock) AllChats(ctx context.Context) ([]domain.Chat, error) {
-	args := m.Called(ctx)
+func (m *ChatMock) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
+	args := m.Called(ctx, userID)
 	return args.Get(0).([]domain.Chat), args.Error(1)
 }
 
-func (m *ChatMock) CreateChat(ctx context.Context) (domain.Chat, error) {
-	args := m.Called(ctx)
+func (m *ChatMock) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error) {
+	args := m.Called(ctx, userID)
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
@@ -46,12 +46,27 @@ func matchChiContext(ctx context.Context) bool {
 }
 
 func TestCreateChat(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	userID := uuid.New()
+	ctx := context.WithValue(context.Background(), UserID("UserID"), userID)
+
+	t.Run("Missed UserID", func(t *testing.T) {
+		defer func() { recover() }()
+
 		req, _ := http.NewRequest("", "", nil)
 		w := httptest.NewRecorder()
 
+		PostChats(&ChatMock{})(w, req)
+
+		assert.Fail(t, "expected panic")
+	})
+
+	t.Run("Success", func(t *testing.T) {
+		req, _ := http.NewRequest("", "", nil)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
 		chat := &ChatMock{}
-		chat.On("CreateChat", context.Background()).Return(domain.Chat{}, nil)
+		chat.On("CreateChat", ctx, userID).Return(domain.Chat{}, nil)
 
 		PostChats(chat)(w, req)
 
@@ -63,10 +78,11 @@ func TestCreateChat(t *testing.T) {
 
 	t.Run("Failure", func(t *testing.T) {
 		req, _ := http.NewRequest("", "", nil)
+		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		chat := &ChatMock{}
-		chat.On("CreateChat", context.Background()).Return(domain.Chat{}, errors.New("failed to create chat"))
+		chat.On("CreateChat", ctx, userID).Return(domain.Chat{}, errors.New("failed to create chat"))
 
 		PostChats(chat)(w, req)
 
@@ -78,12 +94,16 @@ func TestCreateChat(t *testing.T) {
 }
 
 func TestGetChats(t *testing.T) {
+	userID := uuid.New()
+	ctx := context.WithValue(context.Background(), UserID("UserID"), userID)
+
 	t.Run("Success", func(t *testing.T) {
 		req, _ := http.NewRequest("", "", nil)
+		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		chat := &ChatMock{}
-		chat.On("AllChats", context.Background()).Return([]domain.Chat{}, nil)
+		chat.On("AllChats", ctx, userID).Return([]domain.Chat{}, nil)
 
 		GetChats(chat)(w, req)
 
@@ -93,10 +113,11 @@ func TestGetChats(t *testing.T) {
 
 	t.Run("Failure", func(t *testing.T) {
 		req, _ := http.NewRequest("", "", nil)
+		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		chat := &ChatMock{}
-		chat.On("AllChats", context.Background()).Return([]domain.Chat{}, errors.New("failed to get chats"))
+		chat.On("AllChats", ctx, userID).Return([]domain.Chat{}, errors.New("failed to get chats"))
 
 		GetChats(chat)(w, req)
 

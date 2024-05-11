@@ -23,7 +23,7 @@ export function Chat() {
         <Flex direction="column" height="100%" width="100%">
             <Box flexGrow="1" style={{ overflow: "scroll" }}>
                 <Box height="100%" style={{ maxWidth: "688px", margin: "0 auto" }}>
-                    <Flex flexGrow="1" justify="end" direction="column" gap="6">
+                    <Flex flexGrow="1" justify="end" direction="column" gap="2">
                         {messages.map((message, index) => (
                             <Message
                                 key={index}

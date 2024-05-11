@@ -74,7 +74,7 @@ func (s *Server) SetupAuthAPI(auth api.Auth) {
 // SetupChatAPI sets up the chat API.
 func (s *Server) SetupChatAPI(chat api.ChatApp) {
 	s.router.Group(func(r chi.Router) {
-		r.Use(AuthToken)
+		r.Use(api.AuthToken)
 		r.Post("/api/chats", api.PostChats(chat))
 		r.Get("/api/chats", api.GetChats(chat))
 		r.Post("/api/chats/{uuid}/messages", api.PostMessages(chat))

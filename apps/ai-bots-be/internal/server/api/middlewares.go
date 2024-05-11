@@ -1,4 +1,4 @@
-package server
+package api
 
 import (
 	"context"
@@ -7,9 +7,26 @@ import (
 	"strings"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
+
+	"github.com/google/uuid"
 )
 
 type UserID string
+
+// UserIDFromContext returns the UserID value from the context.
+func MustHaveUserID(ctx context.Context) uuid.UUID {
+	v := ctx.Value(UserID("UserID"))
+	if v == nil {
+		panic("missing user ID")
+	}
+
+	userID, ok := v.(uuid.UUID)
+	if !ok {
+		panic("invalid user ID")
+	}
+
+	return userID
+}
 
 // AuthToken is a middleware that checks for the presence of an Authorization header.
 func AuthToken(next http.Handler) http.Handler {

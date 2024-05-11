@@ -19,8 +19,8 @@ type Message struct {
 }
 
 type ChatApp interface {
-	CreateChat(ctx context.Context) (domain.Chat, error)
-	AllChats(ctx context.Context) ([]domain.Chat, error)
+	CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error)
+	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
 	SendMessage(ctx context.Context, chatId uuid.UUID, message string) (domain.Message, error)
 }
@@ -30,11 +30,13 @@ func GetChats(chat ChatApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		chats, err := chat.AllChats(ctx)
+		userID := MustHaveUserID(ctx)
+
+		chats, err := chat.AllChats(ctx, userID)
 		slog.InfoContext(ctx, "get chats", "chats", chats)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get chats", "err", err)
-			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
+			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
@@ -47,10 +49,12 @@ func PostChats(chat ChatApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		chat, err := chat.CreateChat(ctx)
+		userID := MustHaveUserID(ctx)
+
+		chat, err := chat.CreateChat(ctx, userID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create a chat", "err", err)
-			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
+			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
@@ -68,7 +72,7 @@ func GetMessages(chat ChatApp) http.HandlerFunc {
 		messages, err := chat.AllMessages(ctx, uuid.MustParse(chatID))
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get messages", "err", err)
-			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
+			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
@@ -85,14 +89,14 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 
 		var req PostMessagesRequest
 		if err := apiutil.ParseJSON(r, &req); err != nil {
-			apiutil.AsErrorResponse(w, err, http.StatusBadRequest)
+			apiutil.AsErrorResponse(w, ErrInternal, http.StatusBadRequest)
 			return
 		}
 
 		answer, err := chat.SendMessage(ctx, uuid.MustParse(chatID), req.Message.Text)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to send a message", "err", err)
-			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
+			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 

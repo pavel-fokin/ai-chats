@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (a *App) CreateChat(ctx context.Context) (domain.Chat, error) {
+func (a *App) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error) {
 	ai, err := a.chatDB.FindActorByType(ctx, domain.AI)
 	if err != nil {
 		return domain.Chat{}, err
@@ -19,11 +19,11 @@ func (a *App) CreateChat(ctx context.Context) (domain.Chat, error) {
 		return domain.Chat{}, err
 	}
 
-	return a.chatDB.CreateChat(ctx, []domain.Actor{ai, human})
+	return a.chatDB.CreateChat(ctx, userID, []domain.Actor{ai, human})
 }
 
-func (a *App) AllChats(ctx context.Context) ([]domain.Chat, error) {
-	return a.chatDB.AllChats(ctx)
+func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
+	return a.chatDB.AllChats(ctx, userID)
 }
 
 func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error) {

@@ -14,7 +14,7 @@ type mockChatDB struct {
 	mock.Mock
 }
 
-func (m *mockChatDB) CreateChat(ctx context.Context, actors []domain.Actor) (domain.Chat, error) {
+func (m *mockChatDB) CreateChat(ctx context.Context, userID uuid.UUID, actors []domain.Actor) (domain.Chat, error) {
 	args := m.Called(ctx, actors)
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
@@ -49,8 +49,8 @@ func (m *mockChatDB) FindActor(ctx context.Context, actorID uuid.UUID) (domain.A
 	return args.Get(0).(domain.Actor), args.Error(1)
 }
 
-func (m *mockChatDB) AllChats(ctx context.Context) ([]domain.Chat, error) {
-	args := m.Called(ctx)
+func (m *mockChatDB) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
+	args := m.Called(ctx, userID)
 	return args.Get(0).([]domain.Chat), args.Error(1)
 }
 
@@ -65,8 +65,7 @@ func TestCreateChat(t *testing.T) {
 
 	app := &App{chatDB: mockDB}
 
-	chat, err := app.CreateChat(context.Background())
-
+	chat, err := app.CreateChat(context.Background(), uuid.New())
 	assert.NoError(t, err)
 	assert.NotNil(t, chat)
 
