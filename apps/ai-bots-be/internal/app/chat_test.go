@@ -68,7 +68,7 @@ func TestCreateChat(t *testing.T) {
 	mockDB.On("FindActorByType", mock.Anything, domain.Human).Return(mockHuman, nil)
 	mockDB.On("CreateChat", mock.Anything, []domain.Actor{mockAI, mockHuman}).Return(domain.Chat{}, nil)
 
-	app := &App{chatDB: mockDB}
+	app := &App{chats: mockDB}
 
 	chat, err := app.CreateChat(context.Background(), uuid.New())
 	assert.NoError(t, err)

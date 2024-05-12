@@ -41,10 +41,21 @@ func main() {
 		log.Fatalf("Failed to create chat bot: %v", err)
 	}
 
-	appDB, closeDB := sqlite.New(config.DB.DATABASE_URL)
-	defer closeDB()
+	db, err := sqlite.NewDB(config.DB.DATABASE_URL)
+	if err != nil {
+		log.Fatalf("Failed to create database: %v", err)
+	}
+	defer db.Close()
 
-	app := app.New(chatBot, appDB, appDB)
+	if err := sqlite.CreateTables(db); err != nil {
+		log.Fatalf("Failed to create tables: %v", err)
+	}
+
+	app := app.New(
+		chatBot,
+		sqlite.NewChats(db),
+		sqlite.NewUsers(db),
+	)
 
 	server := server.New(config.Server)
 	server.SetupAuthAPI(app)

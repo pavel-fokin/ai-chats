@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -9,24 +10,33 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
-func (db *Sqlite) CreateChat(ctx context.Context, userId uuid.UUID, actors []domain.Actor) (domain.Chat, error) {
+// Chats is a repository for chats.
+type Chats struct {
+	db *sql.DB
+}
+
+func NewChats(db *sql.DB) *Chats {
+	return &Chats{db: db}
+}
+
+func (c *Chats) CreateChat(ctx context.Context, userId uuid.UUID, actors []domain.Actor) (domain.Chat, error) {
 	chat := domain.Chat{
 		ID:     uuid.New(),
 		Actors: actors,
 	}
 
-	_, err := db.db.ExecContext(ctx, "INSERT INTO chat (id) VALUES (?)", chat.ID)
+	_, err := c.db.ExecContext(ctx, "INSERT INTO chat (id) VALUES (?)", chat.ID)
 	if err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to insert chat: %w", err)
 	}
 
-	_, err = db.db.ExecContext(ctx, "INSERT INTO chat_user (chat_id, user_id) VALUES (?, ?)", chat.ID, userId)
+	_, err = c.db.ExecContext(ctx, "INSERT INTO chat_user (chat_id, user_id) VALUES (?, ?)", chat.ID, userId)
 	if err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to insert chat_user: %w", err)
 	}
 
 	for _, actor := range actors {
-		_, err := db.db.ExecContext(
+		_, err := c.db.ExecContext(
 			ctx,
 			"INSERT INTO chat_actor (chat_id, actor_id) VALUES (?, ?)",
 			chat.ID,
@@ -40,8 +50,8 @@ func (db *Sqlite) CreateChat(ctx context.Context, userId uuid.UUID, actors []dom
 	return chat, nil
 }
 
-func (db *Sqlite) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
-	rows, err := db.db.QueryContext(ctx, "SELECT chat_id FROM chat_user WHERE user_id = ?", userID)
+func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
+	rows, err := c.db.QueryContext(ctx, "SELECT chat_id FROM chat_user WHERE user_id = ?", userID)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +75,7 @@ func (db *Sqlite) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat
 	}
 
 	query, args := QueryIn("SELECT id FROM chat WHERE chat.id", chatIDs)
-	rows, err = db.db.QueryContext(
+	rows, err = c.db.QueryContext(
 		ctx,
 		query,
 		args...,
@@ -92,9 +102,9 @@ func (db *Sqlite) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat
 	return chats, nil
 }
 
-func (db *Sqlite) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
+func (c *Chats) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
 	var chat domain.Chat
-	err := db.db.QueryRowContext(ctx, "SELECT id FROM chat WHERE id = ?", chatID).Scan(&chat.ID)
+	err := c.db.QueryRowContext(ctx, "SELECT id FROM chat WHERE id = ?", chatID).Scan(&chat.ID)
 	if err != nil {
 		return domain.Chat{}, err
 	}
@@ -102,13 +112,13 @@ func (db *Sqlite) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, 
 	return chat, nil
 }
 
-func (db *Sqlite) CreateActor(ctx context.Context, actorType domain.ActorType) (domain.Actor, error) {
+func (c *Chats) CreateActor(ctx context.Context, actorType domain.ActorType) (domain.Actor, error) {
 	actor := domain.Actor{
 		ID:   uuid.New(),
 		Type: actorType,
 	}
 
-	_, err := db.db.ExecContext(ctx, "INSERT INTO actor (id, type) VALUES (?, ?)", actor.ID, actor.Type)
+	_, err := c.db.ExecContext(ctx, "INSERT INTO actor (id, type) VALUES (?, ?)", actor.ID, actor.Type)
 	if err != nil {
 		return domain.Actor{}, err
 	}
@@ -116,9 +126,9 @@ func (db *Sqlite) CreateActor(ctx context.Context, actorType domain.ActorType) (
 	return actor, nil
 }
 
-func (db *Sqlite) FindActor(ctx context.Context, actorID uuid.UUID) (domain.Actor, error) {
+func (c *Chats) FindActor(ctx context.Context, actorID uuid.UUID) (domain.Actor, error) {
 	var actor domain.Actor
-	err := db.db.QueryRowContext(ctx, "SELECT id, type FROM actor WHERE id = ?", actorID).Scan(&actor.ID, &actor.Type)
+	err := c.db.QueryRowContext(ctx, "SELECT id, type FROM actor WHERE id = ?", actorID).Scan(&actor.ID, &actor.Type)
 	if err != nil {
 		return domain.Actor{}, err
 	}
@@ -126,9 +136,9 @@ func (db *Sqlite) FindActor(ctx context.Context, actorID uuid.UUID) (domain.Acto
 	return actor, nil
 }
 
-func (db *Sqlite) FindActorByType(ctx context.Context, actorType domain.ActorType) (domain.Actor, error) {
+func (c *Chats) FindActorByType(ctx context.Context, actorType domain.ActorType) (domain.Actor, error) {
 	var actor domain.Actor
-	err := db.db.QueryRowContext(ctx, "SELECT id, type FROM actor WHERE type = ?", actorType).Scan(&actor.ID, &actor.Type)
+	err := c.db.QueryRowContext(ctx, "SELECT id, type FROM actor WHERE type = ?", actorType).Scan(&actor.ID, &actor.Type)
 	if err != nil {
 		return domain.Actor{}, err
 	}
@@ -136,10 +146,10 @@ func (db *Sqlite) FindActorByType(ctx context.Context, actorType domain.ActorTyp
 	return actor, nil
 }
 
-func (db *Sqlite) AddMessage(ctx context.Context, chat domain.Chat, actor domain.Actor, message string) error {
+func (c *Chats) AddMessage(ctx context.Context, chat domain.Chat, actor domain.Actor, message string) error {
 	messageID := uuid.New()
 
-	_, err := db.db.ExecContext(
+	_, err := c.db.ExecContext(
 		ctx,
 		"INSERT INTO message (id, chat_id, actor_id, text) VALUES (?, ?, ?, ?)",
 		messageID, chat.ID, actor.ID, message,
@@ -151,8 +161,8 @@ func (db *Sqlite) AddMessage(ctx context.Context, chat domain.Chat, actor domain
 	return nil
 }
 
-func (db *Sqlite) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
-	rows, err := db.db.QueryContext(
+func (c *Chats) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
+	rows, err := c.db.QueryContext(
 		ctx,
 		`SELECT message.id, actor_id, actor.type, text
 		FROM message

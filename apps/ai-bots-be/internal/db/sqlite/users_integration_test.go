@@ -9,25 +9,33 @@ import (
 )
 
 func TestCreateUser(t *testing.T) {
-	db, close := New(":memory:")
-	defer close()
+	db, err := NewDB(":memory:")
+	assert.NoError(t, err)
+	defer db.Close()
+	CreateTables(db)
+
+	users := NewUsers(db)
 
 	user := domain.NewUser("username")
 
-	err := db.AddUser(context.Background(), user)
+	err = users.AddUser(context.Background(), user)
 	assert.NoError(t, err)
 	assert.NotNil(t, user)
 }
 
 func TestFindUser(t *testing.T) {
-	db, close := New(":memory:")
-	defer close()
+	db, err := NewDB(":memory:")
+	assert.NoError(t, err)
+	defer db.Close()
+	CreateTables(db)
+
+	users := NewUsers(db)
 
 	user := domain.NewUser("username")
-	err := db.AddUser(context.Background(), user)
+	err = users.AddUser(context.Background(), user)
 	assert.NoError(t, err)
 
-	foundUser, err := db.FindUser(context.Background(), "username")
+	foundUser, err := users.FindUser(context.Background(), "username")
 	assert.NoError(t, err)
 	assert.NotNil(t, foundUser)
 	assert.Equal(t, user.ID, foundUser.ID)

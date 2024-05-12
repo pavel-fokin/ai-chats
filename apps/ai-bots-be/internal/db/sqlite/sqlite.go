@@ -2,28 +2,20 @@ package sqlite
 
 import (
 	"database/sql"
-	"log"
 
 	_ "modernc.org/sqlite"
 )
 
-type Sqlite struct {
-	db *sql.DB
-}
-
-func New(url string) (*Sqlite, func() error) {
+func NewDB(url string) (*sql.DB, error) {
 	db, err := sql.Open("sqlite", url)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	// Create initial DB.
-	_, err = db.Exec(SchemaSqlite)
-	if err != nil {
-		log.Fatal(err)
-	}
+	return db, nil
+}
 
-	return &Sqlite{
-		db: db,
-	}, db.Close
+func CreateTables(db *sql.DB) error {
+	_, err := db.Exec(SchemaSqlite)
+	return err
 }

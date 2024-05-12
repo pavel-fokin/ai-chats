@@ -2,14 +2,25 @@ package sqlite
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
+// Users represents a repository of users.
+type Users struct {
+	db *sql.DB
+}
+
+// NewUsers creates a new users repository.
+func NewUsers(db *sql.DB) *Users {
+	return &Users{db: db}
+}
+
 // AddUser adds a new user to the database.
-func (db *Sqlite) AddUser(ctx context.Context, user domain.User) error {
-	_, err := db.db.ExecContext(
+func (u *Users) AddUser(ctx context.Context, user domain.User) error {
+	_, err := u.db.ExecContext(
 		ctx,
 		"INSERT INTO user (id, username, password_hash) VALUES (?, ?, ?);",
 		user.ID, user.Username, user.PasswordHash,
@@ -22,12 +33,12 @@ func (db *Sqlite) AddUser(ctx context.Context, user domain.User) error {
 }
 
 // FindUser finds a user by username.
-func (db *Sqlite) FindUser(ctx context.Context, username string) (domain.User, error) {
+func (u *Users) FindUser(ctx context.Context, username string) (domain.User, error) {
 	user := domain.User{
 		Username: username,
 	}
 
-	err := db.db.QueryRowContext(
+	err := u.db.QueryRowContext(
 		ctx, "SELECT id, password_hash FROM user WHERE username = ?;", username,
 	).Scan(&user.ID, &user.PasswordHash)
 	if err != nil {
