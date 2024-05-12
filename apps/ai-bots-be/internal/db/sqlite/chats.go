@@ -10,7 +10,7 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
-// Chats is a repository for chats.
+// Chats implements a repository for chats.
 type Chats struct {
 	db *sql.DB
 }
@@ -95,47 +95,4 @@ func (c *Chats) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 	}
 
 	return chat, nil
-}
-
-func (c *Chats) AddMessage(ctx context.Context, chat domain.Chat, sender, message string) error {
-	messageID := uuid.New()
-
-	_, err := c.db.ExecContext(
-		ctx,
-		"INSERT INTO message (id, chat_id, sender, text) VALUES (?, ?, ?, ?)",
-		messageID, chat.ID, sender, message,
-	)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (c *Chats) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
-	rows, err := c.db.QueryContext(
-		ctx,
-		`SELECT message.id, text
-		FROM message
-		WHERE chat_id = ?`,
-		chatID,
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var messages []domain.Message
-	for rows.Next() {
-		var message domain.Message
-		if err := rows.Scan(&message.ID, &message.Text); err != nil {
-			return nil, err
-		}
-		messages = append(messages, message)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return messages, nil
 }

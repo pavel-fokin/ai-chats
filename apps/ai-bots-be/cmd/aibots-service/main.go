@@ -55,6 +55,7 @@ func main() {
 		chatBot,
 		sqlite.NewChats(db),
 		sqlite.NewUsers(db),
+		sqlite.NewMessages(db),
 	)
 
 	server := server.New(config.Server)

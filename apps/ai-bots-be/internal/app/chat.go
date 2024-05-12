@@ -28,12 +28,12 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, message string)
 		return domain.Message{}, err
 	}
 
-	history, err := a.chats.AllMessages(ctx, chat.ID)
+	history, err := a.messages.AllMessages(ctx, chat.ID)
 	if err != nil {
 		return domain.Message{}, err
 	}
 
-	if err := a.chats.AddMessage(ctx, chat, "User", message); err != nil {
+	if err := a.messages.AddMessage(ctx, chat, "User", message); err != nil {
 		return domain.Message{}, err
 	}
 
@@ -42,7 +42,7 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, message string)
 		return domain.Message{}, err
 	}
 
-	if err := a.chats.AddMessage(ctx, chat, "AI", aiMessage.Text); err != nil {
+	if err := a.messages.AddMessage(ctx, chat, "AI", aiMessage.Text); err != nil {
 		return domain.Message{}, err
 	}
 
@@ -50,5 +50,5 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, message string)
 }
 
 func (a *App) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
-	return a.chats.AllMessages(ctx, chatID)
+	return a.messages.AllMessages(ctx, chatID)
 }

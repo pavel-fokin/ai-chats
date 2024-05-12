@@ -12,11 +12,22 @@ type ChatBot interface {
 }
 
 type App struct {
-	chatbot ChatBot
-	users   domain.Users
-	chats   domain.Chats
+	chatbot  ChatBot
+	users    domain.Users
+	chats    domain.Chats
+	messages domain.Messages
 }
 
-func New(chatbot ChatBot, chats domain.Chats, users domain.Users) *App {
-	return &App{chatbot: chatbot, chats: chats, users: users}
+func New(
+	chatbot ChatBot,
+	chats domain.Chats,
+	users domain.Users,
+	messages domain.Messages,
+) *App {
+	return &App{
+		chatbot:  chatbot,
+		chats:    chats,
+		users:    users,
+		messages: messages,
+	}
 }
