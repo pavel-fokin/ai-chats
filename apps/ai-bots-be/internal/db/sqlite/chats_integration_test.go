@@ -24,20 +24,8 @@ func TestCreateChat(t *testing.T) {
 	err = users.AddUser(context.Background(), user)
 	assert.NoError(t, err)
 
-	// Create some test actors.
-	actors := []domain.Actor{
-		{
-			ID:   uuid.New(),
-			Type: "User",
-		},
-		{
-			ID:   uuid.New(),
-			Type: "Bot",
-		},
-	}
-
 	// Call the CreateChat method.
-	chat, err := chats.CreateChat(context.Background(), user.ID, actors)
+	chat, err := chats.CreateChat(context.Background(), user.ID)
 	assert.NoError(t, err)
 	assert.NotNil(t, chat)
 }
@@ -75,21 +63,9 @@ func TestAllChats(t *testing.T) {
 		err = users.AddUser(context.Background(), user)
 		assert.NoError(t, err)
 
-		// Create some test actors.
-		actors := []domain.Actor{
-			{
-				ID:   uuid.New(),
-				Type: "User",
-			},
-			{
-				ID:   uuid.New(),
-				Type: "Bot",
-			},
-		}
-
 		// Create some chats.
 		for i := 0; i < 3; i++ {
-			_, err := chats.CreateChat(context.Background(), user.ID, actors)
+			_, err := chats.CreateChat(context.Background(), user.ID)
 			assert.NoError(t, err)
 		}
 
@@ -108,18 +84,6 @@ func TestAllChats(t *testing.T) {
 		users := NewUsers(db)
 		chats := NewChats(db)
 
-		// Create some test actors.
-		actors := []domain.Actor{
-			{
-				ID:   uuid.New(),
-				Type: "User",
-			},
-			{
-				ID:   uuid.New(),
-				Type: "Bot",
-			},
-		}
-
 		// Create some chats.
 		for i := 0; i < 3; i++ {
 			user := domain.NewUser(fmt.Sprintf("test_%d", i))
@@ -129,7 +93,7 @@ func TestAllChats(t *testing.T) {
 			)
 			assert.NoError(t, err)
 
-			_, err = chats.CreateChat(context.Background(), user.ID, actors)
+			_, err = chats.CreateChat(context.Background(), user.ID)
 			assert.NoError(t, err)
 		}
 
@@ -138,21 +102,6 @@ func TestAllChats(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Empty(t, allChats)
 	})
-}
-
-func TestCreateActor(t *testing.T) {
-	db, err := NewDB(":memory:")
-	assert.NoError(t, err)
-	defer db.Close()
-	CreateTables(db)
-
-	chats := NewChats(db)
-
-	// Call the CreateActor method.
-	actorType := domain.ActorType("User")
-	actor, err := chats.CreateActor(context.Background(), actorType)
-	assert.NoError(t, err)
-	assert.NotNil(t, actor)
 }
 
 func TestAddMessages(t *testing.T) {
@@ -168,38 +117,27 @@ func TestAddMessages(t *testing.T) {
 	err = users.AddUser(context.Background(), user)
 	assert.NoError(t, err)
 
-	actors := []domain.Actor{
-		{
-			ID:   uuid.New(),
-			Type: domain.Human,
-		},
-		{
-			ID:   uuid.New(),
-			Type: domain.AI,
-		},
-	}
-
 	// Create a new chat.
-	chat, err := chats.CreateChat(context.Background(), user.ID, actors)
+	chat, err := chats.CreateChat(context.Background(), user.ID)
 	assert.NoError(t, err)
 
 	// Create some test messages
 	messages := []domain.Message{
 		{
-			ID:    uuid.New(),
-			Actor: actors[0],
-			Text:  "Hello, bot!",
+			ID:     uuid.New(),
+			Sender: "User",
+			Text:   "Hello, bot!",
 		},
 		{
-			ID:    uuid.New(),
-			Actor: actors[1],
-			Text:  "Hello, user!",
+			ID:     uuid.New(),
+			Sender: "AI",
+			Text:   "Hello, user!",
 		},
 	}
 
 	// Add the messages to the chat
 	for _, message := range messages {
-		err := chats.AddMessage(context.Background(), chat, message.Actor, message.Text)
+		err := chats.AddMessage(context.Background(), chat, message.Sender, message.Text)
 		assert.NoError(t, err)
 	}
 }
@@ -217,32 +155,24 @@ func TestAllMessages(t *testing.T) {
 	err = users.AddUser(context.Background(), user)
 	assert.NoError(t, err)
 
-	ai, err := chats.CreateActor(context.Background(), domain.AI)
-	assert.NoError(t, err)
-
-	human, err := chats.CreateActor(context.Background(), domain.Human)
-	assert.NoError(t, err)
-
-	chat, err := chats.CreateChat(context.Background(), user.ID, []domain.Actor{ai, human})
+	chat, err := chats.CreateChat(context.Background(), user.ID)
 	assert.NoError(t, err)
 
 	// Create some test messages.
 	messages := []domain.Message{
 		{
-			ID:    uuid.New(),
-			Actor: human,
-			Text:  "Hello, bot!",
+			ID:   uuid.New(),
+			Text: "Hello, bot!",
 		},
 		{
-			ID:    uuid.New(),
-			Actor: ai,
-			Text:  "Hello, user!",
+			ID:   uuid.New(),
+			Text: "Hello, user!",
 		},
 	}
 
 	// Add the messages to the chat.
 	for _, message := range messages {
-		err := chats.AddMessage(context.Background(), chat, message.Actor, message.Text)
+		err := chats.AddMessage(context.Background(), chat, message.Sender, message.Text)
 		assert.NoError(t, err)
 	}
 

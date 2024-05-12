@@ -2,26 +2,33 @@ package domain
 
 import "github.com/google/uuid"
 
-type ActorType string
+type SenderType string
 
 const (
-	AI    ActorType = "ai"
-	Human ActorType = "human"
+	AI    SenderType = "AI"
+	Human SenderType = "human"
 )
 
-type Actor struct {
-	ID   uuid.UUID `json:"id"`
-	Type ActorType `json:"type"`
+type Message struct {
+	ID     uuid.UUID `json:"id"`
+	Sender string    `json:"sender"`
+	Text   string    `json:"text"`
 }
 
-type Message struct {
-	ID    uuid.UUID `json:"id"`
-	Actor Actor     `json:"actor"`
-	Text  string    `json:"text"`
+func NewMessage(sender string, text string) Message {
+	return Message{
+		ID:     uuid.New(),
+		Sender: sender,
+		Text:   text,
+	}
 }
 
 type Chat struct {
-	ID       uuid.UUID `json:"id"`
-	Actors   []Actor   `json:"actors"`
-	Messages []Message `json:"messages"`
+	ID uuid.UUID `json:"id"`
+}
+
+func NewChat() Chat {
+	return Chat{
+		ID: uuid.New(),
+	}
 }

@@ -19,11 +19,8 @@ func NewChats(db *sql.DB) *Chats {
 	return &Chats{db: db}
 }
 
-func (c *Chats) CreateChat(ctx context.Context, userId uuid.UUID, actors []domain.Actor) (domain.Chat, error) {
-	chat := domain.Chat{
-		ID:     uuid.New(),
-		Actors: actors,
-	}
+func (c *Chats) CreateChat(ctx context.Context, userId uuid.UUID) (domain.Chat, error) {
+	chat := domain.NewChat()
 
 	_, err := c.db.ExecContext(ctx, "INSERT INTO chat (id) VALUES (?)", chat.ID)
 	if err != nil {
@@ -33,18 +30,6 @@ func (c *Chats) CreateChat(ctx context.Context, userId uuid.UUID, actors []domai
 	_, err = c.db.ExecContext(ctx, "INSERT INTO chat_user (chat_id, user_id) VALUES (?, ?)", chat.ID, userId)
 	if err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to insert chat_user: %w", err)
-	}
-
-	for _, actor := range actors {
-		_, err := c.db.ExecContext(
-			ctx,
-			"INSERT INTO chat_actor (chat_id, actor_id) VALUES (?, ?)",
-			chat.ID,
-			actor.ID,
-		)
-		if err != nil {
-			return domain.Chat{}, err
-		}
 	}
 
 	return chat, nil
@@ -112,47 +97,13 @@ func (c *Chats) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 	return chat, nil
 }
 
-func (c *Chats) CreateActor(ctx context.Context, actorType domain.ActorType) (domain.Actor, error) {
-	actor := domain.Actor{
-		ID:   uuid.New(),
-		Type: actorType,
-	}
-
-	_, err := c.db.ExecContext(ctx, "INSERT INTO actor (id, type) VALUES (?, ?)", actor.ID, actor.Type)
-	if err != nil {
-		return domain.Actor{}, err
-	}
-
-	return actor, nil
-}
-
-func (c *Chats) FindActor(ctx context.Context, actorID uuid.UUID) (domain.Actor, error) {
-	var actor domain.Actor
-	err := c.db.QueryRowContext(ctx, "SELECT id, type FROM actor WHERE id = ?", actorID).Scan(&actor.ID, &actor.Type)
-	if err != nil {
-		return domain.Actor{}, err
-	}
-
-	return actor, nil
-}
-
-func (c *Chats) FindActorByType(ctx context.Context, actorType domain.ActorType) (domain.Actor, error) {
-	var actor domain.Actor
-	err := c.db.QueryRowContext(ctx, "SELECT id, type FROM actor WHERE type = ?", actorType).Scan(&actor.ID, &actor.Type)
-	if err != nil {
-		return domain.Actor{}, err
-	}
-
-	return actor, nil
-}
-
-func (c *Chats) AddMessage(ctx context.Context, chat domain.Chat, actor domain.Actor, message string) error {
+func (c *Chats) AddMessage(ctx context.Context, chat domain.Chat, sender, message string) error {
 	messageID := uuid.New()
 
 	_, err := c.db.ExecContext(
 		ctx,
-		"INSERT INTO message (id, chat_id, actor_id, text) VALUES (?, ?, ?, ?)",
-		messageID, chat.ID, actor.ID, message,
+		"INSERT INTO message (id, chat_id, sender, text) VALUES (?, ?, ?, ?)",
+		messageID, chat.ID, sender, message,
 	)
 	if err != nil {
 		return err
@@ -164,9 +115,8 @@ func (c *Chats) AddMessage(ctx context.Context, chat domain.Chat, actor domain.A
 func (c *Chats) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
 	rows, err := c.db.QueryContext(
 		ctx,
-		`SELECT message.id, actor_id, actor.type, text
+		`SELECT message.id, text
 		FROM message
-		JOIN actor ON message.actor_id = actor.id
 		WHERE chat_id = ?`,
 		chatID,
 	)
@@ -178,7 +128,7 @@ func (c *Chats) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Mes
 	var messages []domain.Message
 	for rows.Next() {
 		var message domain.Message
-		if err := rows.Scan(&message.ID, &message.Actor.ID, &message.Actor.Type, &message.Text); err != nil {
+		if err := rows.Scan(&message.ID, &message.Text); err != nil {
 			return nil, err
 		}
 		messages = append(messages, message)

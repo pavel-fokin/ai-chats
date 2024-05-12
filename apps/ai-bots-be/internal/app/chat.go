@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 
@@ -9,17 +10,12 @@ import (
 )
 
 func (a *App) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error) {
-	ai, err := a.chats.FindActorByType(ctx, domain.AI)
+	user, err := a.users.FindByID(ctx, userID)
 	if err != nil {
-		return domain.Chat{}, err
+		return domain.Chat{}, fmt.Errorf("failed to create a chat: %w", err)
 	}
 
-	human, err := a.chats.FindActorByType(ctx, domain.Human)
-	if err != nil {
-		return domain.Chat{}, err
-	}
-
-	return a.chats.CreateChat(ctx, userID, []domain.Actor{ai, human})
+	return a.chats.CreateChat(ctx, user.ID)
 }
 
 func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
@@ -32,17 +28,12 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, message string)
 		return domain.Message{}, err
 	}
 
-	human, err := a.chats.FindActorByType(ctx, domain.Human)
-	if err != nil {
-		return domain.Message{}, err
-	}
-
 	history, err := a.chats.AllMessages(ctx, chat.ID)
 	if err != nil {
 		return domain.Message{}, err
 	}
 
-	if err := a.chats.AddMessage(ctx, chat, human, message); err != nil {
+	if err := a.chats.AddMessage(ctx, chat, "User", message); err != nil {
 		return domain.Message{}, err
 	}
 
@@ -51,12 +42,7 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, message string)
 		return domain.Message{}, err
 	}
 
-	ai, err := a.chats.FindActorByType(ctx, domain.AI)
-	if err != nil {
-		return domain.Message{}, err
-	}
-
-	if err := a.chats.AddMessage(ctx, chat, ai, aiMessage.Text); err != nil {
+	if err := a.chats.AddMessage(ctx, chat, "AI", aiMessage.Text); err != nil {
 		return domain.Message{}, err
 	}
 

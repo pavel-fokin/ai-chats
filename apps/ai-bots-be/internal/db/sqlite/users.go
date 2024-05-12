@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+
+	"github.com/google/uuid"
 )
 
 // Users represents a repository of users.
@@ -43,6 +45,22 @@ func (u *Users) FindUser(ctx context.Context, username string) (domain.User, err
 	).Scan(&user.ID, &user.PasswordHash)
 	if err != nil {
 		return domain.User{}, fmt.Errorf("failed to select user: %w", err)
+	}
+
+	return user, nil
+}
+
+// FindByID finds a user by ID.
+func (u *Users) FindByID(ctx context.Context, id uuid.UUID) (domain.User, error) {
+	user := domain.User{
+		ID: id,
+	}
+
+	err := u.db.QueryRowContext(
+		ctx, "SELECT username FROM user WHERE id = ?;", id,
+	).Scan(&user.Username)
+	if err != nil {
+		return domain.User{}, fmt.Errorf("failed to find user by id: %w", err)
 	}
 
 	return user, nil

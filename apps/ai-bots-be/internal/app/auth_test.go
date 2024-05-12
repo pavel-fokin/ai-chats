@@ -7,6 +7,7 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -27,6 +28,11 @@ func (m *mockAuthDB) CreateUser(ctx context.Context, username, password string) 
 
 func (m *mockAuthDB) FindUser(ctx context.Context, username string) (domain.User, error) {
 	args := m.Called(ctx, username)
+	return args.Get(0).(domain.User), args.Error(1)
+}
+
+func (m *mockAuthDB) FindByID(ctx context.Context, id uuid.UUID) (domain.User, error) {
+	args := m.Called(ctx, id)
 	return args.Get(0).(domain.User), args.Error(1)
 }
 

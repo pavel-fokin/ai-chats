@@ -19,37 +19,12 @@ CREATE TABLE IF NOT EXISTS chat (
     id TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS actor (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
-    id TEXT NOT NULL UNIQUE,
-    type TEXT NOT NULL
-);
-
--- ai_actor
-CREATE TABLE IF NOT EXISTS ai_actor (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
-    actor_id TEXT NOT NULL,
-    FOREIGN KEY (actor_id) REFERENCES actor(id)
-);
-
-CREATE TABLE IF NOT EXISTS chat_actor (
-    pk INTEGER PRIMARY KEY AUTOINCREMENT,
-    chat_id TEXT NOT NULL,
-    actor_id TEXT NOT NULL,
-    FOREIGN KEY (chat_id) REFERENCES chat(id),
-    FOREIGN KEY (actor_id) REFERENCES actor(id)
-);
-
 CREATE TABLE IF NOT EXISTS message (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     id TEXT NOT NULL UNIQUE,
     chat_id TEXT NOT NULL,
-    actor_id TEXT NOT NULL,
+    sender TEXT NOT NULL,
     text TEXT NOT NULL,
     -- created_at TEXT NOT NULL,
-    FOREIGN KEY (chat_id) REFERENCES chat(id),
-    FOREIGN KEY (actor_id) REFERENCES actor(id)
+    FOREIGN KEY (chat_id) REFERENCES chat(id)
 );
-
-INSERT OR IGNORE INTO actor (id, type) VALUES ('c74dd8d0-d52f-413b-8534-946dad471dba', 'ai');
-INSERT OR IGNORE INTO actor (id, type) VALUES ('3337e802-918e-4930-96c0-bb312b842467', 'human');

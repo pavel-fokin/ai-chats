@@ -30,9 +30,6 @@ func (c *ChatModel) SingleMessage(ctx context.Context, prompt string) (domain.Me
 	}
 
 	return domain.Message{
-		Actor: domain.Actor{
-			Type: domain.AI,
-		},
 		Text: completion,
 	}, nil
 }
@@ -40,13 +37,13 @@ func (c *ChatModel) SingleMessage(ctx context.Context, prompt string) (domain.Me
 func (c *ChatModel) ChatMessage(ctx context.Context, history []domain.Message, message string) (domain.Message, error) {
 	content := []llms.MessageContent{}
 	for _, message := range history {
-		switch message.Actor.Type {
-		case domain.AI:
+		switch message.Sender {
+		case "AI":
 			content = append(content, llms.TextParts(llms.ChatMessageTypeAI, message.Text))
-		case domain.Human:
+		case "User":
 			content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, message.Text))
 		default:
-			return domain.Message{}, fmt.Errorf("unknown actor type: %s", message.Actor.Type)
+			return domain.Message{}, fmt.Errorf("unknown sender: %s", message.Sender)
 		}
 	}
 
@@ -63,9 +60,7 @@ func (c *ChatModel) ChatMessage(ctx context.Context, history []domain.Message, m
 	text := completion.Choices[0].Content
 
 	return domain.Message{
-		Actor: domain.Actor{
-			Type: domain.AI,
-		},
-		Text: text,
+		Sender: "AI",
+		Text:   text,
 	}, nil
 }
