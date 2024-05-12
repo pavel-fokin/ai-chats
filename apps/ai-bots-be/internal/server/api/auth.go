@@ -6,13 +6,13 @@ import (
 	"log/slog"
 	"net/http"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
 type Auth interface {
-	SignIn(ctx context.Context, username, password string) (app.User, error)
-	SignUp(ctx context.Context, username, password string) (app.User, error)
+	SignIn(ctx context.Context, username, password string) (domain.User, error)
+	SignUp(ctx context.Context, username, password string) (domain.User, error)
 }
 
 // SignIn signs in a user.

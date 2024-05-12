@@ -15,7 +15,9 @@ func TestCreateChat(t *testing.T) {
 	db, close := New(":memory:")
 	defer close()
 
-	user, err := db.CreateUser(context.Background(), "test", "test")
+	user := domain.NewUser("test")
+
+	err := db.AddUser(context.Background(), user)
 	assert.NoError(t, err)
 
 	// Create some test actors.
@@ -41,7 +43,8 @@ func TestAllChats(t *testing.T) {
 		db, close := New(":memory:")
 		defer close()
 
-		user, err := db.CreateUser(context.Background(), "test", "test")
+		user := domain.NewUser("test")
+		err := db.AddUser(context.Background(), user)
 		assert.NoError(t, err)
 
 		// Call the AllChats method.
@@ -54,7 +57,8 @@ func TestAllChats(t *testing.T) {
 		db, close := New(":memory:")
 		defer close()
 
-		user, err := db.CreateUser(context.Background(), "test", "test")
+		user := domain.NewUser("test")
+		err := db.AddUser(context.Background(), user)
 		assert.NoError(t, err)
 
 		// Create some test actors.
@@ -99,10 +103,10 @@ func TestAllChats(t *testing.T) {
 
 		// Create some chats.
 		for i := 0; i < 3; i++ {
-			user, err := db.CreateUser(
+			user := domain.NewUser(fmt.Sprintf("test_%d", i))
+			err := db.AddUser(
 				context.Background(),
-				fmt.Sprintf("username_%d", i),
-				"password",
+				user,
 			)
 			assert.NoError(t, err)
 
@@ -132,11 +136,10 @@ func TestAddMessages(t *testing.T) {
 	db, close := New(":memory:")
 	defer close()
 
-	// Create a new user.
-	user, err := db.CreateUser(context.Background(), "test", "test")
+	user := domain.NewUser("test")
+	err := db.AddUser(context.Background(), user)
 	assert.NoError(t, err)
 
-	// Create some test actors.
 	actors := []domain.Actor{
 		{
 			ID:   uuid.New(),
@@ -178,18 +181,16 @@ func TestAllMessages(t *testing.T) {
 	db, close := New(":memory:")
 	defer close()
 
-	// Create a new user.
-	user, err := db.CreateUser(context.Background(), "test", "test")
+	user := domain.NewUser("test")
+	err := db.AddUser(context.Background(), user)
 	assert.NoError(t, err)
 
-	// Create some test actors.
 	ai, err := db.CreateActor(context.Background(), domain.AI)
 	assert.NoError(t, err)
 
 	human, err := db.CreateActor(context.Background(), domain.Human)
 	assert.NoError(t, err)
 
-	// Create a new chat.
 	chat, err := db.CreateChat(context.Background(), user.ID, []domain.Actor{ai, human})
 	assert.NoError(t, err)
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"strings"
 	"testing"
 
@@ -17,14 +17,14 @@ type AuthMock struct {
 	mock.Mock
 }
 
-func (m *AuthMock) SignIn(ctx context.Context, username, password string) (app.User, error) {
+func (m *AuthMock) SignIn(ctx context.Context, username, password string) (domain.User, error) {
 	args := m.Called(ctx, username, password)
-	return args.Get(0).(app.User), args.Error(1)
+	return args.Get(0).(domain.User), args.Error(1)
 }
 
-func (m *AuthMock) SignUp(ctx context.Context, username, password string) (app.User, error) {
+func (m *AuthMock) SignUp(ctx context.Context, username, password string) (domain.User, error) {
 	args := m.Called(ctx, username, password)
-	return args.Get(0).(app.User), args.Error(1)
+	return args.Get(0).(domain.User), args.Error(1)
 }
 
 func TestSignIn(t *testing.T) {
@@ -34,7 +34,7 @@ func TestSignIn(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		auth := &AuthMock{}
-		auth.On("SignIn", context.Background(), "username", "password").Return(app.User{}, nil)
+		auth.On("SignIn", context.Background(), "username", "password").Return(domain.User{}, nil)
 
 		SignIn(auth)(w, req)
 
@@ -55,7 +55,7 @@ func TestSignIn(t *testing.T) {
 			"SignIn",
 			context.Background(), "username", "password",
 		).Return(
-			app.User{}, fmt.Errorf("some error"),
+			domain.User{}, fmt.Errorf("some error"),
 		)
 
 		// Test.

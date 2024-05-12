@@ -25,16 +25,16 @@ type ChatDB interface {
 }
 
 type UserDB interface {
-	CreateUser(ctx context.Context, username, password string) (User, error)
-	FindUser(ctx context.Context, username string) (User, error)
+	AddUser(ctx context.Context, user domain.User) error
+	FindUser(ctx context.Context, username string) (domain.User, error)
 }
 
 type App struct {
 	chatbot ChatBot
-	userDB  UserDB
+	users   UserDB
 	chatDB  ChatDB
 }
 
 func New(chatbot ChatBot, chatDB ChatDB, userDB UserDB) *App {
-	return &App{chatbot: chatbot, chatDB: chatDB, userDB: userDB}
+	return &App{chatbot: chatbot, chatDB: chatDB, users: userDB}
 }

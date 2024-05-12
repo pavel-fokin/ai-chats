@@ -14,6 +14,11 @@ type mockChatDB struct {
 	mock.Mock
 }
 
+func (m *mockChatDB) AddUser(ctx context.Context, username, password string) error {
+	args := m.Called(ctx, username, password)
+	return args.Error(0)
+}
+
 func (m *mockChatDB) CreateChat(ctx context.Context, userID uuid.UUID, actors []domain.Actor) (domain.Chat, error) {
 	args := m.Called(ctx, actors)
 	return args.Get(0).(domain.Chat), args.Error(1)
