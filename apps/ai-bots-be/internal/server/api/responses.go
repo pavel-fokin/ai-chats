@@ -1,6 +1,6 @@
 package api
 
-import "pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
+import "pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 
 type UserCredentials struct {
 	Username string `json:"username" validate:"required"`

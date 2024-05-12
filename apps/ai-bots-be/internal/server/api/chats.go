@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 

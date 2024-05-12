@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 
 	"github.com/google/uuid"
 )

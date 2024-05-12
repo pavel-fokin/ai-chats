@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
 type ChatBot interface {

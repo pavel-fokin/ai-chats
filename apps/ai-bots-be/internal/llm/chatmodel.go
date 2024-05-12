@@ -7,7 +7,7 @@ import (
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/ollama"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
 type ChatModel struct {

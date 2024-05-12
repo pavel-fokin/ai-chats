@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
 func (db *Sqlite) CreateChat(ctx context.Context, userId uuid.UUID, actors []domain.Actor) (domain.Chat, error) {
