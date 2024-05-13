@@ -45,8 +45,5 @@ func (c *ChatModel) GenerateResponse(ctx context.Context, history []domain.Messa
 
 	text := completion.Choices[0].Content
 
-	return domain.Message{
-		Sender: "AI",
-		Text:   text,
-	}, nil
+	return domain.NewMessage("AI", text), nil
 }

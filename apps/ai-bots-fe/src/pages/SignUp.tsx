@@ -31,7 +31,7 @@ export const SignUp = () => {
                 <TextField.Root name="password" size="3" type="password" placeholder="Your password" onChange={e => { setPassword(e.target.value) }} />
                 <Button size="4" onClick={onSignUp} highContrast>Create an account</Button>
                 <Text align="center">
-                    Already have an account?  <Link href="/app/signin">Sign In</Link>
+                    Already have an account?  <Link href="/app/login">Log in</Link>
                 </Text>
             </Flex>
         </Container>

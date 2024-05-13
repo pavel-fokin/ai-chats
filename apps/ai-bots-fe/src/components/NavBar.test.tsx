@@ -37,7 +37,7 @@ function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
                     <Routes>
                         <Route path="/app" element={ui} />
                         <Route path="/app/chats/:chatId" element={<div>chatId</div>} />
-                        <Route path="/app/signin" element={<div>Sign in</div>} />
+                        <Route path="/app/login" element={<div>Sign in</div>} />
                     </Routes>
                 </MemoryRouter>
             </QueryClientProvider>

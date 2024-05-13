@@ -56,7 +56,7 @@ func TestSignIn(t *testing.T) {
 			users: mockUsers,
 		}
 
-		user, err := app.SignIn(context.Background(), "username", "password")
+		user, err := app.LogIn(context.Background(), "username", "password")
 		assert.ErrorContains(t, err, "failed to find a user: user not found")
 		assert.Equal(t, domain.User{}, user)
 	})
@@ -72,7 +72,7 @@ func TestSignIn(t *testing.T) {
 			users: mockUsers,
 		}
 
-		user, err := app.SignIn(context.Background(), "username", "password")
+		user, err := app.LogIn(context.Background(), "username", "password")
 		assert.NoError(t, err)
 		assert.NotNil(t, user)
 	})

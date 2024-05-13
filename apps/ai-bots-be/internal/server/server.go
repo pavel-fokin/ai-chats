@@ -67,7 +67,7 @@ func (s *Server) Shutdown() error {
 }
 
 func (s *Server) SetupAuthAPI(auth api.Auth) {
-	s.router.Post("/api/auth/signin", api.SignIn(auth))
+	s.router.Post("/api/auth/login", api.LogIn(auth))
 	s.router.Post("/api/auth/signup", api.SignUp(auth))
 }
 

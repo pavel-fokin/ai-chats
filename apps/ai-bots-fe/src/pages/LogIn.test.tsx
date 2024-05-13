@@ -5,7 +5,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import { AuthContextProvider } from "contexts";
-import { SignIn } from './SignIn';
+import { LogIn } from './LogIn';
 
 const server = setupServer(
     http.post('/api/auth/signin', () => {
@@ -17,33 +17,33 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-test('renders Sign In component', () => {
+test('renders Log In component', () => {
     render(
         <AuthContextProvider>
-            <MemoryRouter initialEntries={['/app/signin']}>
+            <MemoryRouter initialEntries={['/app/login']}>
                 <Routes>
-                    <Route path="/app/signin" element={
-                        <SignIn />
+                    <Route path="/app/login" element={
+                        <LogIn />
                     } />
                 </Routes>
             </MemoryRouter>
         </AuthContextProvider>
     );
 
-    expect(screen.getByRole('heading', { name: 'Sign In' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Log in' })).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Your username')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Sign In' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Log In' })).toBeInTheDocument();
     expect(screen.getByText("Don't have an account?")).toBeInTheDocument();
 });
 
-test('calls signIn function and navigates to /app on successful sign in', async () => {
+test('calls signIn function and navigates to /app on successful log in', async () => {
     render(
         <AuthContextProvider>
-            <MemoryRouter initialEntries={['/app/signin']}>
+            <MemoryRouter initialEntries={['/app/login']}>
                 <Routes>
-                    <Route path="/app/signin" element={
-                        <SignIn />
+                    <Route path="/app/login" element={
+                        <LogIn />
                     } />
                     <Route path="/app" element={<div>App</div>} />
                 </Routes>
@@ -56,7 +56,7 @@ test('calls signIn function and navigates to /app on successful sign in', async 
 
     const usernameInput = screen.getByPlaceholderText('Your username');
     const passwordInput = screen.getByPlaceholderText('Your password');
-    const signInButton = screen.getByRole('button', { name: 'Sign In' });
+    const signInButton = screen.getByRole('button', { name: 'Log In' });
 
     userEvent.type(usernameInput, username);
     userEvent.type(passwordInput, password);
@@ -68,6 +68,6 @@ test('calls signIn function and navigates to /app on successful sign in', async 
     });
 });
 
-test('displays error message on unsuccessful sign in', async () => {
+test('displays error message on unsuccessful log in', async () => {
 
 });

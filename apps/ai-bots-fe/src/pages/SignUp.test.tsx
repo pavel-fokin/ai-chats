@@ -56,12 +56,12 @@ test('calls signUp function and navigates to /app on successful sign up', async 
 
     const usernameInput = screen.getByPlaceholderText('Your username');
     const passwordInput = screen.getByPlaceholderText('Your password');
-    const signInButton = screen.getByRole('button', { name: 'Create an account' });
+    const signUpButton = screen.getByRole('button', { name: 'Create an account' });
 
     userEvent.type(usernameInput, username);
     userEvent.type(passwordInput, password);
 
-    userEvent.click(signInButton);
+    userEvent.click(signUpButton);
 
     await waitFor(() => {
         expect(screen.getByText('App')).toBeInTheDocument();

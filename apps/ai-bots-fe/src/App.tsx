@@ -12,7 +12,7 @@ import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 
 import { AuthRequired } from "components";
-import { Chat, EmptyState, Landing, Main, SignIn, SignUp } from 'pages';
+import { Chat, EmptyState, Landing, Main, LogIn, SignUp } from 'pages';
 import { AuthContextProvider } from "contexts";
 
 const router = createBrowserRouter([
@@ -21,8 +21,8 @@ const router = createBrowserRouter([
     element: <Landing />,
   },
   {
-    path: "/app/signin",
-    element: <SignIn />,
+    path: "/app/login",
+    element: <LogIn />,
   },
   {
     path: "/app/signup",

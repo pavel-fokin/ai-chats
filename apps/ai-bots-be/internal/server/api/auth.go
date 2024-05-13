@@ -11,12 +11,12 @@ import (
 )
 
 type Auth interface {
-	SignIn(ctx context.Context, username, password string) (domain.User, error)
+	LogIn(ctx context.Context, username, password string) (domain.User, error)
 	SignUp(ctx context.Context, username, password string) (domain.User, error)
 }
 
 // SignIn signs in a user.
-func SignIn(app Auth) http.HandlerFunc {
+func LogIn(app Auth) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -27,7 +27,7 @@ func SignIn(app Auth) http.HandlerFunc {
 			return
 		}
 
-		user, err := app.SignIn(ctx, req.Username, req.Password)
+		user, err := app.LogIn(ctx, req.Username, req.Password)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to sign in user", "err", err)
 			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)

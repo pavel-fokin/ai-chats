@@ -6,18 +6,18 @@ import { Button, Container, Flex, Heading, Link, Text, TextField } from "@radix-
 import { AuthContext } from "contexts";
 import { useAuth } from "hooks";
 
-export const SignIn = () => {
+export const LogIn = () => {
     const navigate = useNavigate();
 
-    const { signIn } = useAuth();
+    const { logIn } = useAuth();
     const { setIsAuthenticated } = useContext(AuthContext);
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const onSignIn = async () => {
-        const signedIn = await signIn(username, password);
-        if (signedIn) {
+    const onLogIn = async () => {
+        const loggedIn = await logIn(username, password);
+        if (loggedIn) {
             setIsAuthenticated(true);
             navigate('/app');
         }
@@ -26,7 +26,7 @@ export const SignIn = () => {
     return (
         <Container size="1" m="2">
             <Flex direction="column" gap="4">
-                <Heading as="h2" size="8">Sign In</Heading>
+                <Heading as="h2" size="8">Log in</Heading>
                 <TextField.Root
                     name="username"
                     autoComplete="off"
@@ -41,7 +41,7 @@ export const SignIn = () => {
                     placeholder="Your password"
                     onChange={e => { setPassword(e.target.value) }}
                 />
-                <Button size="4" onClick={onSignIn} highContrast>Sign In</Button>
+                <Button size="4" onClick={onLogIn} highContrast>Log In</Button>
                 <Text align="center">
                     Don't have an account?  <Link href="/app/signup">Sign Up</Link>
                 </Text>
@@ -50,4 +50,4 @@ export const SignIn = () => {
     );
 };
 
-export default SignIn;
+export default LogIn;

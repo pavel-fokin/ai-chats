@@ -11,7 +11,7 @@ export const Landing = () => {
                 <header>
                     <nav>
                         <Flex gap="4" align="baseline">
-                            <Button asChild variant="ghost" highContrast><a href="/app/signin">Log In</a></Button>
+                            <Button asChild variant="ghost" highContrast><a href="/app/login">Log In</a></Button>
                             <Button asChild highContrast><a href="/app/signup">Sign Up</a></Button>
                         </Flex>
                     </nav>

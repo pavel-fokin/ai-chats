@@ -29,7 +29,7 @@ export function Navbar() {
     const handleSignOut = () => {
         signOut();
         setIsAuthenticated(false);
-        navigate('/app/signin');
+        navigate('/app/login');
     }
 
     return (

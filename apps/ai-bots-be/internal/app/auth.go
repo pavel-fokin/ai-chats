@@ -7,8 +7,8 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
-// SignIn signs in a user.
-func (a *App) SignIn(ctx context.Context, username, password string) (domain.User, error) {
+// LogIn logs in a user
+func (a *App) LogIn(ctx context.Context, username, password string) (domain.User, error) {
 	user, err := a.users.FindUser(ctx, username)
 	if err != nil {
 		return domain.User{}, fmt.Errorf("failed to find a user: %w", err)

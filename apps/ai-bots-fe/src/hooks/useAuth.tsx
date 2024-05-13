@@ -6,7 +6,7 @@ import { SignIn, SignUp } from "api";
 export const useAuth = () => {
     const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
 
-    const signIn = async (username: string, password: string) => {
+    const logIn = async (username: string, password: string) => {
         const { accessToken: token } = await SignIn(username, password);
         if (!token) {
             return false;
@@ -33,7 +33,7 @@ export const useAuth = () => {
 
     return {
         accessToken,
-        signIn,
+        logIn,
         signUp,
         signOut,
     };

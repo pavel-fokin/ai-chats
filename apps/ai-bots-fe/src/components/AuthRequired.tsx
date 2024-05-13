@@ -10,7 +10,7 @@ type AuthRequiredProps = {
 export const AuthRequired = ({ children }: AuthRequiredProps) => {
   const { isAuthenticated } = useContext(AuthContext);
   if (!isAuthenticated) {
-    return <Navigate to="/app/signin" />;
+    return <Navigate to="/app/login" />;
   }
   return children;
 };
