@@ -3,31 +3,33 @@ package app
 import (
 	"context"
 
+	"github.com/google/uuid"
+
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
-type ChatBot interface {
-	SingleMessage(ctx context.Context, message string) (domain.Message, error)
-	ChatMessage(ctx context.Context, history []domain.Message, message string) (domain.Message, error)
+type MessageSender interface {
+	SendMessage(ctx context.Context, llm domain.LLM, chatID uuid.UUID, message domain.Message) (domain.Message, error)
 }
 
 type App struct {
-	chatbot  ChatBot
 	users    domain.Users
 	chats    domain.Chats
 	messages domain.Messages
+	chatting MessageSender
 }
 
 func New(
-	chatbot ChatBot,
 	chats domain.Chats,
 	users domain.Users,
 	messages domain.Messages,
 ) *App {
+	chatting := domain.NewChatting(chats, messages)
+
 	return &App{
-		chatbot:  chatbot,
 		chats:    chats,
 		users:    users,
 		messages: messages,
+		chatting: chatting,
 	}
 }

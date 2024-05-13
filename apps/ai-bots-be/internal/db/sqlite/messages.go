@@ -34,7 +34,7 @@ func (m *Messages) Add(ctx context.Context, chat domain.Chat, message domain.Mes
 func (c *Messages) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
 	rows, err := c.db.QueryContext(
 		ctx,
-		`SELECT message.id, text
+		`SELECT message.id, sender, text
 		FROM message
 		WHERE chat_id = ?`,
 		chatID,
@@ -47,7 +47,7 @@ func (c *Messages) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.
 	var messages []domain.Message
 	for rows.Next() {
 		var message domain.Message
-		if err := rows.Scan(&message.ID, &message.Text); err != nil {
+		if err := rows.Scan(&message.ID, &message.Sender, &message.Text); err != nil {
 			return nil, err
 		}
 		messages = append(messages, message)

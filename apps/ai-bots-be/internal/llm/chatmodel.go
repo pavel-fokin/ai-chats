@@ -14,6 +14,8 @@ type ChatModel struct {
 	llm llms.Model
 }
 
+var _ domain.LLM = (*ChatModel)(nil)
+
 func NewChatModel(model string) (*ChatModel, error) {
 	llm, err := ollama.New(ollama.WithModel(model))
 	if err != nil {
@@ -23,18 +25,7 @@ func NewChatModel(model string) (*ChatModel, error) {
 	return &ChatModel{llm: llm}, nil
 }
 
-func (c *ChatModel) SingleMessage(ctx context.Context, prompt string) (domain.Message, error) {
-	completion, err := llms.GenerateFromSinglePrompt(ctx, c.llm, prompt)
-	if err != nil {
-		return domain.Message{}, err
-	}
-
-	return domain.Message{
-		Text: completion,
-	}, nil
-}
-
-func (c *ChatModel) ChatMessage(ctx context.Context, history []domain.Message, message string) (domain.Message, error) {
+func (c *ChatModel) GenerateResponse(ctx context.Context, history []domain.Message) (domain.Message, error) {
 	content := []llms.MessageContent{}
 	for _, message := range history {
 		switch message.Sender {
@@ -47,16 +38,11 @@ func (c *ChatModel) ChatMessage(ctx context.Context, history []domain.Message, m
 		}
 	}
 
-	content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, message))
-
 	completion, err := c.llm.GenerateContent(ctx, content)
 	if err != nil {
 		return domain.Message{}, err
 	}
 
-	if len(completion.Choices) == 0 {
-		return domain.Message{}, fmt.Errorf("no completion choices")
-	}
 	text := completion.Choices[0].Content
 
 	return domain.Message{

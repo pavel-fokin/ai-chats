@@ -18,7 +18,7 @@ function InputMessage({ handleSend }: InputMessageProps) {
 
     const onSendClick = async () => {
         if (inputMessage) {
-            handleSend({ sender: 'user', text: inputMessage.text});
+            handleSend({ sender: 'User', text: inputMessage.text});
             setInputMessage({ sender: '', text: '' });
         }
     };

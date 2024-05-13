@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/llm"
 
 	"github.com/google/uuid"
 )
@@ -29,32 +30,14 @@ func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, er
 }
 
 func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (domain.Message, error) {
-	chat, err := a.chats.FindChat(ctx, chatID)
-	if err != nil {
-		return domain.Message{}, err
-	}
-
-	history, err := a.messages.AllMessages(ctx, chat.ID)
-	if err != nil {
-		return domain.Message{}, err
-	}
-
 	message := domain.NewMessage("User", text)
 
-	if err := a.messages.Add(ctx, chat, message); err != nil {
-		return domain.Message{}, err
-	}
-
-	aiMessage, err := a.chatbot.ChatMessage(ctx, history, text)
+	llm, err := llm.NewChatModel("llama3")
 	if err != nil {
-		return domain.Message{}, err
+		return domain.Message{}, fmt.Errorf("failed to create a chat model: %w", err)
 	}
 
-	if err := a.messages.Add(ctx, chat, aiMessage); err != nil {
-		return domain.Message{}, err
-	}
-
-	return aiMessage, nil
+	return a.chatting.SendMessage(ctx, llm, chatID, message)
 }
 
 func (a *App) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {

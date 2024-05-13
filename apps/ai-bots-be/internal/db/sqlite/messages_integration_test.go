@@ -47,4 +47,14 @@ func TestAddMessages(t *testing.T) {
 		err := messages.Add(context.Background(), chat, message)
 		assert.NoError(t, err)
 	}
+
+	// Retrieve all messages for the chat
+	allMessages, err := messages.AllMessages(context.Background(), chat.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, len(msgs), len(allMessages))
+	for i, message := range allMessages {
+		assert.Equal(t, msgs[i].ID, message.ID)
+		assert.Equal(t, msgs[i].Sender, message.Sender)
+		assert.Equal(t, msgs[i].Text, message.Text)
+	}
 }

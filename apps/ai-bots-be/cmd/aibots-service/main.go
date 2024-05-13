@@ -11,7 +11,6 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/db"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/db/sqlite"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/llm"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
 )
 
@@ -36,11 +35,6 @@ func main() {
 
 	config := NewConfig()
 
-	chatBot, err := llm.NewChatModel("llama3")
-	if err != nil {
-		log.Fatalf("Failed to create chat bot: %v", err)
-	}
-
 	db, err := sqlite.NewDB(config.DB.DATABASE_URL)
 	if err != nil {
 		log.Fatalf("Failed to create database: %v", err)
@@ -52,7 +46,6 @@ func main() {
 	}
 
 	app := app.New(
-		chatBot,
 		sqlite.NewChats(db),
 		sqlite.NewUsers(db),
 		sqlite.NewMessages(db),

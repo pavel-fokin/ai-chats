@@ -16,7 +16,7 @@ test('updates input message text on change', () => {
 
 test('calls handleSend with correct message on send click', () => {
     const handleSendMock = vi.fn();
-    const sender = 'user';
+    const sender = 'User';
     const text = 'Hello, world!';
 
     render(<InputMessage handleSend={handleSendMock} />);

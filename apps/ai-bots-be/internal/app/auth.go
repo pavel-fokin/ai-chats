@@ -11,11 +11,11 @@ import (
 func (a *App) SignIn(ctx context.Context, username, password string) (domain.User, error) {
 	user, err := a.users.FindUser(ctx, username)
 	if err != nil {
-		return domain.User{}, fmt.Errorf("failed to sign in a user: %w", err)
+		return domain.User{}, fmt.Errorf("failed to find a user: %w", err)
 	}
 
 	if err := user.VerifyPassword(password); err != nil {
-		return domain.User{}, fmt.Errorf("failed to sign in a user: %w", err)
+		return domain.User{}, fmt.Errorf("failed to verify password: %w", err)
 	}
 
 	return user, nil
@@ -27,11 +27,11 @@ func (a *App) SignUp(ctx context.Context, username, password string) (domain.Use
 
 	pUser := &user
 	if err := pUser.SetPassword(password); err != nil {
-		return domain.User{}, fmt.Errorf("failed to sign up a user: %w", err)
+		return domain.User{}, fmt.Errorf("failed to set up a password: %w", err)
 	}
 
 	if err := a.users.AddUser(ctx, user); err != nil {
-		return domain.User{}, fmt.Errorf("failed to sign up a user: %w", err)
+		return domain.User{}, fmt.Errorf("failed to add a user: %w", err)
 	}
 
 	return user, nil
