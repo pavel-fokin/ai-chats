@@ -24,7 +24,8 @@ func TestAddMessages(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Create a new chat.
-	chat, err := chats.CreateChat(context.Background(), user.ID)
+	chat := domain.NewChat(user)
+	err = chats.Add(context.Background(), chat)
 	assert.NoError(t, err)
 
 	// Create some test messages

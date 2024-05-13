@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateChat(t *testing.T) {
+func TestAddChat(t *testing.T) {
 	db, err := NewDB(":memory:")
 	assert.NoError(t, err)
 	defer db.Close()
@@ -24,10 +24,10 @@ func TestCreateChat(t *testing.T) {
 	err = users.AddUser(context.Background(), user)
 	assert.NoError(t, err)
 
-	// Call the CreateChat method.
-	chat, err := chats.CreateChat(context.Background(), user.ID)
+	// Call the AddChat method.
+	chat := domain.NewChat(user)
+	err = chats.Add(context.Background(), chat)
 	assert.NoError(t, err)
-	assert.NotNil(t, chat)
 }
 
 func TestAllChats(t *testing.T) {
@@ -65,7 +65,8 @@ func TestAllChats(t *testing.T) {
 
 		// Create some chats.
 		for i := 0; i < 3; i++ {
-			_, err := chats.CreateChat(context.Background(), user.ID)
+			chat := domain.NewChat(user)
+			err := chats.Add(context.Background(), chat)
 			assert.NoError(t, err)
 		}
 
@@ -93,7 +94,8 @@ func TestAllChats(t *testing.T) {
 			)
 			assert.NoError(t, err)
 
-			_, err = chats.CreateChat(context.Background(), user.ID)
+			chat := domain.NewChat(user)
+			err = chats.Add(context.Background(), chat)
 			assert.NoError(t, err)
 		}
 

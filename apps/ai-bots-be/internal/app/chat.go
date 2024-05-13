@@ -12,10 +12,16 @@ import (
 func (a *App) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error) {
 	user, err := a.users.FindByID(ctx, userID)
 	if err != nil {
-		return domain.Chat{}, fmt.Errorf("failed to create a chat: %w", err)
+		return domain.Chat{}, fmt.Errorf("failed to find a user: %w", err)
 	}
 
-	return a.chats.CreateChat(ctx, user.ID)
+	chat := domain.NewChat(user)
+
+	if err := a.chats.Add(ctx, chat); err != nil {
+		return domain.Chat{}, fmt.Errorf("failed to add a chat: %w", err)
+	}
+
+	return chat, nil
 }
 
 func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {

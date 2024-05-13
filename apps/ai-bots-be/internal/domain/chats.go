@@ -7,7 +7,7 @@ import (
 )
 
 type Chats interface {
-	CreateChat(ctx context.Context, userID uuid.UUID) (Chat, error)
+	Add(ctx context.Context, chat Chat) error
 	AllChats(ctx context.Context, userID uuid.UUID) ([]Chat, error)
 	FindChat(ctx context.Context, chatID uuid.UUID) (Chat, error)
 }

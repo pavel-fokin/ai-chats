@@ -10,11 +10,13 @@ const (
 )
 
 type Chat struct {
-	ID uuid.UUID `json:"id"`
+	ID        uuid.UUID `json:"id"`
+	CreatedBy User      `json:"created_by"`
 }
 
-func NewChat() Chat {
+func NewChat(createdBy User) Chat {
 	return Chat{
-		ID: uuid.New(),
+		ID:        uuid.New(),
+		CreatedBy: createdBy,
 	}
 }

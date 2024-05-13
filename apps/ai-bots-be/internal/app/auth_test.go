@@ -12,36 +12,31 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type mockAuthDB struct {
+type MockUsers struct {
 	mock.Mock
 }
 
-func (m *mockAuthDB) AddUser(ctx context.Context, user domain.User) error {
+func (m *MockUsers) AddUser(ctx context.Context, user domain.User) error {
 	args := m.Called(ctx, user)
 	return args.Error(0)
 }
 
-func (m *mockAuthDB) CreateUser(ctx context.Context, username, password string) (domain.User, error) {
-	args := m.Called(ctx, username, password)
-	return args.Get(0).(domain.User), args.Error(1)
-}
-
-func (m *mockAuthDB) FindUser(ctx context.Context, username string) (domain.User, error) {
+func (m *MockUsers) FindUser(ctx context.Context, username string) (domain.User, error) {
 	args := m.Called(ctx, username)
 	return args.Get(0).(domain.User), args.Error(1)
 }
 
-func (m *mockAuthDB) FindByID(ctx context.Context, id uuid.UUID) (domain.User, error) {
+func (m *MockUsers) FindByID(ctx context.Context, id uuid.UUID) (domain.User, error) {
 	args := m.Called(ctx, id)
 	return args.Get(0).(domain.User), args.Error(1)
 }
 
 func TestSignUp(t *testing.T) {
-	db := &mockAuthDB{}
-	db.On("AddUser", context.Background(), mock.Anything).Return(nil)
+	mockUsers := &MockUsers{}
+	mockUsers.On("AddUser", context.Background(), mock.Anything).Return(nil)
 
 	app := &App{
-		users: db,
+		users: mockUsers,
 	}
 
 	user, err := app.SignUp(context.Background(), "username", "password")
@@ -54,11 +49,11 @@ func TestSignUp(t *testing.T) {
 
 func TestSignIn(t *testing.T) {
 	t.Run("user not found", func(t *testing.T) {
-		db := &mockAuthDB{}
-		db.On("FindUser", context.Background(), mock.Anything).Return(domain.User{}, errors.New("user not found"))
+		mockUsers := &MockUsers{}
+		mockUsers.On("FindUser", context.Background(), mock.Anything).Return(domain.User{}, errors.New("user not found"))
 
 		app := &App{
-			users: db,
+			users: mockUsers,
 		}
 
 		user, err := app.SignIn(context.Background(), "username", "password")
@@ -70,11 +65,11 @@ func TestSignIn(t *testing.T) {
 		hashedPassword, err := apputil.HashPassword("password")
 		assert.NoError(t, err)
 
-		db := &mockAuthDB{}
-		db.On("FindUser", context.Background(), mock.Anything).Return(domain.User{PasswordHash: hashedPassword}, nil)
+		mockUsers := &MockUsers{}
+		mockUsers.On("FindUser", context.Background(), mock.Anything).Return(domain.User{PasswordHash: hashedPassword}, nil)
 
 		app := &App{
-			users: db,
+			users: mockUsers,
 		}
 
 		user, err := app.SignIn(context.Background(), "username", "password")

@@ -19,69 +19,33 @@ func NewChats(db *sql.DB) *Chats {
 	return &Chats{db: db}
 }
 
-func (c *Chats) CreateChat(ctx context.Context, userId uuid.UUID) (domain.Chat, error) {
-	chat := domain.NewChat()
-
-	_, err := c.db.ExecContext(ctx, "INSERT INTO chat (id) VALUES (?)", chat.ID)
+func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
+	_, err := c.db.ExecContext(ctx, "INSERT INTO chat (id, created_by) VALUES (?, ?)", chat.ID, chat.CreatedBy.ID)
 	if err != nil {
-		return domain.Chat{}, fmt.Errorf("failed to insert chat: %w", err)
+		return fmt.Errorf("failed to insert chat: %w", err)
 	}
 
-	_, err = c.db.ExecContext(ctx, "INSERT INTO chat_user (chat_id, user_id) VALUES (?, ?)", chat.ID, userId)
-	if err != nil {
-		return domain.Chat{}, fmt.Errorf("failed to insert chat_user: %w", err)
-	}
-
-	return chat, nil
+	return nil
 }
 
 func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
-	rows, err := c.db.QueryContext(ctx, "SELECT chat_id FROM chat_user WHERE user_id = ?", userID)
+	rows, err := c.db.QueryContext(ctx, "SELECT id FROM chat WHERE created_by = ?", userID)
 	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var chatIDs []uuid.UUID
-	for rows.Next() {
-		var chatID uuid.UUID
-		err := rows.Scan(&chatID)
-		if err != nil {
-			return nil, err
-		}
-		chatIDs = append(chatIDs, chatID)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	if len(chatIDs) == 0 {
-		return nil, nil
-	}
-
-	query, args := QueryIn("SELECT id FROM chat WHERE chat.id", chatIDs)
-	rows, err = c.db.QueryContext(
-		ctx,
-		query,
-		args...,
-	)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to select chats: %w", err)
 	}
 	defer rows.Close()
 
 	var chats []domain.Chat
 	for rows.Next() {
 		var chat domain.Chat
-		err := rows.Scan(&chat.ID)
-		if err != nil {
-			return nil, err
+		if err := rows.Scan(&chat.ID); err != nil {
+			return nil, fmt.Errorf("failed to scan chat: %w", err)
 		}
-
 		chats = append(chats, chat)
 	}
-	if err := rows.Err(); err != nil {
-		return nil, err
+
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("failed to select chats: %w", rows.Err())
 	}
 
 	return chats, nil
