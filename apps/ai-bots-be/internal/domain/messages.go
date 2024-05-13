@@ -8,6 +8,6 @@ import (
 
 // Messages represents a repository of messages.
 type Messages interface {
-	AddMessage(ctx context.Context, chat Chat, sender, message string) error
+	Add(ctx context.Context, chat Chat, message Message) error
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]Message, error)
 }

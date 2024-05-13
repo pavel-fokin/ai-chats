@@ -28,7 +28,7 @@ func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, er
 	return a.chats.AllChats(ctx, userID)
 }
 
-func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error) {
+func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (domain.Message, error) {
 	chat, err := a.chats.FindChat(ctx, chatID)
 	if err != nil {
 		return domain.Message{}, err
@@ -39,16 +39,18 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, message string)
 		return domain.Message{}, err
 	}
 
-	if err := a.messages.AddMessage(ctx, chat, "User", message); err != nil {
+	message := domain.NewMessage("User", text)
+
+	if err := a.messages.Add(ctx, chat, message); err != nil {
 		return domain.Message{}, err
 	}
 
-	aiMessage, err := a.chatbot.ChatMessage(ctx, history, message)
+	aiMessage, err := a.chatbot.ChatMessage(ctx, history, text)
 	if err != nil {
 		return domain.Message{}, err
 	}
 
-	if err := a.messages.AddMessage(ctx, chat, "AI", aiMessage.Text); err != nil {
+	if err := a.messages.Add(ctx, chat, aiMessage); err != nil {
 		return domain.Message{}, err
 	}
 

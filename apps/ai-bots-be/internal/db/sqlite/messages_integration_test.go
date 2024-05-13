@@ -19,7 +19,7 @@ func TestAddMessages(t *testing.T) {
 	chats := NewChats(db)
 	messages := NewMessages(db)
 
-	user := domain.NewUser("test")
+	user := domain.NewUser("username")
 	err = users.AddUser(context.Background(), user)
 	assert.NoError(t, err)
 
@@ -44,7 +44,7 @@ func TestAddMessages(t *testing.T) {
 
 	// Add the messages to the chat
 	for _, message := range msgs {
-		err := messages.AddMessage(context.Background(), chat, message.Sender, message.Text)
+		err := messages.Add(context.Background(), chat, message)
 		assert.NoError(t, err)
 	}
 }
