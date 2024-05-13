@@ -7,16 +7,17 @@ import { AuthContext } from "contexts";
 import { useAuth } from "hooks";
 
 export const SignUp = () => {
+    const navigate = useNavigate();
+
     const { setIsAuthenticated } = useContext(AuthContext);
     const { signUp } = useAuth();
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const navigate = useNavigate();
-
     const onSignUp = async () => {
-        if (await signUp(username, password)) {
+        const signedUp = await signUp(username, password);
+        if (signedUp) {
             setIsAuthenticated(true);
             navigate('/app');
         }

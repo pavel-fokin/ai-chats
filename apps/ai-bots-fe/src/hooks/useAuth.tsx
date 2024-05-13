@@ -18,7 +18,7 @@ export const useAuth = () => {
 
     const signUp = async (username: string, password: string) => {
         const { accessToken: token } = await SignUp(username, password);
-        if (!accessToken) {
+        if (!token) {
             return false;
         }
         setAccessToken(token);

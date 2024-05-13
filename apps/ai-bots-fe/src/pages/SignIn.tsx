@@ -16,8 +16,8 @@ export const SignIn = () => {
     const [password, setPassword] = useState("");
 
     const onSignIn = async () => {
-        const response = await signIn(username, password);
-        if (response) {
+        const signedIn = await signIn(username, password);
+        if (signedIn) {
             setIsAuthenticated(true);
             navigate('/app');
         }
