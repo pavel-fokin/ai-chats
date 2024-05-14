@@ -8,7 +8,7 @@ import { AuthContextProvider } from "contexts";
 import { LogIn } from './LogIn';
 
 const server = setupServer(
-    http.post('/api/auth/signin', () => {
+    http.post('/api/auth/login', () => {
         return HttpResponse.json({ data: { accessToken: 'accessToken' } });
     }),
 );

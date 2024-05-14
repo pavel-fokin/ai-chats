@@ -7,7 +7,7 @@ type SignUpResponse = {
 }
 
 export const SignIn = async (username: string, password: string): Promise<SignInResponse> => {
-  const resp = await fetch('/api/auth/signin', {
+  const resp = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
