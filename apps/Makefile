@@ -1,10 +1,10 @@
 .PHONY: build
 build:
-	${MAKE} -C ai-bots-fe build
-	@cp -r ai-bots-fe/dist ai-bots-be/internal/web
-	${MAKE} -C ai-bots-be build
+	${MAKE} -C aibots-fe build
+	@cp -r aibots-fe/dist aibots-be/internal/web
+	${MAKE} -C aibots-be build
 
 .PHONY: test
 test:
-	${MAKE} -C ai-bots-be test
-	${MAKE} -C ai-bots-fe test
+	${MAKE} -C aibots-be test
+	${MAKE} -C aibots-fe test
