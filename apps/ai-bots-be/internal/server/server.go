@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"io/fs"
 	"log"
 	"net/http"
 	"time"
@@ -83,4 +84,17 @@ func (s *Server) SetupChatAPI(chat api.ChatApp) {
 	})
 
 	s.router.Get("/api/chats/{uuid}/events", api.GetEvents(chat))
+}
+
+func (s *Server) SetupStaticRoutes(static fs.FS) {
+	fs := http.FileServerFS(static)
+
+	s.router.Get("/", fs.ServeHTTP)
+	s.router.Get("/*", func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = "/"
+		fs.ServeHTTP(w, r)
+	})
+	s.router.Get(
+		"/assets/*", fs.ServeHTTP,
+	)
 }

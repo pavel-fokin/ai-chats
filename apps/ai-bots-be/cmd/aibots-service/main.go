@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"io/fs"
 	"log"
 	"os/signal"
 	"syscall"
@@ -13,6 +14,7 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/db/sqlite"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/web"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
 )
 
@@ -59,6 +61,8 @@ func main() {
 	server := server.New(config.Server)
 	server.SetupAuthAPI(app)
 	server.SetupChatAPI(app)
+	staticFS, _ := fs.Sub(web.Dist, "dist")
+	server.SetupStaticRoutes(staticFS)
 
 	log.Println("Starting AIBots HTTP server... ", config.Server.Port)
 	go server.Start()
