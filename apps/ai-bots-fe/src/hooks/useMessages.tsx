@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchMessages, postMessages } from 'api';
 import { Message } from 'types';
 
-
 export function useMessages(chatId: string) {
     const queryClient = useQueryClient();
 
@@ -26,5 +25,10 @@ export function useMessages(chatId: string) {
     return {
         messages: Array.isArray(payload) ? payload : payload.data.messages || [],
         sendMessage: mutation,
+        invalidateMessages: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['messages', chatId],
+            });
+        }
     }
 }

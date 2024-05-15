@@ -68,18 +68,11 @@ func TestSendMessage(t *testing.T) {
 	chatID := uuid.New()
 	message := NewMessage("User", "Hello!")
 
-	// Mock the newLLM function
-	mockLLM := &MockLLM{}
-	mockLLM.On("GenerateResponse", ctx, mock.Anything).Return(Message{
-		Sender: "Bot",
-		Text:   "Hi!",
-	}, nil)
-
 	// Call the SendMessage method
-	message, err := chatting.SendMessage(ctx, mockLLM, chatID, message)
+	messageSent, err := chatting.SendMessage(ctx, chatID, message)
 	assert.NoError(t, err)
-	assert.Equal(t, "Hi!", message.Text)
+	assert.Equal(t, "Hello!", messageSent.Message.Text)
 
-	// Verify that the Add method was called twice
-	messages.AssertNumberOfCalls(t, "Add", 2)
+	// Verify that the Add method was called once.
+	messages.AssertNumberOfCalls(t, "Add", 1)
 }

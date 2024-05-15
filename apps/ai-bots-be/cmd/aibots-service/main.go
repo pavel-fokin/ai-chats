@@ -11,7 +11,9 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/db"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/db/sqlite"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
 )
 
 // Config is the server configuration.
@@ -45,10 +47,13 @@ func main() {
 		log.Fatalf("Failed to create tables: %v", err)
 	}
 
+	generateResponseEvents := events.New[worker.GenerateResponse]()
+
 	app := app.New(
 		sqlite.NewChats(db),
 		sqlite.NewUsers(db),
 		sqlite.NewMessages(db),
+		generateResponseEvents,
 	)
 
 	server := server.New(config.Server)
@@ -58,7 +63,12 @@ func main() {
 	log.Println("Starting AIBots HTTP server... ", config.Server.Port)
 	go server.Start()
 
+	worker := worker.New(app, generateResponseEvents)
+	go worker.Start()
+
 	<-ctx.Done()
+
+	worker.Stop()
 
 	log.Println("Shutting down the AIBots HTTP server...")
 	if err := server.Shutdown(); err != nil {

@@ -13,7 +13,7 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
-const maxShutdownTimeout = 10
+const maxShutdownTimeout = 3
 
 // Config is the server configuration.
 type Config struct {
@@ -79,5 +79,8 @@ func (s *Server) SetupChatAPI(chat api.ChatApp) {
 		r.Get("/api/chats", api.GetChats(chat))
 		r.Post("/api/chats/{uuid}/messages", api.PostMessages(chat))
 		r.Get("/api/chats/{uuid}/messages", api.GetMessages(chat))
+
 	})
+
+	s.router.Get("/api/chats/{uuid}/events", api.GetEvents(chat))
 }

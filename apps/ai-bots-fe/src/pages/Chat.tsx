@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Flex, Box } from "@radix-ui/themes";
 
 import { InputMessage, Message } from 'components';
-import { useMessages } from 'hooks';
+import { useMessages, useChatEvents } from 'hooks';
 import * as types from 'types';
 
 export function Chat() {
@@ -14,6 +14,7 @@ export function Chat() {
     }
 
     const { messages, sendMessage } = useMessages(chatId);
+    useChatEvents(chatId);
 
     const handleSend = async (msg: types.Message) => {
         sendMessage.mutate({ sender: 'human', text: msg.text });

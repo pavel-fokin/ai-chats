@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -38,6 +39,16 @@ func (m *ChatMock) SendMessage(ctx context.Context, chatID uuid.UUID, message st
 func (m *ChatMock) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
 	args := m.Called(ctx, chatID)
 	return args.Get(0).([]domain.Message), args.Error(1)
+}
+
+func (m *ChatMock) Subscribe(ctx context.Context, topic string, subscriber string) (<-chan domain.MessageSent, error) {
+	args := m.Called(ctx, topic, subscriber)
+	return args.Get(0).(<-chan domain.MessageSent), args.Error(1)
+}
+
+func (m *ChatMock) Unsubscribe(ctx context.Context, topic string, subscriber string) error {
+	args := m.Called(ctx, topic, subscriber)
+	return args.Error(0)
 }
 
 func matchChiContext(ctx context.Context) bool {
@@ -162,4 +173,28 @@ func TestGetMessages(t *testing.T) {
 		resp := w.Result()
 		assert.Equal(t, 500, resp.StatusCode)
 	})
+}
+func TestGetEvents(t *testing.T) {
+	chatID := uuid.New()
+
+	req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
+	w := httptest.NewRecorder()
+
+	// chat := &ChatMock{}
+	// chat.On("AllMessages", mock.MatchedBy(matchChiContext), chatID).Return([]domain.Message{}, nil)
+
+	chat := &ChatMock{}
+	chat.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
+		Return(make(<-chan domain.MessageSent), nil)
+	chat.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
+		Return(nil)
+
+	router := chi.NewRouter()
+	router.Get("/api/chats/{uuid}/events", GetEvents(chat))
+	go router.ServeHTTP(w, req)
+
+	time.Sleep(50 * time.Millisecond)
+
+	resp := w.Result()
+	assert.Equal(t, 200, resp.StatusCode)
 }

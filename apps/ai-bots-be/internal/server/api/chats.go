@@ -22,7 +22,9 @@ type ChatApp interface {
 	CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error)
 	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
-	SendMessage(ctx context.Context, chatId uuid.UUID, message string) (domain.Message, error)
+	SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error)
+	Subscribe(ctx context.Context, topic string, subscriber string) (<-chan domain.MessageSent, error)
+	Unsubscribe(ctx context.Context, topic string, subscriber string) error
 }
 
 // GetChats handles the GET /api/chats endpoint.
@@ -106,5 +108,52 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 				Text:   answer.Text,
 			},
 		}, http.StatusOK)
+	}
+}
+
+// GetEvents handles the GET /api/chats/{uuid}/events endpoint.
+func GetEvents(chat ChatApp) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		chatID := chi.URLParam(r, "uuid")
+		slog.Info("events stream", "chat_id", chatID)
+
+		w.Header().Set("Content-Type", "text/event-stream")
+		w.Header().Set("Cache-Control", "no-cache")
+		w.Header().Set("Connection", "keep-alive")
+
+		flusher, ok := w.(http.Flusher)
+		if !ok {
+			slog.ErrorContext(
+				ctx,
+				"failed to start the event stream",
+				"err", "expected http.ResponseWriter to be an http.Flusher",
+			)
+			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			return
+		}
+
+		subscriberID := uuid.New().String()
+		events, err := chat.Subscribe(ctx, chatID, subscriberID)
+		if err != nil {
+			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
+			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			return
+		}
+		defer chat.Unsubscribe(ctx, chatID, subscriberID)
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case event := <-events:
+				if err := apiutil.WriteEvent(w, event); err != nil {
+					slog.ErrorContext(ctx, "failed to write an event", "err", err)
+					return
+				}
+				flusher.Flush()
+			}
+		}
 	}
 }
