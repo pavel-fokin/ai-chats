@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// CreateChat creates a chat for the user.
 func (a *App) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error) {
 	user, err := a.users.FindByID(ctx, userID)
 	if err != nil {
@@ -26,10 +27,12 @@ func (a *App) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, er
 	return chat, nil
 }
 
+// AllChats returns all chats for the user.
 func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
 	return a.chats.AllChats(ctx, userID)
 }
 
+// SendMessage sends a message to the chat.
 func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (domain.Message, error) {
 	message := domain.NewMessage("User", text)
 
@@ -55,6 +58,7 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (d
 	return domain.Message{}, nil
 }
 
+// GenerateResponse generates a LLM response for the chat.
 func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 	messages, err := a.AllMessages(ctx, chatID)
 	if err != nil {
@@ -83,14 +87,17 @@ func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 	return nil
 }
 
+// AllMessages returns all messages in the chat.
 func (a *App) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
 	return a.messages.AllMessages(ctx, chatID)
 }
 
+// Subscribe subscribes to the chat events.
 func (a *App) Subscribe(ctx context.Context, chatID string, subscriber string) (<-chan domain.MessageSent, error) {
 	return a.messageSentEvents.Subscribe(ctx, chatID, subscriber)
 }
 
+// Unsubscribe unsubscribes from the chat events.
 func (a *App) Unsubscribe(ctx context.Context, chatID string, subscriber string) error {
 	return a.messageSentEvents.Unsubscribe(ctx, chatID, subscriber)
 }

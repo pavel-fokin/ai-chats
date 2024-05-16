@@ -14,8 +14,8 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/db/sqlite"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/web"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
+	"pavel-fokin/ai/apps/ai-bots-be/web"
 )
 
 // Config is the server configuration.
