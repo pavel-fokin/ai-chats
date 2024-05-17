@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
@@ -23,8 +24,8 @@ type ChatApp interface {
 	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
 	SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error)
-	Subscribe(ctx context.Context, topic string, subscriber string) (<-chan domain.MessageSent, error)
-	Unsubscribe(ctx context.Context, topic string, subscriber string) error
+	Subscribe(ctx context.Context, topic string) (events.Channel, error)
+	Unsubscribe(ctx context.Context, channel events.Channel) error
 }
 
 // GetChats handles the GET /api/chats endpoint.
@@ -137,14 +138,13 @@ func GetEvents(chat ChatApp, sse *apiutil.SSEConnections) http.HandlerFunc {
 		sse.Add(conn)
 		defer sse.Remove(conn)
 
-		subscriberID := uuid.New().String()
-		events, err := chat.Subscribe(ctx, chatID, subscriberID)
+		events, err := chat.Subscribe(ctx, chatID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
 			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
-		defer chat.Unsubscribe(ctx, chatID, subscriberID)
+		defer chat.Unsubscribe(ctx, events)
 
 		for {
 			select {
@@ -152,7 +152,7 @@ func GetEvents(chat ChatApp, sse *apiutil.SSEConnections) http.HandlerFunc {
 				return
 			case <-ctx.Done():
 				return
-			case event := <-events:
+			case event := <-events.C():
 				if err := apiutil.WriteEvent(w, event); err != nil {
 					slog.ErrorContext(ctx, "failed to write an event", "err", err)
 					return

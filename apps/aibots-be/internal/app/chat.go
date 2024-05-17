@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/llm"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
 
 	"github.com/google/uuid"
 )
@@ -36,23 +36,19 @@ func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, er
 func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (domain.Message, error) {
 	message := domain.NewMessage("User", text)
 
-	messageSent, err := a.chatting.SendMessage(ctx, chatID, message)
+	_, err := a.chatting.SendMessage(ctx, chatID, message)
 	if err != nil {
 		return domain.Message{}, fmt.Errorf("failed to send a message: %w", err)
 	}
 
-	if err := a.messageSentEvents.Publish(ctx, chatID.String(), messageSent); err != nil {
-		return domain.Message{}, fmt.Errorf("failed to publish a message: %w", err)
+	messageSent := domain.NewMessageSent(chatID, message)
+	if err := a.events.Publish(ctx, chatID.String(), messageSent.AsBytes()); err != nil {
+		return domain.Message{}, fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
-	if err := a.generateResponseEvents.Publish(
-		ctx,
-		"generate-response",
-		worker.GenerateResponse{
-			ChatID: chatID,
-		},
-	); err != nil {
-		return domain.Message{}, fmt.Errorf("failed to generate a response: %w", err)
+	asBytes := []byte(fmt.Sprintf(`{"chat_id": "%s"}`, chatID.String()))
+	if err := a.events.Publish(ctx, "worker", asBytes); err != nil {
+		return domain.Message{}, fmt.Errorf("failed to generate respone event: %w", err)
 	}
 
 	return domain.Message{}, nil
@@ -75,13 +71,14 @@ func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 		return fmt.Errorf("failed to generate a response: %w", err)
 	}
 
-	messageSent, err := a.chatting.SendMessage(ctx, chatID, llmMessage)
+	_, err = a.chatting.SendMessage(ctx, chatID, llmMessage)
 	if err != nil {
 		return fmt.Errorf("failed to send a message: %w", err)
 	}
 
-	if err := a.messageSentEvents.Publish(ctx, chatID.String(), messageSent); err != nil {
-		return fmt.Errorf("failed to publish a message: %w", err)
+	messageSent := domain.NewMessageSent(chatID, llmMessage)
+	if err := a.events.Publish(ctx, chatID.String(), messageSent.AsBytes()); err != nil {
+		return fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
 	return nil
@@ -93,11 +90,11 @@ func (a *App) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Messa
 }
 
 // Subscribe subscribes to the chat events.
-func (a *App) Subscribe(ctx context.Context, chatID string, subscriber string) (<-chan domain.MessageSent, error) {
-	return a.messageSentEvents.Subscribe(ctx, chatID, subscriber)
+func (a *App) Subscribe(ctx context.Context, chatID string) (events.Channel, error) {
+	return a.events.Subscribe(ctx, chatID)
 }
 
 // Unsubscribe unsubscribes from the chat events.
-func (a *App) Unsubscribe(ctx context.Context, chatID string, subscriber string) error {
-	return a.messageSentEvents.Unsubscribe(ctx, chatID, subscriber)
+func (a *App) Unsubscribe(ctx context.Context, channel events.Channel) error {
+	return a.events.Unsubscribe(ctx, channel)
 }

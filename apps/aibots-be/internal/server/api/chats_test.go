@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
@@ -42,13 +43,13 @@ func (m *ChatMock) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.
 	return args.Get(0).([]domain.Message), args.Error(1)
 }
 
-func (m *ChatMock) Subscribe(ctx context.Context, topic string, subscriber string) (<-chan domain.MessageSent, error) {
-	args := m.Called(ctx, topic, subscriber)
-	return args.Get(0).(<-chan domain.MessageSent), args.Error(1)
+func (m *ChatMock) Subscribe(ctx context.Context, topic string) (events.Channel, error) {
+	args := m.Called(ctx, topic)
+	return args.Get(0).(events.Channel), args.Error(1)
 }
 
-func (m *ChatMock) Unsubscribe(ctx context.Context, topic string, subscriber string) error {
-	args := m.Called(ctx, topic, subscriber)
+func (m *ChatMock) Unsubscribe(ctx context.Context, channel events.Channel) error {
+	args := m.Called(ctx, channel)
 	return args.Error(0)
 }
 

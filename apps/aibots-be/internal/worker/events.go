@@ -1,6 +1,8 @@
 package worker
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 // GenerateResponse represents a request to generate a LLM response.
 type GenerateResponse struct {
