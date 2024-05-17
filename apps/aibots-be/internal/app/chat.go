@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/llm"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/llm"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
 
 	"github.com/google/uuid"

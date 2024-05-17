@@ -10,9 +10,9 @@ import (
 	"github.com/caarlos0/env/v6"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/db"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/db/sqlite"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/events"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db/sqlite"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
 	"pavel-fokin/ai/apps/ai-bots-be/web"
