@@ -4,26 +4,47 @@ import { SignIn, SignUp } from "api";
 
 // useAuth custom hook
 export const useAuth = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
 
     const logIn = async (username: string, password: string) => {
-        const { accessToken: token } = await SignIn(username, password);
-        if (!token) {
+        setIsLoading(true);
+        try {
+            const { accessToken: token } = await SignIn(username, password);
+            if (!token) {
+                return false;
+            }
+
+            setAccessToken(token);
+            localStorage.setItem("accessToken", token);
+
+            setIsLoading(false);
+            return true;
+        } catch (error) {
+            console.error(error);
+            setIsLoading(false);
             return false;
         }
-        setAccessToken(token);
-        localStorage.setItem("accessToken", token);
-        return true;
     };
 
     const signUp = async (username: string, password: string) => {
-        const { accessToken: token } = await SignUp(username, password);
-        if (!token) {
+        setIsLoading(true);
+        try {
+            const { accessToken: token } = await SignUp(username, password);
+            if (!token) {
+                return false;
+            }
+
+            setAccessToken(token);
+            localStorage.setItem("accessToken", token);
+
+            setIsLoading(false);
+            return true;
+        } catch (error) {
+            console.error(error);
+            setIsLoading(false);
             return false;
         }
-        setAccessToken(token);
-        localStorage.setItem("accessToken", token);
-        return true;
     }
 
     const signOut = () => {
@@ -33,6 +54,7 @@ export const useAuth = () => {
 
     return {
         accessToken,
+        isLoading,
         logIn,
         signUp,
         signOut,

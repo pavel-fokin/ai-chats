@@ -30,7 +30,7 @@ test('renders Sign Up component', () => {
         </AuthContextProvider>
     );
 
-    expect(screen.getByRole('heading', { name: 'Sign Up' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Sign up' })).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Your username')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Create an account' })).toBeInTheDocument();

@@ -4,22 +4,20 @@ import { useNavigate } from "react-router-dom";
 import { Button, Container, Flex, Heading, Link, Text, TextField } from "@radix-ui/themes";
 
 import { AuthContext } from "contexts";
-import { useAuth } from "hooks";
 
 export const LogIn = () => {
-    const navigate = useNavigate();
-
-    const { logIn } = useAuth();
-    const { setIsAuthenticated } = useContext(AuthContext);
-
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
+    const navigate = useNavigate();
+
+    const { login, isLoading } = useContext(AuthContext);
+
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const loggedIn = await logIn(username, password);
-        if (loggedIn) {
-            setIsAuthenticated(true);
+        let isLoggedIn = false;
+        isLoggedIn = await login(username, password);
+        if (isLoggedIn) {
             navigate('/app');
         }
     }
@@ -43,7 +41,7 @@ export const LogIn = () => {
                         placeholder="Your password"
                         onChange={e => { setPassword(e.target.value) }}
                     />
-                    <Button size="4" highContrast>Log In</Button>
+                    <Button loading={isLoading} size="4" highContrast>Log in</Button>
                     <Text align="center">
                         Don't have an account?  <Link href="/app/signup">Create one</Link>
                     </Text>

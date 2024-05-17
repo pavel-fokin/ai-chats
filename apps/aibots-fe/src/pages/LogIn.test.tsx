@@ -33,7 +33,7 @@ test('renders Log In component', () => {
     expect(screen.getByRole('heading', { name: 'Log in' })).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Your username')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Log In' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Log in' })).toBeInTheDocument();
     expect(screen.getByText("Don't have an account?")).toBeInTheDocument();
 });
 
@@ -56,12 +56,12 @@ test('calls signIn function and navigates to /app on successful log in', async (
 
     const usernameInput = screen.getByPlaceholderText('Your username');
     const passwordInput = screen.getByPlaceholderText('Your password');
-    const signInButton = screen.getByRole('button', { name: 'Log In' });
+    const logInButton = screen.getByRole('button', { name: 'Log in' });
 
     userEvent.type(usernameInput, username);
     userEvent.type(passwordInput, password);
 
-    userEvent.click(signInButton);
+    userEvent.click(logInButton);
 
     await waitFor(() => {
         expect(screen.getByText('App')).toBeInTheDocument();
