@@ -112,16 +112,9 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 }
 
 // GetEvents handles the GET /api/chats/{uuid}/events endpoint.
-func GetEvents(chat ChatApp) http.HandlerFunc {
+func GetEvents(chat ChatApp, sse *apiutil.SSEConnections) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
-		chatID := chi.URLParam(r, "uuid")
-		slog.Info("events stream", "chat_id", chatID)
-
-		w.Header().Set("Content-Type", "text/event-stream")
-		w.Header().Set("Cache-Control", "no-cache")
-		w.Header().Set("Connection", "keep-alive")
 
 		flusher, ok := w.(http.Flusher)
 		if !ok {
@@ -134,6 +127,16 @@ func GetEvents(chat ChatApp) http.HandlerFunc {
 			return
 		}
 
+		w.Header().Set("Content-Type", "text/event-stream")
+		w.Header().Set("Cache-Control", "no-cache")
+		w.Header().Set("Connection", "keep-alive")
+
+		chatID := chi.URLParam(r, "uuid")
+
+		conn := apiutil.NewConnection(ctx, w)
+		sse.Add(conn)
+		defer sse.Remove(conn)
+
 		subscriberID := uuid.New().String()
 		events, err := chat.Subscribe(ctx, chatID, subscriberID)
 		if err != nil {
@@ -145,6 +148,8 @@ func GetEvents(chat ChatApp) http.HandlerFunc {
 
 		for {
 			select {
+			case <-conn.Closed:
+				return
 			case <-ctx.Done():
 				return
 			case event := <-events:

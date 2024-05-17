@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
 type ChatMock struct {
@@ -180,8 +181,7 @@ func TestGetEvents(t *testing.T) {
 	req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
 	w := httptest.NewRecorder()
 
-	// chat := &ChatMock{}
-	// chat.On("AllMessages", mock.MatchedBy(matchChiContext), chatID).Return([]domain.Message{}, nil)
+	sse := apiutil.NewSSEConnections()
 
 	chat := &ChatMock{}
 	chat.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
@@ -190,7 +190,7 @@ func TestGetEvents(t *testing.T) {
 		Return(nil)
 
 	router := chi.NewRouter()
-	router.Get("/api/chats/{uuid}/events", GetEvents(chat))
+	router.Get("/api/chats/{uuid}/events", GetEvents(chat, sse))
 	go router.ServeHTTP(w, req)
 
 	time.Sleep(50 * time.Millisecond)

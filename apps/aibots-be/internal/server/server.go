@@ -26,6 +26,7 @@ type Config struct {
 type Server struct {
 	router *chi.Mux
 	server *http.Server
+	sse    *apiutil.SSEConnections
 }
 
 // NewServer creates a new server.
@@ -47,6 +48,7 @@ func New(config Config) *Server {
 	return &Server{
 		router: router,
 		server: server,
+		sse:    apiutil.NewSSEConnections(),
 	}
 }
 
@@ -59,6 +61,8 @@ func (s *Server) Start() {
 
 // Shutdown gracefully shuts down the server.
 func (s *Server) Shutdown() error {
+	s.sse.CloseAll()
+
 	ctx, cancel := context.WithTimeout(
 		context.Background(), time.Duration(maxShutdownTimeout)*time.Second,
 	)
@@ -83,7 +87,7 @@ func (s *Server) SetupChatAPI(chat api.ChatApp) {
 
 	})
 
-	s.router.Get("/api/chats/{uuid}/events", api.GetEvents(chat))
+	s.router.Get("/api/chats/{uuid}/events", api.GetEvents(chat, s.sse))
 }
 
 func (s *Server) SetupStaticRoutes(static fs.FS) {
