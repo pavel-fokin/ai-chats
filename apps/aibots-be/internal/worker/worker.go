@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 
 	"github.com/google/uuid"
 )
@@ -44,13 +45,13 @@ func (w *Worker) Start() {
 		case <-w.ctx.Done():
 			return
 		case e := <-events:
-			var generateResponse GenerateResponse
-			if err := json.Unmarshal(e, &generateResponse); err != nil {
+			var messageSent domain.MessageSent
+			if err := json.Unmarshal(e, &messageSent); err != nil {
 				slog.ErrorContext(w.ctx, "failed to unmarshal event", "err", err)
 				continue
 			}
 
-			err := w.app.GenerateResponse(w.ctx, generateResponse.ChatID)
+			err := w.app.GenerateResponse(w.ctx, messageSent.ChatID)
 			if err != nil {
 				slog.ErrorContext(w.ctx, "failed to generate a response", "err", err)
 			}

@@ -46,8 +46,7 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (d
 		return domain.Message{}, fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
-	asBytes := []byte(fmt.Sprintf(`{"chat_id": "%s"}`, chatID.String()))
-	if err := a.events.Publish(ctx, "worker", asBytes); err != nil {
+	if err := a.events.Publish(ctx, "worker", messageSent.AsBytes()); err != nil {
 		return domain.Message{}, fmt.Errorf("failed to generate respone event: %w", err)
 	}
 
