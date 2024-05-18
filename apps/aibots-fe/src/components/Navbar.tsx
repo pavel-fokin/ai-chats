@@ -6,7 +6,7 @@ import { Button, Flex, Separator } from '@radix-ui/themes';
 import { IconLogout, IconMessagePlus } from '@tabler/icons-react';
 
 import { AuthContext } from 'contexts';
-import { useAuth, useChats } from 'hooks';
+import { useChats } from 'hooks';
 
 import styles from './Navbar.module.css';
 
@@ -15,8 +15,7 @@ export function Navbar() {
     const { chatId } = useParams<{ chatId: string }>();
 
     const { chats, createChat } = useChats();
-    const { signOut } = useAuth();
-    const { setIsAuthenticated } = useContext(AuthContext);
+    const { setIsAuthenticated, signout } = useContext(AuthContext);
 
     const handleNewChat = async () => {
         createChat.mutateAsync().then((data) => {
@@ -27,7 +26,7 @@ export function Navbar() {
     }
 
     const handleSignOut = () => {
-        signOut();
+        signout();
         setIsAuthenticated(false);
         navigate('/app/login');
     }
