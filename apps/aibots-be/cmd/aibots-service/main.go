@@ -12,7 +12,7 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db/sqlite"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events/channels"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
 	"pavel-fokin/ai/apps/ai-bots-be/web"
@@ -49,7 +49,7 @@ func main() {
 		log.Fatalf("Failed to create tables: %v", err)
 	}
 
-	events := channels.New()
+	events := events.New()
 
 	app := app.New(
 		sqlite.NewChats(db),

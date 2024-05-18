@@ -6,11 +6,15 @@ import (
 	"github.com/google/uuid"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events"
 )
 
 type MessageSender interface {
 	SendMessage(ctx context.Context, chatID uuid.UUID, message domain.Message) (domain.MessageSent, error)
+}
+type Events interface {
+	Subscribe(context.Context, string) (chan []byte, error)
+	Unsubscribe(context.Context, string, chan []byte) error
+	Publish(context.Context, string, []byte) error
 }
 
 type App struct {
@@ -18,14 +22,14 @@ type App struct {
 	chats    domain.Chats
 	messages domain.Messages
 	chatting MessageSender
-	events   events.Events
+	events   Events
 }
 
 func New(
 	chats domain.Chats,
 	users domain.Users,
 	messages domain.Messages,
-	events events.Events,
+	events Events,
 ) *App {
 	chatting := domain.NewChatting(chats, messages)
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events"
 
 	"github.com/google/uuid"
 )
@@ -14,8 +13,8 @@ type App interface {
 }
 
 type Subscriber interface {
-	Subscribe(ctx context.Context, topic string) (events.Channel, error)
-	Unsubscribe(ctx context.Context, channel events.Channel) error
+	Subscribe(ctx context.Context, topic string) (chan []byte, error)
+	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
 }
 
 type Worker struct {
@@ -38,13 +37,13 @@ func (w *Worker) Start() {
 		slog.ErrorContext(w.ctx, "failed to subscribe to events", "err", err)
 		return
 	}
-	defer w.events.Unsubscribe(context.Background(), events)
+	defer w.events.Unsubscribe(context.Background(), "worker", events)
 
 	for {
 		select {
 		case <-w.ctx.Done():
 			return
-		case e := <-events.C():
+		case e := <-events:
 			var generateResponse GenerateResponse
 			if err := json.Unmarshal(e, &generateResponse); err != nil {
 				slog.ErrorContext(w.ctx, "failed to unmarshal event", "err", err)

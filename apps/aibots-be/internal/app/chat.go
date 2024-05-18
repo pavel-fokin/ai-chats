@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events"
+
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/llm"
 
 	"github.com/google/uuid"
@@ -87,14 +87,4 @@ func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 // AllMessages returns all messages in the chat.
 func (a *App) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
 	return a.messages.AllMessages(ctx, chatID)
-}
-
-// Subscribe subscribes to the chat events.
-func (a *App) Subscribe(ctx context.Context, chatID string) (events.Channel, error) {
-	return a.events.Subscribe(ctx, chatID)
-}
-
-// Unsubscribe unsubscribes from the chat events.
-func (a *App) Unsubscribe(ctx context.Context, channel events.Channel) error {
-	return a.events.Unsubscribe(ctx, channel)
 }

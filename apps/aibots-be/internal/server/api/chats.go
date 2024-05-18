@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
@@ -24,8 +23,8 @@ type ChatApp interface {
 	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
 	SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error)
-	Subscribe(ctx context.Context, topic string) (events.Channel, error)
-	Unsubscribe(ctx context.Context, channel events.Channel) error
+	Subscribe(ctx context.Context, topic string) (chan []byte, error)
+	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
 }
 
 // GetChats handles the GET /api/chats endpoint.
@@ -144,7 +143,7 @@ func GetEvents(chat ChatApp, sse *apiutil.SSEConnections) http.HandlerFunc {
 			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
-		defer chat.Unsubscribe(ctx, events)
+		defer chat.Unsubscribe(ctx, chatID, events)
 
 		for {
 			select {
@@ -152,7 +151,7 @@ func GetEvents(chat ChatApp, sse *apiutil.SSEConnections) http.HandlerFunc {
 				return
 			case <-ctx.Done():
 				return
-			case event := <-events.C():
+			case event := <-events:
 				if err := apiutil.WriteEvent(w, event); err != nil {
 					slog.ErrorContext(ctx, "failed to write an event", "err", err)
 					return
