@@ -38,7 +38,7 @@ func TestAuthToken(t *testing.T) {
 	res := httptest.NewRecorder()
 
 	// Call the AuthToken middleware
-	AuthToken(handler).ServeHTTP(res, req)
+	AuthHeader(handler).ServeHTTP(res, req)
 
 	// Check the response status code
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -66,5 +66,57 @@ func TestMustHaveUserID(t *testing.T) {
 		assert.Panics(t, func() {
 			MustHaveUserID(ctx)
 		})
+	})
+}
+
+func TestAuthParam(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		// Create a test handler
+		handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Check if the UserID context value is set correctly
+			userID := r.Context().Value(UserID("UserID"))
+			if userID == nil {
+				t.Error("UserID context value is not set")
+				return
+			}
+
+			// Write a response
+			w.WriteHeader(http.StatusOK)
+		})
+
+		accessToken, err := apiutil.NewAccessToken(uuid.New())
+		assert.NoError(t, err)
+
+		// Create a test request with a valid access token
+		req := httptest.NewRequest(http.MethodGet, "/?accessToken="+accessToken, nil)
+
+		// Create a test response recorder
+		res := httptest.NewRecorder()
+
+		// Call the AuthParam middleware
+		AuthParam(handler).ServeHTTP(res, req)
+
+		// Check the response status code
+		assert.Equal(t, http.StatusOK, res.Code)
+	})
+
+	t.Run("Missing AccessToken", func(t *testing.T) {
+		// Create a test handler
+		handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Write a response
+			w.WriteHeader(http.StatusOK)
+		})
+
+		// Create a test request without an access token
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+		// Create a test response recorder
+		res := httptest.NewRecorder()
+
+		// Call the AuthParam middleware
+		AuthParam(handler).ServeHTTP(res, req)
+
+		// Check the response status code
+		assert.Equal(t, http.StatusUnauthorized, res.Code)
 	})
 }
