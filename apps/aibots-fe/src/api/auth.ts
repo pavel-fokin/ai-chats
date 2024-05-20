@@ -6,7 +6,7 @@ type SignUpResponse = {
   accessToken: string;
 }
 
-export const SignIn = async (username: string, password: string): Promise<SignInResponse> => {
+export const postLogIn = async (username: string, password: string): Promise<SignInResponse> => {
   const resp = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -20,7 +20,7 @@ export const SignIn = async (username: string, password: string): Promise<SignIn
   return payload.data;
 }
 
-export const SignUp = async (username: string, password: string): Promise<SignUpResponse> => {
+export const postSignUp = async (username: string, password: string): Promise<SignUpResponse> => {
   const resp = await fetch('/api/auth/signup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -34,4 +34,4 @@ export const SignUp = async (username: string, password: string): Promise<SignUp
   return payload.data;
 }
 
-export default { SignIn, SignUp }
+export default { postLogIn, postSignUp }

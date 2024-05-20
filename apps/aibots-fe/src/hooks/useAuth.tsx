@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { SignIn, SignUp } from "api";
+import { postLogIn, postSignUp } from "api";
 
 // useAuth custom hook
 export const useAuth = () => {
@@ -10,7 +10,7 @@ export const useAuth = () => {
     const logIn = async (username: string, password: string) => {
         setIsLoading(true);
         try {
-            const { accessToken: token } = await SignIn(username, password);
+            const { accessToken: token } = await postLogIn(username, password);
             if (!token) {
                 return false;
             }
@@ -30,7 +30,7 @@ export const useAuth = () => {
     const signUp = async (username: string, password: string) => {
         setIsLoading(true);
         try {
-            const { accessToken: token } = await SignUp(username, password);
+            const { accessToken: token } = await postSignUp(username, password);
             if (!token) {
                 return false;
             }

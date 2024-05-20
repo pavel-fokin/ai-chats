@@ -5,11 +5,13 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import { AuthContextProvider } from "contexts";
-import { SignUp } from './SignUp';
+import { SignUp } from '../SignUp';
+
+import { generateToken } from './utils';
 
 const server = setupServer(
     http.post('/api/auth/signup', () => {
-        return HttpResponse.json({ data: { accessToken: 'accessToken' } });
+        return HttpResponse.json({ data: { accessToken: generateToken() } });
     }),
 );
 

@@ -13,7 +13,7 @@ type AuthContextValue = {
 
 export const AuthContext = createContext<AuthContextValue>({} as AuthContextValue);
 
-// AuthContextProvider
+// AuthContextProvider component that wraps the application and provides the AuthContext.
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(
         localStorage.getItem("accessToken") ? true : false
@@ -21,15 +21,28 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
     const { isLoading, logIn, signUp, signOut } = useAuth();
 
+    const setAuthTimeout = () => {
+        const accessToken = localStorage.getItem("accessToken");
+        setTimeout(() => {
+            signout();
+        }, accessToken ? getExpirationTime(accessToken) : 0); // Check if accessToken is not null before passing it to getExpirationTime
+    }
+
     const login = async (username: string, password: string) => {
         const isLoggedIn = await logIn(username, password);
         setIsAuthenticated(isLoggedIn);
+        if (isLoggedIn) {
+            setAuthTimeout();
+        }
         return isLoggedIn;
     }
 
     const signup = async (username: string, password: string) => {
         const signedUp = await signUp(username, password);
         setIsAuthenticated(signedUp);
+        if (signedUp) {
+            setAuthTimeout();
+        }
         return signedUp;
     }
 
@@ -50,4 +63,10 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
             {children}
         </AuthContext.Provider>
     );
+};
+
+const getExpirationTime = (token: string) => {
+    const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
+    const expiresAt = decodedToken.exp * 1000; // Convert to milliseconds
+    return expiresAt - Date.now(); // Time until expiration
 };
