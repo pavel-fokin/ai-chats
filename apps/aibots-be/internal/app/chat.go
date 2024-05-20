@@ -87,3 +87,8 @@ func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 func (a *App) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
 	return a.messages.AllMessages(ctx, chatID)
 }
+
+// ChatExists checks if the chat exists.
+func (a *App) ChatExists(ctx context.Context, chatID uuid.UUID) (bool, error) {
+	return a.chats.Exists(ctx, chatID)
+}

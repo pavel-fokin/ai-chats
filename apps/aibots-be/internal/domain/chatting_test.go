@@ -28,6 +28,11 @@ func (m *MockChats) AllChats(ctx context.Context, userID uuid.UUID) ([]Chat, err
 	return args.Get(0).([]Chat), args.Error(1)
 }
 
+func (m *MockChats) Exists(ctx context.Context, chatID uuid.UUID) (bool, error) {
+	args := m.Called(ctx, chatID)
+	return args.Bool(0), args.Error(1)
+}
+
 type MockMessages struct {
 	mock.Mock
 }

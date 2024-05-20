@@ -5,4 +5,5 @@ import "errors"
 var (
 	ErrUnauthorized = errors.New("unauthorized")
 	ErrInternal     = errors.New("internal error")
+	ErrNotFound     = errors.New("not found")
 )

@@ -97,3 +97,19 @@ func (c *Chats) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 
 	return chat, nil
 }
+
+func (c *Chats) Exists(ctx context.Context, chatID uuid.UUID) (bool, error) {
+	var exists bool
+	err := c.db.QueryRowContext(
+		ctx,
+		`SELECT EXISTS(
+		SELECT 1 FROM chat WHERE id = ?
+		)`,
+		chatID,
+	).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("failed to check chat existence: %w", err)
+	}
+
+	return exists, nil
+}

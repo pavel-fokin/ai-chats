@@ -28,6 +28,7 @@ type ChatApp interface {
 	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
 	SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error)
+	ChatExists(ctx context.Context, chatID uuid.UUID) (bool, error)
 }
 
 // GetChats handles the GET /api/chats endpoint.
@@ -114,9 +115,32 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 }
 
 // GetEvents handles the GET /api/chats/{uuid}/events endpoint.
-func GetEvents(chat ChatApp, sse *apiutil.SSEConnections, chatEvents Events) http.HandlerFunc {
+func GetEvents(app ChatApp, sse *apiutil.SSEConnections, chatEvents Events) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
+
+		chatID := chi.URLParam(r, "uuid")
+
+		if exists, err := app.ChatExists(ctx, uuid.MustParse(chatID)); err != nil {
+			slog.ErrorContext(ctx, "failed to check if the chat exists", "err", err)
+			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			return
+		} else if !exists {
+			apiutil.AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
+			return
+		}
+
+		conn := apiutil.NewConnection(ctx, w)
+		sse.Add(conn)
+		defer sse.Remove(conn)
+
+		events, err := chatEvents.Subscribe(ctx, chatID)
+		if err != nil {
+			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
+			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			return
+		}
+		defer chatEvents.Unsubscribe(ctx, chatID, events)
 
 		flusher, ok := w.(http.Flusher)
 		if !ok {
@@ -132,20 +156,6 @@ func GetEvents(chat ChatApp, sse *apiutil.SSEConnections, chatEvents Events) htt
 		w.Header().Set("Content-Type", "text/event-stream")
 		w.Header().Set("Cache-Control", "no-cache")
 		w.Header().Set("Connection", "keep-alive")
-
-		chatID := chi.URLParam(r, "uuid")
-
-		conn := apiutil.NewConnection(ctx, w)
-		sse.Add(conn)
-		defer sse.Remove(conn)
-
-		events, err := chatEvents.Subscribe(ctx, chatID)
-		if err != nil {
-			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
-			return
-		}
-		defer chatEvents.Unsubscribe(ctx, chatID, events)
 
 		for {
 			select {

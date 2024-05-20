@@ -42,6 +42,11 @@ func (m *ChatMock) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.
 	return args.Get(0).([]domain.Message), args.Error(1)
 }
 
+func (m *ChatMock) ChatExists(ctx context.Context, chatID uuid.UUID) (bool, error) {
+	args := m.Called(ctx, chatID)
+	return args.Bool(0), args.Error(1)
+}
+
 type EventsMock struct {
 	mock.Mock
 }
@@ -180,41 +185,90 @@ func TestGetMessages(t *testing.T) {
 	})
 }
 func TestGetEvents(t *testing.T) {
-	chatID := uuid.New()
 
-	req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
-	w := httptest.NewRecorder()
+	t.Run("Success", func(t *testing.T) {
+		chatID := uuid.New()
 
-	sse := apiutil.NewSSEConnections()
+		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
+		w := httptest.NewRecorder()
 
-	chat := &ChatMock{}
-	chat.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
-		Return(make(chan []byte), nil)
-	chat.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
-		Return(nil)
+		sse := apiutil.NewSSEConnections()
 
-	eventsCh := make(chan []byte)
-	defer close(eventsCh)
-	events := &EventsMock{}
-	events.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String()).
-		Return(eventsCh, nil)
-	events.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
-		Return(nil)
+		app := &ChatMock{}
+		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
+			Return(true, nil)
 
-	router := chi.NewRouter()
-	router.Get("/api/chats/{uuid}/events", GetEvents(chat, sse, events))
-	go router.ServeHTTP(w, req)
+		eventsCh := make(chan []byte)
+		defer close(eventsCh)
+		events := &EventsMock{}
+		events.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String()).
+			Return(eventsCh, nil)
+		events.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
+			Return(nil)
 
-	eventsCh <- []byte("event")
-	time.Sleep(time.Millisecond)
+		router := chi.NewRouter()
+		router.Get("/api/chats/{uuid}/events", GetEvents(app, sse, events))
+		go router.ServeHTTP(w, req)
 
-	resp := w.Result()
-	// Read server-sent events from repsonse body, unmarshal each to JSON and compare.
-	assert.Equal(t, 200, resp.StatusCode)
-	body := make([]byte, 1024)
-	resp.Body.Read(body)
-	assert.Contains(t, string(body), "data: \"ZXZlbnQ=\"\n\n")
+		eventsCh <- []byte("event")
+		time.Sleep(time.Millisecond)
 
-	events.AssertNumberOfCalls(t, "Subscribe", 1)
-	// events.AssertNumberOfCalls(t, "Unsubscribe", 1)
+		resp := w.Result()
+		// Read server-sent events from repsonse body, unmarshal each to JSON and compare.
+		assert.Equal(t, 200, resp.StatusCode)
+		body := make([]byte, 1024)
+		resp.Body.Read(body)
+		assert.Contains(t, string(body), "data: \"ZXZlbnQ=\"\n\n")
+
+		events.AssertNumberOfCalls(t, "Subscribe", 1)
+		// events.AssertNumberOfCalls(t, "Unsubscribe", 1)
+	})
+
+	t.Run("Failure", func(t *testing.T) {
+		chatID := uuid.New()
+
+		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
+		w := httptest.NewRecorder()
+
+		sse := apiutil.NewSSEConnections()
+
+		app := &ChatMock{}
+		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
+			Return(true, nil)
+
+		events := &EventsMock{}
+		events.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String()).
+			Return(make(chan []byte), errors.New("failed to subscribe"))
+		events.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
+			Return(errors.New("failed to unsubscribe"))
+
+		router := chi.NewRouter()
+		router.Get("/api/chats/{uuid}/events", GetEvents(app, sse, events))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 500, resp.StatusCode)
+		events.AssertNumberOfCalls(t, "Subscribe", 1)
+		events.AssertNumberOfCalls(t, "Unsubscribe", 0)
+	})
+
+	t.Run("Chat not found", func(t *testing.T) {
+		chatID := uuid.New()
+
+		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
+		w := httptest.NewRecorder()
+
+		sse := apiutil.NewSSEConnections()
+
+		app := &ChatMock{}
+		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
+			Return(false, nil)
+
+		router := chi.NewRouter()
+		router.Get("/api/chats/{uuid}/events", GetEvents(app, sse, &EventsMock{}))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 404, resp.StatusCode)
+	})
 }

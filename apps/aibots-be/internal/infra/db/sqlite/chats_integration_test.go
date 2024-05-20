@@ -115,18 +115,58 @@ func TestFindChat(t *testing.T) {
 	users := NewUsers(db)
 	chats := NewChats(db)
 
-	user := domain.NewUser("test")
-	err = users.AddUser(context.Background(), user)
-	assert.NoError(t, err)
+	t.Run("chat exists", func(t *testing.T) {
+		user := domain.NewUser("test")
+		err = users.AddUser(context.Background(), user)
+		assert.NoError(t, err)
 
-	chat := domain.NewChat(user)
-	err = chats.Add(context.Background(), chat)
-	assert.NoError(t, err)
+		chat := domain.NewChat(user)
+		err = chats.Add(context.Background(), chat)
+		assert.NoError(t, err)
 
-	// Call the FindChat method.
-	foundChat, err := chats.FindChat(context.Background(), chat.ID)
+		// Call the FindChat method.
+		foundChat, err := chats.FindChat(context.Background(), chat.ID)
+		assert.NoError(t, err)
+		assert.Equal(t, chat.ID, foundChat.ID)
+		assert.Equal(t, chat.Title, foundChat.Title)
+		assert.Equal(t, chat.CreatedAt, foundChat.CreatedAt)
+	})
+
+	t.Run("chat does not exist", func(t *testing.T) {
+		// Call the FindChat method.
+		_, err := chats.FindChat(context.Background(), uuid.New())
+		assert.Error(t, err)
+	})
+}
+
+func TestChats_Exists(t *testing.T) {
+	db, err := NewDB(":memory:")
 	assert.NoError(t, err)
-	assert.Equal(t, chat.ID, foundChat.ID)
-	assert.Equal(t, chat.Title, foundChat.Title)
-	assert.Equal(t, chat.CreatedAt, foundChat.CreatedAt)
+	defer db.Close()
+	CreateTables(db)
+
+	chats := NewChats(db)
+	users := NewUsers(db)
+
+	t.Run("chat exists", func(t *testing.T) {
+		user := domain.NewUser("test")
+		err = users.AddUser(context.Background(), user)
+		assert.NoError(t, err)
+
+		chat := domain.NewChat(user)
+		err = chats.Add(context.Background(), chat)
+		assert.NoError(t, err)
+
+		// Call the Exists method.
+		exists, err := chats.Exists(context.Background(), chat.ID)
+		assert.NoError(t, err)
+		assert.True(t, exists)
+	})
+
+	t.Run("chat does not exist", func(t *testing.T) {
+		// Call the Exists method.
+		exists, err := chats.Exists(context.Background(), uuid.New())
+		assert.NoError(t, err)
+		assert.False(t, exists)
+	})
 }
