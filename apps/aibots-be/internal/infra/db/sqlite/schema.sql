@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS user (
 CREATE TABLE IF NOT EXISTS chat (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     id TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    created_at TEXT NOT NULL,
     created_by TEXT NOT NULL,
     FOREIGN KEY (created_by) REFERENCES user(id)
 );
@@ -18,6 +20,5 @@ CREATE TABLE IF NOT EXISTS message (
     chat_id TEXT NOT NULL,
     sender TEXT NOT NULL,
     text TEXT NOT NULL,
-    -- created_at TEXT NOT NULL,
     FOREIGN KEY (chat_id) REFERENCES chat(id)
 );

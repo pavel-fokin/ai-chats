@@ -185,7 +185,7 @@ func TestGetEvents(t *testing.T) {
 
 	chat := &ChatMock{}
 	chat.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
-		Return(make(<-chan domain.MessageSent), nil)
+		Return(make(chan []byte), nil)
 	chat.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
 		Return(nil)
 

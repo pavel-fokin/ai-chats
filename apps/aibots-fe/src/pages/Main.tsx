@@ -11,7 +11,6 @@ export function Main() {
     const [isOpen, setOpen] = useState(false);
 
     let asideStyles = styles.Aside;
-
     if (isOpen) {
         asideStyles += ` ${styles.AsideOpen}`;
     }

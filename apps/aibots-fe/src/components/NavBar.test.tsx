@@ -10,10 +10,22 @@ import { Navbar } from './Navbar';
 
 const server = setupServer(
     http.get('/api/chats', () => {
-        return HttpResponse.json({ data: { chats: [{ id: 'chatId' }] } });
+        return HttpResponse.json({
+            data: {
+                chats: [
+                    { id: 'someChatId', title: 'Some chat', createdAt: new Date() },
+                ]
+            }
+        });
     }),
     http.post('/api/chats', () => {
-        return HttpResponse.json({ data: { id: 'newChatId' } });
+        return HttpResponse.json({
+            data: {
+                id: 'newChatId',
+                title: 'New chat',
+                createdAt: new Date()
+            }
+        });
     }),
 );
 
@@ -29,14 +41,14 @@ const queryClient = new QueryClient({
     },
 });
 
-function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
+function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
     return render(
         <AuthContextProvider>
             <QueryClientProvider client={queryClient}>
                 <MemoryRouter initialEntries={[route]}>
                     <Routes>
                         <Route path="/app" element={ui} />
-                        <Route path="/app/chats/:chatId" element={<div>chatId</div>} />
+                        <Route path="/app/chats/:chatId" element={<div>Chat</div>} />
                         <Route path="/app/login" element={<div>Sign in</div>} />
                     </Routes>
                 </MemoryRouter>
@@ -52,7 +64,7 @@ test('renders Navbar component', async () => {
     expect(screen.getByText('Sign out')).toBeInTheDocument();
 
     await waitFor(() => {
-        expect(screen.getByText('chatId')).toBeInTheDocument();
+        expect(screen.getByText('Some chat')).toBeInTheDocument();
     });
 });
 
@@ -60,9 +72,9 @@ test('navigates to chat on chat link click', async () => {
     renderWithRouter(<Navbar />, { route: '/app' });
 
     await waitFor(async () => {
-        expect(screen.getByText('chatId')).toBeInTheDocument();
-        await userEvent.click(screen.getByText('chatId'));
-        expect(screen.getByText('chatId')).toBeInTheDocument();
+        expect(screen.getByText('Some chat')).toBeInTheDocument();
+        await userEvent.click(screen.getByText('Some chat'));
+        expect(screen.getByText('Chat')).toBeInTheDocument();
     });
 });
 
@@ -71,7 +83,7 @@ test('calls handleNewChat on new chat button click', async () => {
 
     await waitFor(async () => {
         await userEvent.click(screen.getByText('Start a new chat'));
-        expect(screen.getByText('chatId')).toBeInTheDocument();
+        expect(screen.getByText('Chat')).toBeInTheDocument();
     });
 });
 

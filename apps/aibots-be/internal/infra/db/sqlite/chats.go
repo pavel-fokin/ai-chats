@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -20,7 +21,16 @@ func NewChats(db *sql.DB) *Chats {
 }
 
 func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
-	_, err := c.db.ExecContext(ctx, "INSERT INTO chat (id, created_by) VALUES (?, ?)", chat.ID, chat.CreatedBy.ID)
+	_, err := c.db.ExecContext(
+		ctx,
+		`INSERT INTO chat
+		(id, title, created_at, created_by)
+		VALUES (?, ?, ?, ?)`,
+		chat.ID,
+		chat.Title,
+		chat.CreatedAt.Format(time.RFC3339Nano),
+		chat.CreatedBy.ID,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to insert chat: %w", err)
 	}
@@ -29,7 +39,14 @@ func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 }
 
 func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
-	rows, err := c.db.QueryContext(ctx, "SELECT id FROM chat WHERE created_by = ?", userID)
+	rows, err := c.db.QueryContext(
+		ctx,
+		`SELECT
+		id, title, created_at
+		FROM chat
+		WHERE created_by = ?`,
+		userID,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to select chats: %w", err)
 	}
@@ -38,9 +55,16 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 	var chats []domain.Chat
 	for rows.Next() {
 		var chat domain.Chat
-		if err := rows.Scan(&chat.ID); err != nil {
+		var createdAt string
+		if err := rows.Scan(&chat.ID, &chat.Title, &createdAt); err != nil {
 			return nil, fmt.Errorf("failed to scan chat: %w", err)
 		}
+
+		chat.CreatedAt, err = time.Parse(time.RFC3339Nano, createdAt)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse created_at: %w", err)
+		}
+
 		chats = append(chats, chat)
 	}
 
@@ -53,9 +77,22 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 
 func (c *Chats) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
 	var chat domain.Chat
-	err := c.db.QueryRowContext(ctx, "SELECT id FROM chat WHERE id = ?", chatID).Scan(&chat.ID)
+	var createdAt string
+	err := c.db.QueryRowContext(
+		ctx,
+		`SELECT
+		id, title, created_at
+		FROM chat
+		WHERE id = ?`,
+		chatID,
+	).Scan(&chat.ID, &chat.Title, &createdAt)
 	if err != nil {
 		return domain.Chat{}, err
+	}
+
+	chat.CreatedAt, err = time.Parse(time.RFC3339Nano, createdAt)
+	if err != nil {
+		return domain.Chat{}, fmt.Errorf("failed to parse created_at: %w", err)
 	}
 
 	return chat, nil

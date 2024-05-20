@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { Button, Flex, Separator } from '@radix-ui/themes';
@@ -43,14 +43,16 @@ export function Navbar() {
                         {!!chats && chats.data.chats?.map((chat) => (
                             <NavigationMenu.Item key={chat.id}>
                                 <NavigationMenu.Link
-                                    href={`/app/chats/${chat.id}`}
+                                    asChild
                                     className={
                                         styles.NavigationMenuLink
                                         + ' '
                                         + (chatId === chat.id ? styles.NavigationMenuLinkActive : '')
                                     }
                                 >
-                                    {chat.id}
+                                    <Link to={`/app/chats/${chat.id}`} >
+                                        {chat.title}
+                                    </Link>
                                 </NavigationMenu.Link>
                             </NavigationMenu.Item>
                         ))}

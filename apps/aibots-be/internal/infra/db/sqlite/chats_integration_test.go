@@ -105,3 +105,28 @@ func TestAllChats(t *testing.T) {
 		assert.Empty(t, allChats)
 	})
 }
+
+func TestFindChat(t *testing.T) {
+	db, err := NewDB(":memory:")
+	assert.NoError(t, err)
+	defer db.Close()
+	CreateTables(db)
+
+	users := NewUsers(db)
+	chats := NewChats(db)
+
+	user := domain.NewUser("test")
+	err = users.AddUser(context.Background(), user)
+	assert.NoError(t, err)
+
+	chat := domain.NewChat(user)
+	err = chats.Add(context.Background(), chat)
+	assert.NoError(t, err)
+
+	// Call the FindChat method.
+	foundChat, err := chats.FindChat(context.Background(), chat.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, chat.ID, foundChat.ID)
+	assert.Equal(t, chat.Title, foundChat.Title)
+	assert.Equal(t, chat.CreatedAt, foundChat.CreatedAt)
+}

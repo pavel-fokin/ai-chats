@@ -1,6 +1,9 @@
 package api
 
-import "pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+import (
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"time"
+)
 
 type UserCredentials struct {
 	Username string `json:"username" validate:"required"`
@@ -20,7 +23,9 @@ type PostMessagesResponse struct {
 }
 
 type Chat struct {
-	ID string `json:"id"`
+	ID        string `json:"id"`
+	Title     string `json:"title"`
+	CreatedAt string `json:"created_at"`
 }
 
 type GetChatsResponse struct {
@@ -30,7 +35,11 @@ type GetChatsResponse struct {
 func NewGetChatsResponse(chats []domain.Chat) GetChatsResponse {
 	var res GetChatsResponse
 	for _, chat := range chats {
-		res.Chats = append(res.Chats, Chat{ID: chat.ID.String()})
+		res.Chats = append(res.Chats, Chat{
+			ID:        chat.ID.String(),
+			Title:     chat.Title,
+			CreatedAt: chat.CreatedAt.Format(time.RFC3339Nano),
+		})
 	}
 	return res
 }

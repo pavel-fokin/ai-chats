@@ -35,7 +35,6 @@ func GetChats(chat ChatApp) http.HandlerFunc {
 		userID := MustHaveUserID(ctx)
 
 		chats, err := chat.AllChats(ctx, userID)
-		slog.InfoContext(ctx, "get chats", "chats", chats)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get chats", "err", err)
 			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
