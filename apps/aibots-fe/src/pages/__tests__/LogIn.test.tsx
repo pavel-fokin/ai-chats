@@ -19,18 +19,22 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-test('renders Log In component', () => {
-    render(
+// Render a component with required providers and routing.
+export function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
+    return render(
         <AuthContextProvider>
-            <MemoryRouter initialEntries={['/app/login']}>
+            <MemoryRouter initialEntries={[route]}>
                 <Routes>
-                    <Route path="/app/login" element={
-                        <LogIn />
-                    } />
+                    <Route path="/app" element={<div>App</div>} />
+                    <Route path="/app/login" element={ui} />
                 </Routes>
             </MemoryRouter>
         </AuthContextProvider>
     );
+}
+
+test('renders Log In component', () => {
+    renderWithRouter(<LogIn />, { route: '/app/login' });
 
     expect(screen.getByRole('heading', { name: 'Log in' })).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Your username')).toBeInTheDocument();
@@ -39,19 +43,8 @@ test('renders Log In component', () => {
     expect(screen.getByText("Don't have an account?")).toBeInTheDocument();
 });
 
-test('calls signIn function and navigates to /app on successful log in', async () => {
-    render(
-        <AuthContextProvider>
-            <MemoryRouter initialEntries={['/app/login']}>
-                <Routes>
-                    <Route path="/app/login" element={
-                        <LogIn />
-                    } />
-                    <Route path="/app" element={<div>App</div>} />
-                </Routes>
-            </MemoryRouter>
-        </AuthContextProvider>
-    );
+test('calls logIn function and navigates to /app on successful log in', async () => {
+    renderWithRouter(<LogIn />, { route: '/app/login' });
 
     const username = 'user';
     const password = 'password';
@@ -60,13 +53,26 @@ test('calls signIn function and navigates to /app on successful log in', async (
     const passwordInput = screen.getByPlaceholderText('Your password');
     const logInButton = screen.getByRole('button', { name: 'Log in' });
 
-    userEvent.type(usernameInput, username);
-    userEvent.type(passwordInput, password);
+    await userEvent.type(usernameInput, username);
+    await userEvent.type(passwordInput, password);
 
-    userEvent.click(logInButton);
+    await userEvent.click(logInButton);
 
     await waitFor(() => {
         expect(screen.getByText('App')).toBeInTheDocument();
+    });
+});
+
+test('validation errors are displayed when submitting an empty form', async () => {
+    renderWithRouter(<LogIn />, { route: '/app/login' });
+
+    const logInButton = screen.getByRole('button', { name: 'Log in' });
+
+    await userEvent.click(logInButton);
+
+    await waitFor(() => {
+        expect(screen.getByText('Username is required')).toBeInTheDocument();
+        expect(screen.getByText('Password must be at least 6 characters')).toBeInTheDocument();
     });
 });
 

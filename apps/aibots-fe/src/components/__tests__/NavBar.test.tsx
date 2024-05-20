@@ -6,7 +6,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import { AuthContextProvider } from "contexts";
-import { Navbar } from './Navbar';
+import { Navbar } from '../Navbar';
 
 const server = setupServer(
     http.get('/api/chats', () => {

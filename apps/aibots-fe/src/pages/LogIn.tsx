@@ -1,22 +1,28 @@
-import { useContext, useState } from "react";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useContext } from "react";
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from "react-router-dom";
 
 import { Button, Container, Flex, Heading, Link, Text, TextField } from "@radix-ui/themes";
 
 import { AuthContext } from "contexts";
+import { userCredentialsSchema, UserCredentialsSchema } from "schemas";
 
 export const LogIn = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<UserCredentialsSchema>({
+        resolver: zodResolver(userCredentialsSchema),
+    });
 
     const navigate = useNavigate();
 
     const { login, isLoading } = useContext(AuthContext);
 
-    const onSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        let isLoggedIn = false;
-        isLoggedIn = await login(username, password);
+    const onSubmit:  SubmitHandler<UserCredentialsSchema> = async ({username, password}) => {
+        const isLoggedIn = await login(username, password);
         if (isLoggedIn) {
             navigate('/app');
         }
@@ -24,24 +30,24 @@ export const LogIn = () => {
 
     return (
         <Container size="1" m="2">
-            <form role="form" onSubmit={onSubmit}>
+            <form role="form" onSubmit={handleSubmit(onSubmit)}>
                 <Flex direction="column" gap="4">
                     <Heading as="h2" size="8">Log in</Heading>
                     <TextField.Root
-                        name="username"
                         autoComplete="off"
                         size="3"
                         placeholder="Your username"
-                        onChange={e => { setUsername(e.target.value) }}
+                        { ...register("username")}
                     />
+                    {errors.username && <Text color="tomato">{errors.username.message?.toString()}</Text>}
                     <TextField.Root
-                        name="password"
                         size="3"
                         type="password"
                         placeholder="Your password"
-                        onChange={e => { setPassword(e.target.value) }}
+                        { ...register("password")}
                     />
-                    <Button loading={isLoading} size="4" highContrast>Log in</Button>
+                    {errors.password && <Text color="tomato">{errors.password.message?.toString()}</Text>}
+                    <Button loading={isLoading} size="4" highContrast type="submit">Log in</Button>
                     <Text align="center">
                         Don't have an account?  <Link href="/app/signup">Create one</Link>
                     </Text>

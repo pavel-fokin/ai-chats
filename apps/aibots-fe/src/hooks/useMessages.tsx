@@ -15,11 +15,6 @@ export function useMessages(chatId: string) {
         mutationFn: (msg: Message) => {
             return postMessages(chatId, msg);
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['messages', chatId],
-            });
-        }
     });
 
     return {

@@ -15,9 +15,10 @@ export default defineConfig({
       'api': '/src/api',
       'components': '/src/components',
       'contexts': '/src/contexts',
-      'types': '/src/types',
       'hooks': '/src/hooks',
       'pages': '/src/pages',
+      'types': '/src/types',
+      'schemas': '/src/schemas'
     }
   },
   test: {

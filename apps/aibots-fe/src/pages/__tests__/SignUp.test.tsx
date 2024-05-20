@@ -19,18 +19,22 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-test('renders Sign Up component', () => {
-    render(
+// Render a component with required providers and routing.
+export function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
+    return render(
         <AuthContextProvider>
-            <MemoryRouter initialEntries={['/app/signup']}>
+            <MemoryRouter initialEntries={[route]}>
                 <Routes>
-                    <Route path="/app/signup" element={
-                        <SignUp />
-                    } />
+                    <Route path="/app" element={<div>App</div>} />
+                    <Route path="/app/signup" element={ui} />
                 </Routes>
             </MemoryRouter>
         </AuthContextProvider>
     );
+}
+
+test('renders Sign Up component', () => {
+    renderWithRouter(<SignUp />, { route: '/app/signup' });
 
     expect(screen.getByRole('heading', { name: 'Sign up' })).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Your username')).toBeInTheDocument();
@@ -40,18 +44,7 @@ test('renders Sign Up component', () => {
 });
 
 test('calls signUp function and navigates to /app on successful sign up', async () => {
-    render(
-        <AuthContextProvider>
-            <MemoryRouter initialEntries={['/app/signup']}>
-                <Routes>
-                    <Route path="/app/signup" element={
-                        <SignUp />
-                    } />
-                    <Route path="/app" element={<div>App</div>} />
-                </Routes>
-            </MemoryRouter>
-        </AuthContextProvider>
-    );
+    renderWithRouter(<SignUp />, { route: '/app/signup' });
 
     const username = 'user';
     const password = 'password';
@@ -60,13 +53,26 @@ test('calls signUp function and navigates to /app on successful sign up', async 
     const passwordInput = screen.getByPlaceholderText('Your password');
     const signUpButton = screen.getByRole('button', { name: 'Create an account' });
 
-    userEvent.type(usernameInput, username);
-    userEvent.type(passwordInput, password);
+    await userEvent.type(usernameInput, username);
+    await userEvent.type(passwordInput, password);
 
-    userEvent.click(signUpButton);
+    await userEvent.click(signUpButton);
 
     await waitFor(() => {
         expect(screen.getByText('App')).toBeInTheDocument();
+    });
+});
+
+test('displays validation errors on invalid input', async () => {
+    renderWithRouter(<SignUp />, { route: '/app/signup' });
+
+    const signUpButton = screen.getByRole('button', { name: 'Create an account' });
+
+    await userEvent.click(signUpButton);
+
+    await waitFor(() => {
+        expect(screen.getByText('Username is required')).toBeInTheDocument();
+        expect(screen.getByText('Password must be at least 6 characters')).toBeInTheDocument();
     });
 });
 

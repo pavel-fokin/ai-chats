@@ -24,6 +24,8 @@
     "paths": {
       "api/*": ["api/*"],
       "hooks/*": ["hooks/*"],
+      "schemas/*": ["schemas/*"],
+      "components/*": ["components/*"],
     },
   },
   "include": ["src"],
