@@ -14,18 +14,18 @@ type App interface {
 	GenerateResponse(ctx context.Context, chatID uuid.UUID) error
 }
 
-type Subscriber interface {
+type Events interface {
 	Subscribe(ctx context.Context, topic string) (chan []byte, error)
 	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
 }
 
 type Worker struct {
 	app    App
-	events Subscriber
+	events Events
 	ctx    context.Context
 }
 
-func New(app App, events Subscriber) *Worker {
+func New(app App, events Events) *Worker {
 	return &Worker{
 		app:    app,
 		events: events,

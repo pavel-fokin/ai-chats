@@ -58,7 +58,7 @@ func main() {
 		events,
 	)
 
-	server := server.New(config.Server)
+	server := server.New(config.Server, events)
 	server.SetupAuthAPI(app)
 	server.SetupChatAPI(app)
 	staticFS, _ := fs.Sub(web.Dist, "dist")

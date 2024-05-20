@@ -16,6 +16,11 @@ import (
 
 const maxShutdownTimeout = 3
 
+type Events interface {
+	Subscribe(ctx context.Context, topic string) (chan []byte, error)
+	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
+}
+
 // Config is the server configuration.
 type Config struct {
 	Port            string `env:"AIBOTS_SERVER_PORT" envDefault:"8080"`
@@ -27,10 +32,11 @@ type Server struct {
 	router *chi.Mux
 	server *http.Server
 	sse    *apiutil.SSEConnections
+	events Events
 }
 
 // NewServer creates a new server.
-func New(config Config) *Server {
+func New(config Config, events Events) *Server {
 
 	router := chi.NewRouter()
 
@@ -48,6 +54,7 @@ func New(config Config) *Server {
 	return &Server{
 		router: router,
 		server: server,
+		events: events,
 		sse:    apiutil.NewSSEConnections(),
 	}
 }
@@ -87,7 +94,7 @@ func (s *Server) SetupChatAPI(chat api.ChatApp) {
 
 	})
 
-	s.router.Get("/api/chats/{uuid}/events", api.GetEvents(chat, s.sse))
+	s.router.Get("/api/chats/{uuid}/events", api.GetEvents(chat, s.sse, s.events))
 }
 
 func (s *Server) SetupStaticRoutes(static fs.FS) {

@@ -42,12 +42,16 @@ func (m *ChatMock) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.
 	return args.Get(0).([]domain.Message), args.Error(1)
 }
 
-func (m *ChatMock) Subscribe(ctx context.Context, topic string) (chan []byte, error) {
+type EventsMock struct {
+	mock.Mock
+}
+
+func (m *EventsMock) Subscribe(ctx context.Context, topic string) (chan []byte, error) {
 	args := m.Called(ctx, topic)
 	return args.Get(0).(chan []byte), args.Error(1)
 }
 
-func (m *ChatMock) Unsubscribe(ctx context.Context, topic string, channel chan []byte) error {
+func (m *EventsMock) Unsubscribe(ctx context.Context, topic string, channel chan []byte) error {
 	args := m.Called(ctx, topic, channel)
 	return args.Error(0)
 }
@@ -189,12 +193,28 @@ func TestGetEvents(t *testing.T) {
 	chat.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
 		Return(nil)
 
+	eventsCh := make(chan []byte)
+	defer close(eventsCh)
+	events := &EventsMock{}
+	events.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String()).
+		Return(eventsCh, nil)
+	events.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
+		Return(nil)
+
 	router := chi.NewRouter()
-	router.Get("/api/chats/{uuid}/events", GetEvents(chat, sse))
+	router.Get("/api/chats/{uuid}/events", GetEvents(chat, sse, events))
 	go router.ServeHTTP(w, req)
 
-	time.Sleep(50 * time.Millisecond)
+	eventsCh <- []byte("event")
+	time.Sleep(time.Millisecond)
 
 	resp := w.Result()
+	// Read server-sent events from repsonse body, unmarshal each to JSON and compare.
 	assert.Equal(t, 200, resp.StatusCode)
+	body := make([]byte, 1024)
+	resp.Body.Read(body)
+	assert.Contains(t, string(body), "data: \"ZXZlbnQ=\"\n\n")
+
+	events.AssertNumberOfCalls(t, "Subscribe", 1)
+	// events.AssertNumberOfCalls(t, "Unsubscribe", 1)
 }

@@ -12,6 +12,11 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
+type Events interface {
+	Subscribe(ctx context.Context, topic string) (chan []byte, error)
+	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
+}
+
 type Message struct {
 	ID     string `json:"id"`
 	Sender string `json:"sender"`
@@ -23,8 +28,6 @@ type ChatApp interface {
 	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
 	SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error)
-	Subscribe(ctx context.Context, topic string) (chan []byte, error)
-	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
 }
 
 // GetChats handles the GET /api/chats endpoint.
@@ -111,7 +114,7 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 }
 
 // GetEvents handles the GET /api/chats/{uuid}/events endpoint.
-func GetEvents(chat ChatApp, sse *apiutil.SSEConnections) http.HandlerFunc {
+func GetEvents(chat ChatApp, sse *apiutil.SSEConnections, chatEvents Events) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -136,13 +139,13 @@ func GetEvents(chat ChatApp, sse *apiutil.SSEConnections) http.HandlerFunc {
 		sse.Add(conn)
 		defer sse.Remove(conn)
 
-		events, err := chat.Subscribe(ctx, chatID)
+		events, err := chatEvents.Subscribe(ctx, chatID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
 			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
-		defer chat.Unsubscribe(ctx, chatID, events)
+		defer chatEvents.Unsubscribe(ctx, chatID, events)
 
 		for {
 			select {
