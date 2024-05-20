@@ -1,9 +1,10 @@
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import { Flex, Box } from "@radix-ui/themes";
+import { Box, Flex } from "@radix-ui/themes";
 
 import { InputMessage, Message } from 'components';
-import { useMessages, useChatEvents } from 'hooks';
+import { useChatEvents, useMessages } from 'hooks';
 import * as types from 'types';
 
 export function Chat() {
@@ -15,6 +16,10 @@ export function Chat() {
 
     const { messages, sendMessage } = useMessages(chatId);
     useChatEvents(chatId);
+
+    useEffect(() => {
+        window.scrollTo(0, document.body.scrollHeight);
+    }, [messages]);
 
     const handleSend = async (msg: types.Message) => {
         sendMessage.mutate({ sender: 'human', text: msg.text });
@@ -38,7 +43,6 @@ export function Chat() {
             <Box style={{ maxWidth: "688px", width: "100%", margin: "0 auto" }}>
                 <InputMessage handleSend={handleSend} />
             </Box>
-
         </Flex>
     );
 }

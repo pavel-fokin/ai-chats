@@ -27,5 +27,5 @@ export function useChatEvents(chatId: string) {
             console.log('Closing connection to server.');
             eventSource.close();
         }
-    }, []);
+    }, [chatId]);
 }
