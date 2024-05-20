@@ -10,7 +10,11 @@ import { useChats } from 'hooks';
 
 import styles from './Navbar.module.css';
 
-export function Navbar() {
+type NavbarProps = {
+    open: (open: boolean) => void;
+}
+
+export function Navbar({ open }: NavbarProps) {
     const navigate = useNavigate();
     const { chatId } = useParams<{ chatId: string }>();
 
@@ -50,7 +54,7 @@ export function Navbar() {
                                         + (chatId === chat.id ? styles.NavigationMenuLinkActive : '')
                                     }
                                 >
-                                    <Link to={`/app/chats/${chat.id}`} >
+                                    <Link to={`/app/chats/${chat.id}`} onClick={() => open(false)}>
                                         {chat.title}
                                     </Link>
                                 </NavigationMenu.Link>
