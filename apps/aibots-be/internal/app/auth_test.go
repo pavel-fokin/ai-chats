@@ -3,13 +3,14 @@ package app
 import (
 	"context"
 	"errors"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app/apputil"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"testing"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
 )
 
 type MockUsers struct {
@@ -62,7 +63,7 @@ func TestSignIn(t *testing.T) {
 	})
 
 	t.Run("user found", func(t *testing.T) {
-		hashedPassword, err := apputil.HashPassword("password")
+		hashedPassword, err := crypto.HashPassword("password")
 		assert.NoError(t, err)
 
 		mockUsers := &MockUsers{}

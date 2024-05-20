@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 
 	"github.com/google/uuid"
+
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
 type App interface {

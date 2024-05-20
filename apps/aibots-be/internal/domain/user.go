@@ -2,10 +2,9 @@ package domain
 
 import (
 	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
-)
 
-const bcryptCost = 14
+	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
+)
 
 type User struct {
 	ID           uuid.UUID
@@ -21,7 +20,7 @@ func NewUser(username string) User {
 }
 
 func (u *User) SetPassword(password string) error {
-	hashedPassword, err := hashPassword(password)
+	hashedPassword, err := crypto.HashPassword(password)
 	if err != nil {
 		return err
 	}
@@ -32,15 +31,5 @@ func (u *User) SetPassword(password string) error {
 
 // VerifyPassword compares a password with a hash.
 func (u User) VerifyPassword(password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(password))
-}
-
-// HashPassword hashes a password.
-func hashPassword(password string) (string, error) {
-	hashedPassowrd, err := bcrypt.GenerateFromPassword([]byte(password), bcryptCost)
-	if err != nil {
-		return "", err
-	}
-
-	return string(hashedPassowrd), nil
+	return crypto.VerifyPassword(u.PasswordHash, password)
 }
