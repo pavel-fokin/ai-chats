@@ -22,15 +22,15 @@ func NewChatting(chats Chats, messages Messages) *Chatting {
 	}
 }
 
-func (c *Chatting) SendMessage(ctx context.Context, chatID uuid.UUID, message Message) (MessageSent, error) {
+func (c *Chatting) SendMessage(ctx context.Context, chatID uuid.UUID, message Message) error {
 	chat, err := c.chats.FindChat(ctx, chatID)
 	if err != nil {
-		return MessageSent{}, err
+		return err
 	}
 
 	if err := c.messages.Add(ctx, chat, message); err != nil {
-		return MessageSent{}, err
+		return err
 	}
 
-	return NewMessageSent(chatID, message), nil
+	return nil
 }

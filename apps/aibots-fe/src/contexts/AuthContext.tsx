@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode } from 'react';
+import { ReactNode, createContext, useEffect, useState } from 'react';
 
 import { useAuth } from 'hooks';
 
@@ -21,28 +21,32 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
     const { isLoading, logIn, signUp, signOut } = useAuth();
 
+    useEffect(() => {
+        if (isAuthenticated) {
+            setAuthTimeout();
+        }
+    }, [isAuthenticated]);
+
     const setAuthTimeout = () => {
         const accessToken = localStorage.getItem("accessToken");
-        setTimeout(() => {
-            signout();
-        }, accessToken ? getExpirationTime(accessToken) : 0); // Check if accessToken is not null before passing it to getExpirationTime
+        setTimeout(
+            () => {
+                signout();
+            },
+            // Check if accessToken is not null before passing it to getExpirationTime
+            accessToken ? getExpirationTime(accessToken) : 0
+        );
     }
 
     const login = async (username: string, password: string) => {
         const isLoggedIn = await logIn(username, password);
         setIsAuthenticated(isLoggedIn);
-        if (isLoggedIn) {
-            setAuthTimeout();
-        }
         return isLoggedIn;
     }
 
     const signup = async (username: string, password: string) => {
         const signedUp = await signUp(username, password);
         setIsAuthenticated(signedUp);
-        if (signedUp) {
-            setAuthTimeout();
-        }
         return signedUp;
     }
 

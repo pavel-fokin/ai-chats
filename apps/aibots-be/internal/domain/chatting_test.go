@@ -74,9 +74,8 @@ func TestSendMessage(t *testing.T) {
 	message := NewMessage("User", "Hello!")
 
 	// Call the SendMessage method
-	messageSent, err := chatting.SendMessage(ctx, chatID, message)
+	err := chatting.SendMessage(ctx, chatID, message)
 	assert.NoError(t, err)
-	assert.Equal(t, "Hello!", messageSent.Message.Text)
 
 	// Verify that the Add method was called once.
 	messages.AssertNumberOfCalls(t, "Add", 1)

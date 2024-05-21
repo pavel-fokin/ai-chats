@@ -9,7 +9,7 @@ import (
 )
 
 type MessageSender interface {
-	SendMessage(ctx context.Context, chatID uuid.UUID, message domain.Message) (domain.MessageSent, error)
+	SendMessage(ctx context.Context, chatID uuid.UUID, message domain.Message) error
 }
 type Events interface {
 	Subscribe(context.Context, string) (chan []byte, error)

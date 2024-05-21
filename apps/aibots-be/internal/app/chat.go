@@ -36,7 +36,7 @@ func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, er
 func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (domain.Message, error) {
 	message := domain.NewMessage("User", text)
 
-	_, err := a.chatting.SendMessage(ctx, chatID, message)
+	err := a.chatting.SendMessage(ctx, chatID, message)
 	if err != nil {
 		return domain.Message{}, fmt.Errorf("failed to send a message: %w", err)
 	}
@@ -70,7 +70,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 		return fmt.Errorf("failed to generate a response: %w", err)
 	}
 
-	_, err = a.chatting.SendMessage(ctx, chatID, llmMessage)
+	err = a.chatting.SendMessage(ctx, chatID, llmMessage)
 	if err != nil {
 		return fmt.Errorf("failed to send a message: %w", err)
 	}

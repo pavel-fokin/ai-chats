@@ -24,7 +24,7 @@ func InitSigningKey(key string) {
 // JWTClaims represents the claims of a JSON Web Token (JWT).
 type JWTClaims struct {
 	jwt.RegisteredClaims
-	UserID uuid.UUID `json:"userID"`
+	UserID uuid.UUID `json:"userId"`
 }
 
 // NewAccessToken generates a new access token for the given user ID.
