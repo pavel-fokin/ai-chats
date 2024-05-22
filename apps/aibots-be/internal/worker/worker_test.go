@@ -43,7 +43,7 @@ func TestWorker(t *testing.T) {
 		// Assert that the number of goroutines has increased by one.
 		assert.Equal(t, numGoroutins+1, runtime.NumGoroutine())
 
-		w.Stop()
+		w.Shutdown()
 		time.Sleep(time.Millisecond)
 
 		// Assert that the number of goroutines is the same as before the start of the worker.

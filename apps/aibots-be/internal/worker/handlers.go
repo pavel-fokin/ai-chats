@@ -4,26 +4,23 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log/slog"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/app/commands"
 )
 
 func (w *Worker) SetupHandlers(app App) {
-	w.RegisterHandler("worker", 1, w.MessageSent(app))
+	w.RegisterHandler("worker", 1, w.GenerateResponse(app))
 }
 
-func (w *Worker) MessageSent(app App) HandlerFunc {
+func (w *Worker) GenerateResponse(app App) HandlerFunc {
 	return func(ctx context.Context, e []byte) error {
-		var messageSent domain.MessageSent
-		if err := json.Unmarshal(e, &messageSent); err != nil {
-			slog.ErrorContext(w.ctx, "failed to unmarshal event", "err", err)
+		var generateResponse commands.GenerateResponse
+		if err := json.Unmarshal(e, &generateResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal event: %w", err)
 		}
 
-		err := app.GenerateResponse(w.ctx, messageSent.ChatID)
+		err := app.GenerateResponse(ctx, generateResponse.ChatID)
 		if err != nil {
-			slog.ErrorContext(w.ctx, "failed to generate a response", "err", err)
 			return fmt.Errorf("failed to generate a response: %w", err)
 		}
 

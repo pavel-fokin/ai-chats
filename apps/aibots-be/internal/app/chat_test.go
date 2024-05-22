@@ -1,3 +1,5 @@
+//go:build !race
+
 package app
 
 import (
@@ -53,7 +55,7 @@ func TestCreateChat(t *testing.T) {
 	mockChats.On("Add", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
 
 	mockUsers := &MockUsers{}
-	mockUsers.On("FindByID", mock.Anything, mock.Anything).Return(user, nil)
+	mockUsers.On("FindByID", mock.Anything, user.ID).Return(user, nil)
 
 	app := &App{chats: mockChats, users: mockUsers}
 

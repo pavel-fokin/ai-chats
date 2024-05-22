@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/llm"
-
 	"github.com/google/uuid"
+
+	"pavel-fokin/ai/apps/ai-bots-be/internal/app/commands"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/llm"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/json"
 )
 
 // CreateChat creates a chat for the user.
@@ -46,8 +47,9 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (d
 		return domain.Message{}, fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
-	if err := a.events.Publish(ctx, "worker", messageSent.AsBytes()); err != nil {
-		return domain.Message{}, fmt.Errorf("failed to generate respone event: %w", err)
+	generateResponse := commands.NewGenerateResponse(chatID)
+	if err := a.events.Publish(ctx, "worker", json.MustMarshal(ctx, generateResponse)); err != nil {
+		return domain.Message{}, fmt.Errorf("failed to publish a generate response command: %w", err)
 	}
 
 	return domain.Message{}, nil

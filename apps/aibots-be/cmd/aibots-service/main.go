@@ -50,6 +50,7 @@ func main() {
 	}
 
 	events := events.New()
+	defer events.CloseAll()
 
 	app := app.New(
 		sqlite.NewChats(db),
@@ -58,22 +59,28 @@ func main() {
 		events,
 	)
 
+	// Setup the server
 	server := server.New(config.Server, events)
 	server.SetupAuthAPI(app)
 	server.SetupChatAPI(app)
 	staticFS, _ := fs.Sub(web.Dist, "dist")
 	server.SetupStaticRoutes(staticFS)
 
+	// Setup the worker
+	worker := worker.New(events)
+	worker.SetupHandlers(app)
+
 	log.Println("Starting AIBots HTTP server... ", config.Server.Port)
 	go server.Start()
 
-	worker := worker.New(events)
-	worker.SetupHandlers(app)
+	log.Println("Starting AIBots worker...")
 	worker.Start()
 
+	// Wait for the shutdown signal
 	<-ctx.Done()
 
-	worker.Stop()
+	log.Println("Shutting down the AIBots worker...")
+	worker.Shutdown()
 
 	log.Println("Shutting down the AIBots HTTP server...")
 	if err := server.Shutdown(); err != nil {

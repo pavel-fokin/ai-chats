@@ -78,6 +78,6 @@ func (w *Worker) Start() {
 	}
 }
 
-func (w *Worker) Stop() {
+func (w *Worker) Shutdown() {
 	w.stop()
 }

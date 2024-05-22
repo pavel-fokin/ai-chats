@@ -46,3 +46,15 @@ func (e *Events) Publish(ctx context.Context, topic string, data []byte) error {
 	}
 	return nil
 }
+
+func (e *Events) CloseAll() {
+	for topic, chs := range e.topics {
+		for ch := range chs {
+			close(ch)
+			for range ch {
+				// drain channel
+			}
+		}
+		delete(e.topics, topic)
+	}
+}
