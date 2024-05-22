@@ -68,7 +68,8 @@ func main() {
 	go server.Start()
 
 	worker := worker.New(app, events)
-	go worker.Start()
+	worker.SetupHandlers()
+	worker.Start()
 
 	<-ctx.Done()
 
