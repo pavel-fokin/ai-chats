@@ -14,7 +14,7 @@ export function useChatEvents(chatId: string) {
             console.log('Connection to server opened.');
         };
 
-        eventSource.onmessage = (_event) => {
+        eventSource.onmessage = () => {
             console.log('Received event');
             invalidateMessages();
         };

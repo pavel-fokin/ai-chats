@@ -21,6 +21,11 @@ func (m *MockChats) Add(ctx context.Context, chat domain.Chat) error {
 	return args.Error(0)
 }
 
+func (m *MockChats) UpdateTitle(ctx context.Context, chatID uuid.UUID, title string) error {
+	args := m.Called(ctx, chatID, title)
+	return args.Error(0)
+}
+
 func (m *MockChats) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
 	args := m.Called(ctx, chatID)
 	return args.Get(0).(domain.Chat), args.Error(1)

@@ -38,6 +38,22 @@ func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 	return nil
 }
 
+func (c *Chats) UpdateTitle(ctx context.Context, chatID uuid.UUID, title string) error {
+	_, err := c.db.ExecContext(
+		ctx,
+		`UPDATE chat
+		SET title = ?
+		WHERE id = ?`,
+		title,
+		chatID,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to update chat title: %w", err)
+	}
+
+	return nil
+}
+
 func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
 	rows, err := c.db.QueryContext(
 		ctx,

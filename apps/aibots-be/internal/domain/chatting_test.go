@@ -18,6 +18,11 @@ func (m *MockChats) Add(ctx context.Context, chat Chat) error {
 	return args.Error(0)
 }
 
+func (m *MockChats) UpdateTitle(ctx context.Context, chatID uuid.UUID, title string) error {
+	args := m.Called(ctx, chatID, title)
+	return args.Error(0)
+}
+
 func (m *MockChats) FindChat(ctx context.Context, id uuid.UUID) (Chat, error) {
 	args := m.Called(ctx, id)
 	return args.Get(0).(Chat), args.Error(1)

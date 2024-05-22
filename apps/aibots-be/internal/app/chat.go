@@ -8,7 +8,6 @@ import (
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app/commands"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/llm"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/json"
 )
 
@@ -53,36 +52,6 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (d
 	}
 
 	return domain.Message{}, nil
-}
-
-// GenerateResponse generates a LLM response for the chat.
-func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
-	messages, err := a.AllMessages(ctx, chatID)
-	if err != nil {
-		return fmt.Errorf("failed to get messages: %w", err)
-	}
-
-	llm, err := llm.NewChatModel("llama3")
-	if err != nil {
-		return fmt.Errorf("failed to create a chat model: %w", err)
-	}
-
-	llmMessage, err := llm.GenerateResponse(ctx, messages)
-	if err != nil {
-		return fmt.Errorf("failed to generate a response: %w", err)
-	}
-
-	err = a.chatting.SendMessage(ctx, chatID, llmMessage)
-	if err != nil {
-		return fmt.Errorf("failed to send a message: %w", err)
-	}
-
-	messageSent := domain.NewMessageSent(chatID, llmMessage)
-	if err := a.events.Publish(ctx, chatID.String(), messageSent.AsBytes()); err != nil {
-		return fmt.Errorf("failed to publish a message sent event: %w", err)
-	}
-
-	return nil
 }
 
 // AllMessages returns all messages in the chat.

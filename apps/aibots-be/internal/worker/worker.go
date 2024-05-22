@@ -10,6 +10,7 @@ import (
 
 type App interface {
 	GenerateResponse(ctx context.Context, chatID uuid.UUID) error
+	GenerateTitle(ctx context.Context, chatID uuid.UUID) error
 }
 
 type Events interface {

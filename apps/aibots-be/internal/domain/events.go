@@ -26,3 +26,19 @@ func (m MessageSent) AsBytes() []byte {
 	bytes, _ := json.Marshal(m)
 	return bytes
 }
+
+// TitleGenerated represents a title updated event.
+type TitleGenerated struct {
+	ID     uuid.UUID `json:"id"`
+	ChatID uuid.UUID `json:"chat_id"`
+	Title  string    `json:"title"`
+}
+
+// NewTitleGenerated creates a new title generated event.
+func NewTitleGenerated(chatID uuid.UUID, title string) TitleGenerated {
+	return TitleGenerated{
+		ID:     uuid.New(),
+		ChatID: chatID,
+		Title:  title,
+	}
+}
