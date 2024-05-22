@@ -130,7 +130,7 @@ func GetEvents(app ChatApp, sse *apiutil.SSEConnections, chatEvents Events) http
 			return
 		}
 
-		conn := apiutil.NewConnection(ctx, w)
+		conn := apiutil.NewConnection(ctx)
 		sse.Add(conn)
 		defer sse.Remove(conn)
 

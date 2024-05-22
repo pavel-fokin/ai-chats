@@ -2,22 +2,19 @@ package apiutil
 
 import (
 	"context"
-	"net/http"
 	"sync"
 )
 
 type Connection struct {
-	writer http.ResponseWriter
 	Closed chan struct{}
 	ctx    context.Context
 	cancel context.CancelFunc
 }
 
-func NewConnection(ctx context.Context, w http.ResponseWriter) *Connection {
+func NewConnection(ctx context.Context) *Connection {
 	// func NewConnection(ctx context.Context) *Connection {
 	ctx, cancel := context.WithCancel(ctx)
 	return &Connection{
-		writer: w,
 		Closed: make(chan struct{}),
 		ctx:    ctx,
 		cancel: cancel,
