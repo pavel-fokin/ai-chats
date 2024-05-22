@@ -51,17 +51,19 @@ type handler struct {
 type Topic = string
 
 type Worker struct {
-	app      App
 	events   Events
 	ctx      context.Context
+	stop     context.CancelFunc
 	handlers map[Topic]handler
 }
 
-func New(app App, events Events) *Worker {
+func New(events Events) *Worker {
+	ctx, stop := context.WithCancel(context.Background())
+
 	return &Worker{
-		app:      app,
 		events:   events,
-		ctx:      context.Background(),
+		ctx:      ctx,
+		stop:     stop,
 		handlers: make(map[Topic]handler),
 	}
 }
@@ -77,5 +79,5 @@ func (w *Worker) Start() {
 }
 
 func (w *Worker) Stop() {
-	w.ctx.Done()
+	w.stop()
 }

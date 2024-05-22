@@ -67,8 +67,8 @@ func main() {
 	log.Println("Starting AIBots HTTP server... ", config.Server.Port)
 	go server.Start()
 
-	worker := worker.New(app, events)
-	worker.SetupHandlers()
+	worker := worker.New(events)
+	worker.SetupHandlers(app)
 	worker.Start()
 
 	<-ctx.Done()

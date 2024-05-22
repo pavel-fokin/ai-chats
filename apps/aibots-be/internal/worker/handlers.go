@@ -9,8 +9,8 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
-func (w *Worker) SetupHandlers() {
-	w.RegisterHandler("worker", 1, w.MessageSent(w.app))
+func (w *Worker) SetupHandlers(app App) {
+	w.RegisterHandler("worker", 1, w.MessageSent(app))
 }
 
 func (w *Worker) MessageSent(app App) HandlerFunc {
@@ -21,7 +21,7 @@ func (w *Worker) MessageSent(app App) HandlerFunc {
 			return fmt.Errorf("failed to unmarshal event: %w", err)
 		}
 
-		err := w.app.GenerateResponse(w.ctx, messageSent.ChatID)
+		err := app.GenerateResponse(w.ctx, messageSent.ChatID)
 		if err != nil {
 			slog.ErrorContext(w.ctx, "failed to generate a response", "err", err)
 			return fmt.Errorf("failed to generate a response: %w", err)
