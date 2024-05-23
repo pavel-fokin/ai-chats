@@ -42,7 +42,7 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (d
 	}
 
 	messageSent := domain.NewMessageSent(chatID, message)
-	if err := a.events.Publish(ctx, chatID.String(), messageSent.AsBytes()); err != nil {
+	if err := a.events.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageSent)); err != nil {
 		return domain.Message{}, fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 

@@ -1,8 +1,6 @@
 package domain
 
 import (
-	"encoding/json"
-
 	"github.com/google/uuid"
 )
 
@@ -19,12 +17,6 @@ func NewMessageSent(chatID uuid.UUID, m Message) MessageSent {
 		ChatID:  chatID,
 		Message: m,
 	}
-}
-
-// AsBytes returns the byte representation of the event.
-func (m MessageSent) AsBytes() []byte {
-	bytes, _ := json.Marshal(m)
-	return bytes
 }
 
 // TitleGenerated represents a title updated event.

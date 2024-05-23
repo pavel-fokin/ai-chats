@@ -34,7 +34,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 	}
 
 	messageSent := domain.NewMessageSent(chatID, llmMessage)
-	if err := a.events.Publish(ctx, chatID.String(), messageSent.AsBytes()); err != nil {
+	if err := a.events.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageSent)); err != nil {
 		return fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
@@ -62,7 +62,7 @@ func (a *App) GenerateTitle(ctx context.Context, chatID uuid.UUID) error {
 
 	generatedTitle, err := llm.GenerateTitle(ctx, messages)
 	if err != nil {
-		return fmt.Errorf("failed to generate a response: %w", err)
+		return fmt.Errorf("failed to generate a title: %w", err)
 	}
 
 	if err := a.chats.UpdateTitle(ctx, chatID, generatedTitle); err != nil {

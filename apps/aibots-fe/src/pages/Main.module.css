@@ -3,8 +3,14 @@
         --root-flex-direction: row;
     }
 
+    .MobileOnly {
+        --mobile-only-visibility: hidden;
+    }
+
     .Header {
-        --header-display: none;
+        --header-display: block;
+        --header-margin-left: 300px;
+        --header-width: calc(100vw - 300px);
     }
 
     .Aside {
@@ -22,14 +28,19 @@
     height: 100vh;
 }
 
+.MobileOnly {
+    visibility: var(--mobile-only-visibility, visible);
+}
+
 .Header {
     background-color: var(--color-panel-translucent);
     display: var(--header-display, block);
+    margin-left: var(--header-margin-left, 0);
     padding: var(--space-2) var(--space-2);
     position: absolute;
     top: 0;
-    width: 100%;
     z-index: 2;
+    width: var(--header-width, 100%);
 }
 
 .Aside {
@@ -53,4 +64,5 @@
     flex-grow: 1;
     height: 100%;
     width: 100%;
+    /* margin-top: 60px */
 }

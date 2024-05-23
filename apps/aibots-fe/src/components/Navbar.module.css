@@ -1,10 +1,10 @@
 .NavigationMenuList {
-    background-color: var(--color-background);
-    border-radius: var(--radius-3);
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
     justify-content: center;
+    background-color: var(--color-background);
+    border-radius: var(--radius-3);
     list-style: none;
     margin: 0;
     padding: var(--space-1);
@@ -14,7 +14,7 @@
     border-radius: var(--radius-3);
     color: var(--accent-11);
     display: block;
-    font-size: var(--font-size-3);
+    font-size: var(--font-size-2);
     font-weight: var(--font-weight-medium);
     line-height: 1;
     outline: none;

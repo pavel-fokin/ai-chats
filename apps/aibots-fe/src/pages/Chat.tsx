@@ -30,6 +30,7 @@ export function Chat() {
             <Box flexGrow="1" style={{ overflow: "scroll" }}>
                 <Box height="100%" style={{ maxWidth: "688px", margin: "0 auto" }}>
                     <Flex flexGrow="1" justify="end" direction="column" gap="2">
+                        {messages.length !== 0 && <Box style={{height: "60px"}}></Box>}
                         {messages.map((message, index) => (
                             <Message
                                 key={index}

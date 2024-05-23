@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { Button, Flex, Separator } from '@radix-ui/themes';
-import { IconLogout, IconMessagePlus } from '@tabler/icons-react';
+import { IconLogout, IconPencilPlus, IconMessagePlus } from '@tabler/icons-react';
 
 import { AuthContext } from 'contexts';
 import { useChats } from 'hooks';
