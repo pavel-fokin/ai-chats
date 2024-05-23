@@ -18,11 +18,11 @@ func NewMessages(db *sql.DB) *Messages {
 	return &Messages{db: db}
 }
 
-func (m *Messages) Add(ctx context.Context, chat domain.Chat, message domain.Message) error {
+func (m *Messages) Add(ctx context.Context, chatID uuid.UUID, message domain.Message) error {
 	_, err := m.db.ExecContext(
 		ctx,
 		"INSERT INTO message (id, chat_id, sender, text) VALUES (?, ?, ?, ?)",
-		message.ID, chat.ID, message.Sender, message.Text,
+		message.ID, chatID, message.Sender, message.Text,
 	)
 	if err != nil {
 		return err

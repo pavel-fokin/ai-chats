@@ -31,8 +31,8 @@ func (m *MockChats) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
-func (m *MockChats) AddMessage(ctx context.Context, chat domain.Chat, sender, message string) error {
-	args := m.Called(ctx, chat, sender, message)
+func (m *MockChats) AddMessage(ctx context.Context, chatID uuid.UUID, sender, message string) error {
+	args := m.Called(ctx, chatID, sender, message)
 	return args.Error(0)
 }
 

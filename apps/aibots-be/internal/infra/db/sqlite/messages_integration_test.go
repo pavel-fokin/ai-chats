@@ -44,7 +44,7 @@ func TestAddMessages(t *testing.T) {
 
 	// Add the messages to the chat
 	for _, message := range msgs {
-		err := messages.Add(context.Background(), chat, message)
+		err := messages.Add(context.Background(), chat.ID, message)
 		assert.NoError(t, err)
 	}
 

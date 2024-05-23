@@ -8,6 +8,7 @@ import (
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app/commands"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/json"
 )
 
@@ -36,12 +37,11 @@ func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, er
 func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (domain.Message, error) {
 	message := domain.NewMessage("User", text)
 
-	err := a.chatting.SendMessage(ctx, chatID, message)
-	if err != nil {
-		return domain.Message{}, fmt.Errorf("failed to send a message: %w", err)
+	if err := a.messages.Add(ctx, chatID, message); err != nil {
+		return domain.Message{}, fmt.Errorf("failed to add a message: %w", err)
 	}
 
-	messageSent := domain.NewMessageSent(chatID, message)
+	messageSent := events.NewMessageAdded(chatID, message)
 	if err := a.events.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageSent)); err != nil {
 		return domain.Message{}, fmt.Errorf("failed to publish a message sent event: %w", err)
 	}

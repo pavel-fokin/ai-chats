@@ -14,8 +14,6 @@ type ChatModel struct {
 	llm llms.Model
 }
 
-var _ domain.LLM = (*ChatModel)(nil)
-
 func NewChatModel(model string) (*ChatModel, error) {
 	llm, err := ollama.New(ollama.WithModel(model))
 	if err != nil {

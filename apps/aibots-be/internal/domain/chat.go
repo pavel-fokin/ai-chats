@@ -21,12 +21,9 @@ type Chat struct {
 }
 
 func NewChat(createdBy User) Chat {
-	today := time.Now().Format("02 Jan 15:04:05")
-	title := "Chat - " + today
-
 	return Chat{
 		ID:        uuid.New(),
-		Title:     title,
+		Title:     "New chat",
 		CreatedAt: time.Now().UTC(),
 		CreatedBy: createdBy,
 	}

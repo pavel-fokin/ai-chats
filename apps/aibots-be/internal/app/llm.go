@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app/commands"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/llm"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/json"
 )
@@ -29,11 +29,11 @@ func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 		return fmt.Errorf("failed to generate a response: %w", err)
 	}
 
-	if err := a.chatting.SendMessage(ctx, chatID, llmMessage); err != nil {
-		return fmt.Errorf("failed to send a message: %w", err)
+	if err := a.messages.Add(ctx, chatID, llmMessage); err != nil {
+		return fmt.Errorf("failed to add a message: %w", err)
 	}
 
-	messageSent := domain.NewMessageSent(chatID, llmMessage)
+	messageSent := events.NewMessageAdded(chatID, llmMessage)
 	if err := a.events.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageSent)); err != nil {
 		return fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
@@ -69,9 +69,9 @@ func (a *App) GenerateTitle(ctx context.Context, chatID uuid.UUID) error {
 		return fmt.Errorf("failed to update chat title: %w", err)
 	}
 
-	titleGenerated := domain.NewTitleGenerated(chatID, generatedTitle)
-	if err := a.events.Publish(ctx, chatID.String(), json.MustMarshal(ctx, titleGenerated)); err != nil {
-		return fmt.Errorf("failed to publish a title generated event: %w", err)
+	titleUpdated := events.NewTitleUpdated(chatID, generatedTitle)
+	if err := a.events.Publish(ctx, chatID.String(), json.MustMarshal(ctx, titleUpdated)); err != nil {
+		return fmt.Errorf("failed to publish a title updated event: %w", err)
 	}
 
 	return nil
