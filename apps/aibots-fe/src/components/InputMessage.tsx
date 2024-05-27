@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
-import { Box, Flex, IconButton, TextField } from "@radix-ui/themes";
+import { Box, Flex, IconButton } from "@radix-ui/themes";
 import { IconSend } from '@tabler/icons-react';
 
+import { TextArea } from 'components/TextArea';
 import * as types from 'types';
 
 type InputMessageProps = {
@@ -11,14 +12,13 @@ type InputMessageProps = {
 
 function InputMessage({ handleSend }: InputMessageProps) {
     const [inputMessage, setInputMessage] = useState<types.Message>({ sender: '', text: '' });
-
-    const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onInputChangeArea = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputMessage({ ...inputMessage, text: event.target.value });
     }
 
     const onSendClick = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (inputMessage.text.trim() !== ''){
+        if (inputMessage.text.trim() !== '') {
             handleSend({ sender: 'User', text: inputMessage.text });
             setInputMessage({ sender: '', text: '' });
         }
@@ -31,11 +31,10 @@ function InputMessage({ handleSend }: InputMessageProps) {
                 sm: '4',
             }}>
                 <Box flexGrow="1">
-                    <TextField.Root
+                    <TextArea
                         value={inputMessage.text}
+                        onChange={onInputChangeArea}
                         placeholder="Type a message"
-                        onChange={onInputChange}
-                        size="3"
                     />
                 </Box>
                 <IconButton size="3" onClick={onSendClick} highContrast>

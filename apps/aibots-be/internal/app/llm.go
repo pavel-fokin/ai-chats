@@ -69,7 +69,7 @@ func (a *App) GenerateTitle(ctx context.Context, chatID uuid.UUID) error {
 		return fmt.Errorf("failed to update chat title: %w", err)
 	}
 
-	titleUpdated := events.NewTitleUpdated(chatID, generatedTitle)
+	titleUpdated := events.NewChatTitleUpdated(chatID, generatedTitle)
 	if err := a.events.Publish(ctx, chatID.String(), json.MustMarshal(ctx, titleUpdated)); err != nil {
 		return fmt.Errorf("failed to publish a title updated event: %w", err)
 	}

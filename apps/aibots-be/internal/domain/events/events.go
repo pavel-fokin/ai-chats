@@ -22,15 +22,15 @@ func NewMessageAdded(chatID uuid.UUID, m domain.Message) MessageAdded {
 }
 
 // TitleGenerated represents a title updated event.
-type TitleUpdated struct {
+type ChatTitleUpdated struct {
 	ID     uuid.UUID `json:"id"`
 	ChatID uuid.UUID `json:"chat_id"`
 	Title  string    `json:"title"`
 }
 
 // NewTitleGenerated creates a new title generated event.
-func NewTitleUpdated(chatID uuid.UUID, title string) TitleUpdated {
-	return TitleUpdated{
+func NewChatTitleUpdated(chatID uuid.UUID, title string) ChatTitleUpdated {
+	return ChatTitleUpdated{
 		ID:     uuid.New(),
 		ChatID: chatID,
 		Title:  title,
