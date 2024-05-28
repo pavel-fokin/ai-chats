@@ -19,7 +19,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 		return fmt.Errorf("failed to get messages: %w", err)
 	}
 
-	llm, err := llm.NewChatModel("llama3")
+	llm, err := llm.NewOllama("llama3")
 	if err != nil {
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}
@@ -55,7 +55,7 @@ func (a *App) GenerateTitle(ctx context.Context, chatID uuid.UUID) error {
 		return fmt.Errorf("failed to get messages: %w", err)
 	}
 
-	llm, err := llm.NewChatModel("llama3")
+	llm, err := llm.NewOllama("llama3")
 	if err != nil {
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}

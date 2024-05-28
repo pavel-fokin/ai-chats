@@ -4,76 +4,100 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/tmc/langchaingo/llms"
-	"github.com/tmc/langchaingo/llms/ollama"
+	"github.com/ollama/ollama/api"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
-type ChatModel struct {
-	llm llms.Model
+type LLM struct {
+	client *api.Client
+	model  string
 }
 
-func NewChatModel(model string) (*ChatModel, error) {
-	llm, err := ollama.New(ollama.WithModel(model))
+func NewOllama(model string) (*LLM, error) {
+	client, err := api.ClientFromEnvironment()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create a client: %w", err)
 	}
 
-	return &ChatModel{llm: llm}, nil
+	return &LLM{client: client, model: model}, nil
 }
 
-func (c *ChatModel) GenerateResponse(ctx context.Context, history []domain.Message) (domain.Message, error) {
-	content := []llms.MessageContent{}
+func (l *LLM) GenerateResponse(ctx context.Context, history []domain.Message) (domain.Message, error) {
+	messages := []api.Message{}
 	for _, message := range history {
+		role := ""
 		switch message.Sender {
 		case "AI":
-			content = append(content, llms.TextParts(llms.ChatMessageTypeAI, message.Text))
+			role = "assistant"
 		case "User":
-			content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, message.Text))
+			role = "user"
 		default:
 			return domain.Message{}, fmt.Errorf("unknown sender: %s", message.Sender)
 		}
+		messages = append(messages, api.Message{
+			Role:    role,
+			Content: message.Text,
+		})
 	}
 
-	completion, err := c.llm.GenerateContent(ctx, content)
-	if err != nil {
+	req := &api.ChatRequest{
+		Model:    l.model,
+		Messages: messages,
+		Stream:   new(bool),
+	}
+
+	llmMessage := domain.Message{}
+	respFunc := func(resp api.ChatResponse) error {
+		llmMessage = domain.NewMessage("AI", resp.Message.Content)
+		return nil
+	}
+
+	if err := l.client.Chat(ctx, req, respFunc); err != nil {
 		return domain.Message{}, err
 	}
 
-	text := completion.Choices[0].Content
-
-	return domain.NewMessage("AI", text), nil
+	return llmMessage, nil
 }
 
-func (c *ChatModel) GenerateTitle(ctx context.Context, history []domain.Message) (string, error) {
-	content := []llms.MessageContent{}
-
+func (l *LLM) GenerateTitle(ctx context.Context, history []domain.Message) (string, error) {
+	messages := []api.Message{}
 	for _, message := range history {
+		role := ""
 		switch message.Sender {
 		case "AI":
-			content = append(content, llms.TextParts(llms.ChatMessageTypeAI, message.Text))
+			role = "assistant"
 		case "User":
-			content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, message.Text))
+			role = "user"
 		default:
 			return "", fmt.Errorf("unknown sender: %s", message.Sender)
 		}
+		messages = append(messages, api.Message{
+			Role:    role,
+			Content: message.Text,
+		})
 	}
 
-	content = append(
-		content,
-		llms.TextParts(
-			llms.ChatMessageTypeHuman,
-			"Provide a one-sentence, short title of this conversation. Use less than 100 characters. Don't use quotes or special characters.",
-		),
-	)
+	messages = append(messages, api.Message{
+		Role:    "user",
+		Content: "Provide a one-sentence, short title of this following conversation. Use less than 100 characters. Don't use quotes or special characters.",
+	})
 
-	completion, err := c.llm.GenerateContent(ctx, content)
-	if err != nil {
+	req := &api.ChatRequest{
+		Model:    l.model,
+		Messages: messages,
+		Stream:   new(bool),
+	}
+
+	var title string
+	respFunc := func(resp api.ChatResponse) error {
+		title = resp.Message.Content
+		return nil
+	}
+
+	if err := l.client.Chat(ctx, req, respFunc); err != nil {
 		return "", err
 	}
 
-	text := completion.Choices[0].Content
-
-	return text, nil
+	return title, nil
 }
