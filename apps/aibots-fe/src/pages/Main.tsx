@@ -38,8 +38,8 @@ export function Main() {
                             <DropdownMenu.Item color="tomato">Delete <IconTrash size={16} /></DropdownMenu.Item>
                         </DropdownMenu.Content>
                     </DropdownMenu.Root>
-                    <IconButton className={styles.MobileOnly} variant="ghost" size="3" m="3">
-                        <IconMessagePlus size={24} />
+                    <IconButton className={styles.MobileOnly} variant="ghost" size="3" m="3" highContrast>
+                        <IconMessagePlus size={30} />
                     </IconButton>
                 </Flex>
             </header>
