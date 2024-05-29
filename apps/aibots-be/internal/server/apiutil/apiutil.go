@@ -67,13 +67,13 @@ func ParseJSON(r *http.Request, v any) error {
 }
 
 // WriteEvent writes an server sent event to the response.
-func WriteEvent(w http.ResponseWriter, event any) error {
+func WriteEvent(w http.ResponseWriter, data []byte) error {
 	// Encode json.
-	eventJSON, err := json.Marshal(event)
-	if err != nil {
-		return fmt.Errorf("failed to encode event: %w", err)
-	}
+	// dataJSON, err := json.Marshal(data)
+	// if err != nil {
+	// 	return fmt.Errorf("failed to encode event: %w", err)
+	// }
 
-	fmt.Fprintf(w, "data: %s\n\n", eventJSON)
+	fmt.Fprintf(w, "data: %s\n\n", data)
 	return nil
 }

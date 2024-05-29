@@ -15,7 +15,7 @@ export function Chat() {
     }
 
     const { messages, sendMessage } = useMessages(chatId);
-    useChatEvents(chatId);
+    const { messageChunk } = useChatEvents(chatId);
 
     useEffect(() => {
         window.scrollTo(0, document.body.scrollHeight);
@@ -38,6 +38,12 @@ export function Chat() {
                                 text={message.text}
                             />
                         ))}
+                        {messageChunk && (
+                            <Message
+                                sender={messageChunk.sender}
+                                text={messageChunk.text}
+                            />
+                        )}
                     </Flex>
                 </Box>
             </Box>

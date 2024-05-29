@@ -220,7 +220,7 @@ func TestGetEvents(t *testing.T) {
 		assert.Equal(t, 200, resp.StatusCode)
 		body := make([]byte, 1024)
 		resp.Body.Read(body)
-		assert.Contains(t, string(body), "data: \"ZXZlbnQ=\"\n\n")
+		assert.Contains(t, string(body), "data: event\n\n")
 
 		events.AssertNumberOfCalls(t, "Subscribe", 1)
 		// events.AssertNumberOfCalls(t, "Unsubscribe", 1)

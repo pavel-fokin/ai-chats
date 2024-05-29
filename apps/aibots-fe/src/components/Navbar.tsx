@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { Button, Flex, Separator } from '@radix-ui/themes';
-import { IconLogout, IconPencilPlus, IconMessagePlus } from '@tabler/icons-react';
+import { IconLogout, IconMessagePlus } from '@tabler/icons-react';
 
 import { AuthContext } from 'contexts';
 import { useChats } from 'hooks';
@@ -39,7 +39,7 @@ export function Navbar({ open }: NavbarProps) {
         <Flex direction="column" gap="2" height="100%" justify="between">
             <Flex direction="column">
 
-                <Button size="3" variant="ghost" m="3" onClick={handleNewChat}>
+                <Button size="3" variant="ghost" m="4" onClick={handleNewChat}>
                     <IconMessagePlus size={16} />Start a new chat
                 </Button>
                 <NavigationMenu.Root orientation="vertical">

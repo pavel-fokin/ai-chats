@@ -1,9 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
+import * as types from 'types';
 import { useAuth, useMessages } from 'hooks';
 
 
 export function useChatEvents(chatId: string) {
+    const [messageChunk, setMessageChunk] = useState<types.MessageChunk>({} as types.MessageChunk)
+
     const { accessToken } = useAuth();
     const { invalidateMessages } = useMessages(chatId);
 
@@ -14,9 +17,24 @@ export function useChatEvents(chatId: string) {
             console.log('Connection to server opened.');
         };
 
-        eventSource.onmessage = () => {
-            console.log('Received event');
-            invalidateMessages();
+        eventSource.onmessage = (event) => {
+            // console.log('Received event', event);
+            const message = JSON.parse(event.data);
+            // console.log('Received event', message);
+            switch (message.type) {
+                case types.EventTypes.MESSAGE_ADDDED:
+                    invalidateMessages();
+                    break;
+                case types.EventTypes.MESSAGE_CHUNK_RECEIVED:
+                    console.log('Received message chunk:', message)
+                    if (message.done) {
+                        setMessageChunk({} as types.MessageChunk);
+                    }
+                    setMessageChunk(message);
+                    break;
+                default:
+                    console.error('Unknown message type:', message.type);
+            }
         };
 
         eventSource.onerror = (error) => {
@@ -28,4 +46,6 @@ export function useChatEvents(chatId: string) {
             eventSource.close();
         }
     }, [chatId]);
+
+    return { messageChunk };
 }
