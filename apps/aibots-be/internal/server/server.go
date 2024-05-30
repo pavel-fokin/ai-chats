@@ -24,7 +24,7 @@ type Events interface {
 // Config is the server configuration.
 type Config struct {
 	Port            string `env:"AIBOTS_SERVER_PORT" envDefault:"8080"`
-	tokenSigningKey string `env:"AIBOTS_TOKEN_SIGNING_KEY" envDefault:"secret"`
+	TokenSigningKey string `env:"AIBOTS_TOKEN_SIGNING_KEY" envDefault:"secret"`
 }
 
 // Server is the main server struct.
@@ -42,9 +42,6 @@ func New(config Config, events Events) *Server {
 
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
-
-	// Initialize the token signing key and validator.
-	apiutil.InitSigningKey(config.tokenSigningKey)
 
 	server := &http.Server{
 		Addr:    ":" + config.Port,
@@ -78,6 +75,7 @@ func (s *Server) Shutdown() error {
 	return s.server.Shutdown(ctx)
 }
 
+// SetupAuthAPI sets up the auth API.
 func (s *Server) SetupAuthAPI(auth api.Auth) {
 	s.router.Post("/api/auth/login", api.LogIn(auth))
 	s.router.Post("/api/auth/signup", api.SignUp(auth))
@@ -100,6 +98,7 @@ func (s *Server) SetupChatAPI(chat api.ChatApp) {
 	})
 }
 
+// SetupStaticRoutes sets up the static routes.
 func (s *Server) SetupStaticRoutes(static fs.FS) {
 	fs := http.FileServerFS(static)
 

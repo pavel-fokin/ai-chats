@@ -37,6 +37,7 @@ func (m *MockUsers) FindByID(ctx context.Context, id uuid.UUID) (domain.User, er
 func TestSignUp(t *testing.T) {
 	assert := assert.New(t)
 	ctx := context.Background()
+	crypto.InitBcryptCost(1)
 
 	mockUsers := &MockUsers{}
 	mockUsers.On("Add", ctx, mock.AnythingOfType("User")).Return(nil)
@@ -81,6 +82,7 @@ func TestSignUp(t *testing.T) {
 func TestSignIn(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
+	crypto.InitBcryptCost(1)
 
 	t.Run("user not found", func(t *testing.T) {
 		mockUsers := &MockUsers{}

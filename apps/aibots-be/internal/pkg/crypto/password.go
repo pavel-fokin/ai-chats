@@ -4,7 +4,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const bcryptCost = 14
+var bcryptCost int
+
+func InitBcryptCost(value int) {
+	bcryptCost = value
+}
 
 // HashPassword hashes a password.
 func HashPassword(password string) (string, error) {

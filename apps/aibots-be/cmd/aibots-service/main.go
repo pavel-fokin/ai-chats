@@ -13,18 +13,20 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db/sqlite"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
 	"pavel-fokin/ai/apps/ai-bots-be/web"
 )
 
-// Config is the server configuration.
+// Config is the service configuration.
 type Config struct {
 	Server server.Config
 	DB     db.Config
 }
 
-// NewConfig creates a new configuration.
+// NewConfig creates a new configuration for the service.
 func NewConfig() Config {
 	cfg := Config{}
 	if err := env.Parse(&cfg); err != nil {
@@ -59,14 +61,18 @@ func main() {
 		events,
 	)
 
-	// Setup the server
+	// Initialize the crypto package and the signing key.
+	apiutil.InitSigningKey(config.Server.TokenSigningKey)
+	crypto.InitBcryptCost(14)
+
+	// Setup the server.
 	server := server.New(config.Server, events)
 	server.SetupAuthAPI(app)
 	server.SetupChatAPI(app)
 	staticFS, _ := fs.Sub(web.Dist, "dist")
 	server.SetupStaticRoutes(staticFS)
 
-	// Setup the worker
+	// Setup the worker.
 	worker := worker.New(events)
 	worker.SetupHandlers(app)
 
@@ -76,7 +82,7 @@ func main() {
 	log.Println("Starting AIBots worker...")
 	worker.Start()
 
-	// Wait for the shutdown signal
+	// Wait for the shutdown signal.
 	<-ctx.Done()
 
 	log.Println("Shutting down the AIBots worker...")
