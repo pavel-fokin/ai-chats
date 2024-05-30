@@ -106,7 +106,7 @@ func TestFindChat(t *testing.T) {
 		err = chats.Add(context.Background(), chat)
 		assert.NoError(t, err)
 
-		foundChat, err := chats.FindChat(context.Background(), chat.ID)
+		foundChat, err := chats.FindByID(context.Background(), chat.ID)
 		assert.NoError(t, err)
 		assert.Equal(t, chat.ID, foundChat.ID)
 		assert.Equal(t, chat.Title, foundChat.Title)
@@ -114,7 +114,7 @@ func TestFindChat(t *testing.T) {
 	})
 
 	t.Run("chat does not exist", func(t *testing.T) {
-		_, err := chats.FindChat(context.Background(), uuid.New())
+		_, err := chats.FindByID(context.Background(), uuid.New())
 		assert.Error(t, err)
 	})
 }

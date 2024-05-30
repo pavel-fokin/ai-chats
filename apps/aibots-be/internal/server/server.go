@@ -87,6 +87,7 @@ func (s *Server) SetupChatAPI(chat api.ChatApp) {
 		r.Use(apiutil.AuthHeader)
 		r.Post("/api/chats", api.PostChats(chat))
 		r.Get("/api/chats", api.GetChats(chat))
+		r.Get("/api/chats/{uuid}", api.GetChat(chat))
 		r.Post("/api/chats/{uuid}/messages", api.PostMessages(chat))
 		r.Get("/api/chats/{uuid}/messages", api.GetMessages(chat))
 

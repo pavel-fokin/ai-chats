@@ -5,7 +5,7 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { AuthContextProvider } from "contexts";
+import { AuthContextProvider, ChatContextProvider } from "contexts";
 import { Navbar } from '../Navbar';
 
 const server = setupServer(
@@ -44,15 +44,18 @@ const queryClient = new QueryClient({
 function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
     return render(
         <AuthContextProvider>
-            <QueryClientProvider client={queryClient}>
-                <MemoryRouter initialEntries={[route]}>
-                    <Routes>
-                        <Route path="/app" element={ui} />
-                        <Route path="/app/chats/:chatId" element={<div>Chat</div>} />
-                        <Route path="/app/login" element={<div>Sign in</div>} />
-                    </Routes>
-                </MemoryRouter>
-            </QueryClientProvider>
+            <ChatContextProvider>
+                <QueryClientProvider client={queryClient}>
+                    <MemoryRouter initialEntries={[route]}>
+                        <Routes>
+                            <Route path="/app" element={ui} />
+                            <Route path="/app/chats/:chatId" element={<div>Chat</div>} />
+                            <Route path="/app/login" element={<div>Sign in</div>} />
+                        </Routes>
+                    </MemoryRouter>
+                </QueryClientProvider>
+            </ChatContextProvider>
+
         </AuthContextProvider>
     );
 }

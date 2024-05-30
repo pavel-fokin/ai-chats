@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 
 import { Box, Flex } from "@radix-ui/themes";
 
+import { ChatContext } from "contexts";
 import { InputMessage, Message } from 'components';
 import { useChatEvents, useMessages } from 'hooks';
 import * as types from 'types';
@@ -13,6 +14,9 @@ export function Chat() {
     if (!chatId) {
         throw new Error('Chat ID is required');
     }
+
+    const { setChatId } = useContext(ChatContext);
+    setChatId(chatId);
 
     const { messages, sendMessage } = useMessages(chatId);
     const { messageChunk } = useChatEvents(chatId);

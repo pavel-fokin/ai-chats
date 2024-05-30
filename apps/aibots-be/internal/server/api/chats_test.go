@@ -34,6 +34,11 @@ func (m *ChatMock) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Cha
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
+func (m *ChatMock) FindChatByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
+	args := m.Called(ctx, chatID)
+	return args.Get(0).(domain.Chat), args.Error(1)
+}
+
 func (m *ChatMock) SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error) {
 	args := m.Called(ctx, chatID, message)
 	return args.Get(0).(domain.Message), args.Error(1)
@@ -272,5 +277,41 @@ func TestGetEvents(t *testing.T) {
 
 		resp := w.Result()
 		assert.Equal(t, 404, resp.StatusCode)
+	})
+}
+
+func TestGetChat(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		chatID := uuid.New()
+
+		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s", chatID), nil)
+		w := httptest.NewRecorder()
+
+		chat := &ChatMock{}
+		chat.On("FindChatByID", mock.MatchedBy(matchChiContext), chatID).Return(domain.Chat{}, nil)
+
+		router := chi.NewRouter()
+		router.Get("/api/chats/{uuid}", GetChat(chat))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 200, resp.StatusCode)
+	})
+
+	t.Run("Failure", func(t *testing.T) {
+		chatID := uuid.New()
+
+		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s", chatID), nil)
+		w := httptest.NewRecorder()
+
+		chat := &ChatMock{}
+		chat.On("FindChatByID", mock.MatchedBy(matchChiContext), chatID).Return(domain.Chat{}, errors.New("failed to get chat"))
+
+		router := chi.NewRouter()
+		router.Get("/api/chats/{uuid}", GetChat(chat))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 500, resp.StatusCode)
 	})
 }

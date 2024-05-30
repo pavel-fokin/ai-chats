@@ -20,12 +20,13 @@ export function useChatEvents(chatId: string) {
         eventSource.onmessage = (event) => {
             const message = JSON.parse(event.data);
             switch (message.type) {
-                case types.EventTypes.MESSAGE_ADDDED:
+                case types.EventTypes.MESSAGE_ADDED:
                     invalidateMessages();
                     break;
                 case types.EventTypes.MESSAGE_CHUNK_RECEIVED:
                     if (message.done) {
                         setMessageChunk({} as types.MessageChunk);
+                        break;
                     }
                     setMessageChunk(message);
                     break;

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { Button, Flex, Separator } from '@radix-ui/themes';

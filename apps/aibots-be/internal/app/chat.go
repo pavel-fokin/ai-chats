@@ -63,3 +63,8 @@ func (a *App) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Messa
 func (a *App) ChatExists(ctx context.Context, chatID uuid.UUID) (bool, error) {
 	return a.chats.Exists(ctx, chatID)
 }
+
+// FindChatByID finds a chat by ID.
+func (a *App) FindChatByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
+	return a.chats.FindByID(ctx, chatID)
+}

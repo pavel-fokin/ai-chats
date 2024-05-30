@@ -9,8 +9,12 @@ type PostChatsResponse = {
 
 type GetChatsResponse = {
     data: {
-        chats?: Chat[];
+        chats: Chat[];
     }
+};
+
+type GetChatByIdResponse = {
+    data: Chat;
 };
 
 type GetMessagesResponse = {
@@ -25,6 +29,10 @@ type PostMessagesResponse = {
     };
 };
 
+const fetchChatById = async (chatId: string): Promise<GetChatByIdResponse> => {
+    const payload = await fetchData<GetChatByIdResponse>(`/api/chats/${chatId}`);
+    return payload;
+}
 
 const postChats = async (): Promise<PostChatsResponse> => {
     return await postData('/api/chats', {});
@@ -43,4 +51,4 @@ const postMessages = async (chatId: string, message: Message): Promise<PostMessa
     return await postData(`/api/chats/${chatId}/messages`, message);
 }
 
-export { postChats, fetchChats, fetchMessages, postMessages }
+export { postChats, fetchChats, fetchMessages, postMessages, fetchChatById }

@@ -91,7 +91,7 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 	return chats, nil
 }
 
-func (c *Chats) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
+func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
 	var chat domain.Chat
 	var createdAt string
 	err := c.db.QueryRowContext(

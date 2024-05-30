@@ -4,6 +4,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"testing"
 
@@ -26,7 +27,7 @@ func (m *MockChats) UpdateTitle(ctx context.Context, chatID uuid.UUID, title str
 	return args.Error(0)
 }
 
-func (m *MockChats) FindChat(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
+func (m *MockChats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
 	args := m.Called(ctx, chatID)
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
@@ -69,4 +70,40 @@ func TestCreateChat(t *testing.T) {
 	assert.NotNil(t, chat)
 
 	mockChats.AssertExpectations(t)
+}
+
+func TestChat_FindById(t *testing.T) {
+	ctx := context.Background()
+	assert := assert.New(t)
+
+	t.Run("chat exists", func(t *testing.T) {
+		user := domain.NewUser("username")
+		chat := domain.NewChat(user)
+
+		mockChats := &MockChats{}
+		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
+
+		app := &App{chats: mockChats}
+
+		foundChat, err := app.chats.FindByID(ctx, chat.ID)
+		assert.NoError(err)
+
+		assert.Equal(chat.ID, foundChat.ID)
+		assert.Equal(chat.Title, foundChat.Title)
+		assert.Equal(chat.CreatedAt, foundChat.CreatedAt)
+	})
+
+	t.Run("chat does not exist", func(t *testing.T) {
+		chatID := uuid.New()
+		expectedErr := errors.New("chat not found")
+
+		mockChats := &MockChats{}
+		mockChats.On("FindByID", ctx, chatID).Return(domain.Chat{}, expectedErr)
+
+		app := &App{chats: mockChats}
+
+		_, err := app.chats.FindByID(ctx, chatID)
+		assert.Error(err)
+		assert.Equal(expectedErr, err)
+	})
 }

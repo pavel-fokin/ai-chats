@@ -17,6 +17,6 @@ export type MessageChunk = {
 }
 
 export enum EventTypes {
-    MESSAGE_ADDDED = 'message_added',
+    MESSAGE_ADDED = 'message_added',
     MESSAGE_CHUNK_RECEIVED = 'message_chunk_received',
 }
