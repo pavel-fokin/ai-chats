@@ -19,12 +19,12 @@ type MockUsers struct {
 	mock.Mock
 }
 
-func (m *MockUsers) AddUser(ctx context.Context, user domain.User) error {
+func (m *MockUsers) Add(ctx context.Context, user domain.User) error {
 	args := m.Called(ctx, user)
 	return args.Error(0)
 }
 
-func (m *MockUsers) FindUser(ctx context.Context, username string) (domain.User, error) {
+func (m *MockUsers) FindByUsernameWithPassword(ctx context.Context, username string) (domain.User, error) {
 	args := m.Called(ctx, username)
 	return args.Get(0).(domain.User), args.Error(1)
 }
@@ -35,48 +35,81 @@ func (m *MockUsers) FindByID(ctx context.Context, id uuid.UUID) (domain.User, er
 }
 
 func TestSignUp(t *testing.T) {
+	assert := assert.New(t)
+	ctx := context.Background()
+
 	mockUsers := &MockUsers{}
-	mockUsers.On("AddUser", context.Background(), mock.Anything).Return(nil)
+	mockUsers.On("Add", ctx, mock.AnythingOfType("User")).Return(nil)
 
 	app := &App{
 		users: mockUsers,
 	}
 
-	user, err := app.SignUp(context.Background(), "username", "password")
-	assert.NoError(t, err)
-	assert.NotNil(t, user)
+	user, err := app.SignUp(ctx, "username", "password")
+	assert.NoError(err)
+	assert.NotNil(user)
 
 	// Verify that password is not stored in plain text.
-	assert.NotEqual(t, "password", user.PasswordHash)
-}
+	assert.NotEqual("password", user.PasswordHash)
 
-func TestSignIn(t *testing.T) {
-	t.Run("user not found", func(t *testing.T) {
+	t.Run("failed to set up a password", func(t *testing.T) {
+		t.Skip("This test is not implemented yet")
+		app := &App{
+			users: mockUsers,
+		}
+
+		user, err := app.SignUp(ctx, "username", "")
+		assert.ErrorContains(err, "failed to set up a password")
+		assert.Equal(domain.User{}, user)
+	})
+
+	t.Run("failed to add a user", func(t *testing.T) {
 		mockUsers := &MockUsers{}
-		mockUsers.On("FindUser", context.Background(), mock.Anything).Return(domain.User{}, errors.New("user not found"))
+		mockUsers.On("Add", ctx, mock.AnythingOfType("User")).
+			Return(errors.New("failed to add a user"))
 
 		app := &App{
 			users: mockUsers,
 		}
 
-		user, err := app.LogIn(context.Background(), "username", "password")
-		assert.ErrorContains(t, err, "failed to find a user: user not found")
-		assert.Equal(t, domain.User{}, user)
+		user, err := app.SignUp(ctx, "username", "password")
+		assert.ErrorContains(err, "failed to add a user")
+		assert.Equal(domain.User{}, user)
+	})
+}
+
+func TestSignIn(t *testing.T) {
+	ctx := context.Background()
+	assert := assert.New(t)
+
+	t.Run("user not found", func(t *testing.T) {
+		mockUsers := &MockUsers{}
+		mockUsers.On("FindByUsernameWithPassword", ctx, "username").
+			Return(domain.User{}, errors.New("user not found"))
+
+		app := &App{
+			users: mockUsers,
+		}
+
+		user, err := app.LogIn(ctx, "username", "password")
+		assert.ErrorContains(err, "failed to find a user: user not found")
+		assert.Equal(domain.User{}, user)
 	})
 
 	t.Run("user found", func(t *testing.T) {
 		hashedPassword, err := crypto.HashPassword("password")
-		assert.NoError(t, err)
+		assert.NoError(err)
 
 		mockUsers := &MockUsers{}
-		mockUsers.On("FindUser", context.Background(), mock.Anything).Return(domain.User{PasswordHash: hashedPassword}, nil)
+		mockUsers.On("FindByUsernameWithPassword", ctx, "username").
+			Return(domain.User{PasswordHash: hashedPassword}, nil)
 
 		app := &App{
 			users: mockUsers,
 		}
 
-		user, err := app.LogIn(context.Background(), "username", "password")
-		assert.NoError(t, err)
-		assert.NotNil(t, user)
+		user, err := app.LogIn(ctx, "username", "password")
+		assert.NoError(err)
+		assert.NotNil(user)
 	})
 }

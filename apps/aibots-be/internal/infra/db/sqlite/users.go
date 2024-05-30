@@ -21,7 +21,7 @@ func NewUsers(db *sql.DB) *Users {
 }
 
 // AddUser adds a new user to the database.
-func (u *Users) AddUser(ctx context.Context, user domain.User) error {
+func (u *Users) Add(ctx context.Context, user domain.User) error {
 	_, err := u.db.ExecContext(
 		ctx,
 		"INSERT INTO user (id, username, password_hash) VALUES (?, ?, ?);",
@@ -35,7 +35,7 @@ func (u *Users) AddUser(ctx context.Context, user domain.User) error {
 }
 
 // FindUser finds a user by username.
-func (u *Users) FindUser(ctx context.Context, username string) (domain.User, error) {
+func (u *Users) FindByUsernameWithPassword(ctx context.Context, username string) (domain.User, error) {
 	user := domain.User{
 		Username: username,
 	}

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
+import { Button, DropdownMenu, Flex, IconButton } from '@radix-ui/themes';
+import { IconMessagePlus, IconTrash } from '@tabler/icons-react';
 import Hamburger from 'hamburger-react';
-import { Heading, IconButton, DropdownMenu, Flex, Box, Button } from '@radix-ui/themes';
-import { IconMessagePlus, IconPencilPlus, IconTrash } from '@tabler/icons-react';
 
 import { Navbar } from 'components';
 

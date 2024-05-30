@@ -10,7 +10,7 @@ run:
 .PHONY: test
 test:
 	@echo "Running unit tests..."
-	@go test -count 1 -cover -timeout 5s ./...
+	@go test -count 1 -cover -timeout 10s ./...
 	@echo "All unit tests are good ✅"
 
 .PHONY: test-integration

@@ -9,7 +9,7 @@ import (
 
 // LogIn logs in a user
 func (a *App) LogIn(ctx context.Context, username, password string) (domain.User, error) {
-	user, err := a.users.FindUser(ctx, username)
+	user, err := a.users.FindByUsernameWithPassword(ctx, username)
 	if err != nil {
 		return domain.User{}, fmt.Errorf("failed to find a user: %w", err)
 	}
@@ -30,7 +30,7 @@ func (a *App) SignUp(ctx context.Context, username, password string) (domain.Use
 		return domain.User{}, fmt.Errorf("failed to set up a password: %w", err)
 	}
 
-	if err := a.users.AddUser(ctx, user); err != nil {
+	if err := a.users.Add(ctx, user); err != nil {
 		return domain.User{}, fmt.Errorf("failed to add a user: %w", err)
 	}
 

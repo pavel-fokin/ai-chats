@@ -21,7 +21,7 @@ func TestAddChat(t *testing.T) {
 	chats := NewChats(db)
 
 	user := domain.NewUser("test")
-	err = users.AddUser(context.Background(), user)
+	err = users.Add(context.Background(), user)
 	assert.NoError(t, err)
 
 	// Call the AddChat method.
@@ -41,7 +41,7 @@ func TestAllChats(t *testing.T) {
 		chats := NewChats(db)
 
 		user := domain.NewUser("test")
-		err = users.AddUser(context.Background(), user)
+		err = users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
 		// Call the AllChats method.
@@ -60,7 +60,7 @@ func TestAllChats(t *testing.T) {
 		chats := NewChats(db)
 
 		user := domain.NewUser("test")
-		err = users.AddUser(context.Background(), user)
+		err = users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
 		// Create some chats.
@@ -88,7 +88,7 @@ func TestAllChats(t *testing.T) {
 		// Create some chats.
 		for i := 0; i < 3; i++ {
 			user := domain.NewUser(fmt.Sprintf("test_%d", i))
-			err := users.AddUser(
+			err := users.Add(
 				context.Background(),
 				user,
 			)
@@ -117,7 +117,7 @@ func TestFindChat(t *testing.T) {
 
 	t.Run("chat exists", func(t *testing.T) {
 		user := domain.NewUser("test")
-		err = users.AddUser(context.Background(), user)
+		err = users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
 		chat := domain.NewChat(user)
@@ -150,7 +150,7 @@ func TestChats_Exists(t *testing.T) {
 
 	t.Run("chat exists", func(t *testing.T) {
 		user := domain.NewUser("test")
-		err = users.AddUser(context.Background(), user)
+		err = users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
 		chat := domain.NewChat(user)

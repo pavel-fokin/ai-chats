@@ -18,25 +18,31 @@ func TestCreateUser(t *testing.T) {
 
 	user := domain.NewUser("username")
 
-	err = users.AddUser(context.Background(), user)
+	err = users.Add(context.Background(), user)
 	assert.NoError(t, err)
 	assert.NotNil(t, user)
 }
 
-func TestFindUser(t *testing.T) {
+func TestFindByUsernameWithPassword(t *testing.T) {
 	db, err := NewDB(":memory:")
 	assert.NoError(t, err)
 	defer db.Close()
 	CreateTables(db)
-
 	users := NewUsers(db)
 
-	user := domain.NewUser("username")
-	err = users.AddUser(context.Background(), user)
-	assert.NoError(t, err)
+	t.Run("User found", func(t *testing.T) {
+		user := domain.NewUser("username")
+		err = users.Add(context.Background(), user)
+		assert.NoError(t, err)
 
-	foundUser, err := users.FindUser(context.Background(), "username")
-	assert.NoError(t, err)
-	assert.NotNil(t, foundUser)
-	assert.Equal(t, user.ID, foundUser.ID)
+		foundUser, err := users.FindByUsernameWithPassword(context.Background(), "username")
+		assert.NoError(t, err)
+		assert.NotNil(t, foundUser)
+		assert.Equal(t, user.ID, foundUser.ID)
+	})
+
+	t.Run("User not found", func(t *testing.T) {
+		_, err := users.FindByUsernameWithPassword(context.Background(), "unknown")
+		assert.Error(t, err)
+	})
 }
