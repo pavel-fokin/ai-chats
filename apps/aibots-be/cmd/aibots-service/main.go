@@ -12,7 +12,7 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db/sqlite"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/events"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/pubsub"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
@@ -51,14 +51,14 @@ func main() {
 		log.Fatalf("Failed to create tables: %v", err)
 	}
 
-	events := events.New()
-	defer events.CloseAll()
+	pubsub := pubsub.New()
+	defer pubsub.CloseAll()
 
 	app := app.New(
 		sqlite.NewChats(db),
 		sqlite.NewUsers(db),
 		sqlite.NewMessages(db),
-		events,
+		pubsub,
 	)
 
 	// Initialize the crypto package and the signing key.
@@ -66,14 +66,14 @@ func main() {
 	crypto.InitBcryptCost(14)
 
 	// Setup the server.
-	server := server.New(config.Server, events)
+	server := server.New(config.Server, pubsub)
 	server.SetupAuthAPI(app)
 	server.SetupChatAPI(app)
 	staticFS, _ := fs.Sub(web.Dist, "dist")
 	server.SetupStaticRoutes(staticFS)
 
 	// Setup the worker.
-	worker := worker.New(events)
+	worker := worker.New(pubsub)
 	worker.SetupHandlers(app)
 
 	log.Println("Starting AIBots HTTP server... ", config.Server.Port)

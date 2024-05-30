@@ -12,7 +12,7 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
-type Events interface {
+type Subscriber interface {
 	Subscribe(ctx context.Context, topic string) (chan []byte, error)
 	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
 }
@@ -109,7 +109,7 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 }
 
 // GetEvents handles the GET /api/chats/{uuid}/events endpoint.
-func GetEvents(app ChatApp, sse *apiutil.SSEConnections, chatEvents Events) http.HandlerFunc {
+func GetEvents(app ChatApp, sse *apiutil.SSEConnections, subscriber Subscriber) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -124,18 +124,6 @@ func GetEvents(app ChatApp, sse *apiutil.SSEConnections, chatEvents Events) http
 			return
 		}
 
-		conn := apiutil.NewConnection(ctx)
-		sse.Add(conn)
-		defer sse.Remove(conn)
-
-		events, err := chatEvents.Subscribe(ctx, chatID)
-		if err != nil {
-			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
-			return
-		}
-		defer chatEvents.Unsubscribe(ctx, chatID, events)
-
 		flusher, ok := w.(http.Flusher)
 		if !ok {
 			slog.ErrorContext(
@@ -146,6 +134,18 @@ func GetEvents(app ChatApp, sse *apiutil.SSEConnections, chatEvents Events) http
 			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
+
+		conn := apiutil.NewConnection(ctx)
+		sse.Add(conn)
+		defer sse.Remove(conn)
+
+		events, err := subscriber.Subscribe(ctx, chatID)
+		if err != nil {
+			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
+			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			return
+		}
+		defer subscriber.Unsubscribe(ctx, chatID, events)
 
 		w.Header().Set("Content-Type", "text/event-stream")
 		w.Header().Set("Cache-Control", "no-cache")

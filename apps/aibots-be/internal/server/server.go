@@ -16,7 +16,7 @@ import (
 
 const maxShutdownTimeout = 3
 
-type Events interface {
+type PubSub interface {
 	Subscribe(ctx context.Context, topic string) (chan []byte, error)
 	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
 }
@@ -32,11 +32,11 @@ type Server struct {
 	router *chi.Mux
 	server *http.Server
 	sse    *apiutil.SSEConnections
-	events Events
+	pubsub PubSub
 }
 
 // NewServer creates a new server.
-func New(config Config, events Events) *Server {
+func New(config Config, pubsub PubSub) *Server {
 
 	router := chi.NewRouter()
 
@@ -51,7 +51,7 @@ func New(config Config, events Events) *Server {
 	return &Server{
 		router: router,
 		server: server,
-		events: events,
+		pubsub: pubsub,
 		sse:    apiutil.NewSSEConnections(),
 	}
 }
@@ -94,7 +94,7 @@ func (s *Server) SetupChatAPI(chat api.ChatApp) {
 
 	s.router.Group(func(r chi.Router) {
 		r.Use(apiutil.AuthParam)
-		r.Get("/api/chats/{uuid}/events", api.GetEvents(chat, s.sse, s.events))
+		r.Get("/api/chats/{uuid}/events", api.GetEvents(chat, s.sse, s.pubsub))
 	})
 }
 

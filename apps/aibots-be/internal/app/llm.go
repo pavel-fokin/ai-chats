@@ -31,7 +31,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 			messageChunk.Text,
 			messageChunk.Final,
 		)
-		if err := a.events.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageChunkReceived)); err != nil {
+		if err := a.pubsub.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageChunkReceived)); err != nil {
 			return fmt.Errorf("failed to publish a message chunk received event: %w", err)
 		}
 		return nil
@@ -47,13 +47,13 @@ func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 	}
 
 	messageSent := events.NewMessageAdded(chatID, llmMessage)
-	if err := a.events.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageSent)); err != nil {
+	if err := a.pubsub.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageSent)); err != nil {
 		return fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
 	if len(messages) == 1 {
 		generateTitle := commands.NewGenerateTitle(chatID)
-		if err := a.events.Publish(ctx, "generate-title", json.MustMarshal(ctx, generateTitle)); err != nil {
+		if err := a.pubsub.Publish(ctx, "generate-title", json.MustMarshal(ctx, generateTitle)); err != nil {
 			return fmt.Errorf("failed to publish a generate title command: %w", err)
 		}
 	}

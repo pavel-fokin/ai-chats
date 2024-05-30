@@ -42,12 +42,12 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (d
 	}
 
 	messageSent := events.NewMessageAdded(chatID, message)
-	if err := a.events.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageSent)); err != nil {
+	if err := a.pubsub.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageSent)); err != nil {
 		return domain.Message{}, fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
 	generateResponse := commands.NewGenerateResponse(chatID)
-	if err := a.events.Publish(ctx, "worker", json.MustMarshal(ctx, generateResponse)); err != nil {
+	if err := a.pubsub.Publish(ctx, "worker", json.MustMarshal(ctx, generateResponse)); err != nil {
 		return domain.Message{}, fmt.Errorf("failed to publish a generate response command: %w", err)
 	}
 
