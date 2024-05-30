@@ -70,7 +70,7 @@ func matchChiContext(ctx context.Context) bool {
 
 func TestCreateChat(t *testing.T) {
 	userID := uuid.New()
-	ctx := context.WithValue(context.Background(), UserID("UserID"), userID)
+	ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, userID)
 
 	t.Run("Missed UserID", func(t *testing.T) {
 		defer func() { recover() }()
@@ -118,7 +118,7 @@ func TestCreateChat(t *testing.T) {
 
 func TestGetChats(t *testing.T) {
 	userID := uuid.New()
-	ctx := context.WithValue(context.Background(), UserID("UserID"), userID)
+	ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, userID)
 
 	t.Run("Success", func(t *testing.T) {
 		req, _ := http.NewRequest("", "", nil)

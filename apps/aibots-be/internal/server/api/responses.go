@@ -5,27 +5,15 @@ import (
 	"time"
 )
 
-type UserCredentials struct {
-	Username string `json:"username" validate:"required"`
-	Password string `json:"password" validate:"required"`
+type SignInResponse struct {
+	AccessToken string `json:"accessToken"`
 }
 
-type SignInRequest struct {
-	UserCredentials
+type SignUpResponse struct {
+	AccessToken string `json:"accessToken"`
 }
-
-type SignUpRequest struct {
-	UserCredentials
-}
-
 type PostMessagesResponse struct {
 	Message
-}
-
-type Chat struct {
-	ID        string `json:"id"`
-	Title     string `json:"title"`
-	CreatedAt string `json:"created_at"`
 }
 
 type GetChatsResponse struct {

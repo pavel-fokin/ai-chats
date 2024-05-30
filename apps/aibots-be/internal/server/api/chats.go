@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	// "encoding/json"
 	"log/slog"
 	"net/http"
 
@@ -18,12 +17,6 @@ type Events interface {
 	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
 }
 
-type Message struct {
-	ID     string `json:"id"`
-	Sender string `json:"sender"`
-	Text   string `json:"text"`
-}
-
 type ChatApp interface {
 	CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error)
 	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
@@ -37,7 +30,7 @@ func GetChats(chat ChatApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		userID := MustHaveUserID(ctx)
+		userID := apiutil.MustHaveUserID(ctx)
 
 		chats, err := chat.AllChats(ctx, userID)
 		if err != nil {
@@ -55,7 +48,7 @@ func PostChats(chat ChatApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		userID := MustHaveUserID(ctx)
+		userID := apiutil.MustHaveUserID(ctx)
 
 		chat, err := chat.CreateChat(ctx, userID)
 		if err != nil {

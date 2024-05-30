@@ -52,7 +52,7 @@ func AsSuccessResponse[T any](
 	json.NewEncoder(w).Encode(res)
 }
 
-// ParseJSON parses the request body into the given interface.
+// ParseJSON validates and parses the request body into the given interface.
 func ParseJSON(r *http.Request, v any) error {
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(v); err != nil {

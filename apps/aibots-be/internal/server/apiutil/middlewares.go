@@ -1,4 +1,4 @@
-package api
+package apiutil
 
 import (
 	"context"
@@ -6,16 +6,19 @@ import (
 	"net/http"
 	"strings"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
-
 	"github.com/google/uuid"
 )
 
 type UserID string
 
+const (
+	// UserID is the key for the user ID in the context.
+	UserIDCtxKey = UserID("UserID")
+)
+
 // MustHaveUserID returns the user ID from the context or panics if it is not present.
 func MustHaveUserID(ctx context.Context) uuid.UUID {
-	v := ctx.Value(UserID("UserID"))
+	v := ctx.Value(UserIDCtxKey)
 	if v == nil {
 		panic("missing user ID")
 	}
@@ -40,14 +43,14 @@ func AuthHeader(next http.Handler) http.Handler {
 		}
 
 		accessToken := strings.TrimPrefix(authToken, "Bearer ")
-		claims, err := apiutil.VerifyAccessToken(accessToken)
+		claims, err := VerifyAccessToken(accessToken)
 		if err != nil {
 			slog.ErrorContext(r.Context(), "failed to verify access token", "err", err)
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), UserID("UserID"), claims.UserID)
+		ctx := context.WithValue(r.Context(), UserIDCtxKey, claims.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -63,14 +66,14 @@ func AuthParam(next http.Handler) http.Handler {
 			return
 		}
 
-		claims, err := apiutil.VerifyAccessToken(authToken)
+		claims, err := VerifyAccessToken(authToken)
 		if err != nil {
 			slog.ErrorContext(r.Context(), "failed to verify access token", "err", err)
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), UserID("UserID"), claims.UserID)
+		ctx := context.WithValue(r.Context(), UserIDCtxKey, claims.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
