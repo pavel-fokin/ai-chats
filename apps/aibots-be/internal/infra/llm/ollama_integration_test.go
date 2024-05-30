@@ -39,5 +39,5 @@ func TestOllamaGenerateResponseWithStream(t *testing.T) {
 	)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, llmResponse.Text)
-	assert.True(t, messageChunkReceived.Done)
+	assert.True(t, messageChunkReceived.Final)
 }
