@@ -52,7 +52,7 @@ func main() {
 	}
 
 	pubsub := pubsub.New()
-	defer pubsub.CloseAll()
+	// defer pubsub.CloseAll()
 
 	app := app.New(
 		sqlite.NewChats(db),

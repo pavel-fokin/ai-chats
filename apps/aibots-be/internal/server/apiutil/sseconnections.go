@@ -1,28 +1,14 @@
 package apiutil
 
 import (
-	"context"
 	"sync"
 )
 
 type Connection struct {
 	Closed chan struct{}
-	ctx    context.Context
-	cancel context.CancelFunc
-}
-
-func NewConnection(ctx context.Context) *Connection {
-	// func NewConnection(ctx context.Context) *Connection {
-	ctx, cancel := context.WithCancel(ctx)
-	return &Connection{
-		Closed: make(chan struct{}),
-		ctx:    ctx,
-		cancel: cancel,
-	}
 }
 
 func (c *Connection) Close() {
-	c.cancel()
 	close(c.Closed)
 }
 
@@ -39,6 +25,17 @@ func NewSSEConnections() *SSEConnections {
 	}
 }
 
+// NewConnection creates a new connection and adds it to the set.
+func (s *SSEConnections) AddConnection() *Connection {
+	c := &Connection{
+		Closed: make(chan struct{}),
+	}
+	s.Lock()
+	s.connections[c] = struct{}{}
+	s.Unlock()
+	return c
+}
+
 // Add adds a new connection to the set.
 func (s *SSEConnections) Add(c *Connection) {
 	s.Lock()
@@ -49,7 +46,6 @@ func (s *SSEConnections) Add(c *Connection) {
 // Remove removes a connection from the set.
 func (s *SSEConnections) Remove(c *Connection) {
 	s.Lock()
-	c.cancel()
 	delete(s.connections, c)
 	s.Unlock()
 }

@@ -124,19 +124,7 @@ func GetEvents(app ChatApp, sse *apiutil.SSEConnections, subscriber Subscriber) 
 			return
 		}
 
-		flusher, ok := w.(http.Flusher)
-		if !ok {
-			slog.ErrorContext(
-				ctx,
-				"failed to start the event stream",
-				"err", "expected http.ResponseWriter to be an http.Flusher",
-			)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
-			return
-		}
-
-		conn := apiutil.NewConnection(ctx)
-		sse.Add(conn)
+		conn := sse.AddConnection()
 		defer sse.Remove(conn)
 
 		events, err := subscriber.Subscribe(ctx, chatID)
@@ -151,6 +139,7 @@ func GetEvents(app ChatApp, sse *apiutil.SSEConnections, subscriber Subscriber) 
 		w.Header().Set("Cache-Control", "no-cache")
 		w.Header().Set("Connection", "keep-alive")
 
+		flusher := w.(http.Flusher)
 		for {
 			select {
 			case <-conn.Closed:
