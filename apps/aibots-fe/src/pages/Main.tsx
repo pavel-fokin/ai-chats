@@ -2,8 +2,13 @@ import { useContext, useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { Button, DropdownMenu, Flex, IconButton } from '@radix-ui/themes';
-import { IconMessagePlus, IconTrash } from '@tabler/icons-react';
-import Hamburger from 'hamburger-react';
+import {
+    ChatText as ChatIcon,
+    List as HamburgerMenuIcon2,
+    X as CloseIcon,
+    Trash as DeleteIcon,
+    SlidersHorizontal as SettingsIcon
+} from "@phosphor-icons/react";
 
 import { Navbar } from 'components';
 import { ChatContext } from 'contexts';
@@ -31,7 +36,6 @@ export function Main() {
     useEffect(() => {
         if (chatId) {
             getChatById(chatId).then((chat) => {
-                console.log('Chat:', chat);
                 setChat(chat);
             }
             ).catch((error) => {
@@ -45,13 +49,15 @@ export function Main() {
             <header className={styles.Header}>
                 <Flex direction="row" align="center" gap="2" justify="between">
                     <div className={styles.MobileOnly}>
-                        <Hamburger toggled={isOpen} toggle={() => setIsOpen(!isOpen)} />
+                        <IconButton variant="ghost" size="3" m="2" highContrast onClick={() => setIsOpen(!isOpen)}>
+                            {isOpen ? <CloseIcon size="28" weight="light" /> : <HamburgerMenuIcon2 size="28" weight="light" />}
+                        </IconButton>
                     </div>
-                    <DropdownMenu.Root>
+                    <DropdownMenu.Root >
                         <DropdownMenu.Trigger>
                             <Button
                                 variant="ghost"
-                                size="4"
+                                size="3"
                                 highContrast
                                 style={{ overflow: "hidden", textOverflow: "ellipsis" }}
                             >
@@ -59,14 +65,22 @@ export function Main() {
                                 <DropdownMenu.TriggerIcon />
                             </Button>
                         </DropdownMenu.Trigger>
-                        <DropdownMenu.Content>
-                            <DropdownMenu.Item shortcut="">Settings</DropdownMenu.Item>
+                        <DropdownMenu.Content style={{ minWidth: "128px" }} >
+                            <DropdownMenu.Item shortcut="">
+                                <Flex direction="row" align="center" justify="between" width="100%">
+                                    Configure <SettingsIcon size="16" />
+                                </Flex>
+                            </DropdownMenu.Item>
                             <DropdownMenu.Separator />
-                            <DropdownMenu.Item color="tomato" onClick={handleDelete}>Delete <IconTrash size={16} /></DropdownMenu.Item>
+                            <DropdownMenu.Item color="tomato" onClick={handleDelete}>
+                                <Flex direction="row" align="center" justify="between" width="100%">
+                                    Delete <DeleteIcon size="16" />
+                                </Flex>
+                            </DropdownMenu.Item>
                         </DropdownMenu.Content>
                     </DropdownMenu.Root>
-                    <IconButton className={styles.MobileOnly} variant="ghost" size="3" m="3" highContrast>
-                        <IconMessagePlus size={30} />
+                    <IconButton className={styles.MobileOnly} variant="ghost" size="3" m="2" highContrast>
+                        <ChatIcon size="28" weight="light" />
                     </IconButton>
                 </Flex>
             </header>
