@@ -16,8 +16,9 @@ const (
 type Chat struct {
 	ID        uuid.UUID `json:"id"`
 	Title     string    `json:"title"`
-	CreatedAt time.Time `json:"created_at"`
 	CreatedBy User      `json:"created_by"`
+	CreatedAt time.Time `json:"created_at"`
+	DeletedAt time.Time `json:"deleted_at"`
 }
 
 func NewChat(createdBy User) Chat {

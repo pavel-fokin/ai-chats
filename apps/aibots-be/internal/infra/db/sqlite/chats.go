@@ -38,12 +38,37 @@ func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 	return nil
 }
 
+func (c *Chats) Delete(ctx context.Context, chatID uuid.UUID) error {
+	result, err := c.db.ExecContext(
+		ctx,
+		`UPDATE chat
+		SET deleted_at = ?
+		WHERE id = ?`,
+		time.Now().Format(time.RFC3339Nano),
+		chatID,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to delete chat: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to get rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return domain.ErrChatNotFound
+	}
+
+	return nil
+}
+
 func (c *Chats) UpdateTitle(ctx context.Context, chatID uuid.UUID, title string) error {
 	_, err := c.db.ExecContext(
 		ctx,
 		`UPDATE chat
 		SET title = ?
-		WHERE id = ?`,
+		WHERE id = ? AND deleted_at IS NULL`,
 		title,
 		chatID,
 	)
@@ -60,7 +85,7 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 		`SELECT
 		id, title, created_at
 		FROM chat
-		WHERE created_by = ?`,
+		WHERE created_by = ? AND deleted_at IS NULL`,
 		userID,
 	)
 	if err != nil {
@@ -99,11 +124,11 @@ func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 		`SELECT
 		id, title, created_at
 		FROM chat
-		WHERE id = ?`,
+		WHERE id = ? AND deleted_at IS NULL`,
 		chatID,
 	).Scan(&chat.ID, &chat.Title, &createdAt)
 	if err != nil {
-		return domain.Chat{}, err
+		return domain.Chat{}, fmt.Errorf("failed to find chat by id: %w", err)
 	}
 
 	chat.CreatedAt, err = time.Parse(time.RFC3339Nano, createdAt)
@@ -119,7 +144,7 @@ func (c *Chats) Exists(ctx context.Context, chatID uuid.UUID) (bool, error) {
 	err := c.db.QueryRowContext(
 		ctx,
 		`SELECT EXISTS(
-		SELECT 1 FROM chat WHERE id = ?
+		SELECT 1 FROM chat WHERE id = ? AND deleted_at IS NULL
 		)`,
 		chatID,
 	).Scan(&exists)

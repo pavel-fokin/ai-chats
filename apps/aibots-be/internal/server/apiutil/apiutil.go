@@ -40,11 +40,18 @@ func AsErrorResponse(
 	json.NewEncoder(w).Encode(payload)
 }
 
-func AsSuccessResponse[T any](
-	w http.ResponseWriter, payload T, statusCode int,
+func AsSuccessResponse(
+	w http.ResponseWriter, payload any, statusCode int,
 ) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
+
+	if payload == nil {
+		if statusCode != http.StatusNoContent {
+			panic("payload is nil")
+		}
+		return
+	}
 
 	res := SuccessResponse{}
 	res.Data = payload

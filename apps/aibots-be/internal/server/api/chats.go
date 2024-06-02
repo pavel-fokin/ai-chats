@@ -19,6 +19,7 @@ type Subscriber interface {
 
 type ChatApp interface {
 	CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error)
+	DeleteChat(ctx context.Context, chatID uuid.UUID) error
 	FindChatByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error)
 	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
 	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
@@ -77,6 +78,29 @@ func GetChat(chat ChatApp) http.HandlerFunc {
 		}
 
 		apiutil.AsSuccessResponse(w, chat, http.StatusOK)
+	}
+}
+
+// DeleteChat handles the DELETE /api/chats/{uuid} endpoint.
+func DeleteChat(chat ChatApp) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		chatID := chi.URLParam(r, "uuid")
+
+		if err := chat.DeleteChat(ctx, uuid.MustParse(chatID)); err != nil {
+			switch err {
+			case domain.ErrChatNotFound:
+				apiutil.AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
+				return
+			default:
+				slog.ErrorContext(ctx, "failed to delete a chat", "err", err)
+				apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+				return
+			}
+		}
+
+		apiutil.AsSuccessResponse(w, nil, http.StatusNoContent)
 	}
 }
 

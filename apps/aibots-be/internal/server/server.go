@@ -88,9 +88,9 @@ func (s *Server) SetupChatAPI(chat api.ChatApp) {
 		r.Post("/api/chats", api.PostChats(chat))
 		r.Get("/api/chats", api.GetChats(chat))
 		r.Get("/api/chats/{uuid}", api.GetChat(chat))
+		r.Delete("/api/chats/{uuid}", api.DeleteChat(chat))
 		r.Post("/api/chats/{uuid}/messages", api.PostMessages(chat))
 		r.Get("/api/chats/{uuid}/messages", api.GetMessages(chat))
-
 	})
 
 	s.router.Group(func(r chi.Router) {

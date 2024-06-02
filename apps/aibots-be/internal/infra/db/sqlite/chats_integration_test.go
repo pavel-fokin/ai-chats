@@ -30,6 +30,48 @@ func TestAddChat(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestDeleteChat(t *testing.T) {
+	ctx := context.Background()
+	assert := assert.New(t)
+
+	db, err := NewDB(":memory:")
+	assert.NoError(err)
+	defer db.Close()
+	CreateTables(db)
+
+	users := NewUsers(db)
+	chats := NewChats(db)
+
+	t.Run("chat exists", func(t *testing.T) {
+		user := domain.NewUser("username")
+		err = users.Add(ctx, user)
+		assert.NoError(err)
+
+		chat := domain.NewChat(user)
+		err = chats.Add(ctx, chat)
+		assert.NoError(err)
+
+		// Call the DeleteChat method.
+		err = chats.Delete(ctx, chat.ID)
+		assert.NoError(err)
+
+		// Check that the chat was deleted.
+		var deletedAt string
+		err := db.QueryRowContext(ctx, "SELECT deleted_at FROM chat WHERE id = ?", chat.ID).Scan(&deletedAt)
+		assert.NoError(err)
+		assert.NotEmpty(deletedAt)
+
+		exists, err := chats.Exists(ctx, chat.ID)
+		assert.NoError(err)
+		assert.False(exists)
+	})
+
+	t.Run("chat does not exist", func(t *testing.T) {
+		err = chats.Delete(context.Background(), uuid.New())
+		assert.Error(err)
+	})
+}
+
 func TestAllChats(t *testing.T) {
 	db, err := NewDB(":memory:")
 	assert.NoError(t, err)

@@ -34,6 +34,11 @@ func (m *ChatMock) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Cha
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
+func (m *ChatMock) DeleteChat(ctx context.Context, chatID uuid.UUID) error {
+	args := m.Called(ctx, chatID)
+	return args.Error(0)
+}
+
 func (m *ChatMock) FindChatByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
 	args := m.Called(ctx, chatID)
 	return args.Get(0).(domain.Chat), args.Error(1)
@@ -118,6 +123,70 @@ func TestCreateChat(t *testing.T) {
 		assert.Equal(t, 500, resp.StatusCode)
 
 		chat.AssertNumberOfCalls(t, "CreateChat", 1)
+	})
+}
+
+func TestDeleteChat(t *testing.T) {
+	t.Parallel()
+
+	t.Run("Success", func(t *testing.T) {
+		chatID := uuid.New()
+		ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())
+
+		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/chats/%s", chatID), nil)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		chat := &ChatMock{}
+		chat.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(nil)
+
+		router := chi.NewRouter()
+		router.Delete("/api/chats/{uuid}", DeleteChat(chat))
+		router.ServeHTTP(w, req)
+
+		chat.AssertNumberOfCalls(t, "DeleteChat", 1)
+
+		resp := w.Result()
+		assert.Equal(t, 204, resp.StatusCode)
+
+	})
+
+	t.Run("Internal error", func(t *testing.T) {
+		chatID := uuid.New()
+		ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())
+
+		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/chats/%s", chatID), nil)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		chat := &ChatMock{}
+		chat.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(errors.New("failed to delete chat"))
+
+		router := chi.NewRouter()
+		router.Delete("/api/chats/{uuid}", DeleteChat(chat))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 500, resp.StatusCode)
+	})
+
+	t.Run("Chat not found", func(t *testing.T) {
+		chatID := uuid.New()
+		ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())
+
+		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/chats/%s", chatID), nil)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		chat := &ChatMock{}
+		chat.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(domain.ErrChatNotFound)
+
+		router := chi.NewRouter()
+		router.Delete("/api/chats/{uuid}", DeleteChat(chat))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 404, resp.StatusCode)
 	})
 }
 

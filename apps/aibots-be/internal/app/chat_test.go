@@ -22,6 +22,11 @@ func (m *MockChats) Add(ctx context.Context, chat domain.Chat) error {
 	return args.Error(0)
 }
 
+func (m *MockChats) Delete(ctx context.Context, chatID uuid.UUID) error {
+	args := m.Called(ctx, chatID)
+	return args.Error(0)
+}
+
 func (m *MockChats) UpdateTitle(ctx context.Context, chatID uuid.UUID, title string) error {
 	args := m.Called(ctx, chatID, title)
 	return args.Error(0)
@@ -70,6 +75,41 @@ func TestCreateChat(t *testing.T) {
 	assert.NotNil(t, chat)
 
 	mockChats.AssertExpectations(t)
+}
+
+func TestChat_Delete(t *testing.T) {
+	t.Run("chat exists", func(t *testing.T) {
+		ctx := context.Background()
+		assert := assert.New(t)
+
+		chat := domain.NewChat(domain.NewUser("username"))
+
+		mockChats := &MockChats{}
+		mockChats.On("Delete", ctx, chat.ID).Return(nil)
+
+		app := &App{chats: mockChats}
+
+		err := app.DeleteChat(ctx, chat.ID)
+		assert.NoError(err)
+	})
+
+	t.Run("chat does not exist", func(t *testing.T) {
+		ctx := context.Background()
+		assert := assert.New(t)
+
+		chatID := uuid.New()
+		expectedErr := errors.New("chat not found")
+
+		mockChats := &MockChats{}
+		mockChats.On("Delete", ctx, chatID).Return(expectedErr)
+
+		app := &App{chats: mockChats}
+
+		err := app.DeleteChat(ctx, chatID)
+		assert.Error(err)
+		assert.Equal(expectedErr, err)
+	})
+
 }
 
 func TestChat_FindById(t *testing.T) {

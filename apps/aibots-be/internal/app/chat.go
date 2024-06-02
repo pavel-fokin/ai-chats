@@ -28,6 +28,11 @@ func (a *App) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, er
 	return chat, nil
 }
 
+// DeleteChat deletes the chat.
+func (a *App) DeleteChat(ctx context.Context, chatID uuid.UUID) error {
+	return a.chats.Delete(ctx, chatID)
+}
+
 // AllChats returns all chats for the user.
 func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
 	return a.chats.AllChats(ctx, userID)

@@ -8,6 +8,7 @@ import (
 
 type Chats interface {
 	Add(ctx context.Context, chat Chat) error
+	Delete(ctx context.Context, chatID uuid.UUID) error
 	UpdateTitle(ctx context.Context, chatID uuid.UUID, title string) error
 	AllChats(ctx context.Context, userID uuid.UUID) ([]Chat, error)
 	FindByID(ctx context.Context, chatID uuid.UUID) (Chat, error)
