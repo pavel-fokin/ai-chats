@@ -21,9 +21,11 @@ const server = setupServer(
     http.post('/api/chats', () => {
         return HttpResponse.json({
             data: {
-                id: 'newChatId',
-                title: 'New chat',
-                createdAt: new Date()
+                chat: {
+                    id: 'newChatId',
+                    title: 'New chat',
+                    createdAt: new Date()
+                }
             }
         });
     }),

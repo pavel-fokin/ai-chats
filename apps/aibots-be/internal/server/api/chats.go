@@ -59,7 +59,7 @@ func PostChats(chat ChatApp) http.HandlerFunc {
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, chat, http.StatusOK)
+		apiutil.AsSuccessResponse(w, NewPostChatsResponse(chat), http.StatusOK)
 	}
 }
 
@@ -77,7 +77,7 @@ func GetChat(chat ChatApp) http.HandlerFunc {
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, chat, http.StatusOK)
+		apiutil.AsSuccessResponse(w, NewGetChatResponse(chat), http.StatusOK)
 	}
 }
 

@@ -6,6 +6,7 @@ const useChat = (chatId: string | undefined) => {
     return useQuery({
         queryKey: ['chat', chatId],
         queryFn: chatId ? () => fetchChatById(chatId) : skipToken,
+        select: (data) => data.data.chat,
     });
 }
 

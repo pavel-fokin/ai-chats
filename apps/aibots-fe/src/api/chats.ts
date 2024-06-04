@@ -3,7 +3,7 @@ import { fetchData, postData } from './base';
 
 type PostChatsResponse = {
     data: {
-        id: string;
+        chat: Chat;
     };
 };
 
@@ -14,7 +14,9 @@ type GetChatsResponse = {
 };
 
 type GetChatByIdResponse = {
-    data: Chat;
+    data: {
+        chat: Chat
+    };
 };
 
 type GetMessagesResponse = {
@@ -30,8 +32,7 @@ type PostMessagesResponse = {
 };
 
 const fetchChatById = async (chatId: string): Promise<GetChatByIdResponse> => {
-    const payload = await fetchData<GetChatByIdResponse>(`/api/chats/${chatId}`);
-    return payload;
+   return await fetchData<GetChatByIdResponse>(`/api/chats/${chatId}`);
 }
 
 const postChats = async (): Promise<PostChatsResponse> => {
@@ -39,8 +40,7 @@ const postChats = async (): Promise<PostChatsResponse> => {
 }
 
 const fetchChats = async (): Promise<GetChatsResponse> => {
-    const payload = await fetchData<GetChatsResponse>('/api/chats');
-    return payload;
+    return await fetchData<GetChatsResponse>('/api/chats');
 }
 
 const fetchMessages = async (chatId: string): Promise<GetMessagesResponse> => {
@@ -51,4 +51,4 @@ const postMessages = async (chatId: string, message: Message): Promise<PostMessa
     return await postData(`/api/chats/${chatId}/messages`, message);
 }
 
-export { postChats, fetchChats, fetchMessages, postMessages, fetchChatById }
+export { fetchChatById, fetchChats, fetchMessages, postChats, postMessages };

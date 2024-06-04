@@ -43,3 +43,31 @@ func NewGetMessagesResponse(messages []domain.Message) GetMessagesResponse {
 	}
 	return res
 }
+
+type GetChatResponse struct {
+	Chat Chat `json:"chat"`
+}
+
+func NewGetChatResponse(chat domain.Chat) GetChatResponse {
+	return GetChatResponse{
+		Chat: Chat{
+			ID:        chat.ID.String(),
+			Title:     chat.Title,
+			CreatedAt: chat.CreatedAt.Format(time.RFC3339Nano),
+		},
+	}
+}
+
+type PostChatsResponse struct {
+	Chat Chat `json:"chat"`
+}
+
+func NewPostChatsResponse(chat domain.Chat) PostChatsResponse {
+	return PostChatsResponse{
+		Chat: Chat{
+			ID:        chat.ID.String(),
+			Title:     chat.Title,
+			CreatedAt: chat.CreatedAt.Format(time.RFC3339Nano),
+		},
+	}
+}

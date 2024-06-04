@@ -12,7 +12,7 @@ type ChatMenuProps = {
 }
 
 export const ChatMenu = ({ chatId }: ChatMenuProps) => {
-    const { data } = useChat(chatId);
+    const { data: chat } = useChat(chatId);
 
     const handleDelete = () => {
         console.log('Delete chat', chatId);
@@ -34,7 +34,7 @@ export const ChatMenu = ({ chatId }: ChatMenuProps) => {
                             maxWidth: "192px",
                         }}
                     >
-                        {data?.data.title || 'Chat'}
+                        {chat?.title || 'Chat'}
                     </span>
                     <DropdownMenu.TriggerIcon />
                 </Button>

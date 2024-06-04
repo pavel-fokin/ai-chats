@@ -21,7 +21,7 @@ export const Sidebar = () => {
     const handleNewChat = async () => {
         createChat.mutate(void 0, {
             onSuccess: (data) => {
-                navigate(`/app/chats/${data.data.id}`);
+                navigate(`/app/chats/${data.data.chat.id}`);
             },
         });
     }
@@ -38,7 +38,7 @@ export const Sidebar = () => {
                 </Button>
                 <NavigationMenu.Root orientation="vertical">
                     <NavigationMenu.List className={styles.NavigationMenuList}>
-                        {!!chats && chats.data.chats?.map((chat) => (
+                        {!!chats && chats?.map((chat) => (
                             <NavigationMenu.Item key={chat.id}>
                                 {/* <NavigationMenu.Link
                                     asChild

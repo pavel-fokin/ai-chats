@@ -8,6 +8,7 @@ export function useChats() {
     const { data: chats } = useQuery({
         queryKey: ['chats'],
         queryFn: fetchChats,
+        select: (data) => data.data.chats,
     });
 
     const mutation = useMutation({
