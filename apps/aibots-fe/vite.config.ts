@@ -7,23 +7,23 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   server: {
     proxy: {
-      '/api': 'http://localhost:8080'
-    }
+      '/api': 'http://localhost:8080',
+    },
   },
   resolve: {
     alias: {
-      'api': '/src/api',
-      'components': '/src/components',
-      'contexts': '/src/contexts',
-      'hooks': '/src/hooks',
-      'pages': '/src/pages',
-      'types': '/src/types',
-      'schemas': '/src/schemas'
-    }
+      api: '/src/api',
+      components: '/src/components',
+      contexts: '/src/contexts',
+      hooks: '/src/hooks',
+      pages: '/src/pages',
+      types: '/src/types',
+      schemas: '/src/schemas',
+    },
   },
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: './vitest.setup.js',
-  }
-})
+  },
+});

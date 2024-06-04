@@ -4,15 +4,15 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { AuthContextProvider } from "contexts";
+import { AuthContextProvider } from 'contexts';
 import { LogIn } from '../LogIn';
 
 import { generateToken } from './utils';
 
 const server = setupServer(
-    http.post('/api/auth/login', () => {
-        return HttpResponse.json({ data: { accessToken: generateToken() } });
-    }),
+  http.post('/api/auth/login', () => {
+    return HttpResponse.json({ data: { accessToken: generateToken() } });
+  }),
 );
 
 beforeAll(() => server.listen());
@@ -21,61 +21,61 @@ afterAll(() => server.close());
 
 // Render a component with required providers and routing.
 export function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
-    return render(
-        <AuthContextProvider>
-            <MemoryRouter initialEntries={[route]}>
-                <Routes>
-                    <Route path="/app" element={<div>App</div>} />
-                    <Route path="/app/login" element={ui} />
-                </Routes>
-            </MemoryRouter>
-        </AuthContextProvider>
-    );
+  return render(
+    <AuthContextProvider>
+      <MemoryRouter initialEntries={[route]}>
+        <Routes>
+          <Route path="/app" element={<div>App</div>} />
+          <Route path="/app/login" element={ui} />
+        </Routes>
+      </MemoryRouter>
+    </AuthContextProvider>,
+  );
 }
 
 test('renders Log In component', () => {
-    renderWithRouter(<LogIn />, { route: '/app/login' });
+  renderWithRouter(<LogIn />, { route: '/app/login' });
 
-    expect(screen.getByRole('heading', { name: 'Log in' })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Your username')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Log in' })).toBeInTheDocument();
-    expect(screen.getByText("Don't have an account?")).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Log in' })).toBeInTheDocument();
+  expect(screen.getByPlaceholderText('Your username')).toBeInTheDocument();
+  expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Log in' })).toBeInTheDocument();
+  expect(screen.getByText("Don't have an account?")).toBeInTheDocument();
 });
 
 test('calls logIn function and navigates to /app on successful log in', async () => {
-    renderWithRouter(<LogIn />, { route: '/app/login' });
+  renderWithRouter(<LogIn />, { route: '/app/login' });
 
-    const username = 'user';
-    const password = 'password';
+  const username = 'user';
+  const password = 'password';
 
-    const usernameInput = screen.getByPlaceholderText('Your username');
-    const passwordInput = screen.getByPlaceholderText('Your password');
-    const logInButton = screen.getByRole('button', { name: 'Log in' });
+  const usernameInput = screen.getByPlaceholderText('Your username');
+  const passwordInput = screen.getByPlaceholderText('Your password');
+  const logInButton = screen.getByRole('button', { name: 'Log in' });
 
-    await userEvent.type(usernameInput, username);
-    await userEvent.type(passwordInput, password);
+  await userEvent.type(usernameInput, username);
+  await userEvent.type(passwordInput, password);
 
-    await userEvent.click(logInButton);
+  await userEvent.click(logInButton);
 
-    await waitFor(() => {
-        expect(screen.getByText('App')).toBeInTheDocument();
-    });
+  await waitFor(() => {
+    expect(screen.getByText('App')).toBeInTheDocument();
+  });
 });
 
 test('validation errors are displayed when submitting an empty form', async () => {
-    renderWithRouter(<LogIn />, { route: '/app/login' });
+  renderWithRouter(<LogIn />, { route: '/app/login' });
 
-    const logInButton = screen.getByRole('button', { name: 'Log in' });
+  const logInButton = screen.getByRole('button', { name: 'Log in' });
 
-    await userEvent.click(logInButton);
+  await userEvent.click(logInButton);
 
-    await waitFor(() => {
-        expect(screen.getByText('Username is required')).toBeInTheDocument();
-        expect(screen.getByText('Password must be at least 6 characters')).toBeInTheDocument();
-    });
+  await waitFor(() => {
+    expect(screen.getByText('Username is required')).toBeInTheDocument();
+    expect(
+      screen.getByText('Password must be at least 6 characters'),
+    ).toBeInTheDocument();
+  });
 });
 
-test('displays error message on unsuccessful log in', async () => {
-
-});
+test('displays error message on unsuccessful log in', async () => {});

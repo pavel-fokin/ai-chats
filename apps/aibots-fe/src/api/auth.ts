@@ -1,12 +1,15 @@
 type SignInResponse = {
   accessToken: string;
-}
+};
 
 type SignUpResponse = {
   accessToken: string;
-}
+};
 
-export const postLogIn = async (username: string, password: string): Promise<SignInResponse> => {
+export const postLogIn = async (
+  username: string,
+  password: string,
+): Promise<SignInResponse> => {
   const resp = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -18,9 +21,12 @@ export const postLogIn = async (username: string, password: string): Promise<Sig
 
   const payload = await resp.json();
   return payload.data;
-}
+};
 
-export const postSignUp = async (username: string, password: string): Promise<SignUpResponse> => {
+export const postSignUp = async (
+  username: string,
+  password: string,
+): Promise<SignUpResponse> => {
   const resp = await fetch('/api/auth/signup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -32,6 +38,6 @@ export const postSignUp = async (username: string, password: string): Promise<Si
 
   const payload = await resp.json();
   return payload.data;
-}
+};
 
-export default { postLogIn, postSignUp }
+export default { postLogIn, postSignUp };

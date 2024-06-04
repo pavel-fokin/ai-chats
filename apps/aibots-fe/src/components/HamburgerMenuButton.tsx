@@ -8,11 +8,22 @@ import { SidebarContext } from 'contexts';
 import styles from './HamburgerMenuButton.module.css';
 
 export const HamburgerMenuButton: React.FC = () => {
-    const { isOpen, toggleSidebar } = useContext(SidebarContext);
+  const { isOpen, toggleSidebar } = useContext(SidebarContext);
 
-    return (
-        <IconButton className={styles.HamburgerMenuButton} variant="ghost" size="3" m="2" highContrast onClick={toggleSidebar}>
-            {isOpen ? <CloseIcon size="28" weight="light" /> : <HamburgerMenuIcon size="28" weight="light" />}
-        </IconButton>
-    );
-}
+  return (
+    <IconButton
+      className={styles.HamburgerMenuButton}
+      variant="ghost"
+      size="3"
+      m="2"
+      highContrast
+      onClick={toggleSidebar}
+    >
+      {isOpen ? (
+        <CloseIcon size="28" weight="light" />
+      ) : (
+        <HamburgerMenuIcon size="28" weight="light" />
+      )}
+    </IconButton>
+  );
+};

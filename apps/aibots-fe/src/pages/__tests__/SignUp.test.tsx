@@ -4,15 +4,15 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { AuthContextProvider } from "contexts";
+import { AuthContextProvider } from 'contexts';
 import { SignUp } from '../SignUp';
 
 import { generateToken } from './utils';
 
 const server = setupServer(
-    http.post('/api/auth/signup', () => {
-        return HttpResponse.json({ data: { accessToken: generateToken() } });
-    }),
+  http.post('/api/auth/signup', () => {
+    return HttpResponse.json({ data: { accessToken: generateToken() } });
+  }),
 );
 
 beforeAll(() => server.listen());
@@ -21,61 +21,67 @@ afterAll(() => server.close());
 
 // Render a component with required providers and routing.
 export function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
-    return render(
-        <AuthContextProvider>
-            <MemoryRouter initialEntries={[route]}>
-                <Routes>
-                    <Route path="/app" element={<div>App</div>} />
-                    <Route path="/app/signup" element={ui} />
-                </Routes>
-            </MemoryRouter>
-        </AuthContextProvider>
-    );
+  return render(
+    <AuthContextProvider>
+      <MemoryRouter initialEntries={[route]}>
+        <Routes>
+          <Route path="/app" element={<div>App</div>} />
+          <Route path="/app/signup" element={ui} />
+        </Routes>
+      </MemoryRouter>
+    </AuthContextProvider>,
+  );
 }
 
 test('renders Sign Up component', () => {
-    renderWithRouter(<SignUp />, { route: '/app/signup' });
+  renderWithRouter(<SignUp />, { route: '/app/signup' });
 
-    expect(screen.getByRole('heading', { name: 'Sign up' })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Your username')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Create an account' })).toBeInTheDocument();
-    expect(screen.getByText('Already have an account?')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Sign up' })).toBeInTheDocument();
+  expect(screen.getByPlaceholderText('Your username')).toBeInTheDocument();
+  expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
+  expect(
+    screen.getByRole('button', { name: 'Create an account' }),
+  ).toBeInTheDocument();
+  expect(screen.getByText('Already have an account?')).toBeInTheDocument();
 });
 
 test('calls signUp function and navigates to /app on successful sign up', async () => {
-    renderWithRouter(<SignUp />, { route: '/app/signup' });
+  renderWithRouter(<SignUp />, { route: '/app/signup' });
 
-    const username = 'user';
-    const password = 'password';
+  const username = 'user';
+  const password = 'password';
 
-    const usernameInput = screen.getByPlaceholderText('Your username');
-    const passwordInput = screen.getByPlaceholderText('Your password');
-    const signUpButton = screen.getByRole('button', { name: 'Create an account' });
+  const usernameInput = screen.getByPlaceholderText('Your username');
+  const passwordInput = screen.getByPlaceholderText('Your password');
+  const signUpButton = screen.getByRole('button', {
+    name: 'Create an account',
+  });
 
-    await userEvent.type(usernameInput, username);
-    await userEvent.type(passwordInput, password);
+  await userEvent.type(usernameInput, username);
+  await userEvent.type(passwordInput, password);
 
-    await userEvent.click(signUpButton);
+  await userEvent.click(signUpButton);
 
-    await waitFor(() => {
-        expect(screen.getByText('App')).toBeInTheDocument();
-    });
+  await waitFor(() => {
+    expect(screen.getByText('App')).toBeInTheDocument();
+  });
 });
 
 test('displays validation errors on invalid input', async () => {
-    renderWithRouter(<SignUp />, { route: '/app/signup' });
+  renderWithRouter(<SignUp />, { route: '/app/signup' });
 
-    const signUpButton = screen.getByRole('button', { name: 'Create an account' });
+  const signUpButton = screen.getByRole('button', {
+    name: 'Create an account',
+  });
 
-    await userEvent.click(signUpButton);
+  await userEvent.click(signUpButton);
 
-    await waitFor(() => {
-        expect(screen.getByText('Username is required')).toBeInTheDocument();
-        expect(screen.getByText('Password must be at least 6 characters')).toBeInTheDocument();
-    });
+  await waitFor(() => {
+    expect(screen.getByText('Username is required')).toBeInTheDocument();
+    expect(
+      screen.getByText('Password must be at least 6 characters'),
+    ).toBeInTheDocument();
+  });
 });
 
-test('displays error message on unsuccessful sign in', async () => {
-
-});
+test('displays error message on unsuccessful sign in', async () => {});

@@ -3,24 +3,24 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchChats, postChats } from 'api';
 
 export function useChats() {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    const { data: chats } = useQuery({
+  const { data: chats } = useQuery({
+    queryKey: ['chats'],
+    queryFn: fetchChats,
+    select: (data) => data.data.chats,
+  });
+
+  const mutation = useMutation({
+    mutationFn: postChats,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
         queryKey: ['chats'],
-        queryFn: fetchChats,
-        select: (data) => data.data.chats,
-    });
-
-    const mutation = useMutation({
-        mutationFn: postChats,
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['chats'],
-            });
-        }
-    });
-    return {
-        chats,
-        createChat: mutation,
-    }
+      });
+    },
+  });
+  return {
+    chats,
+    createChat: mutation,
+  };
 }

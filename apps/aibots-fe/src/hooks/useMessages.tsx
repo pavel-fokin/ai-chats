@@ -4,26 +4,26 @@ import { fetchMessages, postMessages } from 'api';
 import { Message } from 'types';
 
 export function useMessages(chatId: string) {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    const { data: payload = [] } = useQuery({
+  const { data: payload = [] } = useQuery({
+    queryKey: ['messages', chatId],
+    queryFn: () => fetchMessages(chatId),
+  });
+
+  const mutation = useMutation({
+    mutationFn: (msg: Message) => {
+      return postMessages(chatId, msg);
+    },
+  });
+
+  return {
+    messages: Array.isArray(payload) ? payload : payload.data.messages || [],
+    sendMessage: mutation,
+    invalidateMessages: () => {
+      queryClient.invalidateQueries({
         queryKey: ['messages', chatId],
-        queryFn: () => fetchMessages(chatId),
-    });
-
-    const mutation = useMutation({
-        mutationFn: (msg: Message) => {
-            return postMessages(chatId, msg);
-        },
-    });
-
-    return {
-        messages: Array.isArray(payload) ? payload : payload.data.messages || [],
-        sendMessage: mutation,
-        invalidateMessages: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['messages', chatId],
-            });
-        }
-    }
+      });
+    },
+  };
 }

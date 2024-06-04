@@ -3,47 +3,50 @@ import { useEffect, useState } from 'react';
 import * as types from 'types';
 import { useAuth, useMessages } from 'hooks';
 
-
 export function useChatEvents(chatId: string) {
-    const [messageChunk, setMessageChunk] = useState<types.MessageChunk>({} as types.MessageChunk)
+  const [messageChunk, setMessageChunk] = useState<types.MessageChunk>(
+    {} as types.MessageChunk,
+  );
 
-    const { accessToken } = useAuth();
-    const { invalidateMessages } = useMessages(chatId);
+  const { accessToken } = useAuth();
+  const { invalidateMessages } = useMessages(chatId);
 
-    useEffect(() => {
-        const eventSource = new EventSource(`/api/chats/${chatId}/events?accessToken=${accessToken}`);
+  useEffect(() => {
+    const eventSource = new EventSource(
+      `/api/chats/${chatId}/events?accessToken=${accessToken}`,
+    );
 
-        eventSource.onopen = () => {
-            console.log('Connection to server opened.');
-        };
+    eventSource.onopen = () => {
+      console.log('Connection to server opened.');
+    };
 
-        eventSource.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            switch (message.type) {
-                case types.EventTypes.MESSAGE_ADDED:
-                    invalidateMessages();
-                    break;
-                case types.EventTypes.MESSAGE_CHUNK_RECEIVED:
-                    if (message.done) {
-                        setMessageChunk({} as types.MessageChunk);
-                        break;
-                    }
-                    setMessageChunk(message);
-                    break;
-                default:
-                    console.error('Unknown message type:', message.type);
-            }
-        };
+    eventSource.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      switch (message.type) {
+        case types.EventTypes.MESSAGE_ADDED:
+          invalidateMessages();
+          break;
+        case types.EventTypes.MESSAGE_CHUNK_RECEIVED:
+          if (message.done) {
+            setMessageChunk({} as types.MessageChunk);
+            break;
+          }
+          setMessageChunk(message);
+          break;
+        default:
+          console.error('Unknown message type:', message.type);
+      }
+    };
 
-        eventSource.onerror = (error) => {
-            console.error('EventSource failed:', error);
-        };
+    eventSource.onerror = (error) => {
+      console.error('EventSource failed:', error);
+    };
 
-        return () => {
-            console.log('Closing connection to server.');
-            eventSource.close();
-        }
-    }, [chatId]);
+    return () => {
+      console.log('Closing connection to server.');
+      eventSource.close();
+    };
+  }, [chatId]);
 
-    return { messageChunk };
+  return { messageChunk };
 }

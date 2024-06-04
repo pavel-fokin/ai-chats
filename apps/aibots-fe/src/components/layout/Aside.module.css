@@ -1,25 +1,25 @@
 @media only screen and (min-width: 768px) {
-    .Aside {
-        --sidebar-display: block;
-        --sidebar-height: auto;
-        --sidebar-padding: var(--space-3);
-        --sidebar-position: static;
-        --sidebar-width: 300px;
-    }
+  .Aside {
+    --sidebar-display: block;
+    --sidebar-height: auto;
+    --sidebar-padding: var(--space-3);
+    --sidebar-position: static;
+    --sidebar-width: 300px;
+  }
 }
 
 .Aside {
-    background-color: var(--color-background);
-    border-inline-end: 1px solid var(--accent-6);
-    display: var(--sidebar-display, none);
-    height: var(--sidebar-height, 100vh);
-    min-width: 300px;
-    padding: var(--sidebar-padding, var(--space-9)) var(--space-3) var(--space-3);
-    position: var(--sidebar-position, fixed);
-    width: var(--sidebar-width, 100vw);
-    z-index: 1;
+  background-color: var(--color-background);
+  border-inline-end: 1px solid var(--accent-6);
+  display: var(--sidebar-display, none);
+  height: var(--sidebar-height, 100vh);
+  min-width: 300px;
+  padding: var(--sidebar-padding, var(--space-9)) var(--space-3) var(--space-3);
+  position: var(--sidebar-position, fixed);
+  width: var(--sidebar-width, 100vw);
+  z-index: 1;
 }
 
 .AsideOpen {
-    --sidebar-display: block;
+  --sidebar-display: block;
 }
