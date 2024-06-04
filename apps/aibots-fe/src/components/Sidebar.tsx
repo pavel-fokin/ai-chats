@@ -8,9 +8,9 @@ import { ChatText as ChatIcon, SignOut as SignOutIcon } from "@phosphor-icons/re
 import { AuthContext, SidebarContext } from 'contexts';
 import { useChats } from 'hooks';
 
-import styles from './Navbar.module.css';
+import styles from './Sidebar.module.css';
 
-export function Navbar() {
+export const Sidebar = () => {
     const navigate = useNavigate();
 
     const { toggleSidebar } = useContext(SidebarContext);

@@ -14,7 +14,7 @@ import '@radix-ui/themes/styles.css';
 
 import { AuthRequired } from "components";
 import { Chat, Landing, Home, LogIn, SignUp } from 'pages';
-import { AuthContextProvider, ChatContextProvider, SidebarContextProvider } from "contexts";
+import { AuthContextProvider, SidebarContextProvider } from "contexts";
 
 const router = createBrowserRouter([
   {
@@ -33,11 +33,9 @@ const router = createBrowserRouter([
     path: "/app",
     element: (
       <AuthRequired>
-        <ChatContextProvider>
           <SidebarContextProvider>
             <Outlet />
           </SidebarContextProvider>
-        </ChatContextProvider>
       </AuthRequired>
     ),
     children: [

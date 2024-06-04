@@ -6,7 +6,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import { AuthContextProvider } from "contexts";
-import { Navbar } from '../Navbar';
+import { Sidebar } from '../Sidebar';
 
 const server = setupServer(
     http.get('/api/chats', () => {
@@ -58,7 +58,7 @@ function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
 }
 
 test('renders Navbar component', async () => {
-    renderWithRouter(<Navbar />, { route: '/app' });
+    renderWithRouter(<Sidebar />, { route: '/app' });
 
     expect(screen.getByText('Start a new chat')).toBeInTheDocument();
     expect(screen.getByText('Sign out')).toBeInTheDocument();
@@ -69,7 +69,7 @@ test('renders Navbar component', async () => {
 });
 
 test('navigates to chat on chat link click', async () => {
-    renderWithRouter(<Navbar />, { route: '/app' });
+    renderWithRouter(<Sidebar />, { route: '/app' });
 
     await waitFor(async () => {
         expect(screen.getByText('Some chat')).toBeInTheDocument();
@@ -79,7 +79,7 @@ test('navigates to chat on chat link click', async () => {
 });
 
 test('calls handleNewChat on new chat button click', async () => {
-    renderWithRouter(<Navbar />, { route: '/app' });
+    renderWithRouter(<Sidebar />, { route: '/app' });
 
     await waitFor(async () => {
         await userEvent.click(screen.getByText('Start a new chat'));
@@ -88,7 +88,7 @@ test('calls handleNewChat on new chat button click', async () => {
 });
 
 test('calls handleSignOut on sign out button click', async () => {
-    renderWithRouter(<Navbar />, { route: '/app' });
+    renderWithRouter(<Sidebar />, { route: '/app' });
 
     await waitFor(async () => {
         await userEvent.click(screen.getByText('Sign out'));
