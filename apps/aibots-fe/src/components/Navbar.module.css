@@ -26,6 +26,10 @@
     white-space: nowrap;
 }
 
+.NavigationMenuLinkActive {
+    background-color: var(--accent-4);
+}
+
 .NavigationMenuLink:focus {
     box-shadow: 0 0 0 2px var(--accent-7);
 }
@@ -34,6 +38,3 @@
     background-color: var(--accent-3);
 }
 
-.NavigationMenuLinkActive {
-    background-color: var(--accent-4);
-}

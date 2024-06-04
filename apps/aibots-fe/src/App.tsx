@@ -3,6 +3,7 @@
 import {
   createBrowserRouter,
   RouterProvider,
+  Outlet,
 } from "react-router-dom";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -12,8 +13,8 @@ import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 
 import { AuthRequired } from "components";
-import { Chat, EmptyState, Landing, Main, LogIn, SignUp } from 'pages';
-import { AuthContextProvider, ChatContextProvider } from "contexts";
+import { Chat, Landing, Home, LogIn, SignUp } from 'pages';
+import { AuthContextProvider, ChatContextProvider, SidebarContextProvider } from "contexts";
 
 const router = createBrowserRouter([
   {
@@ -33,14 +34,16 @@ const router = createBrowserRouter([
     element: (
       <AuthRequired>
         <ChatContextProvider>
-          <Main />
+          <SidebarContextProvider>
+            <Outlet />
+          </SidebarContextProvider>
         </ChatContextProvider>
       </AuthRequired>
     ),
     children: [
       {
         path: "",
-        element: <EmptyState />,
+        element: <Home />,
       },
       {
         path: "chats/:chatId",

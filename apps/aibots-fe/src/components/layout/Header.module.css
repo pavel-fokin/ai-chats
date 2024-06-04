@@ -1,0 +1,19 @@
+@media only screen and (min-width: 768px) {
+    .Header {
+        --header-margin-left: 300px;
+        --header-width: calc(100vw - 300px);
+    }
+}
+
+.Header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--color-panel-translucent);
+    margin-left: var(--header-margin-left, 0);
+    padding: var(--space-2) var(--space-2);
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    width: var(--header-width, 100%);
+}

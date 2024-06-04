@@ -5,7 +5,6 @@ import { useAuth } from 'hooks';
 type AuthContextValue = {
     isAuthenticated: boolean;
     isLoading: boolean;
-    setIsAuthenticated: (isAuthenticated: boolean) => void;
     login: (username: string, password: string) => Promise<boolean>;
     signup: (username: string, password: string) => Promise<boolean>;
     signout: () => void;
@@ -59,7 +58,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         <AuthContext.Provider value={{
             isAuthenticated,
             isLoading,
-            setIsAuthenticated,
             login,
             signup,
             signout

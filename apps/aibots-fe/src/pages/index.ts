@@ -1,6 +1,5 @@
 export * from './Chat';
-export * from './Main';
-export * from './EmptyState';
+export * from './Home';
 export * from './Landing';
 export * from './LogIn';
 export * from './SignUp';

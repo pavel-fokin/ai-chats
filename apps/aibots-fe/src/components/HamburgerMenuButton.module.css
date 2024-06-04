@@ -1,0 +1,10 @@
+@media only screen and (min-width: 768px) {
+    .HamburgerMenuButton {
+      --mobile-only-visibility: hidden;
+    }
+
+  }
+
+  .HamburgerMenuButton {
+    visibility: var(--mobile-only-visibility, visible);
+  }

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { fetchChats, postChats, fetchChatById } from 'api';
+import { fetchChats, postChats } from 'api';
 
 export function useChats() {
     const queryClient = useQueryClient();
@@ -18,18 +18,8 @@ export function useChats() {
             });
         }
     });
-
-    const getChatById = async (chatId: string) => {
-        const { data: chat } = await queryClient.ensureQueryData({
-            queryKey: ['chat', chatId],
-            queryFn: () => fetchChatById(chatId),
-        });
-        return chat;
-    }
-
     return {
         chats,
         createChat: mutation,
-        getChatById,
     }
 }

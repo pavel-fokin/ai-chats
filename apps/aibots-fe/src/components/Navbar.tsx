@@ -1,44 +1,38 @@
 import { useContext } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { Button, Flex, Separator } from '@radix-ui/themes';
-import {  ChatText as ChatIcon, SignOut as SignOutIcon } from "@phosphor-icons/react";
+import { ChatText as ChatIcon, SignOut as SignOutIcon } from "@phosphor-icons/react";
 
-import { AuthContext } from 'contexts';
+import { AuthContext, SidebarContext } from 'contexts';
 import { useChats } from 'hooks';
 
 import styles from './Navbar.module.css';
 
-type NavbarProps = {
-    open: (open: boolean) => void;
-}
-
-export function Navbar({ open }: NavbarProps) {
+export function Navbar() {
     const navigate = useNavigate();
-    const { chatId } = useParams<{ chatId: string }>();
+
+    const { toggleSidebar } = useContext(SidebarContext);
 
     const { chats, createChat } = useChats();
-    const { setIsAuthenticated, signout } = useContext(AuthContext);
+    const { signout } = useContext(AuthContext);
 
     const handleNewChat = async () => {
-        createChat.mutateAsync().then((data) => {
-            navigate(`/app/chats/${data.data.id}`);
-        }).catch((error) => {
-            console.error('Failed to create a chat', error);
+        createChat.mutate(void 0, {
+            onSuccess: (data) => {
+                navigate(`/app/chats/${data.data.id}`);
+            },
         });
     }
 
     const handleSignOut = () => {
         signout();
-        setIsAuthenticated(false);
-        navigate('/app/login');
     }
 
     return (
         <Flex direction="column" gap="2" height="100%" justify="between">
             <Flex direction="column">
-
                 <Button size="3" variant="ghost" m="4" onClick={handleNewChat}>
                     <ChatIcon width={16} height={16} />Start a new chat
                 </Button>
@@ -46,18 +40,19 @@ export function Navbar({ open }: NavbarProps) {
                     <NavigationMenu.List className={styles.NavigationMenuList}>
                         {!!chats && chats.data.chats?.map((chat) => (
                             <NavigationMenu.Item key={chat.id}>
-                                <NavigationMenu.Link
+                                {/* <NavigationMenu.Link
                                     asChild
-                                    className={
-                                        styles.NavigationMenuLink
-                                        + ' '
-                                        + (chatId === chat.id ? styles.NavigationMenuLinkActive : '')
-                                    }
-                                >
-                                    <Link to={`/app/chats/${chat.id}`} onClick={() => open(false)}>
+                                > */}
+                                    <NavLink
+                                        className={({isActive}) =>
+                                            isActive ? styles.NavigationMenuLink + ' ' + styles.NavigationMenuLinkActive: styles.NavigationMenuLink
+                                        }
+                                        to={`/app/chats/${chat.id}`}
+                                        onClick={toggleSidebar}
+                                    >
                                         {chat.title}
-                                    </Link>
-                                </NavigationMenu.Link>
+                                    </NavLink>
+                                {/* </NavigationMenu.Link> */}
                             </NavigationMenu.Item>
                         ))}
                     </NavigationMenu.List>
