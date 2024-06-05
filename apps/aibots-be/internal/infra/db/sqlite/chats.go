@@ -24,12 +24,12 @@ func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 	_, err := c.db.ExecContext(
 		ctx,
 		`INSERT INTO chat
-		(id, title, created_at, created_by)
+		(id, title, created_at, user_id)
 		VALUES (?, ?, ?, ?)`,
 		chat.ID,
 		chat.Title,
 		chat.CreatedAt.Format(time.RFC3339Nano),
-		chat.CreatedBy.ID,
+		chat.User.ID,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to insert chat: %w", err)
@@ -85,7 +85,7 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 		`SELECT
 		id, title, created_at
 		FROM chat
-		WHERE created_by = ? AND deleted_at IS NULL`,
+		WHERE user_id = ? AND deleted_at IS NULL`,
 		userID,
 	)
 	if err != nil {

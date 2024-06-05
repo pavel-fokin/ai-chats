@@ -16,16 +16,16 @@ const (
 type Chat struct {
 	ID        uuid.UUID `json:"id"`
 	Title     string    `json:"title"`
-	CreatedBy User      `json:"created_by"`
+	User      User      `json:"user"`
 	CreatedAt time.Time `json:"created_at"`
 	DeletedAt time.Time `json:"deleted_at"`
 }
 
-func NewChat(createdBy User) Chat {
+func NewChat(user User) Chat {
 	return Chat{
 		ID:        uuid.New(),
 		Title:     "New chat",
 		CreatedAt: time.Now().UTC(),
-		CreatedBy: createdBy,
+		User:      user,
 	}
 }

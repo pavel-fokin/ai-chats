@@ -9,10 +9,10 @@ CREATE TABLE IF NOT EXISTS chat (
     pk INTEGER PRIMARY KEY AUTOINCREMENT,
     id TEXT NOT NULL UNIQUE,
     title TEXT NOT NULL,
-    created_by TEXT NOT NULL,
+    user_id TEXT NOT NULL,
     created_at TEXT NOT NULL,
     deleted_at TEXT,
-    FOREIGN KEY (created_by) REFERENCES user(id)
+    FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
 CREATE TABLE IF NOT EXISTS message (
