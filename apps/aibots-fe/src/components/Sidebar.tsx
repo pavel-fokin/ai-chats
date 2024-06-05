@@ -23,8 +23,8 @@ export const Sidebar = () => {
 
   const handleNewChat = async () => {
     createChat.mutate(void 0, {
-      onSuccess: (data) => {
-        navigate(`/app/chats/${data.data.chat.id}`);
+      onSuccess: ({ data }) => {
+        navigate(`/app/chats/${data.chat.id}`);
       },
     });
   };

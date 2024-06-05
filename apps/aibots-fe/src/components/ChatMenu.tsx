@@ -1,21 +1,29 @@
 import { Button, DropdownMenu, Flex } from '@radix-ui/themes';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Trash as DeleteIcon,
   SlidersHorizontal as SettingsIcon,
 } from '@phosphor-icons/react';
 
-import { useChat } from 'hooks';
+import { useChat, useDeleteChat } from 'hooks';
 
 type ChatMenuProps = {
   chatId: string;
 };
 
 export const ChatMenu = ({ chatId }: ChatMenuProps) => {
+  const navigate = useNavigate();
+
   const { data: chat } = useChat(chatId);
+  const deleteChat = useDeleteChat(chatId);
 
   const handleDelete = () => {
-    console.log('Delete chat', chatId);
+    deleteChat.mutate(void 0, {
+      onSuccess: () => {
+        navigate('/app');
+      },
+    });
   };
 
   return (

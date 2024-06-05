@@ -186,6 +186,7 @@ func GetEvents(app ChatApp, sse *apiutil.SSEConnections, subscriber Subscriber) 
 		for {
 			select {
 			case <-conn.Closed:
+				apiutil.AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
 				return
 			case <-ctx.Done():
 				return

@@ -1,8 +1,8 @@
-import { useQuery, skipToken } from '@tanstack/react-query';
+import { useQuery, skipToken, useMutation } from '@tanstack/react-query';
 
-import { fetchChatById } from 'api';
+import { fetchChatById, deleteChats } from 'api';
 
-const useChat = (chatId: string | undefined) => {
+export const useChat = (chatId: string | undefined) => {
   return useQuery({
     queryKey: ['chat', chatId],
     queryFn: chatId ? () => fetchChatById(chatId) : skipToken,
@@ -10,4 +10,8 @@ const useChat = (chatId: string | undefined) => {
   });
 };
 
-export { useChat };
+export const useDeleteChat = (chatId: string) => {
+  return useMutation({
+    mutationFn: () => deleteChats(chatId),
+  });
+};

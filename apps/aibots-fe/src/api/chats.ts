@@ -1,5 +1,9 @@
 import { Chat, Message } from 'types';
-import { fetchData, postData } from './base';
+import { fetchData, postData, deleteData } from './base';
+
+type Error = {
+  message: string;
+};
 
 type PostChatsResponse = {
   data: {
@@ -19,6 +23,10 @@ type GetChatByIdResponse = {
   };
 };
 
+type DeleteChatsResponse = {
+  errors?: Error[];
+};
+
 type GetMessagesResponse = {
   data: {
     messages: Message[];
@@ -31,27 +39,35 @@ type PostMessagesResponse = {
   };
 };
 
-const fetchChatById = async (chatId: string): Promise<GetChatByIdResponse> => {
+export const fetchChatById = async (
+  chatId: string,
+): Promise<GetChatByIdResponse> => {
   return await fetchData<GetChatByIdResponse>(`/api/chats/${chatId}`);
 };
 
-const postChats = async (): Promise<PostChatsResponse> => {
+export const postChats = async (): Promise<PostChatsResponse> => {
   return await postData('/api/chats', {});
 };
 
-const fetchChats = async (): Promise<GetChatsResponse> => {
+export const deleteChats = async (
+  chatId: string,
+): Promise<DeleteChatsResponse> => {
+  return await deleteData(`/api/chats/${chatId}`);
+};
+
+export const fetchChats = async (): Promise<GetChatsResponse> => {
   return await fetchData<GetChatsResponse>('/api/chats');
 };
 
-const fetchMessages = async (chatId: string): Promise<GetMessagesResponse> => {
+export const fetchMessages = async (
+  chatId: string,
+): Promise<GetMessagesResponse> => {
   return await fetchData(`/api/chats/${chatId}/messages`);
 };
 
-const postMessages = async (
+export const postMessages = async (
   chatId: string,
   message: Message,
 ): Promise<PostMessagesResponse> => {
   return await postData(`/api/chats/${chatId}/messages`, message);
 };
-
-export { fetchChatById, fetchChats, fetchMessages, postChats, postMessages };
