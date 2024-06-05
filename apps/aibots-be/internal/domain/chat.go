@@ -25,7 +25,7 @@ func NewChat(user User) Chat {
 	return Chat{
 		ID:        uuid.New(),
 		Title:     "New chat",
-		CreatedAt: time.Now().UTC(),
 		User:      user,
+		CreatedAt: time.Now().UTC(),
 	}
 }
