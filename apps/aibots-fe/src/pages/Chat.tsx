@@ -9,6 +9,8 @@ import { InputMessage, Message } from 'components';
 import { useChatEvents, useMessages } from 'hooks';
 import * as types from 'types';
 
+import styles from './Chat.module.css';
+
 export function Chat() {
   const { chatId } = useParams<{ chatId: string }>();
 
@@ -32,7 +34,7 @@ export function Chat() {
       <Header>
         <HamburgerMenuButton />
         <ChatMenu chatId={chatId} />
-        <IconButton variant="ghost" size="3" m="2" highContrast>
+        <IconButton className={styles.NewChatHeaderButton} variant="ghost" size="3" m="2" highContrast>
           <ChatIcon size="28" weight="light" />
         </IconButton>
       </Header>

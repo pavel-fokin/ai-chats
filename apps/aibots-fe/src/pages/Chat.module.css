@@ -1,0 +1,10 @@
+@media only screen and (min-width: 768px) {
+    .NewChatHeaderButton {
+      --mobile-only-visibility: hidden;
+    }
+  }
+  
+  .NewChatHeaderButton {
+    visibility: var(--mobile-only-visibility, visible);
+  }
+  
