@@ -3,11 +3,8 @@ import { useNavigate, NavLink } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { Button, Flex, Separator } from '@radix-ui/themes';
-import {
-  ChatText as ChatIcon,
-  SignOut as SignOutIcon,
-} from '@phosphor-icons/react';
 
+import { ChatIcon, SignOutIcon } from 'components/ui/icons';
 import { AuthContext, SidebarContext } from 'contexts';
 import { useChats } from 'hooks';
 

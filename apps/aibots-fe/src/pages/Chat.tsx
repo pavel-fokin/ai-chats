@@ -34,7 +34,13 @@ export function Chat() {
       <Header>
         <HamburgerMenuButton />
         <ChatMenu chatId={chatId} />
-        <IconButton className={styles.NewChatHeaderButton} variant="ghost" size="3" m="2" highContrast>
+        <IconButton
+          className={styles.NewChatHeaderButton}
+          variant="ghost"
+          size="3"
+          m="2"
+          highContrast
+        >
           <ChatIcon size="28" weight="light" />
         </IconButton>
       </Header>

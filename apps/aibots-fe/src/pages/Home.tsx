@@ -8,7 +8,9 @@ export const Home: React.FC = () => {
     <PageLayout>
       <Header>
         <HamburgerMenuButton />
-        <Heading as="h2" size="3" weight="regular">AI Chats</Heading>
+        <Heading as="h2" size="3" weight="regular">
+          AI Chats
+        </Heading>
         <Box width="40px"></Box>
       </Header>
       <Flex direction="column" align="center" justify="center" flexGrow="1">

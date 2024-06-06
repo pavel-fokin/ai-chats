@@ -5,4 +5,4 @@ export * from './InputMessage';
 export * from './Message';
 export * from './Sidebar';
 export * from './TextArea';
-export * from './icons';
+export * from './ui/icons';

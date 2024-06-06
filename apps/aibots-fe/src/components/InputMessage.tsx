@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 import { Box, Flex, IconButton } from '@radix-ui/themes';
-import { PaperPlaneTilt } from '@phosphor-icons/react';
 
-import { TextArea } from 'components/TextArea';
+import { SendIcon } from 'components/ui/icons';
+import { TextArea } from 'components';
 import * as types from 'types';
 
 type InputMessageProps = {
@@ -45,7 +45,7 @@ function InputMessage({ handleSend }: InputMessageProps) {
           />
         </Box>
         <IconButton size="3" onClick={onSendClick} highContrast>
-          <PaperPlaneTilt size={16} weight="light" />
+          <SendIcon size={16} weight="light" />
         </IconButton>
       </Flex>
     </form>

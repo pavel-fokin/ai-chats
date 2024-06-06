@@ -1,11 +1,7 @@
 import { Button, DropdownMenu, Flex } from '@radix-ui/themes';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  Trash as DeleteIcon,
-  SlidersHorizontal as SettingsIcon,
-} from '@phosphor-icons/react';
-
+import { DeleteIcon, SettingsIcon } from 'components/ui/icons';
 import { useChat, useDeleteChat } from 'hooks';
 
 type ChatMenuProps = {
