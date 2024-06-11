@@ -18,7 +18,7 @@ const (
 type MessageAdded struct {
 	ID      uuid.UUID      `json:"id"`
 	Type    EventType      `json:"type"`
-	ChatID  uuid.UUID      `json:"chat_id"`
+	ChatID  domain.ChatID  `json:"chat_id"`
 	Message domain.Message `json:"message"`
 }
 
@@ -40,7 +40,7 @@ type ChatTitleUpdated struct {
 }
 
 // NewTitleGenerated creates a new title generated event.
-func NewChatTitleUpdated(chatID uuid.UUID, title string) ChatTitleUpdated {
+func NewChatTitleUpdated(chatID domain.ChatID, title string) ChatTitleUpdated {
 	return ChatTitleUpdated{
 		ID:     uuid.New(),
 		Type:   "chat_title_updated",

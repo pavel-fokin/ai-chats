@@ -29,7 +29,7 @@ func (a *App) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, er
 }
 
 // DeleteChat deletes the chat.
-func (a *App) DeleteChat(ctx context.Context, chatID uuid.UUID) error {
+func (a *App) DeleteChat(ctx context.Context, chatID domain.ChatID) error {
 	return a.chats.Delete(ctx, chatID)
 }
 
@@ -39,7 +39,7 @@ func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, er
 }
 
 // SendMessage sends a message to the chat.
-func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (domain.Message, error) {
+func (a *App) SendMessage(ctx context.Context, chatID domain.ChatID, text string) (domain.Message, error) {
 	message := domain.NewMessage("User", text)
 
 	if err := a.messages.Add(ctx, chatID, message); err != nil {
@@ -60,12 +60,12 @@ func (a *App) SendMessage(ctx context.Context, chatID uuid.UUID, text string) (d
 }
 
 // AllMessages returns all messages in the chat.
-func (a *App) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
+func (a *App) AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
 	return a.messages.AllMessages(ctx, chatID)
 }
 
 // ChatExists checks if the chat exists.
-func (a *App) ChatExists(ctx context.Context, chatID uuid.UUID) (bool, error) {
+func (a *App) ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error) {
 	return a.chats.Exists(ctx, chatID)
 }
 

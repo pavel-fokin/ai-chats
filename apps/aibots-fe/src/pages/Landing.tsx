@@ -26,7 +26,7 @@ export const Landing = () => {
                 lg: '8',
               }}
             >
-              Create and Manage Your AI Bots
+              Create and Manage Your AI Chats
             </Heading>
             <Heading
               as="h2"

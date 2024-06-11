@@ -13,8 +13,14 @@ const (
 	Human SenderType = "human"
 )
 
+type ChatID = uuid.UUID
+
+func NewChatID() ChatID {
+	return uuid.New()
+}
+
 type Chat struct {
-	ID        uuid.UUID `json:"id"`
+	ID        ChatID    `json:"id"`
 	Title     string    `json:"title"`
 	User      User      `json:"user"`
 	CreatedAt time.Time `json:"created_at"`
@@ -23,7 +29,7 @@ type Chat struct {
 
 func NewChat(user User) Chat {
 	return Chat{
-		ID:        uuid.New(),
+		ID:        NewChatID(),
 		Title:     "New chat",
 		User:      user,
 		CreatedAt: time.Now().UTC(),

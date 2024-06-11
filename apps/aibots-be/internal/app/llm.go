@@ -4,16 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
-
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app/commands"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/llm"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/json"
 )
 
 // GenerateResponse generates a LLM response for the chat.
-func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
+func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error {
 	messages, err := a.AllMessages(ctx, chatID)
 	if err != nil {
 		return fmt.Errorf("failed to get messages: %w", err)
@@ -62,7 +61,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID uuid.UUID) error {
 }
 
 // GenerateTitle generates a LLM title for the chat.
-func (a *App) GenerateTitle(ctx context.Context, chatID uuid.UUID) error {
+func (a *App) GenerateTitle(ctx context.Context, chatID domain.ChatID) error {
 	messages, err := a.AllMessages(ctx, chatID)
 	if err != nil {
 		return fmt.Errorf("failed to get messages: %w", err)

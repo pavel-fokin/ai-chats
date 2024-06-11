@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/google/uuid"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
 type App interface {
-	GenerateResponse(ctx context.Context, chatID uuid.UUID) error
-	GenerateTitle(ctx context.Context, chatID uuid.UUID) error
+	GenerateResponse(ctx context.Context, chatID domain.ChatID) error
+	GenerateTitle(ctx context.Context, chatID domain.ChatID) error
 }
 
 type PubSub interface {

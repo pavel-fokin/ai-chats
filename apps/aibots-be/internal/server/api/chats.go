@@ -19,12 +19,12 @@ type Subscriber interface {
 
 type ChatApp interface {
 	CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error)
-	DeleteChat(ctx context.Context, chatID uuid.UUID) error
-	FindChatByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error)
+	DeleteChat(ctx context.Context, chatID domain.ChatID) error
+	FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error)
 	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
-	AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error)
-	SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error)
-	ChatExists(ctx context.Context, chatID uuid.UUID) (bool, error)
+	AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error)
+	SendMessage(ctx context.Context, chatID domain.ChatID, message string) (domain.Message, error)
+	ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error)
 }
 
 // GetChats handles the GET /api/chats endpoint.
