@@ -1,7 +1,7 @@
 import { Button, DropdownMenu, Flex } from '@radix-ui/themes';
 import { useNavigate } from 'react-router-dom';
 
-import { DeleteIcon, SettingsIcon } from 'components/ui/icons';
+import { DeleteIcon, ConfigurationIcon } from 'components/ui/icons';
 import { useChat, useDeleteChat } from 'hooks';
 
 type ChatMenuProps = {
@@ -42,7 +42,7 @@ export const ChatMenu = ({ chatId }: ChatMenuProps) => {
       <DropdownMenu.Content style={{ minWidth: '128px' }}>
         <DropdownMenu.Item shortcut="">
           <Flex direction="row" align="center" justify="between" width="100%">
-            Configure <SettingsIcon size="16" />
+            Configure <ConfigurationIcon size="16" />
           </Flex>
         </DropdownMenu.Item>
         <DropdownMenu.Separator />

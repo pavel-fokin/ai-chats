@@ -10,7 +10,6 @@
   font-family: var(--default-font-family);
   font-weight: var(--font-weight-regular);
 
-
   &:where(:focus-within) {
     outline: 2px solid var(--focus-8);
     outline-offset: -1px;

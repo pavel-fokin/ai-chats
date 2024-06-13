@@ -15,6 +15,7 @@ function InputMessage({ handleSend }: InputMessageProps) {
     sender: '',
     text: '',
   });
+
   const onInputChangeArea = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputMessage({ ...inputMessage, text: event.target.value });
   };

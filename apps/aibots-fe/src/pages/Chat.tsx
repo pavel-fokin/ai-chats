@@ -21,10 +21,6 @@ export function Chat() {
   const { messages, sendMessage } = useMessages(chatId);
   const { messageChunk } = useChatEvents(chatId);
 
-  useEffect(() => {
-    window.scrollTo(0, document.body.scrollHeight);
-  }, [messages]);
-
   const handleSend = async (msg: types.Message) => {
     sendMessage.mutate({ sender: 'human', text: msg.text });
   };

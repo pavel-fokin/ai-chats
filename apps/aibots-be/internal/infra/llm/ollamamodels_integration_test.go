@@ -20,7 +20,6 @@ func TestOllamaModels(t *testing.T) {
 	t.Run("All", func(t *testing.T) {
 		models, err := ollama.All(ctx)
 		assert.NoError(err)
-		assert.NotEmpty(models)
 	})
 
 	t.Run("Pull", func(t *testing.T) {

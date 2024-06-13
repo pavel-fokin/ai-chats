@@ -7,7 +7,7 @@ import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 
 import { AuthRequired } from 'components';
-import { Chat, Landing, Home, LogIn, SignUp } from 'pages';
+import { Chat, Landing, Home, LogIn, SignUp, Settings } from 'pages';
 import { AuthContextProvider, SidebarContextProvider } from 'contexts';
 
 const router = createBrowserRouter([
@@ -40,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: 'chats/:chatId',
         element: <Chat />,
+      },
+      {
+        path: 'settings',
+        element: <Settings />,
       },
     ],
   },
