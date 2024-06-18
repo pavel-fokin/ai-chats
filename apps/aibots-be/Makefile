@@ -29,3 +29,7 @@ test-race:
 test-all: test test-integration test
 	@echo "✅ All tests are good"
 	@echo ""
+
+.PHONY: format
+format:
+	@gofmt -w internal/ cmd/

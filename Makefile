@@ -25,3 +25,7 @@ test-e2e:
 test-all: test test-integration test-e2e
 	@echo "✅ All tests are good"
 	@echo ""
+
+.PHONY: format
+format:
+	${MAKE} -C apps format

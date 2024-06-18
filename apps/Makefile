@@ -25,3 +25,8 @@ test-e2e:
 	@kill -9 `cat aibots-be.pid`
 	@rm aibots-be.pid
 	@echo "✅ All e2e tests are good"
+
+.PHONY: format
+format:
+	${MAKE} -C aibots-be format
+	${MAKE} -C aibots-fe format

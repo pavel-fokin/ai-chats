@@ -10,3 +10,7 @@ run:
 test:
 	@echo "Running unit tests..."
 	@bun run test
+
+.PHONY: format
+format:
+	@bun run format
