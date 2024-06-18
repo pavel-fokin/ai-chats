@@ -20,3 +20,9 @@ export enum EventTypes {
   MESSAGE_ADDED = 'message_added',
   MESSAGE_CHUNK_RECEIVED = 'message_chunk_received',
 }
+
+export type OllamaModel = {
+  id: string;
+  name: string;
+  tag: string;
+};

@@ -71,3 +71,11 @@ func NewPostChatsResponse(chat domain.Chat) PostChatsResponse {
 		},
 	}
 }
+
+type GetOllamaModelsResponse struct {
+	Models []domain.Model `json:"models"`
+}
+
+func NewGetOllamaModelsResponse(models []domain.Model) GetOllamaModelsResponse {
+	return GetOllamaModelsResponse{Models: models}
+}

@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"encoding/json"
+
 	"github.com/google/uuid"
 )
 
@@ -8,6 +10,10 @@ type ModelID uuid.UUID
 
 func NewModelID() ModelID {
 	return ModelID(uuid.New())
+}
+
+func (m ModelID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(uuid.UUID(m))
 }
 
 type Model struct {

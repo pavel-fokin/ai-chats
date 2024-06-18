@@ -3,3 +3,4 @@ export * from './useChat';
 export * from './useChatEvents';
 export * from './useChats';
 export * from './useMessages';
+export * from './useOllamaModels';

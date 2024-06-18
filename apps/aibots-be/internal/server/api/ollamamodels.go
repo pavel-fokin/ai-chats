@@ -25,6 +25,6 @@ func GetOllamaModels(ollama OllamaApp) http.HandlerFunc {
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, models, http.StatusOK)
+		apiutil.AsSuccessResponse(w, NewGetOllamaModelsResponse(models), http.StatusOK)
 	}
 }
