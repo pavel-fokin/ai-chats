@@ -1,4 +1,4 @@
-package llm
+package ollama
 
 import (
 	"context"
@@ -40,7 +40,7 @@ func (o *OllamaModels) All(ctx context.Context) ([]domain.Model, error) {
 
 func (o *OllamaModels) Pull(ctx context.Context, model domain.Model) error {
 	req := &api.PullRequest{
-		Name: model.Name + ":" + model.Tag,
+		Model: model.Name + ":" + model.Tag,
 	}
 
 	progressFunc := func(resp api.ProgressResponse) error {
@@ -57,7 +57,7 @@ func (o *OllamaModels) Pull(ctx context.Context, model domain.Model) error {
 
 func (o *OllamaModels) Delete(ctx context.Context, model domain.Model) error {
 	req := &api.DeleteRequest{
-		Name: model.Name + ":" + model.Tag,
+		Model: model.Name + ":" + model.Tag,
 	}
 
 	if err := o.client.Delete(ctx, req); err != nil {

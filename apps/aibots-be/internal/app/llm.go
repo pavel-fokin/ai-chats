@@ -7,7 +7,7 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app/commands"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/llm"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/ollama"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/json"
 )
 
@@ -18,7 +18,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 		return fmt.Errorf("failed to get messages: %w", err)
 	}
 
-	llm, err := llm.NewOllama("llama3")
+	llm, err := ollama.NewOllama("llama3")
 	if err != nil {
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}
@@ -67,7 +67,7 @@ func (a *App) GenerateTitle(ctx context.Context, chatID domain.ChatID) error {
 		return fmt.Errorf("failed to get messages: %w", err)
 	}
 
-	llm, err := llm.NewOllama("llama3")
+	llm, err := ollama.NewOllama("llama3")
 	if err != nil {
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}

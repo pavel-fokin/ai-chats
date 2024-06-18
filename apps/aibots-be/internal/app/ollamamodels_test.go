@@ -1,0 +1,66 @@
+package app
+
+import (
+	"context"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+)
+
+type MockModels struct {
+	mock.Mock
+}
+
+func (m *MockModels) All(ctx context.Context) ([]domain.Model, error) {
+	args := m.Called(ctx)
+
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+
+	return args.Get(0).([]domain.Model), args.Error(1)
+}
+
+func (m *MockModels) Pull(ctx context.Context, modelID domain.Model) error {
+	args := m.Called(ctx, modelID)
+	return args.Error(0)
+}
+
+func (m *MockModels) Delete(ctx context.Context, modelID domain.Model) error {
+	args := m.Called(ctx, modelID)
+	return args.Error(0)
+}
+
+func TestOllamaAllModels(t *testing.T) {
+	ctx := context.Background()
+
+	t.Run("success", func(t *testing.T) {
+		models := []domain.Model{
+			domain.NewModel("model1", "latest"),
+			domain.NewModel("model2", "latest"),
+		}
+
+		mockModels := new(MockModels)
+		mockModels.On("All", ctx).Return(models, nil)
+
+		a := New(nil, nil, nil, mockModels, nil)
+
+		result, err := a.AllOllamaModels(ctx)
+		assert.NoError(t, err)
+		assert.Equal(t, models, result)
+		mockModels.AssertExpectations(t)
+	})
+
+	t.Run("error", func(t *testing.T) {
+		mockModels := new(MockModels)
+		mockModels.On("All", ctx).Return(nil, assert.AnError)
+
+		a := New(nil, nil, nil, mockModels, nil)
+
+		_, err := a.AllOllamaModels(ctx)
+		assert.Error(t, err)
+		mockModels.AssertExpectations(t)
+	})
+}

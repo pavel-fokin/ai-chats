@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const BASE_URL = process.env.AIBOTS_CYPRESS_BASE_URL || 'http://localhost:8080'
+const BASE_URL = process.env.AICHATS_CYPRESS_BASE_URL || 'http://localhost:8080'
 
 const sizes = ['iphone-6', 'macbook-13']
 

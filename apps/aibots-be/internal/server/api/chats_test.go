@@ -127,8 +127,6 @@ func TestCreateChat(t *testing.T) {
 }
 
 func TestDeleteChat(t *testing.T) {
-	t.Parallel()
-
 	t.Run("Success", func(t *testing.T) {
 		chatID := uuid.New()
 		ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())

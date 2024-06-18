@@ -99,6 +99,14 @@ func (s *Server) SetupChatAPI(chat api.ChatApp) {
 	})
 }
 
+// SetupOllamaAPI sets up the ollama model API.
+func (s *Server) SetupOllamaAPI(ollama api.OllamaApp) {
+	s.router.Group(func(r chi.Router) {
+		r.Use(apiutil.AuthHeader)
+		r.Get("/api/ollama-models", api.GetOllamaModels(ollama))
+	})
+}
+
 // SetupStaticRoutes sets up the static routes.
 func (s *Server) SetupStaticRoutes(static fs.FS) {
 	fs := http.FileServerFS(static)

@@ -12,6 +12,7 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db/sqlite"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/ollama"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/pubsub"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
@@ -54,10 +55,16 @@ func main() {
 	pubsub := pubsub.New()
 	// defer pubsub.CloseAll()
 
+	ollamamodels, err := ollama.NewOllamaModels()
+	if err != nil {
+		log.Fatalf("Failed to load Ollama models: %v", err)
+	}
+
 	app := app.New(
 		sqlite.NewChats(db),
 		sqlite.NewUsers(db),
 		sqlite.NewMessages(db),
+		ollamamodels,
 		pubsub,
 	)
 
@@ -69,6 +76,7 @@ func main() {
 	server := server.New(config.Server, pubsub)
 	server.SetupAuthAPI(app)
 	server.SetupChatAPI(app)
+	server.SetupOllamaAPI(app)
 	staticFS, _ := fs.Sub(web.Dist, "dist")
 	server.SetupStaticRoutes(staticFS)
 

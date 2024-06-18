@@ -2,8 +2,9 @@ package domain
 
 import "context"
 
+// Models is a repository for Ollama models.
 type Models interface {
-	Add(ctx context.Context, model Model) error
-	Update(ctx context.Context, model Model) error
-	Delete(ctx context.Context, id ModelID) error
+	All(context.Context) ([]Model, error)
+	Pull(context.Context, Model) error
+	Delete(context.Context, Model) error
 }

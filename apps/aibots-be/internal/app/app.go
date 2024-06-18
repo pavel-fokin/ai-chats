@@ -16,6 +16,7 @@ type App struct {
 	users    domain.Users
 	chats    domain.Chats
 	messages domain.Messages
+	models   domain.Models
 	pubsub   PubSub
 }
 
@@ -23,12 +24,14 @@ func New(
 	chats domain.Chats,
 	users domain.Users,
 	messages domain.Messages,
+	models domain.Models,
 	pubsub PubSub,
 ) *App {
 	return &App{
 		chats:    chats,
 		users:    users,
 		messages: messages,
+		models:   models,
 		pubsub:   pubsub,
 	}
 }

@@ -1,6 +1,6 @@
 //go:build integration
 
-package llm
+package ollama
 
 import (
 	"context"
