@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Box, Flex, IconButton } from '@radix-ui/themes';

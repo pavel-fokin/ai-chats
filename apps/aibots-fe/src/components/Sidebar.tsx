@@ -80,7 +80,7 @@ export const Sidebar = () => {
             <NavigationMenu.Item>
               <Link to="/app/settings">
                 <Flex align="center" gap="3">
-                  <SettingsIcon size={24} /> <Text size="4">Models</Text>
+                  <SettingsIcon size={24} /> <Text size="3">Models</Text>
                 </Flex>
               </Link>
             </NavigationMenu.Item>

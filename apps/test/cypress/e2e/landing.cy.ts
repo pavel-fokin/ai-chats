@@ -9,13 +9,13 @@ describe('Landing Page', () => {
     it(`[${size}] it should have title`, () => {
       cy.viewport(size as Cypress.ViewportPreset)
       cy.visit(BASE_URL)
-      cy.contains('Create and Manage Your AI Bots')
+      cy.contains('Create and Manage Your AI Chats')
     })
 
     it(`[${size}] it should open 'Log in' page`, () => {
       cy.viewport(size as Cypress.ViewportPreset)
       cy.visit(BASE_URL)
-      cy.contains('Create and Manage Your AI Bots')
+      cy.contains('Create and Manage Your AI Chats')
       cy.get('a').contains('Log in').click()
       cy.get('h2').contains('Log in')
     })
@@ -23,7 +23,7 @@ describe('Landing Page', () => {
     it(`[${size}] it should open 'Sign up' page`, () => {
       cy.viewport(size as Cypress.ViewportPreset)
       cy.visit(BASE_URL)
-      cy.contains('Create and Manage Your AI Bots')
+      cy.contains('Create and Manage Your AI Chats')
       cy.get('a').contains('Sign up').click()
       cy.get('h2').contains('Sign up')
     })

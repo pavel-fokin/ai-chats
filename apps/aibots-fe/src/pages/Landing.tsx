@@ -6,11 +6,11 @@ export const Landing = () => {
       <Flex p="4" direction="column" align="end">
         <header>
           <nav>
-            <Flex gap="4" align="baseline">
-              <Button asChild variant="ghost" highContrast>
+            <Flex gap="6" align="baseline">
+              <Button asChild variant="ghost" size="3" highContrast>
                 <a href="/app/login">Log in</a>
               </Button>
-              <Button asChild highContrast>
+              <Button asChild size="3" highContrast>
                 <a href="/app/signup">Sign up</a>
               </Button>
             </Flex>
@@ -43,7 +43,7 @@ export const Landing = () => {
       <Box p="4">
         <footer>
           <Text as="p" align="center">
-            {new Date().getFullYear()} AI Bots
+            {new Date().getFullYear()} AI Chats``
           </Text>
         </footer>
       </Box>

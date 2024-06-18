@@ -18,7 +18,7 @@ func TestOllamaModels(t *testing.T) {
 	assert.NoError(err)
 
 	t.Run("All", func(t *testing.T) {
-		models, err := ollama.All(ctx)
+		_, err := ollama.All(ctx)
 		assert.NoError(err)
 	})
 
