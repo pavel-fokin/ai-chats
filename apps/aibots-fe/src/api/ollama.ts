@@ -18,8 +18,6 @@ export const postOllamaModels = async (
   return await postData<OllamaModel>('/api/ollama-models', { modelId });
 };
 
-export const deleteOllamaModels = async (
-  modelId: string,
-): Promise<OllamaModel> => {
+export const deleteOllamaModels = async (): Promise<OllamaModel> => {
   return await deleteData<OllamaModel>('/api/ollama-models');
 };

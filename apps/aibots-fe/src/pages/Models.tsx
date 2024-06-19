@@ -8,7 +8,7 @@ import {
   TextField,
 } from '@radix-ui/themes';
 
-import { HamburgerMenuButton } from 'components';
+import { HamburgerMenuButton, NewChatIconButton } from 'components';
 import { Header, PageLayout } from 'components/layout';
 import { DownloadIcon } from 'components/ui/icons';
 import { useOllamaModels } from 'hooks';
@@ -32,7 +32,7 @@ export const Settings: React.FC = () => {
         <Heading as="h2" size="3" weight="regular">
           Models
         </Heading>
-        <Box width="40px"></Box>
+        <NewChatIconButton />
       </Header>
       <Box style={{ maxWidth: '688px', width: '100%', margin: '0 auto' }}>
         <Flex

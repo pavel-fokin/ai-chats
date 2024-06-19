@@ -3,6 +3,7 @@ export * from './ChatMenu';
 export * from './HamburgerMenuButton';
 export * from './InputMessage';
 export * from './Message';
+export * from './NewChatIconButton';
 export * from './Sidebar';
 export * from './TextArea';
 export * from './ui/icons';

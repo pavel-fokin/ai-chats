@@ -1,14 +1,17 @@
 import { useParams } from 'react-router-dom';
 
-import { Box, Flex, IconButton } from '@radix-ui/themes';
+import { Box, Flex } from '@radix-ui/themes';
 
-import { ChatIcon, ChatMenu, HamburgerMenuButton } from 'components';
-import { PageLayout, Header } from 'components/layout';
-import { InputMessage, Message } from 'components';
+import {
+  ChatMenu,
+  HamburgerMenuButton,
+  InputMessage,
+  Message,
+  NewChatIconButton,
+} from 'components';
+import { Header, PageLayout } from 'components/layout';
 import { useChatEvents, useMessages } from 'hooks';
 import * as types from 'types';
-
-import styles from './Chat.module.css';
 
 export function Chat() {
   const { chatId } = useParams<{ chatId: string }>();
@@ -29,15 +32,7 @@ export function Chat() {
       <Header>
         <HamburgerMenuButton />
         <ChatMenu chatId={chatId} />
-        <IconButton
-          className={styles.NewChatHeaderButton}
-          variant="ghost"
-          size="3"
-          m="2"
-          highContrast
-        >
-          <ChatIcon size="28" weight="light" />
-        </IconButton>
+        <NewChatIconButton />
       </Header>
       <Flex direction="column" height="100%" width="100%">
         <Box flexGrow="1" style={{ overflow: 'scroll' }}>
