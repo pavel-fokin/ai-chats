@@ -19,6 +19,7 @@ export default defineConfig({
       pages: '/src/pages',
       types: '/src/types',
       schemas: '/src/schemas',
+      styles: '/src/styles',
     },
   },
   test: {

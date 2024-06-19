@@ -5,14 +5,14 @@ import { IconButton } from '@radix-ui/themes';
 import { HamburgerMenuIcon, CloseIcon } from 'components';
 import { SidebarContext } from 'contexts';
 
-import styles from './HamburgerMenuButton.module.css';
+import 'styles/styles.css'
 
 export const HamburgerMenuButton: React.FC = () => {
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
 
   return (
     <IconButton
-      className={styles.HamburgerMenuButton}
+      className="mobile-only"
       variant="ghost"
       size="3"
       m="2"

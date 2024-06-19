@@ -62,7 +62,7 @@ function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
 test('renders Navbar component', async () => {
   renderWithRouter(<Sidebar />, { route: '/app' });
 
-  expect(screen.getByText('Start a new chat')).toBeInTheDocument();
+  expect(screen.getByText('New chat')).toBeInTheDocument();
   expect(screen.getByText('Sign out')).toBeInTheDocument();
 
   await waitFor(() => {
@@ -84,7 +84,7 @@ test('calls handleNewChat on new chat button click', async () => {
   renderWithRouter(<Sidebar />, { route: '/app' });
 
   await waitFor(async () => {
-    await userEvent.click(screen.getByText('Start a new chat'));
+    await userEvent.click(screen.getByText('New chat'));
     expect(screen.getByText('Chat')).toBeInTheDocument();
   });
 });

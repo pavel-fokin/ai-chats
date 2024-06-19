@@ -1,12 +1,13 @@
 export {
+  Cards as ModelsIcon,
+  DownloadSimple as DownloadIcon,
+  GearSix as SettingsIcon,
   List as HamburgerMenuIcon,
+  MagnifyingGlass as SearchIcon,
   NotePencil as ChatIcon,
   PaperPlaneTilt as SendIcon,
   SignOut as SignOutIcon,
   SlidersHorizontal as ConfigurationIcon,
   Trash as DeleteIcon,
   X as CloseIcon,
-  GearSix as SettingsIcon,
-  Cards as ModelsIcon,
-  DownloadSimple as DownloadIcon,
 } from '@phosphor-icons/react';

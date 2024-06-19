@@ -39,7 +39,7 @@ export const Settings: React.FC = () => {
           direction="column"
           align="center"
           justify="start"
-          gap="4"
+          gap="3"
           flexGrow="1"
           mt="9"
           px="4"
