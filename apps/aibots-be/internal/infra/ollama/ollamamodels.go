@@ -22,7 +22,7 @@ func NewOllamaModels() (*OllamaModels, error) {
 	return &OllamaModels{client: client}, nil
 }
 
-func (o *OllamaModels) All(ctx context.Context) ([]domain.Model, error) {
+func (o *OllamaModels) List(ctx context.Context) ([]domain.Model, error) {
 	resp, err := o.client.List(ctx)
 	if err != nil {
 		return nil, err

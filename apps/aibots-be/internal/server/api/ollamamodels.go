@@ -10,7 +10,7 @@ import (
 )
 
 type OllamaApp interface {
-	AllOllamaModels(ctx context.Context) ([]domain.Model, error)
+	ListModels(ctx context.Context) ([]domain.Model, error)
 }
 
 // GetOllamaModels handles the GET /api/ollama-models endpoint.
@@ -18,7 +18,7 @@ func GetOllamaModels(ollama OllamaApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		models, err := ollama.AllOllamaModels(ctx)
+		models, err := ollama.ListModels(ctx)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get ollama models", "err", err)
 			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)

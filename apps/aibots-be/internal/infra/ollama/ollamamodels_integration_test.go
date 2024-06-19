@@ -17,8 +17,8 @@ func TestOllamaModels(t *testing.T) {
 	ollama, err := NewOllamaModels()
 	assert.NoError(err)
 
-	t.Run("All", func(t *testing.T) {
-		_, err := ollama.All(ctx)
+	t.Run("List", func(t *testing.T) {
+		_, err := ollama.List(ctx)
 		assert.NoError(err)
 	})
 
@@ -28,7 +28,7 @@ func TestOllamaModels(t *testing.T) {
 	})
 
 	t.Run("Check if model exists", func(t *testing.T) {
-		models, err := ollama.All(ctx)
+		models, err := ollama.List(ctx)
 		assert.NoError(err)
 		assert.NotEmpty(models)
 

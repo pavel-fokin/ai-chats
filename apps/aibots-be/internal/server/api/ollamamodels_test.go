@@ -20,7 +20,7 @@ type MockOllamaApp struct {
 	mock.Mock
 }
 
-func (m *MockOllamaApp) AllOllamaModels(ctx context.Context) ([]domain.Model, error) {
+func (m *MockOllamaApp) ListModels(ctx context.Context) ([]domain.Model, error) {
 	args := m.Called(ctx)
 
 	if args.Get(0) == nil {
@@ -44,7 +44,7 @@ func TestGetOllamaModels(t *testing.T) {
 		}
 
 		mockOllamaApp := &MockOllamaApp{}
-		mockOllamaApp.On("AllOllamaModels", mock.MatchedBy(matchChiContext)).Return(models, nil)
+		mockOllamaApp.On("ListModels", mock.MatchedBy(matchChiContext)).Return(models, nil)
 
 		router := chi.NewRouter()
 		router.Get("/api/ollama-models", GetOllamaModels(mockOllamaApp))
@@ -61,7 +61,7 @@ func TestGetOllamaModels(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		mockOllamaApp := &MockOllamaApp{}
-		mockOllamaApp.On("AllOllamaModels", mock.MatchedBy(matchChiContext)).Return(nil, assert.AnError)
+		mockOllamaApp.On("ListModels", mock.MatchedBy(matchChiContext)).Return(nil, assert.AnError)
 
 		router := chi.NewRouter()
 		router.Get("/api/ollama-models", GetOllamaModels(mockOllamaApp))

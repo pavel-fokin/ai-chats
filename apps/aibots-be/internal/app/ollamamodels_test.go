@@ -13,7 +13,7 @@ type MockModels struct {
 	mock.Mock
 }
 
-func (m *MockModels) All(ctx context.Context) ([]domain.Model, error) {
+func (m *MockModels) List(ctx context.Context) ([]domain.Model, error) {
 	args := m.Called(ctx)
 
 	if args.Get(0) == nil {
@@ -43,11 +43,11 @@ func TestOllamaAllModels(t *testing.T) {
 		}
 
 		mockModels := new(MockModels)
-		mockModels.On("All", ctx).Return(models, nil)
+		mockModels.On("List", ctx).Return(models, nil)
 
 		a := New(nil, nil, nil, mockModels, nil)
 
-		result, err := a.AllOllamaModels(ctx)
+		result, err := a.ListModels(ctx)
 		assert.NoError(t, err)
 		assert.Equal(t, models, result)
 		mockModels.AssertExpectations(t)
@@ -55,11 +55,11 @@ func TestOllamaAllModels(t *testing.T) {
 
 	t.Run("error", func(t *testing.T) {
 		mockModels := new(MockModels)
-		mockModels.On("All", ctx).Return(nil, assert.AnError)
+		mockModels.On("List", ctx).Return(nil, assert.AnError)
 
 		a := New(nil, nil, nil, mockModels, nil)
 
-		_, err := a.AllOllamaModels(ctx)
+		_, err := a.ListModels(ctx)
 		assert.Error(t, err)
 		mockModels.AssertExpectations(t)
 	})
