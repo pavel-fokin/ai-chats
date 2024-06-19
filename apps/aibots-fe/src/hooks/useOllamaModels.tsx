@@ -9,3 +9,19 @@ export const useOllamaModels = () => {
     select: (data) => data.data.models,
   });
 };
+
+export const usePullOllamaModel = () => {
+  return useQuery({
+    queryKey: ['ollama-models'],
+    queryFn: fetchOllamaModels,
+    select: (data) => data.data.models,
+  });
+};
+
+export const useDeleteOllamaModel = () => {
+  return useQuery({
+    queryKey: ['ollama-models'],
+    queryFn: fetchOllamaModels,
+    select: (data) => data.data.models,
+  });
+};
