@@ -1,5 +1,9 @@
 package api
 
+type PostChatsRequest struct {
+	Message string `json:"message"`
+}
+
 type PostMessagesRequest struct {
 	Message
 }

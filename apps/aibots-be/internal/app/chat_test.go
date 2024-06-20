@@ -57,24 +57,87 @@ func (m *MockChats) Exists(ctx context.Context, chatID uuid.UUID) (bool, error) 
 	return args.Bool(0), args.Error(1)
 }
 
+type MockPubSub struct {
+	mock.Mock
+}
+
+func (m *MockPubSub) Subscribe(ctx context.Context, topic string) (chan []byte, error) {
+	args := m.Called(ctx, topic)
+	return args.Get(0).(chan []byte), args.Error(1)
+}
+
+func (m *MockPubSub) Unsubscribe(ctx context.Context, topic string, channel chan []byte) error {
+	args := m.Called(ctx, topic, channel)
+	return args.Error(0)
+}
+
+func (m *MockPubSub) Publish(ctx context.Context, topic string, data []byte) error {
+	args := m.Called(ctx, topic, data)
+	return args.Error(0)
+}
+
+type MockMessages struct {
+	mock.Mock
+}
+
+func (m *MockMessages) Add(ctx context.Context, chatID domain.ChatID, message domain.Message) error {
+	args := m.Called(ctx, chatID, message)
+	return args.Error(0)
+}
+
+func (m *MockMessages) AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
+	args := m.Called(ctx, chatID)
+	return args.Get(0).([]domain.Message), args.Error(1)
+}
+
 func TestCreateChat(t *testing.T) {
 	ctx := context.Background()
 
 	user := domain.NewUser("username")
-
-	mockChats := &MockChats{}
-	mockChats.On("Add", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
-
 	mockUsers := &MockUsers{}
 	mockUsers.On("FindByID", mock.Anything, user.ID).Return(user, nil)
 
-	app := &App{chats: mockChats, users: mockUsers}
+	mockPubSub := &MockPubSub{}
+	mockPubSub.On(
+		"Publish",
+		ctx,
+		mock.AnythingOfType("string"),
+		mock.AnythingOfType("[]uint8"),
+	).Return(nil)
 
-	chat, err := app.CreateChat(ctx, user.ID)
-	assert.NoError(t, err)
-	assert.NotNil(t, chat)
+	mockMessages := &MockMessages{}
+	mockMessages.On(
+		"Add",
+		ctx,
+		mock.AnythingOfType("uuid.UUID"),
+		mock.AnythingOfType("domain.Message"),
+	).Return(nil)
 
-	mockChats.AssertExpectations(t)
+	t.Run("with empty message", func(t *testing.T) {
+		mockChats := &MockChats{}
+		mockChats.On("Add", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
+
+		app := &App{chats: mockChats, users: mockUsers}
+
+		chat, err := app.CreateChat(ctx, user.ID, "")
+		assert.NoError(t, err)
+		assert.NotNil(t, chat)
+
+		mockChats.AssertExpectations(t)
+	})
+
+	t.Run("with message", func(t *testing.T) {
+		mockChats := &MockChats{}
+		mockChats.On("Add", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
+
+		app := &App{chats: mockChats, users: mockUsers, messages: mockMessages, pubsub: mockPubSub}
+
+		chat, err := app.CreateChat(ctx, user.ID, "message")
+		assert.NoError(t, err)
+		assert.NotNil(t, chat)
+
+		mockChats.AssertExpectations(t)
+	})
 }
 
 func TestChat_Delete(t *testing.T) {

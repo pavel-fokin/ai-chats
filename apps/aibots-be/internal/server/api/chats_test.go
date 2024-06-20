@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -20,41 +21,41 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
-type ChatMock struct {
+type MockChat struct {
 	mock.Mock
 }
 
-func (m *ChatMock) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
+func (m *MockChat) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
 	args := m.Called(ctx, userID)
 	return args.Get(0).([]domain.Chat), args.Error(1)
 }
 
-func (m *ChatMock) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error) {
-	args := m.Called(ctx, userID)
+func (m *MockChat) CreateChat(ctx context.Context, userID uuid.UUID, message string) (domain.Chat, error) {
+	args := m.Called(ctx, userID, message)
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
-func (m *ChatMock) DeleteChat(ctx context.Context, chatID uuid.UUID) error {
+func (m *MockChat) DeleteChat(ctx context.Context, chatID uuid.UUID) error {
 	args := m.Called(ctx, chatID)
 	return args.Error(0)
 }
 
-func (m *ChatMock) FindChatByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
+func (m *MockChat) FindChatByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
 	args := m.Called(ctx, chatID)
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
-func (m *ChatMock) SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error) {
+func (m *MockChat) SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error) {
 	args := m.Called(ctx, chatID, message)
 	return args.Get(0).(domain.Message), args.Error(1)
 }
 
-func (m *ChatMock) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
+func (m *MockChat) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
 	args := m.Called(ctx, chatID)
 	return args.Get(0).([]domain.Message), args.Error(1)
 }
 
-func (m *ChatMock) ChatExists(ctx context.Context, chatID uuid.UUID) (bool, error) {
+func (m *MockChat) ChatExists(ctx context.Context, chatID uuid.UUID) (bool, error) {
 	args := m.Called(ctx, chatID)
 	return args.Bool(0), args.Error(1)
 }
@@ -88,7 +89,7 @@ func TestCreateChat(t *testing.T) {
 		req, _ := http.NewRequest("", "", nil)
 		w := httptest.NewRecorder()
 
-		PostChats(&ChatMock{})(w, req)
+		PostChats(&MockChat{})(w, req)
 
 		assert.Fail(t, "expected panic")
 	})
@@ -98,15 +99,15 @@ func TestCreateChat(t *testing.T) {
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
-		chat := &ChatMock{}
-		chat.On("CreateChat", ctx, userID).Return(domain.Chat{}, nil)
+		mockChat := &MockChat{}
+		mockChat.On("CreateChat", ctx, userID, "").Return(domain.Chat{}, nil)
 
-		PostChats(chat)(w, req)
+		PostChats(mockChat)(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 200, resp.StatusCode)
 
-		chat.AssertNumberOfCalls(t, "CreateChat", 1)
+		mockChat.AssertNumberOfCalls(t, "CreateChat", 1)
 	})
 
 	t.Run("Failure", func(t *testing.T) {
@@ -114,15 +115,87 @@ func TestCreateChat(t *testing.T) {
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
-		chat := &ChatMock{}
-		chat.On("CreateChat", ctx, userID).Return(domain.Chat{}, errors.New("failed to create chat"))
+		mockChat := &MockChat{}
+		mockChat.On("CreateChat", ctx, userID, "").Return(domain.Chat{}, errors.New("failed to create chat"))
 
-		PostChats(chat)(w, req)
+		PostChats(mockChat)(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 500, resp.StatusCode)
 
-		chat.AssertNumberOfCalls(t, "CreateChat", 1)
+		mockChat.AssertNumberOfCalls(t, "CreateChat", 1)
+	})
+
+	t.Run("With empty JSON", func(t *testing.T) {
+		body := `{}`
+		req, err := http.NewRequest("POST", "", strings.NewReader(body))
+		assert.NoError(t, err)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockChat := &MockChat{}
+		mockChat.On("CreateChat", ctx, userID, "").Return(domain.Chat{}, nil)
+
+		PostChats(mockChat)(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 200, resp.StatusCode)
+
+		mockChat.AssertNumberOfCalls(t, "CreateChat", 1)
+	})
+
+	t.Run("With invalid JSON", func(t *testing.T) {
+		body := `{"12312"}`
+		req, err := http.NewRequest("POST", "", strings.NewReader(body))
+		assert.NoError(t, err)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockChat := &MockChat{}
+		mockChat.On("CreateChat", ctx, userID, "").Return(domain.Chat{}, nil)
+
+		PostChats(mockChat)(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 200, resp.StatusCode)
+
+		mockChat.AssertNumberOfCalls(t, "CreateChat", 1)
+	})
+
+	t.Run("Success with message", func(t *testing.T) {
+		body := `{"message": "message"}`
+		req, err := http.NewRequest("POST", "", strings.NewReader(body))
+		assert.NoError(t, err)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockChat := &MockChat{}
+		mockChat.On("CreateChat", ctx, userID, "message").Return(domain.Chat{}, nil)
+
+		PostChats(mockChat)(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 200, resp.StatusCode)
+
+		mockChat.AssertNumberOfCalls(t, "CreateChat", 1)
+	})
+
+	t.Run("Failure with message", func(t *testing.T) {
+		body := `{"message": "message"}`
+		req, err := http.NewRequest("POST", "", strings.NewReader(body))
+		assert.NoError(t, err)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockChat := &MockChat{}
+		mockChat.On("CreateChat", ctx, userID, "message").Return(domain.Chat{}, errors.New("failed to create chat"))
+
+		PostChats(mockChat)(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 500, resp.StatusCode)
+
+		mockChat.AssertNumberOfCalls(t, "CreateChat", 1)
 	})
 }
 
@@ -135,14 +208,14 @@ func TestDeleteChat(t *testing.T) {
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
-		chat := &ChatMock{}
-		chat.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(nil)
+		mockChat := &MockChat{}
+		mockChat.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(nil)
 
 		router := chi.NewRouter()
-		router.Delete("/api/chats/{uuid}", DeleteChat(chat))
+		router.Delete("/api/chats/{uuid}", DeleteChat(mockChat))
 		router.ServeHTTP(w, req)
 
-		chat.AssertNumberOfCalls(t, "DeleteChat", 1)
+		mockChat.AssertNumberOfCalls(t, "DeleteChat", 1)
 
 		resp := w.Result()
 		assert.Equal(t, 204, resp.StatusCode)
@@ -157,11 +230,11 @@ func TestDeleteChat(t *testing.T) {
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
-		chat := &ChatMock{}
-		chat.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(errors.New("failed to delete chat"))
+		mockChat := &MockChat{}
+		mockChat.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(errors.New("failed to delete chat"))
 
 		router := chi.NewRouter()
-		router.Delete("/api/chats/{uuid}", DeleteChat(chat))
+		router.Delete("/api/chats/{uuid}", DeleteChat(mockChat))
 		router.ServeHTTP(w, req)
 
 		resp := w.Result()
@@ -176,11 +249,11 @@ func TestDeleteChat(t *testing.T) {
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
-		chat := &ChatMock{}
-		chat.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(domain.ErrChatNotFound)
+		mockChat := &MockChat{}
+		mockChat.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(domain.ErrChatNotFound)
 
 		router := chi.NewRouter()
-		router.Delete("/api/chats/{uuid}", DeleteChat(chat))
+		router.Delete("/api/chats/{uuid}", DeleteChat(mockChat))
 		router.ServeHTTP(w, req)
 
 		resp := w.Result()
@@ -197,10 +270,10 @@ func TestGetChats(t *testing.T) {
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
-		chat := &ChatMock{}
-		chat.On("AllChats", ctx, userID).Return([]domain.Chat{}, nil)
+		mockChat := &MockChat{}
+		mockChat.On("AllChats", ctx, userID).Return([]domain.Chat{}, nil)
 
-		GetChats(chat)(w, req)
+		GetChats(mockChat)(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 200, resp.StatusCode)
@@ -211,7 +284,7 @@ func TestGetChats(t *testing.T) {
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
-		chat := &ChatMock{}
+		chat := &MockChat{}
 		chat.On("AllChats", ctx, userID).Return([]domain.Chat{}, errors.New("failed to get chats"))
 
 		GetChats(chat)(w, req)
@@ -228,8 +301,10 @@ func TestGetMessages(t *testing.T) {
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/messages", chatID), nil)
 		w := httptest.NewRecorder()
 
-		chat := &ChatMock{}
-		chat.On("AllMessages", mock.MatchedBy(matchChiContext), chatID).Return([]domain.Message{}, nil)
+		chat := &MockChat{}
+		chat.On(
+			"AllMessages", mock.MatchedBy(matchChiContext), chatID,
+		).Return([]domain.Message{}, nil)
 
 		router := chi.NewRouter()
 		router.Get("/api/chats/{uuid}/messages", GetMessages(chat))
@@ -245,7 +320,7 @@ func TestGetMessages(t *testing.T) {
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/messages", chatID), nil)
 		w := httptest.NewRecorder()
 
-		chat := &ChatMock{}
+		chat := &MockChat{}
 		chat.On(
 			"AllMessages", mock.MatchedBy(matchChiContext), chatID,
 		).Return([]domain.Message{}, errors.New("failed to get messages")).Once()
@@ -259,7 +334,6 @@ func TestGetMessages(t *testing.T) {
 	})
 }
 func TestGetEvents(t *testing.T) {
-
 	t.Run("Success", func(t *testing.T) {
 		chatID := uuid.New()
 
@@ -268,7 +342,7 @@ func TestGetEvents(t *testing.T) {
 
 		sse := apiutil.NewSSEConnections()
 
-		app := &ChatMock{}
+		app := &MockChat{}
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
 			Return(true, nil)
 
@@ -306,7 +380,7 @@ func TestGetEvents(t *testing.T) {
 
 		sse := apiutil.NewSSEConnections()
 
-		app := &ChatMock{}
+		app := &MockChat{}
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
 			Return(true, nil)
 
@@ -334,7 +408,7 @@ func TestGetEvents(t *testing.T) {
 
 		sse := apiutil.NewSSEConnections()
 
-		app := &ChatMock{}
+		app := &MockChat{}
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
 			Return(false, nil)
 
@@ -354,11 +428,13 @@ func TestGetChat(t *testing.T) {
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s", chatID), nil)
 		w := httptest.NewRecorder()
 
-		chat := &ChatMock{}
-		chat.On("FindChatByID", mock.MatchedBy(matchChiContext), chatID).Return(domain.Chat{}, nil)
+		mockChat := &MockChat{}
+		mockChat.On(
+			"FindChatByID", mock.MatchedBy(matchChiContext), chatID,
+		).Return(domain.Chat{}, nil)
 
 		router := chi.NewRouter()
-		router.Get("/api/chats/{uuid}", GetChat(chat))
+		router.Get("/api/chats/{uuid}", GetChat(mockChat))
 		router.ServeHTTP(w, req)
 
 		resp := w.Result()
@@ -371,11 +447,13 @@ func TestGetChat(t *testing.T) {
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s", chatID), nil)
 		w := httptest.NewRecorder()
 
-		chat := &ChatMock{}
-		chat.On("FindChatByID", mock.MatchedBy(matchChiContext), chatID).Return(domain.Chat{}, errors.New("failed to get chat"))
+		mockChat := &MockChat{}
+		mockChat.On(
+			"FindChatByID", mock.MatchedBy(matchChiContext), chatID,
+		).Return(domain.Chat{}, errors.New("failed to get chat"))
 
 		router := chi.NewRouter()
-		router.Get("/api/chats/{uuid}", GetChat(chat))
+		router.Get("/api/chats/{uuid}", GetChat(mockChat))
 		router.ServeHTTP(w, req)
 
 		resp := w.Result()

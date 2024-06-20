@@ -10,9 +10,9 @@ import (
 
 const (
 	accessTokenDuration = time.Hour
-	accessTokenIssuer   = "ai-bots-be"
+	accessTokenIssuer   = "ai-chats-be"
 	accessTokenSubject  = "access"
-	accessTokenAudience = "ai-bots-fe"
+	accessTokenAudience = "ai-chats-fe"
 )
 
 var signingKey string

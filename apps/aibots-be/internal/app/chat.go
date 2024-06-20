@@ -13,7 +13,7 @@ import (
 )
 
 // CreateChat creates a chat for the user.
-func (a *App) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error) {
+func (a *App) CreateChat(ctx context.Context, userID uuid.UUID, message string) (domain.Chat, error) {
 	user, err := a.users.FindByID(ctx, userID)
 	if err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to find a user: %w", err)
@@ -23,6 +23,16 @@ func (a *App) CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, er
 
 	if err := a.chats.Add(ctx, chat); err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to add a chat: %w", err)
+	}
+
+	// If the message is empty, we don't need to send it.
+	if message == "" {
+		return chat, nil
+	}
+
+	_, err = a.SendMessage(ctx, chat.ID, message)
+	if err != nil {
+		return domain.Chat{}, fmt.Errorf("failed to send a message: %w", err)
 	}
 
 	return chat, nil

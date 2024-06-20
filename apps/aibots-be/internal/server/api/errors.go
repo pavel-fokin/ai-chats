@@ -6,4 +6,5 @@ var (
 	ErrUnauthorized = errors.New("unauthorized")
 	ErrInternal     = errors.New("internal error")
 	ErrNotFound     = errors.New("not found")
+	ErrBadRequest   = errors.New("bad request")
 )

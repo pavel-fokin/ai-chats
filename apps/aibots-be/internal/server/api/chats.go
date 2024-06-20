@@ -18,7 +18,7 @@ type Subscriber interface {
 }
 
 type ChatApp interface {
-	CreateChat(ctx context.Context, userID uuid.UUID) (domain.Chat, error)
+	CreateChat(ctx context.Context, userID uuid.UUID, message string) (domain.Chat, error)
 	DeleteChat(ctx context.Context, chatID domain.ChatID) error
 	FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error)
 	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
@@ -52,7 +52,18 @@ func PostChats(chat ChatApp) http.HandlerFunc {
 
 		userID := apiutil.MustHaveUserID(ctx)
 
-		chat, err := chat.CreateChat(ctx, userID)
+		message := ""
+		if r.Body != nil {
+			var req PostChatsRequest
+			if err := apiutil.ParseJSON(r, &req); err != nil {
+				slog.ErrorContext(ctx, "failed to parse the request", "err", err)
+				apiutil.AsErrorResponse(w, ErrBadRequest, http.StatusBadRequest)
+				return
+			}
+			message = req.Message
+		}
+
+		chat, err := chat.CreateChat(ctx, userID, message)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create a chat", "err", err)
 			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
