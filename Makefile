@@ -2,10 +2,10 @@
 build:
 	${MAKE} -C apps build
 	@mkdir -p bin
-	@cp apps/aibots-be/bin/aibots-service bin/aibots-service
+	@cp apps/ai-chats-be/bin/ai-chats-service bin/ai-chats-service
 	@echo ""
 	@echo "Build is done 🎉"
-	@echo "Run aibots-service with ./bin/aibots-service"
+	@echo "Run ai-chats-service with ./bin/ai-chats-service"
 	@echo ""
 
 

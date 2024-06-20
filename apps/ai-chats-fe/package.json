@@ -1,10 +1,10 @@
 {
-  "name": "ai-bot-fe",
+  "name": "ai-chats-fe",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "imports": {
-    "@aibots": "./src/*"
+    "@ai-chats": "./src/*"
   },
   "scripts": {
     "dev": "vite",

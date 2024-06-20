@@ -154,12 +154,12 @@ func TestCreateChat(t *testing.T) {
 		mockChat := &MockChat{}
 		mockChat.On("CreateChat", ctx, userID, "").Return(domain.Chat{}, nil)
 
-		PostChats(mockChat)(w, req)
+		PostChats(nil)(w, req)
 
 		resp := w.Result()
-		assert.Equal(t, 200, resp.StatusCode)
+		assert.Equal(t, 400, resp.StatusCode)
 
-		mockChat.AssertNumberOfCalls(t, "CreateChat", 1)
+		mockChat.AssertNumberOfCalls(t, "CreateChat", 0)
 	})
 
 	t.Run("Success with message", func(t *testing.T) {

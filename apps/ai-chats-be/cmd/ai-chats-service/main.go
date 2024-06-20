@@ -84,21 +84,21 @@ func main() {
 	worker := worker.New(pubsub)
 	worker.SetupHandlers(app)
 
-	log.Println("Starting AIBots HTTP server... ", config.Server.Port)
+	log.Println("Starting AIChats HTTP server... ", config.Server.Port)
 	go server.Start()
 
-	log.Println("Starting AIBots worker...")
+	log.Println("Starting AIChats worker...")
 	worker.Start()
 
 	// Wait for the shutdown signal.
 	<-ctx.Done()
 
-	log.Println("Shutting down the AIBots worker...")
+	log.Println("Shutting down the AIChats worker...")
 	worker.Shutdown()
 
-	log.Println("Shutting down the AIBots HTTP server...")
+	log.Println("Shutting down the AIChats HTTP server...")
 	if err := server.Shutdown(); err != nil {
 		log.Fatalf("Failed to shutdown the server: %v", err)
 	}
-	log.Println("AIBots HTTP server shutdown successfully")
+	log.Println("AIChats HTTP server shutdown successfully")
 }

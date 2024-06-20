@@ -23,8 +23,8 @@ type PubSub interface {
 
 // Config is the server configuration.
 type Config struct {
-	Port            string `env:"AIBOTS_SERVER_PORT" envDefault:"8080"`
-	TokenSigningKey string `env:"AIBOTS_TOKEN_SIGNING_KEY" envDefault:"secret"`
+	Port            string `env:"AICHATS_SERVER_PORT" envDefault:"8080"`
+	TokenSigningKey string `env:"AICHATS_TOKEN_SIGNING_KEY" envDefault:"secret"`
 }
 
 // Server is the main server struct.
