@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
-import { InputMessage } from '../InputMessage';
+import { InputMessage } from 'components';
 
 test('updates input message text on change', () => {
   render(<InputMessage handleSend={() => {}} />);

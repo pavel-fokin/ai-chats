@@ -1,17 +1,17 @@
 @media only screen and (min-width: 768px) {
-    .mobile-only {
-      --mobile-only: hidden;
-    }
-
-    .mobile-hidden {
-      --mobile-hidden: flex;
-    }
+  .mobile-only {
+    --mobile-only: hidden;
   }
-  
+
+  .mobile-hidden {
+    --mobile-hidden: flex;
+  }
+}
+
 .mobile-only {
-    visibility: var(--mobile-only, visible);
+  visibility: var(--mobile-only, visible);
 }
 
 .mobile-hidden {
-    display: var(--mobile-hidden, none);
+  display: var(--mobile-hidden, none);
 }

@@ -5,7 +5,7 @@ import { IconButton } from '@radix-ui/themes';
 import { HamburgerMenuIcon, CloseIcon } from 'components';
 import { SidebarContext } from 'contexts';
 
-import 'styles/styles.css'
+import 'styles/styles.css';
 
 export const HamburgerMenuButton: React.FC = () => {
   const { isOpen, toggleSidebar } = useContext(SidebarContext);

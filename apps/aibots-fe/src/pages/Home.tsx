@@ -1,8 +1,6 @@
 import { Box, Flex, Heading } from '@radix-ui/themes';
 
-import {
-  HamburgerMenuButton, NewChatIconButton
-} from 'components';
+import { HamburgerMenuButton, NewChatIconButton } from 'components';
 import { Header, PageLayout } from 'components/layout';
 
 export const Home: React.FC = () => {
@@ -11,7 +9,7 @@ export const Home: React.FC = () => {
       <Header>
         <HamburgerMenuButton />
         <Heading as="h2" size="3" weight="regular">
-          AI Chats
+          Start a new chat
         </Heading>
         <NewChatIconButton />
       </Header>

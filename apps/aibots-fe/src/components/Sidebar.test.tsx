@@ -6,7 +6,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import { AuthContextProvider } from 'contexts';
-import { Sidebar } from '../Sidebar';
+import { Sidebar } from 'components';
 
 const server = setupServer(
   http.get('/api/chats', () => {
@@ -62,7 +62,7 @@ function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
 test('renders Navbar component', async () => {
   renderWithRouter(<Sidebar />, { route: '/app' });
 
-  expect(screen.getByText('New chat')).toBeInTheDocument();
+  expect(screen.getByLabelText('New chat')).toBeInTheDocument();
   expect(screen.getByText('Sign out')).toBeInTheDocument();
 
   await waitFor(() => {
@@ -84,7 +84,7 @@ test('calls handleNewChat on new chat button click', async () => {
   renderWithRouter(<Sidebar />, { route: '/app' });
 
   await waitFor(async () => {
-    await userEvent.click(screen.getByText('New chat'));
+    await userEvent.click(screen.getByLabelText('New chat'));
     expect(screen.getByText('Chat')).toBeInTheDocument();
   });
 });

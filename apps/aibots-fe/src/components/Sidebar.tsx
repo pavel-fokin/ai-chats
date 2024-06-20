@@ -2,9 +2,20 @@ import { useContext } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
-import { Box, Button, Flex, Separator, Text, TextField, Heading } from '@radix-ui/themes';
+import {
+  Button,
+  Flex,
+  Separator,
+  Text,
+  Heading,
+  IconButton,
+} from '@radix-ui/themes';
 
-import { ChatIcon, SettingsIcon, SignOutIcon, SearchIcon } from 'components/ui/icons';
+import {
+  ChatIcon,
+  SettingsIcon,
+  SignOutIcon,
+} from 'components/ui/icons';
 import { AuthContext, SidebarContext } from 'contexts';
 import { useChats } from 'hooks';
 
@@ -61,27 +72,31 @@ export const Sidebar = () => {
   return (
     <Flex direction="column" gap="2" height="100%" justify="between">
       <Flex direction="column" flexGrow="1">
-        <Box className="mobile-hidden" px="2" pb={{
-          initial: '4',
-          sm: '2',
-        }}>
-          <Heading as="h2" align="center" size='3' weight="regular">AI Chats</Heading>
-        </Box>
-        <Flex className="mobile-hidden" direction="column" flexGrow="1">
-          <Button size="3" variant="ghost" m="4" onClick={handleNewChat}>
-            <ChatIcon size={16} />
-            New chat
-          </Button>
+        <Flex
+          className="mobile-hidden"
+          align="center"
+          justify="between"
+          gap="2"
+          px="2"
+          pb={{
+            initial: '4',
+            sm: '5',
+          }}
+        >
+          <Heading as="h2" align="center" size="5" weight="bold">
+            AI Chats
+          </Heading>
+          <IconButton
+            variant="ghost"
+            size="3"
+            m="2"
+            highContrast
+            onClick={handleNewChat}
+            aria-label="New chat"
+          >
+            <ChatIcon size="28" weight="light" />
+          </IconButton>
         </Flex>
-        <Box px="2" pb='4'>
-          <TextField.Root size="3" placeholder='Find chat...'>
-            <TextField.Slot>
-              <SearchIcon size={16} />
-            </TextField.Slot>
-          </TextField.Root>
-        </Box>
-
-
         <NavigationMenu.Root
           orientation="vertical"
           className={styles.NavigationMenuRoot}
