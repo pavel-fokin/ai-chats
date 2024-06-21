@@ -53,16 +53,11 @@ const Link: React.FC<LinkProps> = ({ to, children, ...props }) => {
 
 export const Sidebar = () => {
   const navigate = useNavigate();
-
-  const { chats, createChat } = useChats();
   const { signout } = useContext(AuthContext);
+  const { data: chats } = useChats();
 
-  const handleNewChat = async () => {
-    createChat.mutate(void 0, {
-      onSuccess: ({ data }) => {
-        navigate(`/app/chats/${data.chat.id}`);
-      },
-    });
+  const handleNewChat = () => {
+    navigate('/app');
   };
 
   const handleSignOut = () => {

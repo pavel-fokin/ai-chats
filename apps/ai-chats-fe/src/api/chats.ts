@@ -1,5 +1,5 @@
 import { Chat, Message } from 'types';
-import { fetchData, postData, deleteData } from './base';
+import { doGet, doPost, doDelete } from './base';
 
 type Error = {
   message: string;
@@ -42,32 +42,32 @@ type PostMessagesResponse = {
 export const fetchChatById = async (
   chatId: string,
 ): Promise<GetChatByIdResponse> => {
-  return await fetchData<GetChatByIdResponse>(`/api/chats/${chatId}`);
+  return await doGet<GetChatByIdResponse>(`/api/chats/${chatId}`);
 };
 
-export const postChats = async (): Promise<PostChatsResponse> => {
-  return await postData('/api/chats', {});
+export const postChats = async (message: string): Promise<PostChatsResponse> => {
+  return await doPost('/api/chats', { message });
 };
 
 export const deleteChats = async (
   chatId: string,
 ): Promise<DeleteChatsResponse> => {
-  return await deleteData(`/api/chats/${chatId}`);
+  return await doDelete(`/api/chats/${chatId}`);
 };
 
 export const fetchChats = async (): Promise<GetChatsResponse> => {
-  return await fetchData<GetChatsResponse>('/api/chats');
+  return await doGet<GetChatsResponse>('/api/chats');
 };
 
 export const fetchMessages = async (
   chatId: string,
 ): Promise<GetMessagesResponse> => {
-  return await fetchData(`/api/chats/${chatId}/messages`);
+  return await doGet(`/api/chats/${chatId}/messages`);
 };
 
 export const postMessages = async (
   chatId: string,
   message: Message,
 ): Promise<PostMessagesResponse> => {
-  return await postData(`/api/chats/${chatId}/messages`, message);
+  return await doPost(`/api/chats/${chatId}/messages`, message);
 };

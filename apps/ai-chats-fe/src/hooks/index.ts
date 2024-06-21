@@ -1,6 +1,5 @@
 export * from './useAuth';
-export * from './useChat';
+export * from './useChatHooks';
 export * from './useChatEvents';
-export * from './useChats';
 export * from './useMessages';
 export * from './useOllamaModels';

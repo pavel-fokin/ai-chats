@@ -43,15 +43,15 @@ const queryClient = new QueryClient({
   },
 });
 
-function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
+function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
   return render(
     <AuthContextProvider>
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={[route]}>
           <Routes>
-            <Route path="/app" element={ui} />
+            <Route path="/" element={ui} />
+            <Route path="/app" element={<div>App</div>} />
             <Route path="/app/chats/:chatId" element={<div>Chat</div>} />
-            <Route path="/app/login" element={<div>Sign in</div>} />
           </Routes>
         </MemoryRouter>
       </QueryClientProvider>
@@ -60,7 +60,7 @@ function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
 }
 
 test('renders Navbar component', async () => {
-  renderWithRouter(<Sidebar />, { route: '/app' });
+  renderWithRouter(<Sidebar />, { route: '/' });
 
   expect(screen.getByLabelText('New chat')).toBeInTheDocument();
   expect(screen.getByText('Sign out')).toBeInTheDocument();
@@ -71,7 +71,7 @@ test('renders Navbar component', async () => {
 });
 
 test('navigates to chat on chat link click', async () => {
-  renderWithRouter(<Sidebar />, { route: '/app' });
+  renderWithRouter(<Sidebar />, { route: '/' });
 
   await waitFor(async () => {
     expect(screen.getByText('Some chat')).toBeInTheDocument();
@@ -81,16 +81,16 @@ test('navigates to chat on chat link click', async () => {
 });
 
 test('calls handleNewChat on new chat button click', async () => {
-  renderWithRouter(<Sidebar />, { route: '/app' });
+  renderWithRouter(<Sidebar />, { route: '/' });
 
   await waitFor(async () => {
     await userEvent.click(screen.getByLabelText('New chat'));
-    expect(screen.getByText('Chat')).toBeInTheDocument();
+    expect(screen.getByText('App')).toBeInTheDocument();
   });
 });
 
 test('calls handleSignOut on sign out button click', async () => {
-  renderWithRouter(<Sidebar />, { route: '/app' });
+  renderWithRouter(<Sidebar />, { route: '/' });
 
   await waitFor(async () => {
     await userEvent.click(screen.getByText('Sign out'));

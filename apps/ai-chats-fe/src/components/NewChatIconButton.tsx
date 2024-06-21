@@ -19,6 +19,7 @@ export const NewChatIconButton: React.FC = () => {
 
   return (
     <IconButton
+      aria-label="New chat"
       className="mobile-only"
       variant="ghost"
       size="3"

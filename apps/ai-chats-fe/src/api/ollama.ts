@@ -1,6 +1,6 @@
 import { OllamaModel } from 'types';
 
-import { fetchData, postData, deleteData } from './base';
+import {  doGet, doPost, doDelete } from './base';
 
 type GetOllamaResponse = {
   data: {
@@ -9,15 +9,15 @@ type GetOllamaResponse = {
 };
 
 export const fetchOllamaModels = async (): Promise<GetOllamaResponse> => {
-  return await fetchData<GetOllamaResponse>('/api/ollama-models');
+  return await doGet<GetOllamaResponse>('/api/ollama-models');
 };
 
 export const postOllamaModels = async (
   modelId: string,
 ): Promise<OllamaModel> => {
-  return await postData<OllamaModel>('/api/ollama-models', { modelId });
+  return await doPost<OllamaModel>('/api/ollama-models', { modelId });
 };
 
 export const deleteOllamaModels = async (): Promise<OllamaModel> => {
-  return await deleteData<OllamaModel>('/api/ollama-models');
+  return await doDelete<OllamaModel>('/api/ollama-models');
 };
