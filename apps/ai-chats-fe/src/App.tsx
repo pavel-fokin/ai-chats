@@ -7,7 +7,15 @@ import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 
 import { AuthRequired } from 'components';
-import { Chat, Landing, Startpage, LogIn, SignUp, Settings } from 'pages';
+import {
+  Chat,
+  Landing,
+  Startpage,
+  LogIn,
+  SignUp,
+  Settings,
+  SignOut,
+} from 'pages';
 import { AuthContextProvider, SidebarContextProvider } from 'contexts';
 
 const router = createBrowserRouter([
@@ -22,6 +30,10 @@ const router = createBrowserRouter([
   {
     path: '/app/signup',
     element: <SignUp />,
+  },
+  {
+    path: '/app/signout',
+    element: <SignOut />,
   },
   {
     path: '/app',

@@ -1,7 +1,11 @@
-import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  skipToken,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 import { deleteChats, fetchChatById, postChats, fetchChats } from 'api';
-
 
 export const useChats = () => {
   return useQuery({
@@ -9,7 +13,7 @@ export const useChats = () => {
     queryFn: fetchChats,
     select: (data) => data.data.chats,
   });
-}
+};
 
 export const useChat = (chatId: string | undefined) => {
   return useQuery({
@@ -32,7 +36,7 @@ export const useCreateChat = () => {
   });
 
   return mutation;
-}
+};
 
 export const useDeleteChat = (chatId: string) => {
   return useMutation({

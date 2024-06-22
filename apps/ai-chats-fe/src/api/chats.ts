@@ -45,7 +45,9 @@ export const fetchChatById = async (
   return await doGet<GetChatByIdResponse>(`/api/chats/${chatId}`);
 };
 
-export const postChats = async (message: string): Promise<PostChatsResponse> => {
+export const postChats = async (
+  message: string,
+): Promise<PostChatsResponse> => {
   return await doPost('/api/chats', { message });
 };
 

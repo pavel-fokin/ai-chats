@@ -75,5 +75,3 @@ export const SignUp = () => {
     </Container>
   );
 };
-
-export default SignUp;

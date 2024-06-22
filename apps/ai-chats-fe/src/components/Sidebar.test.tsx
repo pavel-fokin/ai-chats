@@ -59,11 +59,11 @@ function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
   );
 }
 
-test('renders Navbar component', async () => {
+test('renders Sidebar component', async () => {
   renderWithRouter(<Sidebar />, { route: '/' });
 
   expect(screen.getByLabelText('New chat')).toBeInTheDocument();
-  expect(screen.getByText('Sign out')).toBeInTheDocument();
+  expect(screen.getByLabelText('Sign out')).toBeInTheDocument();
 
   await waitFor(() => {
     expect(screen.getByText('Some chat')).toBeInTheDocument();
@@ -93,7 +93,7 @@ test('calls handleSignOut on sign out button click', async () => {
   renderWithRouter(<Sidebar />, { route: '/' });
 
   await waitFor(async () => {
-    await userEvent.click(screen.getByText('Sign out'));
+    await userEvent.click(screen.getByLabelText('Sign out'));
     // expect(screen.getByText('Sign in')).toBeInTheDocument();
   });
 });

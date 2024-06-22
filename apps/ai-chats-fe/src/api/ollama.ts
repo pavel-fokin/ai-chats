@@ -1,6 +1,6 @@
 import { OllamaModel } from 'types';
 
-import {  doGet, doPost, doDelete } from './base';
+import { doGet, doPost, doDelete } from './base';
 
 type GetOllamaResponse = {
   data: {

@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import {
+  Box,
   Button,
   Flex,
   Separator,
@@ -11,11 +12,7 @@ import {
   IconButton,
 } from '@radix-ui/themes';
 
-import {
-  ChatIcon,
-  SettingsIcon,
-  SignOutIcon,
-} from 'components/ui/icons';
+import { ChatIcon, SettingsIcon, SignOutIcon } from 'components/ui/icons';
 import { AuthContext, SidebarContext } from 'contexts';
 import { useChats } from 'hooks';
 
@@ -60,9 +57,10 @@ export const Sidebar = () => {
     navigate('/app');
   };
 
-  const handleSignOut = () => {
-    signout();
-  };
+  // const handleSignOut = (e) => {
+  //   e.preventDefault();
+  //   signout();
+  // };
 
   return (
     <Flex direction="column" gap="2" height="100%" justify="between">
@@ -104,24 +102,28 @@ export const Sidebar = () => {
                 </NavigationMenu.Item>
               ))}
           </NavigationMenu.List>
+
           <NavigationMenu.List className={styles.NavigationMenuList}>
             <NavigationMenu.Item>
-              <Link to="/app/settings">
+              <Link aria-label="Ollama settings" to="/app/settings">
                 <Flex align="center" gap="3">
-                  <SettingsIcon size={24} /> <Text size="3">Models</Text>
+                  <SettingsIcon size={24} /> <Text size="2">Ollama</Text>
+                </Flex>
+              </Link>
+            </NavigationMenu.Item>
+            <NavigationMenu.Item>
+              <Link
+                aria-label="Sign out"
+                to="/app/signout"
+                // onClick={handleSignOut}
+              >
+                <Flex align="center" gap="3">
+                  <SignOutIcon size={24} /> <Text size="2">Sign Out</Text>
                 </Flex>
               </Link>
             </NavigationMenu.Item>
           </NavigationMenu.List>
         </NavigationMenu.Root>
-      </Flex>
-
-      <Flex direction="column" gap="2">
-        <Separator size="4" />
-        <Button size="3" variant="ghost" m="3" onClick={handleSignOut}>
-          <SignOutIcon width={16} />
-          Sign out
-        </Button>
       </Flex>
     </Flex>
   );

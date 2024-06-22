@@ -21,10 +21,13 @@ export const doGet = async <T>(url: string): Promise<T> => {
     console.error('Error:', error);
     throw error; // Re-throw to handle it in the caller function
   }
-}
+};
 
 // Function to make a POST request with Authorization header and JSON body.
-export const doPost = async <T>(url: string, data: Record<string, any>): Promise<T> => {
+export const doPost = async <T>(
+  url: string,
+  data: Record<string, any>,
+): Promise<T> => {
   const headers = new Headers({
     Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
     'Content-Type': 'application/json',
