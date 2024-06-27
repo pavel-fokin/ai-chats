@@ -66,6 +66,7 @@ func main() {
 		sqlite.NewMessages(db),
 		ollamamodels,
 		pubsub,
+		sqlite.NewTx(db),
 	)
 
 	// Initialize the crypto package and the signing key.

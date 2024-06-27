@@ -13,16 +13,15 @@ import (
 
 // Chats implements a repository for chats.
 type Chats struct {
-	db *sql.DB
+	DB
 }
 
 func NewChats(db *sql.DB) *Chats {
-	return &Chats{db: db}
+	return &Chats{DB{db: db}}
 }
 
 func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
-	_, err := c.db.ExecContext(
-		ctx,
+	_, err := c.DBTX(ctx).Exec(
 		`INSERT INTO chat
 		(id, title, created_at, user_id)
 		VALUES (?, ?, ?, ?)`,
@@ -39,7 +38,7 @@ func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 }
 
 func (c *Chats) Delete(ctx context.Context, chatID uuid.UUID) error {
-	result, err := c.db.ExecContext(
+	result, err := c.DBTX(ctx).ExecContext(
 		ctx,
 		`UPDATE chat
 		SET deleted_at = ?
@@ -64,7 +63,7 @@ func (c *Chats) Delete(ctx context.Context, chatID uuid.UUID) error {
 }
 
 func (c *Chats) UpdateTitle(ctx context.Context, chatID uuid.UUID, title string) error {
-	_, err := c.db.ExecContext(
+	_, err := c.DBTX(ctx).ExecContext(
 		ctx,
 		`UPDATE chat
 		SET title = ?
@@ -80,7 +79,7 @@ func (c *Chats) UpdateTitle(ctx context.Context, chatID uuid.UUID, title string)
 }
 
 func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
-	rows, err := c.db.QueryContext(
+	rows, err := c.DBTX(ctx).QueryContext(
 		ctx,
 		`SELECT
 		id, title, created_at
@@ -119,7 +118,7 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
 	var chat domain.Chat
 	var createdAt string
-	err := c.db.QueryRowContext(
+	err := c.DBTX(ctx).QueryRowContext(
 		ctx,
 		`SELECT
 		id, title, created_at
@@ -141,7 +140,7 @@ func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 
 func (c *Chats) Exists(ctx context.Context, chatID uuid.UUID) (bool, error) {
 	var exists bool
-	err := c.db.QueryRowContext(
+	err := c.DBTX(ctx).QueryRowContext(
 		ctx,
 		`SELECT EXISTS(
 		SELECT 1 FROM chat WHERE id = ? AND deleted_at IS NULL

@@ -5,6 +5,7 @@ package app
 import (
 	"context"
 	"errors"
+	"fmt"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"testing"
 
@@ -90,6 +91,15 @@ func (m *MockMessages) AllMessages(ctx context.Context, chatID domain.ChatID) ([
 	return args.Get(0).([]domain.Message), args.Error(1)
 }
 
+type MockTx struct{}
+
+func (m *MockTx) Tx(ctx context.Context, f func(context.Context) error) error {
+	if err := f(ctx); err != nil {
+		return fmt.Errorf("transaction failed: %w", err)
+	}
+	return nil
+}
+
 func TestCreateChat(t *testing.T) {
 	ctx := context.Background()
 
@@ -113,11 +123,13 @@ func TestCreateChat(t *testing.T) {
 		mock.AnythingOfType("domain.Message"),
 	).Return(nil)
 
+	mockTx := &MockTx{}
+
 	t.Run("with empty message", func(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("Add", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
 
-		app := &App{chats: mockChats, users: mockUsers}
+		app := &App{chats: mockChats, users: mockUsers, tx: mockTx}
 
 		chat, err := app.CreateChat(ctx, user.ID, "")
 		assert.NoError(t, err)
@@ -130,7 +142,7 @@ func TestCreateChat(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("Add", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
 
-		app := &App{chats: mockChats, users: mockUsers, messages: mockMessages, pubsub: mockPubSub}
+		app := &App{chats: mockChats, users: mockUsers, messages: mockMessages, pubsub: mockPubSub, tx: mockTx}
 
 		chat, err := app.CreateChat(ctx, user.ID, "message")
 		assert.NoError(t, err)

@@ -45,9 +45,9 @@ func TestOllamaAllModels(t *testing.T) {
 		mockModels := new(MockModels)
 		mockModels.On("List", ctx).Return(models, nil)
 
-		a := New(nil, nil, nil, mockModels, nil)
+		app := New(nil, nil, nil, mockModels, nil, nil)
 
-		result, err := a.ListModels(ctx)
+		result, err := app.ListModels(ctx)
 		assert.NoError(t, err)
 		assert.Equal(t, models, result)
 		mockModels.AssertExpectations(t)
@@ -57,9 +57,9 @@ func TestOllamaAllModels(t *testing.T) {
 		mockModels := new(MockModels)
 		mockModels.On("List", ctx).Return(nil, assert.AnError)
 
-		a := New(nil, nil, nil, mockModels, nil)
+		app := New(nil, nil, nil, mockModels, nil, nil)
 
-		_, err := a.ListModels(ctx)
+		_, err := app.ListModels(ctx)
 		assert.Error(t, err)
 		mockModels.AssertExpectations(t)
 	})

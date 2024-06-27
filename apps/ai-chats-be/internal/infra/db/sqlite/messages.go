@@ -10,16 +10,16 @@ import (
 
 // Messages implements a repository of messages.
 type Messages struct {
-	db *sql.DB
+	DB
 }
 
 // NewMessages creates a new messages repository.
 func NewMessages(db *sql.DB) *Messages {
-	return &Messages{db: db}
+	return &Messages{DB{db: db}}
 }
 
 func (m *Messages) Add(ctx context.Context, chatID uuid.UUID, message domain.Message) error {
-	_, err := m.db.ExecContext(
+	_, err := m.DBTX(ctx).ExecContext(
 		ctx,
 		"INSERT INTO message (id, chat_id, sender, text) VALUES (?, ?, ?, ?)",
 		message.ID, chatID, message.Sender, message.Text,
@@ -32,7 +32,7 @@ func (m *Messages) Add(ctx context.Context, chatID uuid.UUID, message domain.Mes
 }
 
 func (c *Messages) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
-	rows, err := c.db.QueryContext(
+	rows, err := c.DBTX(ctx).QueryContext(
 		ctx,
 		`SELECT message.id, sender, text
 		FROM message

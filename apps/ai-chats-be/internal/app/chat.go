@@ -20,25 +20,30 @@ func (a *App) CreateChat(ctx context.Context, userID uuid.UUID, text string) (do
 	}
 
 	chat := domain.NewChat(user)
+	if err := a.tx.Tx(ctx, func(ctx context.Context) error {
+		if err := a.chats.Add(ctx, chat); err != nil {
+			return fmt.Errorf("failed to add a chat: %w", err)
+		}
 
-	if err := a.chats.Add(ctx, chat); err != nil {
-		return domain.Chat{}, fmt.Errorf("failed to add a chat: %w", err)
-	}
+		// If the message is empty, we don't need to send it.
+		if text == "" {
+			return nil
+		}
 
-	// If the message is empty, we don't need to send it.
-	if text == "" {
-		return chat, nil
-	}
+		message := domain.NewMessage("User", text)
 
-	message := domain.NewMessage("User", text)
+		if err := a.messages.Add(ctx, chat.ID, message); err != nil {
+			return fmt.Errorf("failed to add a message: %w", err)
+		}
 
-	if err := a.messages.Add(ctx, chat.ID, message); err != nil {
-		return domain.Chat{}, fmt.Errorf("failed to add a message: %w", err)
-	}
+		generateResponse := commands.NewGenerateResponse(chat.ID)
+		if err := a.pubsub.Publish(ctx, "worker", json.MustMarshal(ctx, generateResponse)); err != nil {
+			return fmt.Errorf("failed to publish a generate response command: %w", err)
+		}
 
-	generateResponse := commands.NewGenerateResponse(chat.ID)
-	if err := a.pubsub.Publish(ctx, "worker", json.MustMarshal(ctx, generateResponse)); err != nil {
-		return domain.Chat{}, fmt.Errorf("failed to publish a generate response command: %w", err)
+		return nil
+	}); err != nil {
+		return domain.Chat{}, fmt.Errorf("failed to create a chat: %w", err)
 	}
 
 	return chat, nil
