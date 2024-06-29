@@ -1,16 +1,15 @@
 .PHONY: build
 build:
-	@bun run build
+	@npm run build
 
 .PHONY: run
 run:
-	@bun run dev
+	@npm run dev
 
 .PHONY: test
 test:
-	@echo "Running unit tests..."
-	@bun run test
+	@npm run test
 
 .PHONY: format
 format:
-	@bun run format
+	@npm run format

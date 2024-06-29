@@ -3,17 +3,14 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import {
-  Box,
-  Button,
   Flex,
-  Separator,
   Text,
   Heading,
   IconButton,
 } from '@radix-ui/themes';
 
 import { ChatIcon, SettingsIcon, SignOutIcon } from 'components/ui/icons';
-import { AuthContext, SidebarContext } from 'contexts';
+import { SidebarContext } from 'contexts';
 import { useChats } from 'hooks';
 
 import 'styles/styles.css';
@@ -50,7 +47,6 @@ const Link: React.FC<LinkProps> = ({ to, children, ...props }) => {
 
 export const Sidebar = () => {
   const navigate = useNavigate();
-  const { signout } = useContext(AuthContext);
   const { data: chats } = useChats();
 
   const handleNewChat = () => {
