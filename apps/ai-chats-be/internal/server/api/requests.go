@@ -15,3 +15,7 @@ type SignInRequest struct {
 type SignUpRequest struct {
 	UserCredentials
 }
+
+type PostOllamaModelsRequest struct {
+	Model string `json:"model"`
+}

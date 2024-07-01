@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 
 	"testing"
 
@@ -28,6 +29,16 @@ func (m *MockOllamaApp) ListModels(ctx context.Context) ([]domain.Model, error) 
 	}
 
 	return args.Get(0).([]domain.Model), args.Error(1)
+}
+
+func (m *MockOllamaApp) PullModel(ctx context.Context, modelName string) error {
+	args := m.Called(ctx, modelName)
+	return args.Error(0)
+}
+
+func (m *MockOllamaApp) DeleteModel(ctx context.Context, modelName string) error {
+	args := m.Called(ctx, modelName)
+	return args.Error(0)
 }
 
 func TestGetOllamaModels(t *testing.T) {
@@ -65,6 +76,86 @@ func TestGetOllamaModels(t *testing.T) {
 
 		router := chi.NewRouter()
 		router.Get("/api/ollama-models", GetOllamaModels(mockOllamaApp))
+
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 500, resp.StatusCode)
+	})
+}
+
+func TestPostOllamaModels(t *testing.T) {
+	ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())
+
+	t.Run("success", func(t *testing.T) {
+		body := `{"model":"model1"}`
+
+		req, _ := http.NewRequest("POST", "/api/ollama-models", strings.NewReader(body))
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockOllamaApp := &MockOllamaApp{}
+		mockOllamaApp.On("PullModel", mock.MatchedBy(matchChiContext), "model1").Return(nil)
+
+		router := chi.NewRouter()
+		router.Post("/api/ollama-models", PostOllamaModels(mockOllamaApp))
+
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 204, resp.StatusCode)
+	})
+
+	t.Run("error", func(t *testing.T) {
+		body := `{"model":"model1"}`
+
+		req, _ := http.NewRequest("POST", "/api/ollama-models", strings.NewReader(body))
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockOllamaApp := &MockOllamaApp{}
+		mockOllamaApp.On("PullModel", mock.MatchedBy(matchChiContext), "model1").Return(assert.AnError)
+
+		router := chi.NewRouter()
+		router.Post("/api/ollama-models", PostOllamaModels(mockOllamaApp))
+
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 500, resp.StatusCode)
+	})
+}
+
+func TestDeleteOllamaModels(t *testing.T) {
+	ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())
+
+	t.Run("success", func(t *testing.T) {
+		req, _ := http.NewRequest("DELETE", "/api/ollama-models/model1", nil)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockOllamaApp := &MockOllamaApp{}
+		mockOllamaApp.On("DeleteModel", mock.MatchedBy(matchChiContext), "model1").Return(nil)
+
+		router := chi.NewRouter()
+		router.Delete("/api/ollama-models/{model}", DeleteOllamaModel(mockOllamaApp))
+
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 204, resp.StatusCode)
+	})
+
+	t.Run("error", func(t *testing.T) {
+		req, _ := http.NewRequest("DELETE", "/api/ollama-models/model1", nil)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockOllamaApp := &MockOllamaApp{}
+		mockOllamaApp.On("DeleteModel", mock.MatchedBy(matchChiContext), "model1").Return(assert.AnError)
+
+		router := chi.NewRouter()
+		router.Delete("/api/ollama-models/{model}", DeleteOllamaModel(mockOllamaApp))
 
 		router.ServeHTTP(w, req)
 

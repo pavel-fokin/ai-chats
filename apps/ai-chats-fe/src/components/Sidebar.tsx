@@ -2,12 +2,7 @@ import { useContext } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
-import {
-  Flex,
-  Text,
-  Heading,
-  IconButton,
-} from '@radix-ui/themes';
+import { Flex, Text, Heading, IconButton } from '@radix-ui/themes';
 
 import { ChatIcon, SettingsIcon, SignOutIcon } from 'components/ui/icons';
 import { SidebarContext } from 'contexts';

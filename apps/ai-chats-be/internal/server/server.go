@@ -104,6 +104,8 @@ func (s *Server) SetupOllamaAPI(ollama api.OllamaApp) {
 	s.router.Group(func(r chi.Router) {
 		r.Use(apiutil.AuthHeader)
 		r.Get("/api/ollama-models", api.GetOllamaModels(ollama))
+		r.Post("/api/ollama-models", api.PostOllamaModels(ollama))
+		r.Delete("/api/ollama-models/{model}", api.DeleteOllamaModel(ollama))
 	})
 }
 

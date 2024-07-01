@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { fetchOllamaModels } from 'api';
+import { fetchOllamaModels, postOllamaModels, deleteOllamaModels } from 'api';
 
 export const useOllamaModels = () => {
   return useQuery({
@@ -11,17 +11,27 @@ export const useOllamaModels = () => {
 };
 
 export const usePullOllamaModel = () => {
-  return useQuery({
-    queryKey: ['ollama-models'],
-    queryFn: fetchOllamaModels,
-    select: (data) => data.data.models,
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (modelName: string) => postOllamaModels(modelName),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['ollama-models'],
+      });
+    },
   });
 };
 
 export const useDeleteOllamaModel = () => {
-  return useQuery({
-    queryKey: ['ollama-models'],
-    queryFn: fetchOllamaModels,
-    select: (data) => data.data.models,
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (modelName: string) => deleteOllamaModels(modelName),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['ollama-models'],
+      });
+    },
   });
 };

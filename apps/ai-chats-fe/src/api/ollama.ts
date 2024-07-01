@@ -12,12 +12,10 @@ export const fetchOllamaModels = async (): Promise<GetOllamaResponse> => {
   return await doGet<GetOllamaResponse>('/api/ollama-models');
 };
 
-export const postOllamaModels = async (
-  modelId: string,
-): Promise<OllamaModel> => {
-  return await doPost<OllamaModel>('/api/ollama-models', { modelId });
+export const postOllamaModels = async (modelName: string) => {
+  return await doPost<undefined>('/api/ollama-models', { model: modelName });
 };
 
-export const deleteOllamaModels = async (): Promise<OllamaModel> => {
-  return await doDelete<OllamaModel>('/api/ollama-models');
+export const deleteOllamaModels = async (modelName: string) => {
+  return await doDelete<undefined>(`/api/ollama-models/${modelName}`);
 };
