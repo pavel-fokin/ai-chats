@@ -7,7 +7,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthContextProvider } from 'contexts';
 import { LogIn } from 'pages';
 
-import { generateToken } from './utils';
+import { generateToken } from 'utils/utilsTests';
 
 const server = setupServer(
   http.post('/api/auth/login', () => {
