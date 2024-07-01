@@ -64,7 +64,7 @@ func (s *Server) Start() {
 }
 
 // Shutdown gracefully shuts down the server.
-func (s *Server) Shutdown() error {
+func (s *Server) Shutdown() {
 	s.sse.CloseAll()
 
 	ctx, cancel := context.WithTimeout(
@@ -72,7 +72,9 @@ func (s *Server) Shutdown() error {
 	)
 	defer cancel()
 
-	return s.server.Shutdown(ctx)
+	if err := s.server.Shutdown(ctx); err != nil {
+		log.Fatalf("Failed to shutdown the server: %v", err)
+	}
 }
 
 // SetupAuthAPI sets up the auth API.

@@ -42,29 +42,19 @@ func main() {
 
 	config := NewConfig()
 
-	db, err := sqlite.NewDB(config.DB.DATABASE_URL)
-	if err != nil {
-		log.Fatalf("Failed to create database: %v", err)
-	}
+	db := sqlite.NewDB(config.DB.DATABASE_URL)
 	defer db.Close()
 
-	if err := sqlite.CreateTables(db); err != nil {
-		log.Fatalf("Failed to create tables: %v", err)
-	}
+	sqlite.CreateTables(db)
 
 	pubsub := pubsub.New()
 	// defer pubsub.CloseAll()
-
-	ollamamodels, err := ollama.NewOllamaModels()
-	if err != nil {
-		log.Fatalf("Failed to load Ollama models: %v", err)
-	}
 
 	app := app.New(
 		sqlite.NewChats(db),
 		sqlite.NewUsers(db),
 		sqlite.NewMessages(db),
-		ollamamodels,
+		ollama.NewOllamaModels(),
 		pubsub,
 		sqlite.NewTx(db),
 	)
@@ -98,8 +88,6 @@ func main() {
 	worker.Shutdown()
 
 	log.Println("Shutting down the AIChats HTTP server...")
-	if err := server.Shutdown(); err != nil {
-		log.Fatalf("Failed to shutdown the server: %v", err)
-	}
+	server.Shutdown()
 	log.Println("AIChats HTTP server shutdown successfully")
 }

@@ -3,22 +3,25 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+	"log"
 
 	_ "modernc.org/sqlite"
 )
 
-func NewDB(url string) (*sql.DB, error) {
+func NewDB(url string) *sql.DB {
 	db, err := sql.Open("sqlite", url)
 	if err != nil {
-		return nil, err
+		log.Fatalf("Failed to open database: %v", err)
 	}
 
-	return db, nil
+	return db
 }
 
-func CreateTables(db *sql.DB) error {
+func CreateTables(db *sql.DB) {
 	_, err := db.Exec(SchemaSqlite)
-	return err
+	if err != nil {
+		log.Fatalf("Failed to create tables: %v", err)
+	}
 }
 
 // DBTX is an interface for database connections or transactions.

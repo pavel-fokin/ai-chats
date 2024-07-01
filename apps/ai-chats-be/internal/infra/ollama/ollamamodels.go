@@ -3,6 +3,7 @@ package ollama
 import (
 	"context"
 	"fmt"
+	"log"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"strings"
 
@@ -13,13 +14,13 @@ type OllamaModels struct {
 	client *api.Client
 }
 
-func NewOllamaModels() (*OllamaModels, error) {
+func NewOllamaModels() *OllamaModels {
 	client, err := api.ClientFromEnvironment()
 	if err != nil {
-		return nil, fmt.Errorf("failed to create a client: %w", err)
+		log.Fatalf("Failed to create Ollama client: %v", err)
 	}
 
-	return &OllamaModels{client: client}, nil
+	return &OllamaModels{client: client}
 }
 
 func (o *OllamaModels) List(ctx context.Context) ([]domain.Model, error) {

@@ -9,30 +9,25 @@ import (
 )
 
 func TestCreateUser(t *testing.T) {
-	db, err := NewDB(":memory:")
-	assert.NoError(t, err)
+	db := NewDB(":memory:")
 	defer db.Close()
 	CreateTables(db)
 
 	users := NewUsers(db)
 
-	user := domain.NewUser("username")
-
-	err = users.Add(context.Background(), user)
+	err := users.Add(context.Background(), domain.NewUser("username"))
 	assert.NoError(t, err)
-	assert.NotNil(t, user)
 }
 
 func TestFindByUsernameWithPassword(t *testing.T) {
-	db, err := NewDB(":memory:")
-	assert.NoError(t, err)
+	db := NewDB(":memory:")
 	defer db.Close()
 	CreateTables(db)
 	users := NewUsers(db)
 
 	t.Run("User found", func(t *testing.T) {
 		user := domain.NewUser("username")
-		err = users.Add(context.Background(), user)
+		err := users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
 		foundUser, err := users.FindByUsernameWithPassword(context.Background(), "username")

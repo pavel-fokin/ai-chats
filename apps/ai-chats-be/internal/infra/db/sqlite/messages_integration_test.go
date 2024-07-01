@@ -13,8 +13,7 @@ func TestAddMessages(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
-	db, err := NewDB(":memory:")
-	assert.NoError(err)
+	db := NewDB(":memory:")
 	defer db.Close()
 	CreateTables(db)
 
@@ -23,7 +22,7 @@ func TestAddMessages(t *testing.T) {
 	messages := NewMessages(db)
 
 	user := domain.NewUser("username")
-	err = users.Add(ctx, user)
+	err := users.Add(ctx, user)
 	assert.NoError(err)
 
 	// Create a new chat.

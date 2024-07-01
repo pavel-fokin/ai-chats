@@ -12,12 +12,10 @@ func TestTx_Tx(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
-	db, err := NewDB("file:memdb1?mode=memory&cache=shared")
-	// db, err := NewDB("/tmp/test.db")
-	assert.NoError(err)
+	db := NewDB("file:memdb1?mode=memory&cache=shared")
 	defer db.Close()
 
-	_, err = db.Exec(
+	_, err := db.Exec(
 		`CREATE TABLE user (
 			id TEXT PRIMARY KEY,
 			username TEXT NOT NULL
