@@ -24,13 +24,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 	}
 
 	streamFunc := func(messageChunk events.MessageChunkReceived) error {
-		messageChunkReceived := events.NewMessageChunkReceived(
-			messageChunk.MessageID,
-			messageChunk.Sender,
-			messageChunk.Text,
-			messageChunk.Final,
-		)
-		if err := a.pubsub.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageChunkReceived)); err != nil {
+		if err := a.pubsub.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageChunk)); err != nil {
 			return fmt.Errorf("failed to publish a message chunk received event: %w", err)
 		}
 		return nil

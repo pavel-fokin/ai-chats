@@ -22,7 +22,7 @@ export enum EventTypes {
 }
 
 export type OllamaModel = {
-  id: string;
+  // id: string;
   name: string;
   tag: string;
 };
