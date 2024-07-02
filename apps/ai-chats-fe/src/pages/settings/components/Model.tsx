@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, Text } from '@radix-ui/themes';
+import { AlertDialog, Button, Flex, Heading, Text } from '@radix-ui/themes';
 
 import { useDeleteOllamaModel } from 'hooks';
 import { OllamaModel } from 'types';
@@ -8,6 +8,24 @@ type ModelProps = {
 };
 
 export const Model: React.FC<ModelProps> = ({ model }) => {
+  return (
+    <Flex direction="column" gap="2" key={model.id} width="100%">
+      <Heading as="h2">{`${model.name}:${model.tag}`}</Heading>
+      <Text>
+        Meta Llama 3: The most capable openly available LLM to date 8B.
+      </Text>
+      <Flex align="center" justify="end" flexGrow="1" mt="4" gap="4">
+        <Delete model={model} />
+      </Flex>
+    </Flex>
+  );
+};
+
+type DeleteProps = {
+  model: OllamaModel;
+};
+
+const Delete: React.FC<DeleteProps> = ({ model }) => {
   const deleteModel = useDeleteOllamaModel();
 
   const handleDelete = (model: string) => {
@@ -15,23 +33,33 @@ export const Model: React.FC<ModelProps> = ({ model }) => {
   };
 
   return (
-    <Flex direction="column" gap="2" key={model.id} width="100%">
-      <Heading as="h2">
-        {model.name}:{model.tag}
-      </Heading>
-      <Text>
-        Meta Llama 3: The most capable openly available LLM to date 8B.
-      </Text>
-      <Flex align="center" justify="end" flexGrow="1" mt="4" gap="4">
-        <Button
-          size="2"
-          variant="soft"
-          onClick={() => handleDelete(model.name)}
-          loading={deleteModel.isPending}
-        >
+    <AlertDialog.Root>
+      <AlertDialog.Trigger>
+        <Button size="2" variant="soft" loading={deleteModel.isPending}>
           Delete
         </Button>
-      </Flex>
-    </Flex>
+      </AlertDialog.Trigger>
+      <AlertDialog.Content maxWidth="450px">
+        <AlertDialog.Title>{`Delete model - ${model.name}:${model.tag}`}</AlertDialog.Title>
+        <AlertDialog.Description size="2">
+          Are you sure? This model will no longer be accessible locally.
+        </AlertDialog.Description>
+
+        <Flex gap="4" mt="4" align="center" justify="end">
+          <AlertDialog.Cancel>
+            <Button variant="ghost">Cancel</Button>
+          </AlertDialog.Cancel>
+          <AlertDialog.Action>
+            <Button
+              variant="solid"
+              color="tomato"
+              onClick={() => handleDelete(model.name)}
+            >
+              Delete model
+            </Button>
+          </AlertDialog.Action>
+        </Flex>
+      </AlertDialog.Content>
+    </AlertDialog.Root>
   );
 };
