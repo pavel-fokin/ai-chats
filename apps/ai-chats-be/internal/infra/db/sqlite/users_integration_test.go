@@ -9,7 +9,7 @@ import (
 )
 
 func TestCreateUser(t *testing.T) {
-	db := NewDB(":memory:")
+	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
 
@@ -20,7 +20,7 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestFindByUsernameWithPassword(t *testing.T) {
-	db := NewDB(":memory:")
+	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
 	users := NewUsers(db)

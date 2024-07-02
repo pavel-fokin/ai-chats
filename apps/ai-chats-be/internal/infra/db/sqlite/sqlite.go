@@ -8,7 +8,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-func NewDB(url string) *sql.DB {
+func New(url string) *sql.DB {
 	db, err := sql.Open("sqlite", url)
 	if err != nil {
 		log.Fatalf("Failed to open database: %v", err)
@@ -36,7 +36,7 @@ type DBTX interface {
 
 // DB is a database connection.
 type DB struct {
-	db DBTX
+	db *sql.DB
 }
 
 // DBTX returns a transaction from the context if it exists, otherwise returns the database.

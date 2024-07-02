@@ -12,7 +12,7 @@ func TestTx_Tx(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
-	db := NewDB("file:memdb1?mode=memory&cache=shared")
+	db := New("file:memdb1?mode=memory&cache=shared")
 	defer db.Close()
 
 	_, err := db.Exec(

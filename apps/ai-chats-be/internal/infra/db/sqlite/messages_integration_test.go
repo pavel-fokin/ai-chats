@@ -13,7 +13,7 @@ func TestAddMessages(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
-	db := NewDB(":memory:")
+	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
 

@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"strings"
 
 	"github.com/ollama/ollama/api"
+
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
 type OllamaModels struct {

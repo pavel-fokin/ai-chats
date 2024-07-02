@@ -14,7 +14,7 @@ import (
 func TestAddChat(t *testing.T) {
 	ctx := context.Background()
 
-	db := NewDB(":memory:")
+	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
 
@@ -35,7 +35,7 @@ func TestDeleteChat(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
-	db := NewDB(":memory:")
+	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
 
@@ -73,7 +73,7 @@ func TestDeleteChat(t *testing.T) {
 }
 
 func TestAllChats(t *testing.T) {
-	db := NewDB(":memory:")
+	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
 
@@ -130,7 +130,7 @@ func TestAllChats(t *testing.T) {
 }
 
 func TestFindChat(t *testing.T) {
-	db := NewDB(":memory:")
+	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
 
@@ -160,7 +160,7 @@ func TestFindChat(t *testing.T) {
 }
 
 func TestChats_Exists(t *testing.T) {
-	db := NewDB(":memory:")
+	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
 

@@ -40,7 +40,7 @@ func main() {
 
 	config := NewConfig()
 
-	db := sqlite.NewDB(config.DB.DATABASE_URL)
+	db := sqlite.New(config.DB.DATABASE_URL)
 	defer db.Close()
 
 	sqlite.CreateTables(db)
