@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
 )
 
 type Subscriber interface {
@@ -32,16 +32,16 @@ func GetChats(chat ChatApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		userID := apiutil.MustHaveUserID(ctx)
+		userID := MustHaveUserID(ctx)
 
 		chats, err := chat.AllChats(ctx, userID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get chats", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, NewGetChatsResponse(chats), http.StatusOK)
+		AsSuccessResponse(w, NewGetChatsResponse(chats), http.StatusOK)
 	}
 }
 
@@ -50,14 +50,14 @@ func PostChats(chat ChatApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		userID := apiutil.MustHaveUserID(ctx)
+		userID := MustHaveUserID(ctx)
 
 		message := ""
 		if r.Body != nil {
 			var req PostChatsRequest
-			if err := apiutil.ParseJSON(r, &req); err != nil {
+			if err := ParseJSON(r, &req); err != nil {
 				slog.ErrorContext(ctx, "failed to parse the request", "err", err)
-				apiutil.AsErrorResponse(w, ErrBadRequest, http.StatusBadRequest)
+				AsErrorResponse(w, ErrBadRequest, http.StatusBadRequest)
 				return
 			}
 			message = req.Message
@@ -66,11 +66,11 @@ func PostChats(chat ChatApp) http.HandlerFunc {
 		chat, err := chat.CreateChat(ctx, userID, message)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create a chat", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, NewPostChatsResponse(chat), http.StatusOK)
+		AsSuccessResponse(w, NewPostChatsResponse(chat), http.StatusOK)
 	}
 }
 
@@ -84,11 +84,11 @@ func GetChat(chat ChatApp) http.HandlerFunc {
 		chat, err := chat.FindChatByID(ctx, uuid.MustParse(chatID))
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get a chat", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, NewGetChatResponse(chat), http.StatusOK)
+		AsSuccessResponse(w, NewGetChatResponse(chat), http.StatusOK)
 	}
 }
 
@@ -102,16 +102,16 @@ func DeleteChat(chat ChatApp) http.HandlerFunc {
 		if err := chat.DeleteChat(ctx, uuid.MustParse(chatID)); err != nil {
 			switch err {
 			case domain.ErrChatNotFound:
-				apiutil.AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
+				AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
 				return
 			default:
 				slog.ErrorContext(ctx, "failed to delete a chat", "err", err)
-				apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+				AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 				return
 			}
 		}
 
-		apiutil.AsSuccessResponse(w, nil, http.StatusNoContent)
+		AsSuccessResponse(w, nil, http.StatusNoContent)
 	}
 }
 
@@ -125,11 +125,11 @@ func GetMessages(chat ChatApp) http.HandlerFunc {
 		messages, err := chat.AllMessages(ctx, uuid.MustParse(chatID))
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get messages", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, NewGetMessagesResponse(messages), http.StatusOK)
+		AsSuccessResponse(w, NewGetMessagesResponse(messages), http.StatusOK)
 	}
 }
 
@@ -141,19 +141,19 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 		chatID := chi.URLParam(r, "uuid")
 
 		var req PostMessagesRequest
-		if err := apiutil.ParseJSON(r, &req); err != nil {
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusBadRequest)
+		if err := ParseJSON(r, &req); err != nil {
+			AsErrorResponse(w, ErrInternal, http.StatusBadRequest)
 			return
 		}
 
 		answer, err := chat.SendMessage(ctx, uuid.MustParse(chatID), req.Message.Text)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to send a message", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, PostMessagesResponse{
+		AsSuccessResponse(w, PostMessagesResponse{
 			Message{
 				Sender: "AI",
 				Text:   answer.Text,
@@ -163,7 +163,7 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 }
 
 // GetEvents handles the GET /api/chats/{uuid}/events endpoint.
-func GetEvents(app ChatApp, sse *apiutil.SSEConnections, subscriber Subscriber) http.HandlerFunc {
+func GetEvents(app ChatApp, sse *server.SSEConnections, subscriber Subscriber) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -171,10 +171,10 @@ func GetEvents(app ChatApp, sse *apiutil.SSEConnections, subscriber Subscriber) 
 
 		if exists, err := app.ChatExists(ctx, uuid.MustParse(chatID)); err != nil {
 			slog.ErrorContext(ctx, "failed to check if the chat exists", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		} else if !exists {
-			apiutil.AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
+			AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
 			return
 		}
 
@@ -184,7 +184,7 @@ func GetEvents(app ChatApp, sse *apiutil.SSEConnections, subscriber Subscriber) 
 		events, err := subscriber.Subscribe(ctx, chatID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 		defer subscriber.Unsubscribe(ctx, chatID, events)
@@ -197,12 +197,12 @@ func GetEvents(app ChatApp, sse *apiutil.SSEConnections, subscriber Subscriber) 
 		for {
 			select {
 			case <-conn.Closed:
-				apiutil.AsSuccessResponse(w, nil, http.StatusNoContent)
+				AsSuccessResponse(w, nil, http.StatusNoContent)
 				return
 			case <-ctx.Done():
 				return
 			case event := <-events:
-				if err := apiutil.WriteEvent(w, event); err != nil {
+				if err := WriteEvent(w, event); err != nil {
 					slog.ErrorContext(ctx, "failed to write an event", "err", err)
 					return
 				}

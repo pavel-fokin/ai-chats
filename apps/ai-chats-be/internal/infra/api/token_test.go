@@ -1,4 +1,4 @@
-package apiutil
+package api
 
 import (
 	"testing"

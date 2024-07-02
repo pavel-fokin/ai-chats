@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
 )
 
 type MockChat struct {
@@ -81,7 +81,7 @@ func matchChiContext(ctx context.Context) bool {
 
 func TestCreateChat(t *testing.T) {
 	userID := uuid.New()
-	ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, userID)
+	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
 	t.Run("Missed UserID", func(t *testing.T) {
 		defer func() { recover() }()
@@ -202,7 +202,7 @@ func TestCreateChat(t *testing.T) {
 func TestDeleteChat(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		chatID := uuid.New()
-		ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())
+		ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
 
 		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/chats/%s", chatID), nil)
 		req = req.WithContext(ctx)
@@ -224,7 +224,7 @@ func TestDeleteChat(t *testing.T) {
 
 	t.Run("Internal error", func(t *testing.T) {
 		chatID := uuid.New()
-		ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())
+		ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
 
 		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/chats/%s", chatID), nil)
 		req = req.WithContext(ctx)
@@ -243,7 +243,7 @@ func TestDeleteChat(t *testing.T) {
 
 	t.Run("Chat not found", func(t *testing.T) {
 		chatID := uuid.New()
-		ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())
+		ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
 
 		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/chats/%s", chatID), nil)
 		req = req.WithContext(ctx)
@@ -263,7 +263,7 @@ func TestDeleteChat(t *testing.T) {
 
 func TestGetChats(t *testing.T) {
 	userID := uuid.New()
-	ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, userID)
+	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
 	t.Run("Success", func(t *testing.T) {
 		req, _ := http.NewRequest("", "", nil)
@@ -340,7 +340,7 @@ func TestGetEvents(t *testing.T) {
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
 		w := httptest.NewRecorder()
 
-		sse := apiutil.NewSSEConnections()
+		sse := server.NewSSEConnections()
 
 		app := &MockChat{}
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
@@ -378,7 +378,7 @@ func TestGetEvents(t *testing.T) {
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
 		w := httptest.NewRecorder()
 
-		sse := apiutil.NewSSEConnections()
+		sse := server.NewSSEConnections()
 
 		app := &MockChat{}
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
@@ -406,7 +406,7 @@ func TestGetEvents(t *testing.T) {
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
 		w := httptest.NewRecorder()
 
-		sse := apiutil.NewSSEConnections()
+		sse := server.NewSSEConnections()
 
 		app := &MockChat{}
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).

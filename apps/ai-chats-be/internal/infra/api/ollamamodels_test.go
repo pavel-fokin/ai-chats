@@ -14,7 +14,6 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
 type MockOllamaApp struct {
@@ -42,7 +41,7 @@ func (m *MockOllamaApp) DeleteModel(ctx context.Context, modelName string) error
 }
 
 func TestGetOllamaModels(t *testing.T) {
-	ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())
+	ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
 
 	t.Run("success", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/ollama-models", nil)
@@ -85,7 +84,7 @@ func TestGetOllamaModels(t *testing.T) {
 }
 
 func TestPostOllamaModels(t *testing.T) {
-	ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())
+	ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
 
 	t.Run("success", func(t *testing.T) {
 		body := `{"model":"model1"}`
@@ -127,7 +126,7 @@ func TestPostOllamaModels(t *testing.T) {
 }
 
 func TestDeleteOllamaModels(t *testing.T) {
-	ctx := context.WithValue(context.Background(), apiutil.UserIDCtxKey, uuid.New())
+	ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
 
 	t.Run("success", func(t *testing.T) {
 		req, _ := http.NewRequest("DELETE", "/api/ollama-models/model1", nil)

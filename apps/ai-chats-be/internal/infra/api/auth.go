@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 )
 
 type Auth interface {
@@ -21,27 +20,27 @@ func LogIn(app Auth) http.HandlerFunc {
 		ctx := r.Context()
 
 		var req SignInRequest
-		if err := apiutil.ParseJSON(r, &req); err != nil {
+		if err := ParseJSON(r, &req); err != nil {
 			slog.ErrorContext(ctx, "failed to parse request body", "err", err)
-			apiutil.AsErrorResponse(w, err, http.StatusBadRequest)
+			AsErrorResponse(w, err, http.StatusBadRequest)
 			return
 		}
 
 		user, err := app.LogIn(ctx, req.Username, req.Password)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to sign in user", "err", err)
-			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
+			AsErrorResponse(w, err, http.StatusInternalServerError)
 			return
 		}
 
-		accessToken, err := apiutil.NewAccessToken(user.ID)
+		accessToken, err := NewAccessToken(user.ID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create access token", "err", err)
-			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
+			AsErrorResponse(w, err, http.StatusInternalServerError)
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, &SignInResponse{
+		AsSuccessResponse(w, &SignInResponse{
 			AccessToken: accessToken,
 		}, http.StatusOK)
 	}
@@ -53,9 +52,9 @@ func SignUp(app Auth) http.HandlerFunc {
 		ctx := r.Context()
 
 		var req SignUpRequest
-		if err := apiutil.ParseJSON(r, &req); err != nil {
+		if err := ParseJSON(r, &req); err != nil {
 			slog.ErrorContext(ctx, "failed to parse request body", "err", err)
-			apiutil.AsErrorResponse(w, err, http.StatusBadRequest)
+			AsErrorResponse(w, err, http.StatusBadRequest)
 			return
 		}
 
@@ -66,14 +65,14 @@ func SignUp(app Auth) http.HandlerFunc {
 			return
 		}
 
-		accessToken, err := apiutil.NewAccessToken(user.ID)
+		accessToken, err := NewAccessToken(user.ID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create access token", "err", err)
-			apiutil.AsErrorResponse(w, err, http.StatusInternalServerError)
+			AsErrorResponse(w, err, http.StatusInternalServerError)
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, SignInResponse{
+		AsSuccessResponse(w, SignInResponse{
 			AccessToken: accessToken,
 		}, http.StatusOK)
 	}

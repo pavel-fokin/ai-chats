@@ -1,4 +1,4 @@
-package apiutil
+package server
 
 import (
 	"sync"

@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -25,11 +24,11 @@ func GetOllamaModels(ollama OllamaApp) http.HandlerFunc {
 		models, err := ollama.ListModels(ctx)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get ollama models", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, NewGetOllamaModelsResponse(models), http.StatusOK)
+		AsSuccessResponse(w, NewGetOllamaModelsResponse(models), http.StatusOK)
 	}
 }
 
@@ -39,20 +38,20 @@ func PostOllamaModels(ollama OllamaApp) http.HandlerFunc {
 		ctx := r.Context()
 
 		var req PostOllamaModelsRequest
-		if err := apiutil.ParseJSON(r, &req); err != nil {
+		if err := ParseJSON(r, &req); err != nil {
 			slog.ErrorContext(ctx, "failed to parse the request", "err", err)
-			apiutil.AsErrorResponse(w, ErrBadRequest, http.StatusBadRequest)
+			AsErrorResponse(w, ErrBadRequest, http.StatusBadRequest)
 			return
 		}
 
 		err := ollama.PullModel(ctx, req.Model)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to pull ollama model", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, nil, http.StatusNoContent)
+		AsSuccessResponse(w, nil, http.StatusNoContent)
 	}
 }
 
@@ -66,10 +65,10 @@ func DeleteOllamaModel(ollama OllamaApp) http.HandlerFunc {
 		err := ollama.DeleteModel(ctx, model)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to delete ollama model", "err", err)
-			apiutil.AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
-		apiutil.AsSuccessResponse(w, nil, http.StatusNoContent)
+		AsSuccessResponse(w, nil, http.StatusNoContent)
 	}
 }

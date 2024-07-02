@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"io/fs"
 	"log"
 	"os/signal"
 	"syscall"
@@ -10,15 +9,14 @@ import (
 	"github.com/caarlos0/env/v6"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/api"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db/sqlite"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/ollama"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/pubsub"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/server/apiutil"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
-	"pavel-fokin/ai/apps/ai-bots-be/web"
 )
 
 // Config is the service configuration.
@@ -60,16 +58,15 @@ func main() {
 	)
 
 	// Initialize the crypto package and the signing key.
-	apiutil.InitSigningKey(config.Server.TokenSigningKey)
+	api.InitSigningKey(config.Server.TokenSigningKey)
 	crypto.InitBcryptCost(14)
 
 	// Setup the server.
-	server := server.New(config.Server, pubsub)
-	server.SetupAuthAPI(app)
-	server.SetupChatAPI(app)
-	server.SetupOllamaAPI(app)
-	staticFS, _ := fs.Sub(web.Dist, "dist")
-	server.SetupStaticRoutes(staticFS)
+	sse := server.NewSSEConnections()
+	defer sse.CloseAll()
+
+	router := api.NewRouter(app, sse, pubsub)
+	server := server.New(config.Server, router)
 
 	// Setup the worker.
 	worker := worker.New(pubsub)
