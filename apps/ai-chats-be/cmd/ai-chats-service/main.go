@@ -63,7 +63,7 @@ func main() {
 
 	// Setup the server.
 	sse := server.NewSSEConnections()
-	defer sse.CloseAll()
+	// defer sse.CloseAll()
 
 	router := api.NewRouter(app, sse, pubsub)
 	server := server.New(config.Server, router)
@@ -80,6 +80,7 @@ func main() {
 
 	// Wait for the shutdown signal.
 	<-ctx.Done()
+	sse.CloseAll()
 
 	log.Println("Shutting down the AIChats worker...")
 	worker.Shutdown()

@@ -6,10 +6,10 @@ import (
 
 	"github.com/google/uuid"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app/commands"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/json"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
 )
 
 // CreateChat creates a chat for the user.
@@ -31,14 +31,13 @@ func (a *App) CreateChat(ctx context.Context, userID uuid.UUID, text string) (do
 		}
 
 		message := domain.NewMessage("User", text)
-
 		if err := a.messages.Add(ctx, chat.ID, message); err != nil {
 			return fmt.Errorf("failed to add a message: %w", err)
 		}
 
-		generateResponse := commands.NewGenerateResponse(chat.ID)
-		if err := a.pubsub.Publish(ctx, "worker", json.MustMarshal(ctx, generateResponse)); err != nil {
-			return fmt.Errorf("failed to publish a generate response command: %w", err)
+		messageAdded := events.NewMessageAdded(chat.ID, message)
+		if err := a.pubsub.Publish(ctx, worker.MessageAddedTopic, json.MustMarshal(ctx, messageAdded)); err != nil {
+			return fmt.Errorf("failed to publish a message added event: %w", err)
 		}
 
 		return nil
@@ -67,14 +66,9 @@ func (a *App) SendMessage(ctx context.Context, chatID domain.ChatID, text string
 		return domain.Message{}, fmt.Errorf("failed to add a message: %w", err)
 	}
 
-	messageSent := events.NewMessageAdded(chatID, message)
-	if err := a.pubsub.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageSent)); err != nil {
-		return domain.Message{}, fmt.Errorf("failed to publish a message sent event: %w", err)
-	}
-
-	generateResponse := commands.NewGenerateResponse(chatID)
-	if err := a.pubsub.Publish(ctx, "worker", json.MustMarshal(ctx, generateResponse)); err != nil {
-		return domain.Message{}, fmt.Errorf("failed to publish a generate response command: %w", err)
+	messageAdded := events.NewMessageAdded(chatID, message)
+	if err := a.pubsub.Publish(ctx, worker.MessageAddedTopic, json.MustMarshal(ctx, messageAdded)); err != nil {
+		return domain.Message{}, fmt.Errorf("failed to publish a message added event: %w", err)
 	}
 
 	return domain.Message{}, nil

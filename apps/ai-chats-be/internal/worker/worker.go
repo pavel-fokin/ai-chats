@@ -6,11 +6,13 @@ import (
 	"log/slog"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
 )
 
 type App interface {
 	GenerateResponse(ctx context.Context, chatID domain.ChatID) error
 	GenerateTitle(ctx context.Context, chatID domain.ChatID) error
+	ProcessAddedMessage(ctx context.Context, event events.MessageAdded) error
 }
 
 type PubSub interface {

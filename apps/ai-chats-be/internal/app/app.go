@@ -6,11 +6,13 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
+type Topic = string
+
 // PubSub is a publish/subscribe interface.
 type PubSub interface {
-	Subscribe(context.Context, string) (chan []byte, error)
-	Unsubscribe(context.Context, string, chan []byte) error
-	Publish(context.Context, string, []byte) error
+	Subscribe(context.Context, Topic) (chan []byte, error)
+	Unsubscribe(context.Context, Topic, chan []byte) error
+	Publish(context.Context, Topic, []byte) error
 }
 
 // Tx is a transaction interface.

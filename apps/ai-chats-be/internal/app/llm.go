@@ -4,21 +4,21 @@ import (
 	"context"
 	"fmt"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app/commands"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/ollama"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/json"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
 )
 
 // GenerateResponse generates a LLM response for the chat.
 func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error {
-	messages, err := a.AllMessages(ctx, chatID)
+	messages, err := a.messages.AllMessages(ctx, chatID)
 	if err != nil {
 		return fmt.Errorf("failed to get messages: %w", err)
 	}
 
-	llm, err := ollama.NewOllama("llama3")
+	llm, err := ollama.NewOllama("llama3:latest")
 	if err != nil {
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}
@@ -39,16 +39,9 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 		return fmt.Errorf("failed to add a message: %w", err)
 	}
 
-	messageSent := events.NewMessageAdded(chatID, llmMessage)
-	if err := a.pubsub.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageSent)); err != nil {
+	messageAdded := events.NewMessageAdded(chatID, llmMessage)
+	if err := a.pubsub.Publish(ctx, worker.MessageAddedTopic, json.MustMarshal(ctx, messageAdded)); err != nil {
 		return fmt.Errorf("failed to publish a message sent event: %w", err)
-	}
-
-	if len(messages) == 1 {
-		generateTitle := commands.NewGenerateTitle(chatID)
-		if err := a.pubsub.Publish(ctx, "generate-title", json.MustMarshal(ctx, generateTitle)); err != nil {
-			return fmt.Errorf("failed to publish a generate title command: %w", err)
-		}
 	}
 
 	return nil

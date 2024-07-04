@@ -42,7 +42,7 @@ const Delete: React.FC<DeleteProps> = ({ model }) => {
       <AlertDialog.Content maxWidth="450px">
         <AlertDialog.Title>{`Delete model - ${model.name}:${model.tag}`}</AlertDialog.Title>
         <AlertDialog.Description size="2">
-          Are you sure? This model will no longer be accessible locally.
+          Are you sure? This model will no longer be available locally.
         </AlertDialog.Description>
 
         <Flex gap="4" mt="4" align="center" justify="end">

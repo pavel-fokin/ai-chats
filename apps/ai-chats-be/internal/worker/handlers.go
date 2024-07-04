@@ -5,40 +5,27 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app/commands"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
+)
+
+const (
+	MessageAddedTopic Topic = "message-added"
 )
 
 func (w *Worker) SetupHandlers(app App) {
-	w.RegisterHandler("worker", 1, w.GenerateResponse(app))
-	w.RegisterHandler("generate-title", 1, w.GenerateTitle(app))
+	w.RegisterHandler(MessageAddedTopic, 1, w.MessageAdded(app))
 }
 
-func (w *Worker) GenerateResponse(app App) HandlerFunc {
+func (w *Worker) MessageAdded(app App) HandlerFunc {
 	return func(ctx context.Context, e []byte) error {
-		var generateResponse commands.GenerateResponse
-		if err := json.Unmarshal(e, &generateResponse); err != nil {
+		var messageAdded events.MessageAdded
+		if err := json.Unmarshal(e, &messageAdded); err != nil {
 			return fmt.Errorf("failed to unmarshal event: %w", err)
 		}
 
-		err := app.GenerateResponse(ctx, generateResponse.ChatID)
+		err := app.ProcessAddedMessage(ctx, messageAdded)
 		if err != nil {
-			return fmt.Errorf("failed to generate a response: %w", err)
-		}
-
-		return nil
-	}
-}
-
-func (w *Worker) GenerateTitle(app App) HandlerFunc {
-	return func(ctx context.Context, e []byte) error {
-		var generateTitle commands.GenerateTitle
-		if err := json.Unmarshal(e, &generateTitle); err != nil {
-			return fmt.Errorf("failed to unmarshal event: %w", err)
-		}
-
-		err := app.GenerateTitle(ctx, generateTitle.ChatID)
-		if err != nil {
-			return fmt.Errorf("failed to generate a title: %w", err)
+			return fmt.Errorf("failed to handle a message added event: %w", err)
 		}
 
 		return nil

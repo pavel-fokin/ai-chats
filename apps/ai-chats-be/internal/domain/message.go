@@ -15,3 +15,11 @@ func NewMessage(sender string, text string) Message {
 		Text:   text,
 	}
 }
+
+func (m Message) IsFromUser() bool {
+	return m.Sender == "User"
+}
+
+func (m Message) IsFromBot() bool {
+	return m.Sender == "AI"
+}
