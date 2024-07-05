@@ -8,15 +8,31 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateUser(t *testing.T) {
+func TestSqliteAddUser(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
 
 	users := NewUsers(db)
+	t.Run("Add user", func(t *testing.T) {
+		err := users.Add(context.Background(), domain.NewUser("username"))
+		assert.NoError(t, err)
+	})
 
-	err := users.Add(context.Background(), domain.NewUser("username"))
-	assert.NoError(t, err)
+	t.Run("Add user with the same username", func(t *testing.T) {
+		err := users.Add(context.Background(), domain.NewUser("another_username"))
+		assert.NoError(t, err)
+
+		err = users.Add(context.Background(), domain.NewUser("another_username"))
+		// assert.NoError(t, err)
+		assert.ErrorIs(t, err, domain.ErrUserAlreadyExists)
+		// assert.Error(t, err)
+	})
+
+	t.Run("Add user with the same username but different case", func(t *testing.T) {
+		err := users.Add(context.Background(), domain.NewUser("username"))
+		assert.Error(t, err)
+	})
 }
 
 func TestFindByUsernameWithPassword(t *testing.T) {

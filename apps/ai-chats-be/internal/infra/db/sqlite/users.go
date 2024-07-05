@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 
@@ -28,7 +29,12 @@ func (u *Users) Add(ctx context.Context, user domain.User) error {
 		user.ID, user.Username, user.PasswordHash,
 	)
 	if err != nil {
-		return fmt.Errorf("failed to insert user: %w", err)
+		switch {
+		case isUniqueConstraintViolation(err):
+			return domain.ErrUserAlreadyExists
+		default:
+			return fmt.Errorf("failed to insert user: %w", err)
+		}
 	}
 
 	return nil
@@ -64,4 +70,8 @@ func (u *Users) FindByID(ctx context.Context, id uuid.UUID) (domain.User, error)
 	}
 
 	return user, nil
+}
+
+func isUniqueConstraintViolation(err error) bool {
+	return strings.Contains(err.Error(), "UNIQUE constraint failed")
 }

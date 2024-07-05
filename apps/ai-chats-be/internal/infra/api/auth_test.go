@@ -28,7 +28,7 @@ func (m *AuthMock) SignUp(ctx context.Context, username, password string) (domai
 	return args.Get(0).(domain.User), args.Error(1)
 }
 
-func TestSignIn(t *testing.T) {
+func TestAuthAPISignIn(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		body := `{"username": "username", "password": "password"}`
 		req, _ := http.NewRequest("POST", "/login", strings.NewReader(body))
@@ -46,7 +46,6 @@ func TestSignIn(t *testing.T) {
 	})
 
 	t.Run("Failure", func(t *testing.T) {
-		// Setup.
 		body := `{"username": "username", "password": "password"}`
 		req, _ := http.NewRequest("POST", "/login", strings.NewReader(body))
 		w := httptest.NewRecorder()
@@ -59,10 +58,8 @@ func TestSignIn(t *testing.T) {
 			domain.User{}, fmt.Errorf("some error"),
 		)
 
-		// Test.
 		LogIn(auth)(w, req)
 
-		// Assert.
 		resp := w.Result()
 		assert.Equal(t, 500, resp.StatusCode)
 
@@ -70,20 +67,96 @@ func TestSignIn(t *testing.T) {
 	})
 
 	t.Run("Invalid request", func(t *testing.T) {
-		// Setup.
 		body := `{"username": "username"}`
 		req, _ := http.NewRequest("POST", "/login", strings.NewReader(body))
 		w := httptest.NewRecorder()
 
 		auth := &AuthMock{}
 
-		// Test.
 		LogIn(auth)(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 400, resp.StatusCode)
+
+		auth.AssertNumberOfCalls(t, "LogIn", 0)
+	})
+}
+
+func TestAuthAPISignUP(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		body := `{"username": "username", "password": "password"}`
+		req, _ := http.NewRequest("POST", "/signup", strings.NewReader(body))
+		w := httptest.NewRecorder()
+
+		auth := &AuthMock{}
+		auth.On("SignUp", context.Background(), "username", "password").Return(domain.User{}, nil)
+
+		SignUp(auth)(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 200, resp.StatusCode)
+
+		auth.AssertNumberOfCalls(t, "SignUp", 1)
+	})
+
+	t.Run("Failure", func(t *testing.T) {
+		body := `{"username": "username", "password": "password"}`
+		req, _ := http.NewRequest("POST", "/signup", strings.NewReader(body))
+		w := httptest.NewRecorder()
+
+		auth := &AuthMock{}
+		auth.On(
+			"SignUp",
+			context.Background(), "username", "password",
+		).Return(
+			domain.User{}, fmt.Errorf("some error"),
+		)
+
+		SignUp(auth)(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 500, resp.StatusCode)
+
+		auth.AssertNumberOfCalls(t, "SignUp", 1)
+	})
+
+	t.Run("Invalid request", func(t *testing.T) {
+		body := `{"username": "username"}`
+		req, _ := http.NewRequest("POST", "/signup", strings.NewReader(body))
+		w := httptest.NewRecorder()
+
+		auth := &AuthMock{}
+
+		SignUp(auth)(w, req)
 
 		// Assert.
 		resp := w.Result()
 		assert.Equal(t, 400, resp.StatusCode)
 
-		auth.AssertNumberOfCalls(t, "LogIn", 0)
+		auth.AssertNumberOfCalls(t, "SignUp", 0)
+	})
+
+	t.Run("Username taken", func(t *testing.T) {
+		// Setup.
+		body := `{"username": "username", "password": "password"}`
+		req, _ := http.NewRequest("POST", "/signup", strings.NewReader(body))
+		w := httptest.NewRecorder()
+
+		auth := &AuthMock{}
+		auth.On(
+			"SignUp",
+			context.Background(), "username", "password",
+		).Return(
+			domain.User{}, domain.ErrUserAlreadyExists,
+		)
+
+		// Test.
+		SignUp(auth)(w, req)
+
+		// Assert.
+		resp := w.Result()
+		assert.Equal(t, 409, resp.StatusCode)
+
+		auth.AssertNumberOfCalls(t, "SignUp", 1)
 	})
 }

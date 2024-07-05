@@ -31,7 +31,12 @@ func (a *App) SignUp(ctx context.Context, username, password string) (domain.Use
 	}
 
 	if err := a.users.Add(ctx, user); err != nil {
-		return domain.User{}, fmt.Errorf("failed to add a user: %w", err)
+		switch err {
+		case domain.ErrUserAlreadyExists:
+			return domain.User{}, fmt.Errorf("failed to add a user: %w", domain.ErrUserAlreadyExists)
+		default:
+			return domain.User{}, fmt.Errorf("failed to add a user: %w", err)
+		}
 	}
 
 	return user, nil

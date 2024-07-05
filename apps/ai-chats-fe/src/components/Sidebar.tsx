@@ -31,8 +31,8 @@ const Link: React.FC<LinkProps> = ({ to, children, ...props }) => {
       <NavLink
         to={to}
         className={classNames}
-        {...props}
         onClick={toggleSidebar}
+        {...props}
       >
         {children}
       </NavLink>

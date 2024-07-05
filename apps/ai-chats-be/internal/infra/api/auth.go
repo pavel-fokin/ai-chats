@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"log/slog"
 	"net/http"
 
@@ -14,7 +14,7 @@ type Auth interface {
 	SignUp(ctx context.Context, username, password string) (domain.User, error)
 }
 
-// SignIn signs in a user.
+// LogIn logs in a user.
 func LogIn(app Auth) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -61,8 +61,14 @@ func SignUp(app Auth) http.HandlerFunc {
 		user, err := app.SignUp(ctx, req.Username, req.Password)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to sign up user", "err", err)
-			http.Error(w, fmt.Sprintf("failed to sign up user: %v", err), http.StatusInternalServerError)
-			return
+			switch {
+			case errors.Is(err, domain.ErrUserAlreadyExists):
+				AsErrorResponse(w, ErrUsernameTaken, http.StatusConflict)
+				return
+			default:
+				AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+				return
+			}
 		}
 
 		accessToken, err := NewAccessToken(user.ID)
