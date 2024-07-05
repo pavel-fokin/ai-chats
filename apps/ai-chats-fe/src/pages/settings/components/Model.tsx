@@ -9,7 +9,12 @@ type ModelProps = {
 
 export const Model: React.FC<ModelProps> = ({ model }) => {
   return (
-    <Flex direction="column" gap="2" key={`${model.name}:${model.tag}`} width="100%">
+    <Flex
+      direction="column"
+      gap="2"
+      key={`${model.name}:${model.tag}`}
+      width="100%"
+    >
       <Heading as="h2">{`${model.name}:${model.tag}`}</Heading>
       <Text>
         Meta Llama 3: The most capable openly available LLM to date 8B.

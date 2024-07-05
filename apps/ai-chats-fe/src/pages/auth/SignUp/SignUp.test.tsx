@@ -40,7 +40,7 @@ test('renders Sign Up component', () => {
   expect(screen.getByPlaceholderText('Your username')).toBeInTheDocument();
   expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
   expect(
-    screen.getByRole('button', { name: 'Create an account' }),
+    screen.getByRole('button', { name: 'Create account' }),
   ).toBeInTheDocument();
   expect(screen.getByText('Already have an account?')).toBeInTheDocument();
 });
@@ -54,7 +54,7 @@ test('calls signUp function and navigates to /app on successful sign up', async 
   const usernameInput = screen.getByPlaceholderText('Your username');
   const passwordInput = screen.getByPlaceholderText('Your password');
   const signUpButton = screen.getByRole('button', {
-    name: 'Create an account',
+    name: 'Create account',
   });
 
   await userEvent.type(usernameInput, username);
@@ -71,7 +71,7 @@ test('displays validation errors on invalid input', async () => {
   renderWithRouter(<SignUp />, { route: '/app/signup' });
 
   const signUpButton = screen.getByRole('button', {
-    name: 'Create an account',
+    name: 'Create account',
   });
 
   await userEvent.click(signUpButton);
