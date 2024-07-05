@@ -16,7 +16,7 @@ test.describe('signup page', () => {
         await expect(page.getByRole('heading', { name: 'Log in' })).toBeVisible();
     });
 
-    test('log in with empty credentials', async ({ page }) => {
+    test('sign up with empty credentials', async ({ page }) => {
         await page.getByRole('button', { name: 'Create an account' }).click();
         await expect(page.getByText('Username is required')).toBeVisible();
         await expect(page.getByText('Password must be at least 6 characters')).toBeVisible();
