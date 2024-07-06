@@ -26,3 +26,8 @@ export type OllamaModel = {
   name: string;
   tag: string;
 };
+
+export type UserCredentials = {
+  username: string;
+  password: string;
+};

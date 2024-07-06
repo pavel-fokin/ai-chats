@@ -5,10 +5,11 @@ import { AuthContext } from 'contexts';
 
 export const SignOut = () => {
   const navigate = useNavigate();
-  const { signout } = useContext(AuthContext);
+  const { setIsAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
-    signout();
+    setIsAuthenticated(false);
+    localStorage.removeItem('accessToken');
     navigate('/app/login');
   }, []);
 

@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HttpResponse, http } from 'msw';
@@ -12,24 +13,34 @@ import { generateToken } from 'utils/utilsTests';
 const server = setupServer(
   http.post('/api/auth/login', () => {
     return HttpResponse.json({ data: { accessToken: generateToken() } });
-  }),
+  })
 );
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
 // Render a component with required providers and routing.
 export function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
   return render(
     <AuthContextProvider>
-      <MemoryRouter initialEntries={[route]}>
-        <Routes>
-          <Route path="/app" element={<div>App</div>} />
-          <Route path="/app/login" element={ui} />
-        </Routes>
-      </MemoryRouter>
-    </AuthContextProvider>,
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={[route]}>
+          <Routes>
+            <Route path="/app" element={<div>App</div>} />
+            <Route path="/app/login" element={ui} />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>
+    </AuthContextProvider>
   );
 }
 
@@ -73,7 +84,7 @@ test('validation errors are displayed when submitting an empty form', async () =
   await waitFor(() => {
     expect(screen.getByText('Username is required')).toBeInTheDocument();
     expect(
-      screen.getByText('Password must be at least 6 characters'),
+      screen.getByText('Password must be at least 6 characters')
     ).toBeInTheDocument();
   });
 });

@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 
 import * as types from 'types';
-import { useAuth, useMessages } from 'hooks';
+import { useMessages } from 'hooks';
 
 export function useChatEvents(chatId: string) {
   const [messageChunk, setMessageChunk] = useState<types.MessageChunk>(
     {} as types.MessageChunk,
   );
 
-  const { accessToken } = useAuth();
+  const accessToken = localStorage.getItem('accessToken') || '';
   const { invalidateMessages } = useMessages(chatId);
 
   useEffect(() => {

@@ -26,7 +26,7 @@ export const useChat = (chatId: string | undefined) => {
 export const useCreateChat = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
+  return useMutation({
     mutationFn: (message: string) => postChats(message),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -34,8 +34,6 @@ export const useCreateChat = () => {
       });
     },
   });
-
-  return mutation;
 };
 
 export const useDeleteChat = (chatId: string) => {

@@ -5,22 +5,25 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Flex, Heading, Link, Text } from '@radix-ui/themes';
 
 import { AuthContext } from 'contexts';
+import { useLogIn } from 'hooks';
 import { UserCredentialsSchema } from 'schemas';
-
 import { UserCredentialsForm } from '../components/UserCredentialsForm';
 
 export const LogIn = () => {
   const navigate = useNavigate();
-  const { login, isLoading } = useContext(AuthContext);
+  const { setIsAuthenticated } = useContext(AuthContext);
+  const logIn = useLogIn();
 
   const onSubmit: SubmitHandler<UserCredentialsSchema> = async ({
     username,
     password,
   }) => {
-    const isLoggedIn = await login(username, password);
-    if (isLoggedIn) {
-      navigate('/app');
-    }
+    logIn.mutate({ username, password }, {
+      onSuccess: () => {
+        setIsAuthenticated(true);
+        navigate('/app');
+      },
+    });
   };
 
   return (
@@ -31,7 +34,7 @@ export const LogIn = () => {
         </Heading>
         <UserCredentialsForm
           onSubmit={onSubmit}
-          isLoading={isLoading}
+          isLoading={logIn.isPending}
           submitButtonText="Log in"
         />
         <Text align="center">
