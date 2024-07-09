@@ -7,8 +7,8 @@ export const useLogIn = () => {
   return useMutation({
     mutationFn: ({ username, password }: UserCredentials) =>
       postLogIn(username, password),
-    onSuccess: (data) => {
-      localStorage.setItem('accessToken', data.accessToken);
+    onSuccess: (response) => {
+      localStorage.setItem('accessToken', response.data?.accessToken!);
     },
   });
 };
@@ -17,8 +17,8 @@ export const useSignUp = () => {
   return useMutation({
     mutationFn: ({ username, password }: UserCredentials) =>
       postSignUp(username, password),
-    onSuccess: (data) => {
-      localStorage.setItem('accessToken', data.accessToken);
+    onSuccess: (response) => {
+      localStorage.setItem('accessToken', response.data?.accessToken!);
     },
   });
 };

@@ -5,7 +5,7 @@ import { userCredentialsSchema, UserCredentialsSchema } from 'schemas';
 
 import { Button, Flex, Text, TextField } from '@radix-ui/themes';
 
-type Props = {
+interface Props {
   onSubmit: SubmitHandler<UserCredentialsSchema>;
   isLoading: boolean;
   submitButtonText: string;

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,6 +14,7 @@ export const SignUp = () => {
   const navigate = useNavigate();
   const signup = useSignUp();
   const { setIsAuthenticated } = useContext(AuthContext);
+  const [error, setError] = useState<string | null>(null);
 
   const onSubmit: SubmitHandler<UserCredentialsSchema> = ({
     username,
@@ -24,6 +25,11 @@ export const SignUp = () => {
         setIsAuthenticated(true);
         navigate('/app');
       },
+      onError: (error: any) => {
+        if (error.response.data.errors) {
+          setError(error.response.data.errors[0].message);
+        }
+      },
     });
   };
 
@@ -33,6 +39,7 @@ export const SignUp = () => {
         <Heading as="h2" size="8">
           Sign up
         </Heading>
+        { signup.isError && <Text color="tomato">{error}</Text> }
         <UserCredentialsForm
           onSubmit={onSubmit}
           isLoading={signup.isPending}

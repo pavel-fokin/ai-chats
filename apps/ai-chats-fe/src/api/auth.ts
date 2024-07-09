@@ -1,43 +1,32 @@
-type SignInResponse = {
-  accessToken: string;
-};
+import { client } from './baseAxios';
 
-type SignUpResponse = {
+interface Response<T> {
+  data?: T;
+  errors?: string[];
+}
+
+interface AccessToken {
   accessToken: string;
-};
+}
 
 export const postLogIn = async (
   username: string,
-  password: string,
-): Promise<SignInResponse> => {
-  const resp = await fetch('/api/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
+  password: string
+): Promise<Response<AccessToken>> => {
+  const resp = await client.post<Response<AccessToken>>('/auth/login', {
+    username,
+    password,
   });
-  if (!resp.ok) {
-    throw new Error('Failed to sign in');
-  }
-
-  const payload = await resp.json();
-  return payload.data;
+  return resp.data;
 };
 
 export const postSignUp = async (
   username: string,
-  password: string,
-): Promise<SignUpResponse> => {
-  const resp = await fetch('/api/auth/signup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
+  password: string
+): Promise<Response<AccessToken>> => {
+  const resp = await client.post<Response<AccessToken>>('/auth/signup', {
+    username,
+    password,
   });
-  if (!resp.ok) {
-    throw new Error('Failed to sign up');
-  }
-
-  const payload = await resp.json();
-  return payload.data;
+  return resp.data;
 };
-
-export default { postLogIn, postSignUp };
