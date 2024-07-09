@@ -1,4 +1,5 @@
-import { Box, Flex, Heading, Text } from '@radix-ui/themes';
+import { Box, Flex, Heading } from '@radix-ui/themes';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -7,11 +8,16 @@ import {
   NewChatIconButton,
 } from 'components';
 import { Header, PageLayout } from 'components/layout';
-import { useCreateChat } from 'hooks';
+import { useCreateChat, useOllamaModels } from 'hooks';
+import { OllamaModel } from 'types';
+
+import { ModelsList } from './components/ModelsList';
 
 export const Startpage: React.FC = () => {
   const navigate = useNavigate();
+  const [selectedModel, setSelectedModel] = useState<OllamaModel | null>(null);
   const createChat = useCreateChat();
+  const ollamaModels = useOllamaModels();
 
   const handleSend = async (msg: { text: string }) => {
     createChat.mutate(msg.text, {
@@ -30,11 +36,11 @@ export const Startpage: React.FC = () => {
       </Header>
       <Flex direction="column" height="100%" width="100%">
         <Flex direction="column" align="center" justify="center" flexGrow="1">
-          <Box>
-            <Text as="p" size="6" weight="bold">
-              What are you up to? 🤖
-            </Text>
-          </Box>
+          <ModelsList
+            models={ollamaModels.data || []}
+            selectedModel={selectedModel}
+            setSelectedModel={setSelectedModel}
+          />
         </Flex>
         <Box style={{ maxWidth: '688px', width: '100%', margin: '0 auto' }}>
           <InputMessage handleSend={handleSend} />

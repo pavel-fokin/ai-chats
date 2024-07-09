@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	accessTokenDuration = time.Minute
+	accessTokenDuration = time.Hour
 	accessTokenIssuer   = "ai-chats-be"
 	accessTokenSubject  = "access"
 	accessTokenAudience = "ai-chats-fe"
