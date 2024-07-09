@@ -6,12 +6,12 @@ type AuthContextValue = {
 };
 
 export const AuthContext = createContext<AuthContextValue>(
-  {} as AuthContextValue
+  {} as AuthContextValue,
 );
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(
-    localStorage.getItem('accessToken') ? true : false
+    localStorage.getItem('accessToken') ? true : false,
   );
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         setIsAuthenticated(false);
       },
       // Check if accessToken is not null before passing it to getExpirationTime
-      accessToken ? getExpirationTime(accessToken) : 0
+      accessToken ? getExpirationTime(accessToken) : 0,
     );
   };
 

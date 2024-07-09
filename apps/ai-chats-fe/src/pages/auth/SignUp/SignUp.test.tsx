@@ -13,7 +13,7 @@ import { generateToken } from 'utils/utilsTests';
 const server = setupServer(
   http.post('/api/auth/signup', () => {
     return HttpResponse.json({ data: { accessToken: generateToken() } });
-  })
+  }),
 );
 
 beforeAll(() => server.listen());
@@ -40,7 +40,7 @@ export function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
           </Routes>
         </MemoryRouter>
       </QueryClientProvider>
-    </AuthContextProvider>
+    </AuthContextProvider>,
   );
 }
 
@@ -51,7 +51,7 @@ test('renders Sign Up component', () => {
   expect(screen.getByPlaceholderText('Your username')).toBeInTheDocument();
   expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
   expect(
-    screen.getByRole('button', { name: 'Create an account' })
+    screen.getByRole('button', { name: 'Create an account' }),
   ).toBeInTheDocument();
   expect(screen.getByText('Already have an account?')).toBeInTheDocument();
 });
@@ -90,7 +90,7 @@ test('displays validation errors on invalid input', async () => {
   await waitFor(() => {
     expect(screen.getByText('Username is required')).toBeInTheDocument();
     expect(
-      screen.getByText('Password must be at least 6 characters')
+      screen.getByText('Password must be at least 6 characters'),
     ).toBeInTheDocument();
   });
 });

@@ -9,6 +9,7 @@ import (
 )
 
 type Error struct {
+	Field   string `json:"field,omitempty"`
 	Message string `json:"message"`
 }
 
@@ -23,6 +24,15 @@ type SuccessResponse struct {
 	Errors []Error `json:"errors,omitempty"`
 }
 
+type Response struct {
+	Data   any     `json:"data,omitempty"`
+	Errors []Error `json:"errors,omitempty"`
+}
+
+func NewResponse(data any, errors []Error) Response {
+	return Response{Data: data, Errors: errors}
+}
+
 type SignInResponse struct {
 	AccessToken string `json:"accessToken"`
 }
@@ -30,6 +40,11 @@ type SignInResponse struct {
 type SignUpResponse struct {
 	AccessToken string `json:"accessToken"`
 }
+
+func NewSignUpResponse(accessToken string) SignUpResponse {
+	return SignUpResponse{AccessToken: accessToken}
+}
+
 type PostMessagesResponse struct {
 	Message
 }
@@ -105,40 +120,60 @@ func AsErrorResponse(
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
-	// Make error response.
-	payload := ErrorResponse{}
-	payload.Errors = []Error{{Message: fmt.Sprint(err)}}
+	res := Response{
+		Errors: []Error{{Message: err.Error()}},
+	}
 
-	// Encode json.
-	json.NewEncoder(w).Encode(payload)
+	json.NewEncoder(w).Encode(res)
 }
 
 func AsSuccessResponse(
-	w http.ResponseWriter, payload any, statusCode int,
+	w http.ResponseWriter, data any, statusCode int,
 ) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
-	if payload == nil {
+	if data == nil {
 		if statusCode != http.StatusNoContent {
 			panic("payload is nil")
 		}
 		return
 	}
 
-	res := SuccessResponse{Data: payload}
+	res := Response{Data: data}
 
 	json.NewEncoder(w).Encode(res)
 }
 
+// WriteResponse writes a JSON response.
+func WriteSuccessResponse(w http.ResponseWriter, statusCode int, data any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+
+	if data == nil {
+		if statusCode != http.StatusNoContent {
+			panic("payload is nil")
+		}
+		return
+	}
+
+	response := Response{Data: data}
+
+	json.NewEncoder(w).Encode(response)
+}
+
+// WriteResponse writes a JSON response.
+func WriteErrorResponse(w http.ResponseWriter, statusCode int, errs ...Error) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+
+	response := Response{Errors: errs}
+
+	json.NewEncoder(w).Encode(response)
+}
+
 // WriteEvent writes an server sent event to the response.
 func WriteEvent(w http.ResponseWriter, data []byte) error {
-	// Encode json.
-	// dataJSON, err := json.Marshal(data)
-	// if err != nil {
-	// 	return fmt.Errorf("failed to encode event: %w", err)
-	// }
-
 	fmt.Fprintf(w, "data: %s\n\n", data)
 	return nil
 }

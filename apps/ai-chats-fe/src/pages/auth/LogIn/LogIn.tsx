@@ -18,12 +18,15 @@ export const LogIn = () => {
     username,
     password,
   }) => {
-    logIn.mutate({ username, password }, {
-      onSuccess: () => {
-        setIsAuthenticated(true);
-        navigate('/app');
+    logIn.mutate(
+      { username, password },
+      {
+        onSuccess: () => {
+          setIsAuthenticated(true);
+          navigate('/app');
+        },
       },
-    });
+    );
   };
 
   return (

@@ -11,7 +11,7 @@ interface AccessToken {
 
 export const postLogIn = async (
   username: string,
-  password: string
+  password: string,
 ): Promise<Response<AccessToken>> => {
   const resp = await client.post<Response<AccessToken>>('/auth/login', {
     username,
@@ -22,7 +22,7 @@ export const postLogIn = async (
 
 export const postSignUp = async (
   username: string,
-  password: string
+  password: string,
 ): Promise<Response<AccessToken>> => {
   const resp = await client.post<Response<AccessToken>>('/auth/signup', {
     username,

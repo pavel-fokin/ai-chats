@@ -9,7 +9,7 @@ interface Props {
   onSubmit: SubmitHandler<UserCredentialsSchema>;
   isLoading: boolean;
   submitButtonText: string;
-};
+}
 
 export const UserCredentialsForm: React.FC<Props> = ({
   onSubmit,

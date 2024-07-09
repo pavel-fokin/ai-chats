@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -54,19 +55,19 @@ func SignUp(app Auth) http.HandlerFunc {
 		var req SignUpRequest
 		if err := ParseJSON(r, &req); err != nil {
 			slog.ErrorContext(ctx, "failed to parse request body", "err", err)
-			AsErrorResponse(w, err, http.StatusBadRequest)
+			WriteErrorResponse(w, http.StatusBadRequest, BadRequest)
 			return
 		}
 
 		user, err := app.SignUp(ctx, req.Username, req.Password)
 		if err != nil {
-			slog.ErrorContext(ctx, "failed to sign up user", "err", err)
+			slog.ErrorContext(ctx, fmt.Sprintf("failed to add user - %s", req.Username), "err", err)
 			switch {
 			case errors.Is(err, domain.ErrUserAlreadyExists):
-				AsErrorResponse(w, ErrUsernameTaken, http.StatusConflict)
+				WriteErrorResponse(w, http.StatusConflict, UsernameIsTaken)
 				return
 			default:
-				AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 				return
 			}
 		}
@@ -74,12 +75,10 @@ func SignUp(app Auth) http.HandlerFunc {
 		accessToken, err := NewAccessToken(user.ID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create access token", "err", err)
-			AsErrorResponse(w, err, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 
-		AsSuccessResponse(w, SignInResponse{
-			AccessToken: accessToken,
-		}, http.StatusOK)
+		WriteSuccessResponse(w, http.StatusOK, SignUpResponse{accessToken})
 	}
 }

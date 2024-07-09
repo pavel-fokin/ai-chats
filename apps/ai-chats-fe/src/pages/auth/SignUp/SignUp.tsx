@@ -20,17 +20,20 @@ export const SignUp = () => {
     username,
     password,
   }) => {
-    signup.mutate({ username, password }, {
-      onSuccess: () => {
-        setIsAuthenticated(true);
-        navigate('/app');
+    signup.mutate(
+      { username, password },
+      {
+        onSuccess: () => {
+          setIsAuthenticated(true);
+          navigate('/app');
+        },
+        onError: (error: any) => {
+          if (error.response.data.errors) {
+            setError(error.response.data.errors[0].message);
+          }
+        },
       },
-      onError: (error: any) => {
-        if (error.response.data.errors) {
-          setError(error.response.data.errors[0].message);
-        }
-      },
-    });
+    );
   };
 
   return (
@@ -39,7 +42,7 @@ export const SignUp = () => {
         <Heading as="h2" size="8">
           Sign up
         </Heading>
-        { signup.isError && <Text color="tomato">{error}</Text> }
+        {signup.isError && <Text color="tomato">{error}</Text>}
         <UserCredentialsForm
           onSubmit={onSubmit}
           isLoading={signup.isPending}

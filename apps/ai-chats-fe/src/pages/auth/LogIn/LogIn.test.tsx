@@ -13,7 +13,7 @@ import { generateToken } from 'utils/utilsTests';
 const server = setupServer(
   http.post('/api/auth/login', () => {
     return HttpResponse.json({ data: { accessToken: generateToken() } });
-  })
+  }),
 );
 
 beforeAll(() => server.listen());
@@ -40,7 +40,7 @@ export function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
           </Routes>
         </MemoryRouter>
       </QueryClientProvider>
-    </AuthContextProvider>
+    </AuthContextProvider>,
   );
 }
 
@@ -84,7 +84,7 @@ test('validation errors are displayed when submitting an empty form', async () =
   await waitFor(() => {
     expect(screen.getByText('Username is required')).toBeInTheDocument();
     expect(
-      screen.getByText('Password must be at least 6 characters')
+      screen.getByText('Password must be at least 6 characters'),
     ).toBeInTheDocument();
   });
 });
