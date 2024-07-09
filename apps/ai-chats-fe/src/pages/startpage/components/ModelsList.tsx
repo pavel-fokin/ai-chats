@@ -1,6 +1,5 @@
 import { Badge, Box, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
-
 import { OllamaModel } from 'types';
 
 interface ModelsListProps {
@@ -14,12 +13,11 @@ export const ModelsList: React.FC<ModelsListProps> = ({
   selectedModel,
   setSelectedModel,
 }) => {
-
   const onModelClick = (model: OllamaModel) => {
     setSelectedModel(model);
   };
 
-  // set the selected model to the first model in the list
+  // Set the selected model to the first model in the list.
   if (!selectedModel && ollamaModels.length > 0) {
     setSelectedModel(ollamaModels[0]);
   }

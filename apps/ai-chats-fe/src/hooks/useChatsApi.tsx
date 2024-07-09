@@ -5,7 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { deleteChats, fetchChatById, postChats, fetchChats } from 'api';
+import { deleteChats, fetchChatById, fetchChats, postChats } from 'api';
 
 export const useChats = () => {
   return useQuery({

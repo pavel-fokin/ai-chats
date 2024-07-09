@@ -1,19 +1,19 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 import * as types from 'types';
-import { useMessages } from 'hooks';
 
 export function useChatEvents(chatId: string) {
   const [messageChunk, setMessageChunk] = useState<types.MessageChunk>(
-    {} as types.MessageChunk,
+    {} as types.MessageChunk
   );
+  const queryClient = useQueryClient();
 
   const accessToken = localStorage.getItem('accessToken') || '';
-  const { invalidateMessages } = useMessages(chatId);
 
   useEffect(() => {
     const eventSource = new EventSource(
-      `/api/chats/${chatId}/events?accessToken=${accessToken}`,
+      `/api/chats/${chatId}/events?accessToken=${accessToken}`
     );
 
     eventSource.onopen = () => {
@@ -24,7 +24,9 @@ export function useChatEvents(chatId: string) {
       const message = JSON.parse(event.data);
       switch (message.type) {
         case types.EventTypes.MESSAGE_ADDED:
-          invalidateMessages();
+          queryClient.invalidateQueries({
+            queryKey: ['messages', chatId],
+          });
           break;
         case types.EventTypes.MESSAGE_CHUNK_RECEIVED:
           if (message.done) {
