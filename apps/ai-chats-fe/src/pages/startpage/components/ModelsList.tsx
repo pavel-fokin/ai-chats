@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { Badge, Box, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
 import { OllamaModel } from 'types';
@@ -18,9 +20,11 @@ export const ModelsList: React.FC<ModelsListProps> = ({
   };
 
   // Set the selected model to the first model in the list.
-  if (!selectedModel && ollamaModels.length > 0) {
-    setSelectedModel(ollamaModels[0]);
-  }
+  useEffect(() => {
+    if (!selectedModel && ollamaModels.length > 0) {
+      setSelectedModel(ollamaModels[0]);
+    }
+  }, [ollamaModels, selectedModel, setSelectedModel]);
 
   return (
     <>

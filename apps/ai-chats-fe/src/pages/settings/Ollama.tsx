@@ -7,8 +7,8 @@ import { useOllamaModels, usePullOllamaModel } from 'hooks';
 
 import { Model } from './components/Model';
 
-export const Settings: React.FC = () => {
-  const { data: models } = useOllamaModels();
+export const OllamaSettings: React.FC = () => {
+  const models = useOllamaModels();
   const pullModel = usePullOllamaModel();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,7 +57,9 @@ export const Settings: React.FC = () => {
               </IconButton>
             </Flex>
           </form>
-          {models?.map((model) => <Model model={model} />)}
+          {models.data?.map((model) => (
+            <Model key={model.name} model={model} />
+          ))}
         </Flex>
       </Box>
     </PageLayout>

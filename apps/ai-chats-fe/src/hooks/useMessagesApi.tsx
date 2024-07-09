@@ -11,7 +11,7 @@ export const useMessages = (chatId: string | undefined) => {
   });
 };
 
-export const useSendMessage = (chatId: string ) => {
+export const useSendMessage = (chatId: string) => {
   return useMutation({
     mutationFn: (msg: Message) => {
       return postMessages(chatId, msg);

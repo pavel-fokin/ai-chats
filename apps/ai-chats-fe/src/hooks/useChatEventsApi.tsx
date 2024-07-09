@@ -5,7 +5,7 @@ import * as types from 'types';
 
 export function useChatEvents(chatId: string) {
   const [messageChunk, setMessageChunk] = useState<types.MessageChunk>(
-    {} as types.MessageChunk
+    {} as types.MessageChunk,
   );
   const queryClient = useQueryClient();
 
@@ -13,7 +13,7 @@ export function useChatEvents(chatId: string) {
 
   useEffect(() => {
     const eventSource = new EventSource(
-      `/api/chats/${chatId}/events?accessToken=${accessToken}`
+      `/api/chats/${chatId}/events?accessToken=${accessToken}`,
     );
 
     eventSource.onopen = () => {

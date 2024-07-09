@@ -13,7 +13,7 @@ import {
   Startpage,
   LogIn,
   SignUp,
-  Settings,
+  OllamaSettings,
   SignOut,
 } from 'pages';
 import { AuthContextProvider, SidebarContextProvider } from 'contexts';
@@ -55,7 +55,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'settings',
-        element: <Settings />,
+        element: <OllamaSettings />,
       },
     ],
   },

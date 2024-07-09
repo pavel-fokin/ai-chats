@@ -60,4 +60,4 @@ export const Chat = () => {
       </Flex>
     </PageLayout>
   );
-}
+};
