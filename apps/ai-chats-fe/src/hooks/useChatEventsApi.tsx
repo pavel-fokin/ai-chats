@@ -1,13 +1,13 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 import * as types from 'types';
+import { useInvalidateMessages } from 'hooks/useMessagesApi';
 
 export function useChatEvents(chatId: string) {
   const [messageChunk, setMessageChunk] = useState<types.MessageChunk>(
     {} as types.MessageChunk,
   );
-  const queryClient = useQueryClient();
+  const invalidateQueries = useInvalidateMessages(chatId);
 
   const accessToken = localStorage.getItem('accessToken') || '';
 
@@ -24,9 +24,7 @@ export function useChatEvents(chatId: string) {
       const message = JSON.parse(event.data);
       switch (message.type) {
         case types.EventTypes.MESSAGE_ADDED:
-          queryClient.invalidateQueries({
-            queryKey: ['messages', chatId],
-          });
+          invalidateQueries();
           break;
         case types.EventTypes.MESSAGE_CHUNK_RECEIVED:
           if (message.done) {

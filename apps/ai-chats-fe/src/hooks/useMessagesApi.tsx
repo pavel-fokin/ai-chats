@@ -1,4 +1,4 @@
-import { skipToken, useMutation, useQuery } from '@tanstack/react-query';
+import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchMessages, postMessages } from 'api';
 import { Message } from 'types';
@@ -18,3 +18,13 @@ export const useSendMessage = (chatId: string) => {
     },
   });
 };
+
+export const useInvalidateMessages = (chatId: string) => {
+  const queryClient = useQueryClient();
+
+  return () => {
+    queryClient.invalidateQueries({
+      queryKey: ['messages', chatId],
+    });
+  }
+}
