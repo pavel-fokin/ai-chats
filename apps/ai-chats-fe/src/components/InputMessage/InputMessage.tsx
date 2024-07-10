@@ -46,7 +46,7 @@ function InputMessage({ handleSend }: InputMessageProps) {
           />
         </Box>
         <IconButton size="3" onClick={onSendClick} highContrast>
-          <SendIcon size={16} weight="light" />
+          <SendIcon size={16} />
         </IconButton>
       </Flex>
     </form>

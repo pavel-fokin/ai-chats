@@ -30,8 +30,8 @@ func (m *MockChat) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Cha
 	return args.Get(0).([]domain.Chat), args.Error(1)
 }
 
-func (m *MockChat) CreateChat(ctx context.Context, userID uuid.UUID, message string) (domain.Chat, error) {
-	args := m.Called(ctx, userID, message)
+func (m *MockChat) CreateChat(ctx context.Context, userID uuid.UUID, defaultModel, message string) (domain.Chat, error) {
+	args := m.Called(ctx, userID, defaultModel, message)
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
@@ -100,7 +100,7 @@ func TestCreateChat(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		mockChat := &MockChat{}
-		mockChat.On("CreateChat", ctx, userID, "").Return(domain.Chat{}, nil)
+		mockChat.On("CreateChat", ctx, userID, "", "").Return(domain.Chat{}, nil)
 
 		PostChats(mockChat)(w, req)
 
@@ -116,7 +116,7 @@ func TestCreateChat(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		mockChat := &MockChat{}
-		mockChat.On("CreateChat", ctx, userID, "").Return(domain.Chat{}, errors.New("failed to create chat"))
+		mockChat.On("CreateChat", ctx, userID, "", "").Return(domain.Chat{}, errors.New("failed to create chat"))
 
 		PostChats(mockChat)(w, req)
 
@@ -134,7 +134,7 @@ func TestCreateChat(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		mockChat := &MockChat{}
-		mockChat.On("CreateChat", ctx, userID, "").Return(domain.Chat{}, nil)
+		mockChat.On("CreateChat", ctx, userID, "", "").Return(domain.Chat{}, nil)
 
 		PostChats(mockChat)(w, req)
 
@@ -152,7 +152,7 @@ func TestCreateChat(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		mockChat := &MockChat{}
-		mockChat.On("CreateChat", ctx, userID, "").Return(domain.Chat{}, nil)
+		mockChat.On("CreateChat", ctx, userID, "", "").Return(domain.Chat{}, nil)
 
 		PostChats(nil)(w, req)
 
@@ -163,14 +163,14 @@ func TestCreateChat(t *testing.T) {
 	})
 
 	t.Run("Success with message", func(t *testing.T) {
-		body := `{"message": "message"}`
+		body := `{"default_model": "model","message": "message"}`
 		req, err := http.NewRequest("POST", "", strings.NewReader(body))
 		assert.NoError(t, err)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		mockChat := &MockChat{}
-		mockChat.On("CreateChat", ctx, userID, "message").Return(domain.Chat{}, nil)
+		mockChat.On("CreateChat", ctx, userID, "model", "message").Return(domain.Chat{}, nil)
 
 		PostChats(mockChat)(w, req)
 
@@ -181,14 +181,16 @@ func TestCreateChat(t *testing.T) {
 	})
 
 	t.Run("Failure with message", func(t *testing.T) {
-		body := `{"message": "message"}`
+		body := `{"default_model": "model","message": "message"}`
 		req, err := http.NewRequest("POST", "", strings.NewReader(body))
 		assert.NoError(t, err)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		mockChat := &MockChat{}
-		mockChat.On("CreateChat", ctx, userID, "message").Return(domain.Chat{}, errors.New("failed to create chat"))
+		mockChat.On(
+			"CreateChat", ctx, userID, "model", "message",
+		).Return(domain.Chat{}, errors.New("failed to create chat"))
 
 		PostChats(mockChat)(w, req)
 

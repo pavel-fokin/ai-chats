@@ -13,13 +13,13 @@ import (
 )
 
 // CreateChat creates a chat for the user.
-func (a *App) CreateChat(ctx context.Context, userID uuid.UUID, text string) (domain.Chat, error) {
+func (a *App) CreateChat(ctx context.Context, userID uuid.UUID, model, text string) (domain.Chat, error) {
 	user, err := a.users.FindByID(ctx, userID)
 	if err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to find a user: %w", err)
 	}
 
-	chat := domain.NewChat(user)
+	chat := domain.NewChat(user, model)
 	if err := a.tx.Tx(ctx, func(ctx context.Context) error {
 		if err := a.chats.Add(ctx, chat); err != nil {
 			return fmt.Errorf("failed to add a chat: %w", err)

@@ -18,7 +18,7 @@ type Subscriber interface {
 }
 
 type ChatApp interface {
-	CreateChat(ctx context.Context, userID uuid.UUID, message string) (domain.Chat, error)
+	CreateChat(ctx context.Context, userID uuid.UUID, defaultModel, message string) (domain.Chat, error)
 	DeleteChat(ctx context.Context, chatID domain.ChatID) error
 	FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error)
 	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
@@ -52,6 +52,7 @@ func PostChats(chat ChatApp) http.HandlerFunc {
 
 		userID := MustHaveUserID(ctx)
 
+		defaultModel := ""
 		message := ""
 		if r.Body != nil {
 			var req PostChatsRequest
@@ -60,10 +61,11 @@ func PostChats(chat ChatApp) http.HandlerFunc {
 				AsErrorResponse(w, ErrBadRequest, http.StatusBadRequest)
 				return
 			}
+			defaultModel = req.DefaultModel
 			message = req.Message
 		}
 
-		chat, err := chat.CreateChat(ctx, userID, message)
+		chat, err := chat.CreateChat(ctx, userID, defaultModel, message)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create a chat", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)

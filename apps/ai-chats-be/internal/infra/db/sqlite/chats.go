@@ -23,12 +23,13 @@ func NewChats(db *sql.DB) *Chats {
 func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 	_, err := c.DBTX(ctx).Exec(
 		`INSERT INTO chat
-		(id, title, created_at, user_id)
-		VALUES (?, ?, ?, ?)`,
+		(id, title, user_id, default_model, created_at)
+		VALUES (?, ?, ?, ?, ?)`,
 		chat.ID,
 		chat.Title,
-		chat.CreatedAt.Format(time.RFC3339Nano),
 		chat.User.ID,
+		chat.DefaultModel,
+		chat.CreatedAt.Format(time.RFC3339Nano),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to insert chat: %w", err)

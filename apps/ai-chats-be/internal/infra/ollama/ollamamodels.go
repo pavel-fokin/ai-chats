@@ -32,8 +32,15 @@ func (o *OllamaModels) List(ctx context.Context) ([]domain.Model, error) {
 
 	models := []domain.Model{}
 	for _, model := range resp.Models {
-		name := strings.Split(model.Name, ":")[0]
-		tag := strings.Split(model.Name, ":")[1]
+		fmt.Println("model.Name", model.Name)
+		fmt.Println("model.Model", model.Model)
+		fmt.Println("model.ModifiedAt", model.ModifiedAt)
+		fmt.Println("model.Size", model.Size)
+		fmt.Println("model.Digest", model.Digest)
+		fmt.Println("model.Details", model.Details)
+		fmt.Println("")
+		name := strings.Split(model.Model, ":")[0]
+		tag := strings.Split(model.Model, ":")[1]
 		models = append(models, domain.NewModel(name, tag))
 	}
 

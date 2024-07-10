@@ -20,18 +20,20 @@ func NewChatID() ChatID {
 }
 
 type Chat struct {
-	ID        ChatID    `json:"id"`
-	Title     string    `json:"title"`
-	User      User      `json:"user"`
-	CreatedAt time.Time `json:"created_at"`
-	DeletedAt time.Time `json:"deleted_at"`
+	ID           ChatID    `json:"id"`
+	Title        string    `json:"title"`
+	User         User      `json:"user"`
+	DefaultModel string    `json:"default_model"`
+	CreatedAt    time.Time `json:"created_at"`
+	DeletedAt    time.Time `json:"deleted_at"`
 }
 
-func NewChat(user User) Chat {
+func NewChat(user User, defaultModel string) Chat {
 	return Chat{
-		ID:        NewChatID(),
-		Title:     "New chat",
-		User:      user,
-		CreatedAt: time.Now().UTC(),
+		ID:           NewChatID(),
+		Title:        "New chat",
+		User:         user,
+		DefaultModel: defaultModel,
+		CreatedAt:    time.Now().UTC(),
 	}
 }

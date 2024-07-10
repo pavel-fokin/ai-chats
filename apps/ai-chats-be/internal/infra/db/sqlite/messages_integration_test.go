@@ -26,7 +26,7 @@ func TestAddMessages(t *testing.T) {
 	assert.NoError(err)
 
 	// Create a new chat.
-	chat := domain.NewChat(user)
+	chat := domain.NewChat(user, "model:latest")
 	err = chats.Add(ctx, chat)
 	assert.NoError(err)
 

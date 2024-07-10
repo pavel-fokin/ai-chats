@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAddChat(t *testing.T) {
+func TestSqliteAddChat(t *testing.T) {
 	ctx := context.Background()
 
 	db := New(":memory:")
@@ -25,13 +25,39 @@ func TestAddChat(t *testing.T) {
 	err := users.Add(ctx, user)
 	assert.NoError(t, err)
 
-	// Call the AddChat method.
-	chat := domain.NewChat(user)
-	err = chats.Add(ctx, chat)
-	assert.NoError(t, err)
+	t.Run("valid", func(t *testing.T) {
+		chat := domain.NewChat(user, "model:latest")
+		err = chats.Add(ctx, chat)
+		assert.NoError(t, err)
+	})
+
+	t.Run("add chat without user", func(t *testing.T) {
+		chat := domain.NewChat(domain.User{}, "model:latest")
+		err = chats.Add(ctx, chat)
+		assert.Error(t, err)
+	})
+
+	t.Run("add chat with empty title", func(t *testing.T) {
+		chat := domain.NewChat(user, "model:latest")
+		chat.Title = ""
+		err = chats.Add(ctx, chat)
+		assert.Error(t, err)
+	})
+
+	t.Run("add chat with invalid user", func(t *testing.T) {
+		chat := domain.NewChat(domain.User{ID: uuid.New()}, "model:latest")
+		err = chats.Add(ctx, chat)
+		assert.Error(t, err)
+	})
+
+	t.Run("add chat with empty model", func(t *testing.T) {
+		chat := domain.NewChat(user, "")
+		err = chats.Add(ctx, chat)
+		assert.Error(t, err)
+	})
 }
 
-func TestDeleteChat(t *testing.T) {
+func TestSqliteDeleteChat(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
@@ -47,7 +73,7 @@ func TestDeleteChat(t *testing.T) {
 		err := users.Add(ctx, user)
 		assert.NoError(err)
 
-		chat := domain.NewChat(user)
+		chat := domain.NewChat(user, "model:latest")
 		err = chats.Add(ctx, chat)
 		assert.NoError(err)
 
@@ -72,7 +98,7 @@ func TestDeleteChat(t *testing.T) {
 	})
 }
 
-func TestAllChats(t *testing.T) {
+func TestSqliteAllChats(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
@@ -98,7 +124,7 @@ func TestAllChats(t *testing.T) {
 
 		// Create some chats.
 		for i := 0; i < 3; i++ {
-			chat := domain.NewChat(user)
+			chat := domain.NewChat(user, "model:latest")
 			err := chats.Add(context.Background(), chat)
 			assert.NoError(t, err)
 		}
@@ -118,7 +144,7 @@ func TestAllChats(t *testing.T) {
 			)
 			assert.NoError(t, err)
 
-			chat := domain.NewChat(user)
+			chat := domain.NewChat(user, "model:latest")
 			err = chats.Add(context.Background(), chat)
 			assert.NoError(t, err)
 		}
@@ -129,7 +155,7 @@ func TestAllChats(t *testing.T) {
 	})
 }
 
-func TestFindChat(t *testing.T) {
+func TestSqliteFindChat(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
@@ -142,7 +168,7 @@ func TestFindChat(t *testing.T) {
 		err := users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
-		chat := domain.NewChat(user)
+		chat := domain.NewChat(user, "model:latest")
 		err = chats.Add(context.Background(), chat)
 		assert.NoError(t, err)
 
@@ -159,7 +185,7 @@ func TestFindChat(t *testing.T) {
 	})
 }
 
-func TestChats_Exists(t *testing.T) {
+func TestSqliteChats_Exists(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
@@ -172,7 +198,7 @@ func TestChats_Exists(t *testing.T) {
 		err := users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
-		chat := domain.NewChat(user)
+		chat := domain.NewChat(user, "model:latest")
 		err = chats.Add(context.Background(), chat)
 		assert.NoError(t, err)
 

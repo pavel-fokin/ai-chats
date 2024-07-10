@@ -6,9 +6,10 @@ CREATE TABLE IF NOT EXISTS user (
 
 CREATE TABLE IF NOT EXISTS chat (
     id TEXT PRIMARY KEY,
-    title TEXT NOT NULL,
-    user_id TEXT NOT NULL,
-    created_at TEXT NOT NULL,
+    title TEXT NOT NULL CHECK (length(title) > 0),
+    user_id TEXT NOT NULL CHECK (length(user_id) > 0),
+    default_model text NOT NULL CHECK (length(default_model) > 0),
+    created_at TEXT NOT NULL CHECK (length(created_at) > 0),
     deleted_at TEXT,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
@@ -32,3 +33,5 @@ CREATE TABLE IF NOT EXISTS model_tag (
     model_id TEXT NOT NULL,
     FOREIGN KEY (model_id) REFERENCES model(id)
 );
+
+PRAGMA foreign_keys = ON;
