@@ -10,7 +10,7 @@ import (
 var validate = validator.New(validator.WithRequiredStructEnabled())
 
 type PostChatsRequest struct {
-	DefaultModel string `json:"default_model"`
+	DefaultModel string `json:"defaultModel"`
 	Message      string `json:"message"`
 }
 

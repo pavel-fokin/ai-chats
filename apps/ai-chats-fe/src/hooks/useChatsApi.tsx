@@ -5,12 +5,13 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { deleteChats, fetchChatById, fetchChats, postChats } from 'api';
+import { deleteChats, getChatById, getChats, postChats } from 'api';
+import { PostChatsRequest } from 'api/requests';
 
 export const useChats = () => {
   return useQuery({
     queryKey: ['chats'],
-    queryFn: fetchChats,
+    queryFn: getChats,
     select: (data) => data.data.chats,
   });
 };
@@ -18,7 +19,7 @@ export const useChats = () => {
 export const useChat = (chatId: string | undefined) => {
   return useQuery({
     queryKey: ['chat', chatId],
-    queryFn: chatId ? () => fetchChatById(chatId) : skipToken,
+    queryFn: chatId ? () => getChatById(chatId) : skipToken,
     select: (data) => data.data.chat,
   });
 };
@@ -27,7 +28,7 @@ export const useCreateChat = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (message: string) => postChats(message),
+    mutationFn: (req: PostChatsRequest) => postChats(req),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['chats'],

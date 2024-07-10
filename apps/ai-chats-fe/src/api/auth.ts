@@ -1,13 +1,6 @@
-import { client } from './baseAxios';
+import { clientUnauthed as client } from './baseAxios';
 
-interface Response<T> {
-  data?: T;
-  errors?: string[];
-}
-
-interface AccessToken {
-  accessToken: string;
-}
+import { AccessToken, Response } from './responses';
 
 export const postLogIn = async (
   username: string,

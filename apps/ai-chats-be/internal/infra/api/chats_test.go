@@ -79,7 +79,7 @@ func matchChiContext(ctx context.Context) bool {
 	return key != nil
 }
 
-func TestCreateChat(t *testing.T) {
+func TestApiCreateChat(t *testing.T) {
 	userID := uuid.New()
 	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
@@ -162,8 +162,8 @@ func TestCreateChat(t *testing.T) {
 		mockChat.AssertNumberOfCalls(t, "CreateChat", 0)
 	})
 
-	t.Run("Success with message", func(t *testing.T) {
-		body := `{"default_model": "model","message": "message"}`
+	t.Run("success with message", func(t *testing.T) {
+		body := `{"defaultModel": "model","message": "message"}`
 		req, err := http.NewRequest("POST", "", strings.NewReader(body))
 		assert.NoError(t, err)
 		req = req.WithContext(ctx)
@@ -180,8 +180,8 @@ func TestCreateChat(t *testing.T) {
 		mockChat.AssertNumberOfCalls(t, "CreateChat", 1)
 	})
 
-	t.Run("Failure with message", func(t *testing.T) {
-		body := `{"default_model": "model","message": "message"}`
+	t.Run("failure with message", func(t *testing.T) {
+		body := `{"defaultModel": "model","message": "message"}`
 		req, err := http.NewRequest("POST", "", strings.NewReader(body))
 		assert.NoError(t, err)
 		req = req.WithContext(ctx)
@@ -201,8 +201,8 @@ func TestCreateChat(t *testing.T) {
 	})
 }
 
-func TestDeleteChat(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+func TestApiDeleteChat(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
 		chatID := uuid.New()
 		ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
 
@@ -224,7 +224,7 @@ func TestDeleteChat(t *testing.T) {
 
 	})
 
-	t.Run("Internal error", func(t *testing.T) {
+	t.Run("internal error", func(t *testing.T) {
 		chatID := uuid.New()
 		ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
 
@@ -243,7 +243,7 @@ func TestDeleteChat(t *testing.T) {
 		assert.Equal(t, 500, resp.StatusCode)
 	})
 
-	t.Run("Chat not found", func(t *testing.T) {
+	t.Run("chat not found", func(t *testing.T) {
 		chatID := uuid.New()
 		ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
 
@@ -263,11 +263,11 @@ func TestDeleteChat(t *testing.T) {
 	})
 }
 
-func TestGetChats(t *testing.T) {
+func TestApiGetChats(t *testing.T) {
 	userID := uuid.New()
 	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
 		req, _ := http.NewRequest("", "", nil)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
@@ -281,7 +281,7 @@ func TestGetChats(t *testing.T) {
 		assert.Equal(t, 200, resp.StatusCode)
 	})
 
-	t.Run("Failure", func(t *testing.T) {
+	t.Run("failure", func(t *testing.T) {
 		req, _ := http.NewRequest("", "", nil)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
@@ -296,8 +296,8 @@ func TestGetChats(t *testing.T) {
 	})
 }
 
-func TestGetMessages(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+func TestApiGetMessages(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
 		chatID := uuid.New()
 
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/messages", chatID), nil)
@@ -316,7 +316,7 @@ func TestGetMessages(t *testing.T) {
 		assert.Equal(t, 200, resp.StatusCode)
 	})
 
-	t.Run("Failure", func(t *testing.T) {
+	t.Run("failure", func(t *testing.T) {
 		chatID := uuid.New()
 
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/messages", chatID), nil)
@@ -335,8 +335,8 @@ func TestGetMessages(t *testing.T) {
 		assert.Equal(t, 500, resp.StatusCode)
 	})
 }
-func TestGetEvents(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+func TestApiGetEvents(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
 		chatID := uuid.New()
 
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
@@ -374,7 +374,7 @@ func TestGetEvents(t *testing.T) {
 		// events.AssertNumberOfCalls(t, "Unsubscribe", 1)
 	})
 
-	t.Run("Failure", func(t *testing.T) {
+	t.Run("failure", func(t *testing.T) {
 		chatID := uuid.New()
 
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
@@ -402,7 +402,7 @@ func TestGetEvents(t *testing.T) {
 		events.AssertNumberOfCalls(t, "Unsubscribe", 0)
 	})
 
-	t.Run("Chat not found", func(t *testing.T) {
+	t.Run("chat not found", func(t *testing.T) {
 		chatID := uuid.New()
 
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
@@ -423,8 +423,8 @@ func TestGetEvents(t *testing.T) {
 	})
 }
 
-func TestGetChat(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+func TestApiGetChat(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
 		chatID := uuid.New()
 
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s", chatID), nil)
@@ -443,7 +443,7 @@ func TestGetChat(t *testing.T) {
 		assert.Equal(t, 200, resp.StatusCode)
 	})
 
-	t.Run("Failure", func(t *testing.T) {
+	t.Run("fmailure", func(t *testing.T) {
 		chatID := uuid.New()
 
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s", chatID), nil)

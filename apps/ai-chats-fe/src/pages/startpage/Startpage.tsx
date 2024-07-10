@@ -20,11 +20,17 @@ export const Startpage: React.FC = () => {
   const ollamaModels = useOllamaModels();
 
   const handleSend = async (msg: { text: string }) => {
-    createChat.mutate(msg.text, {
-      onSuccess: ({ data }) => {
-        navigate(`/app/chats/${data.chat.id}`);
+    createChat.mutate(
+      {
+        defaultModel: `${selectedModel?.name}:${selectedModel?.tag}`,
+        message: msg.text,
       },
-    });
+      {
+        onSuccess: ({ data }) => {
+          navigate(`/app/chats/${data.chat.id}`);
+        },
+      },
+    );
   };
 
   return (
