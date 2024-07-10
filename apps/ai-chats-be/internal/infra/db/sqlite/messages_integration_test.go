@@ -3,25 +3,27 @@ package sqlite
 import (
 	"context"
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
 	"testing"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAddMessages(t *testing.T) {
+func TestSqliteAddMessages(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
+	crypto.InitBcryptCost(1)
 
 	users := NewUsers(db)
 	chats := NewChats(db)
 	messages := NewMessages(db)
 
-	user := domain.NewUser("username")
+	user := domain.NewUser("username", "password")
 	err := users.Add(ctx, user)
 	assert.NoError(err)
 

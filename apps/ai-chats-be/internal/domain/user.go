@@ -12,10 +12,16 @@ type User struct {
 	PasswordHash string
 }
 
-func NewUser(username string) User {
+func NewUser(username, password string) User {
+	hashedPassword, err := crypto.HashPassword(password)
+	if err != nil {
+		panic(err)
+	}
+
 	return User{
-		ID:       uuid.New(),
-		Username: username,
+		ID:           uuid.New(),
+		Username:     username,
+		PasswordHash: hashedPassword,
 	}
 }
 

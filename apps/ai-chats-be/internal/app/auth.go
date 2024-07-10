@@ -23,12 +23,7 @@ func (a *App) LogIn(ctx context.Context, username, password string) (domain.User
 
 // SignUp signs up a user.
 func (a *App) SignUp(ctx context.Context, username, password string) (domain.User, error) {
-	user := domain.NewUser(username)
-
-	pUser := &user
-	if err := pUser.SetPassword(password); err != nil {
-		return domain.User{}, fmt.Errorf("failed to set up a password: %w", err)
-	}
+	user := domain.NewUser(username, password)
 
 	if err := a.users.Add(ctx, user); err != nil {
 		switch err {

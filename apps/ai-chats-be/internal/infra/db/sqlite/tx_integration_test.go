@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTx_Tx(t *testing.T) {
+func TestSqliteTx(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
