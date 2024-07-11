@@ -17,7 +17,7 @@ export const Model: React.FC<ModelProps> = ({ model, isSelected, onClick }) => {
             <Heading as="h3" size="4">
               {model.name}
             </Heading>
-            {isSelected && <Badge color="jade">Choosen</Badge>}
+            {isSelected && <Badge color="jade">Use model</Badge>}
           </Flex>
           <Text>
             Meta Llama 3: The most capable openly available LLM to date 8B.
