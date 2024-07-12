@@ -2,7 +2,6 @@ package pubsub
 
 import (
 	"context"
-	"fmt"
 )
 
 type Topic = string
@@ -39,7 +38,8 @@ func (e *Events) Unsubscribe(ctx context.Context, topic string, ch chan []byte) 
 
 func (e *Events) Publish(ctx context.Context, topic string, data []byte) error {
 	if _, ok := e.topics[topic]; !ok {
-		return fmt.Errorf("topic %s not found", topic)
+		e.topics[topic] = make(map[chan []byte]struct{})
+		// return fmt.Errorf("topic %s not found", topic)
 	}
 	for ch := range e.topics[topic] {
 		ch <- data

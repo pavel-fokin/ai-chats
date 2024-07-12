@@ -11,6 +11,11 @@ import (
 // ProcessAddedMessage processes a message added event.
 func (a *App) ProcessAddedMessage(ctx context.Context, event events.MessageAdded) error {
 
+	messageAdded := events.NewMessageAdded(event.ChatID, event.Message)
+	if err := a.pubsub.Publish(ctx, event.ChatID.String(), json.MustMarshal(ctx, messageAdded)); err != nil {
+		return fmt.Errorf("failed to publish a message sent event: %w", err)
+	}
+
 	switch {
 	case event.Message.IsFromBot():
 		// Ignore messages from bots.
@@ -18,11 +23,6 @@ func (a *App) ProcessAddedMessage(ctx context.Context, event events.MessageAdded
 		a.GenerateResponse(ctx, event.ChatID)
 	default:
 		return fmt.Errorf("unknown message type: %s", event.Message)
-	}
-
-	messageAdded := events.NewMessageAdded(event.ChatID, event.Message)
-	if err := a.pubsub.Publish(ctx, event.ChatID.String(), json.MustMarshal(ctx, messageAdded)); err != nil {
-		return fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
 	messages, err := a.messages.AllMessages(ctx, event.ChatID)

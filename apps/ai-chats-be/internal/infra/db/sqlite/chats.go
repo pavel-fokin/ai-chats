@@ -83,7 +83,7 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 	rows, err := c.DBTX(ctx).QueryContext(
 		ctx,
 		`SELECT
-		id, title, created_at
+		id, title, default_model, created_at
 		FROM chat
 		WHERE user_id = ? AND deleted_at IS NULL`,
 		userID,
@@ -95,9 +95,11 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 
 	var chats []domain.Chat
 	for rows.Next() {
-		var chat domain.Chat
-		var createdAt string
-		if err := rows.Scan(&chat.ID, &chat.Title, &createdAt); err != nil {
+		var (
+			chat      domain.Chat
+			createdAt string
+		)
+		if err := rows.Scan(&chat.ID, &chat.Title, &chat.DefaultModel, &createdAt); err != nil {
 			return nil, fmt.Errorf("failed to scan chat: %w", err)
 		}
 
@@ -117,16 +119,18 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 }
 
 func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
-	var chat domain.Chat
-	var createdAt string
+	var (
+		chat      domain.Chat
+		createdAt string
+	)
 	err := c.DBTX(ctx).QueryRowContext(
 		ctx,
 		`SELECT
-		id, title, created_at
+		id, title, default_model, created_at
 		FROM chat
 		WHERE id = ? AND deleted_at IS NULL`,
 		chatID,
-	).Scan(&chat.ID, &chat.Title, &createdAt)
+	).Scan(&chat.ID, &chat.Title, &chat.DefaultModel, &createdAt)
 	if err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to find chat by id: %w", err)
 	}

@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
-import { Flex, Text, Heading, IconButton } from '@radix-ui/themes';
+import { Flex, Heading, IconButton, Text } from '@radix-ui/themes';
 
 import { ChatIcon, SettingsIcon, SignOutIcon } from 'components/ui/icons';
 import { SidebarContext } from 'contexts';
@@ -42,7 +42,7 @@ const Link: React.FC<LinkProps> = ({ to, children, ...props }) => {
 
 export const Sidebar = () => {
   const navigate = useNavigate();
-  const { data: chats } = useChats();
+  const chats = useChats();
 
   const handleNewChat = () => {
     navigate('/app');
@@ -86,12 +86,11 @@ export const Sidebar = () => {
           className={styles.NavigationMenuRoot}
         >
           <NavigationMenu.List className={styles.NavigationMenuList}>
-            {!!chats &&
-              chats?.map((chat) => (
-                <NavigationMenu.Item key={chat.id}>
-                  <Link to={`/app/chats/${chat.id}`}>{chat.title}</Link>
-                </NavigationMenu.Item>
-              ))}
+            {chats.data?.map((chat) => (
+              <NavigationMenu.Item key={chat.id}>
+                <Link to={`/app/chats/${chat.id}`}>{chat.title}</Link>
+              </NavigationMenu.Item>
+            ))}
           </NavigationMenu.List>
 
           <NavigationMenu.List className={styles.NavigationMenuList}>

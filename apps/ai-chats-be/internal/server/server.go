@@ -9,11 +9,6 @@ import (
 
 const maxShutdownTimeout = 3
 
-type PubSub interface {
-	Subscribe(ctx context.Context, topic string) (chan []byte, error)
-	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
-}
-
 // Config is the server configuration.
 type Config struct {
 	Port            string `env:"AICHATS_SERVER_PORT" envDefault:"8080"`

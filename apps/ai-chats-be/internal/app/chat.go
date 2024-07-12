@@ -19,6 +19,7 @@ func (a *App) CreateChat(ctx context.Context, userID uuid.UUID, model, text stri
 		return domain.Chat{}, fmt.Errorf("failed to find a user: %w", err)
 	}
 
+	var message domain.Message
 	chat := domain.NewChat(user, model)
 	if err := a.tx.Tx(ctx, func(ctx context.Context) error {
 		if err := a.chats.Add(ctx, chat); err != nil {
@@ -30,19 +31,24 @@ func (a *App) CreateChat(ctx context.Context, userID uuid.UUID, model, text stri
 			return nil
 		}
 
-		message := domain.NewMessage("User", text)
+		message = domain.NewMessage("User", text)
 		if err := a.messages.Add(ctx, chat.ID, message); err != nil {
 			return fmt.Errorf("failed to add a message: %w", err)
-		}
-
-		messageAdded := events.NewMessageAdded(chat.ID, message)
-		if err := a.pubsub.Publish(ctx, worker.MessageAddedTopic, json.MustMarshal(ctx, messageAdded)); err != nil {
-			return fmt.Errorf("failed to publish a message added event: %w", err)
 		}
 
 		return nil
 	}); err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to create a chat: %w", err)
+	}
+
+	// If the message is empty, we don't need to send it.
+	if text == "" {
+		return chat, nil
+	}
+
+	messageAdded := events.NewMessageAdded(chat.ID, message)
+	if err := a.pubsub.Publish(ctx, worker.MessageAddedTopic, json.MustMarshal(ctx, messageAdded)); err != nil {
+		return domain.Chat{}, fmt.Errorf("failed to publish a message added event: %w", err)
 	}
 
 	return chat, nil

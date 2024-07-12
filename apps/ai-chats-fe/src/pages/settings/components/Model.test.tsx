@@ -42,14 +42,14 @@ test('displays model description', () => {
 test('shows and hides gdelete dialog', async () => {
   renderComponent(<Model model={mockModel} />);
 
-  expect(screen.queryByText('Delete model - llama3:latest')).toBeNull();
+  expect(screen.queryByText('Delete model?')).toBeNull();
 
   const deleteButton = screen.getByRole('button', { name: 'Delete' });
   userEvent.click(deleteButton);
 
   await waitFor(() => {
     expect(
-      screen.getByText('Delete model - llama3:latest'),
+      screen.getByText('Delete model?'),
     ).toBeInTheDocument();
   });
 
@@ -57,6 +57,6 @@ test('shows and hides gdelete dialog', async () => {
   userEvent.click(cancelButton);
 
   await waitFor(() => {
-    expect(screen.queryByText('Delete model - llama3:latest')).toBeNull();
+    expect(screen.queryByText('Delete model?')).toBeNull();
   });
 });
