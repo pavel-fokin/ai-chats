@@ -1,35 +1,48 @@
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+
 import styles from './TextArea.module.css';
 
-type TextAreaProps = {
+interface TextAreaProps {
   placeholder: string;
   value: string;
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
-};
+}
 
-import React, { useState } from 'react';
+export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
+  (props, ref) => {
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const [value, setValue] = useState(props.value);
 
-export const TextArea: React.FC<TextAreaProps> = (props) => {
-  const [rows, setRows] = useState(1);
-  // const [text, setText] = useState('');
+    useImperativeHandle(ref, () => textareaRef.current as HTMLTextAreaElement);
 
-  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    // const { value } = event.target;
-    // setText(value);
+    useEffect(() => {
+      if (textareaRef && textareaRef.current) {
+        textareaRef.current.style.height = '0px';
+        const scrollHeight = textareaRef.current.scrollHeight;
+        textareaRef.current.style.height = scrollHeight + 'px';
+      }
+    }, [value]);
 
-    // Count the number of line breaks to adjust the rows
-    const lineBreaks = (props.value.match(/\n/g) || []).length + 1;
-    setRows(lineBreaks + 1);
+    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setValue(event.target.value);
+      // textareaRef.current?.value = event.target.value;
+      props.onChange(event);
+    };
 
-    props.onChange(event);
-  };
-
-  return (
-    <textarea
-      rows={rows}
-      value={props.value}
-      onChange={handleChange}
-      className={styles.TextArea}
-      placeholder={props.placeholder}
-    />
-  );
-};
+    return (
+      <textarea
+        ref={textareaRef}
+        value={value}
+        onChange={handleChange}
+        className={styles.TextArea}
+        placeholder={props.placeholder}
+      />
+    );
+  },
+);

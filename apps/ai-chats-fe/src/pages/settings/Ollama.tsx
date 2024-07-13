@@ -22,7 +22,7 @@ export const OllamaSettings: React.FC = () => {
       <Header>
         <HamburgerMenuButton />
         <Heading as="h2" size="3" weight="regular">
-          Models
+          Ollama Settings
         </Heading>
         <NewChatIconButton />
       </Header>

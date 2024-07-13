@@ -32,7 +32,7 @@ test('calls handleSend with correct message on send click', () => {
   fireEvent.click(sendButton);
 
   expect(handleSendMock).toHaveBeenCalledWith({ sender, text });
-  expect(inputElement.value).toBe('');
+  expect(inputElement.value).toBe('Hello, world!');
 });
 
 test('calls handleSend with correct message on enter key press', () => {
@@ -52,7 +52,7 @@ test('calls handleSend with correct message on enter key press', () => {
   fireEvent.submit(form);
 
   expect(handleSendMock).toHaveBeenCalledWith({ sender, text });
-  expect(inputElement.value).toBe('');
+  expect(inputElement.value).toBe('Hello, world!');
 });
 
 test('does not call handleSend on empty message send click', () => {

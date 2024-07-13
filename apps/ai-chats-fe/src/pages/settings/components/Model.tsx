@@ -47,7 +47,9 @@ const Delete: React.FC<DeleteProps> = ({ model }) => {
       <AlertDialog.Content maxWidth="450px">
         <AlertDialog.Title>Delete model?</AlertDialog.Title>
         <AlertDialog.Description size="2">
-          {`Are you sure? The model `}<Text weight="bold">{`${model.name}:${model.tag}`}</Text>{` will not be available locally.`}
+          {`Are you sure? The model `}
+          <Text weight="bold">{`${model.name}:${model.tag}`}</Text>
+          {` will not be available locally.`}
         </AlertDialog.Description>
 
         <Flex gap="4" mt="4" align="center" justify="end">

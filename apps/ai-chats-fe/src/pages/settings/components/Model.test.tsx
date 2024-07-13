@@ -48,9 +48,7 @@ test('shows and hides gdelete dialog', async () => {
   userEvent.click(deleteButton);
 
   await waitFor(() => {
-    expect(
-      screen.getByText('Delete model?'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Delete model?')).toBeInTheDocument();
   });
 
   const cancelButton = screen.getByRole('button', { name: 'Cancel' });
