@@ -1,7 +1,7 @@
 import { Button, DropdownMenu, Flex } from '@radix-ui/themes';
 import { useNavigate } from 'react-router-dom';
 
-import { DeleteIcon, ConfigurationIcon } from 'components/ui/icons';
+import { ConfigurationIcon, DeleteIcon } from 'components/ui/icons';
 import { useChat, useDeleteChat } from 'hooks';
 
 type ChatMenuProps = {
@@ -10,8 +10,7 @@ type ChatMenuProps = {
 
 export const ChatMenu = ({ chatId }: ChatMenuProps) => {
   const navigate = useNavigate();
-
-  const { data: chat } = useChat(chatId);
+  const chat = useChat(chatId);
   const deleteChat = useDeleteChat(chatId);
 
   const handleDelete = () => {
@@ -34,7 +33,7 @@ export const ChatMenu = ({ chatId }: ChatMenuProps) => {
               maxWidth: '192px',
             }}
           >
-            {chat?.title || 'Chat'}
+            {chat.data?.title || 'Chat'}
           </span>
           <DropdownMenu.TriggerIcon />
         </Button>

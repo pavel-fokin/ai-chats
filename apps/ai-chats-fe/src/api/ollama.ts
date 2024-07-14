@@ -1,6 +1,6 @@
 import { OllamaModel } from 'types';
 
-import { doGet, doPost, doDelete } from './base';
+import { client } from './baseAxios';
 
 type GetOllamaResponse = {
   data: {
@@ -9,13 +9,14 @@ type GetOllamaResponse = {
 };
 
 export const fetchOllamaModels = async (): Promise<GetOllamaResponse> => {
-  return await doGet<GetOllamaResponse>('/api/ollama-models');
+  const resp = await client.get<GetOllamaResponse>('/ollama-models');
+  return resp.data;
 };
 
 export const postOllamaModels = async (modelName: string) => {
-  return await doPost<undefined>('/api/ollama-models', { model: modelName });
+  await client.post('/ollama-models', { model: modelName });
 };
 
 export const deleteOllamaModels = async (modelName: string) => {
-  return await doDelete<undefined>(`/api/ollama-models/${modelName}`);
+  await client.delete(`/ollama-models/${modelName}`);
 };
