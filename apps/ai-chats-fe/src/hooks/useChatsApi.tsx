@@ -37,8 +37,8 @@ export const useCreateChat = () => {
   });
 };
 
-export const useDeleteChat = (chatId: string) => {
+export const useDeleteChat = () => {
   return useMutation({
-    mutationFn: () => deleteChats(chatId),
+    mutationFn: (chatId: string) => deleteChats(chatId),
   });
 };

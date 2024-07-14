@@ -15,11 +15,11 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
   onCancelClick,
 }) => {
   const chat = useChat(chatId);
-  const deleteChat = useDeleteChat(chatId);
+  const deleteChat = useDeleteChat();
   const navigate = useNavigate();
 
   const handleDelete = () => {
-    deleteChat.mutate(void 0, {
+    deleteChat.mutate(chatId, {
       onSuccess: () => {
         navigate('/app');
       },

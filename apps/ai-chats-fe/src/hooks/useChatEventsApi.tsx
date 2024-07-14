@@ -7,7 +7,7 @@ export function useChatEvents(chatId: string) {
   const [messageChunk, setMessageChunk] = useState<types.MessageChunk>(
     {} as types.MessageChunk,
   );
-  const invalidateQueries = useInvalidateMessages(chatId);
+  const invalidateMessages = useInvalidateMessages();
 
   const accessToken = localStorage.getItem('accessToken') || '';
 
@@ -24,7 +24,7 @@ export function useChatEvents(chatId: string) {
       const message = JSON.parse(event.data);
       switch (message.type) {
         case types.EventTypes.MESSAGE_ADDED:
-          invalidateQueries();
+          invalidateMessages(chatId);
           break;
         case types.EventTypes.MESSAGE_CHUNK_RECEIVED:
           if (message.done) {

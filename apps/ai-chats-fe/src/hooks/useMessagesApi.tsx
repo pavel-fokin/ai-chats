@@ -24,10 +24,10 @@ export const useSendMessage = (chatId: string) => {
   });
 };
 
-export const useInvalidateMessages = (chatId: string) => {
+export const useInvalidateMessages = () => {
   const queryClient = useQueryClient();
 
-  return () => {
+  return (chatId: string) => {
     queryClient.invalidateQueries({
       queryKey: ['messages', chatId],
     });
