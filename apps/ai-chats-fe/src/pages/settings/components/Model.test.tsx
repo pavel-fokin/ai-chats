@@ -27,11 +27,6 @@ test('renders model name and tag', () => {
   renderComponent(<Model model={mockModel} />);
 
   expect(screen.getByText('llama3:latest')).toBeInTheDocument();
-});
-
-test('displays model description', () => {
-  renderComponent(<Model model={mockModel} />);
-
   expect(
     screen.getByText(
       'Meta Llama 3: The most capable openly available LLM to date 8B.',
@@ -39,7 +34,7 @@ test('displays model description', () => {
   ).toBeInTheDocument();
 });
 
-test('shows and hides gdelete dialog', async () => {
+test('shows and hides delete dialog', async () => {
   renderComponent(<Model model={mockModel} />);
 
   expect(screen.queryByText('Delete model?')).toBeNull();

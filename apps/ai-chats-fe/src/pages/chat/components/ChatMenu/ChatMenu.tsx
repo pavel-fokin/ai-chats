@@ -1,25 +1,18 @@
 import { Button, DropdownMenu, Flex } from '@radix-ui/themes';
-import { useNavigate } from 'react-router-dom';
 
 import { ConfigurationIcon, DeleteIcon } from 'components/ui/icons';
-import { useChat, useDeleteChat } from 'hooks';
+import { useChat } from 'hooks';
 
-type ChatMenuProps = {
-  chatId: string;
-};
+interface ChatMenuProps {
+  chatId?: string;
+  onDeleteClick: () => void;
+}
 
-export const ChatMenu = ({ chatId }: ChatMenuProps) => {
-  const navigate = useNavigate();
+export const ChatMenu: React.FC<ChatMenuProps> = ({
+  chatId,
+  onDeleteClick,
+}) => {
   const chat = useChat(chatId);
-  const deleteChat = useDeleteChat(chatId);
-
-  const handleDelete = () => {
-    deleteChat.mutate(void 0, {
-      onSuccess: () => {
-        navigate('/app');
-      },
-    });
-  };
 
   return (
     <DropdownMenu.Root>
@@ -45,7 +38,7 @@ export const ChatMenu = ({ chatId }: ChatMenuProps) => {
           </Flex>
         </DropdownMenu.Item>
         <DropdownMenu.Separator />
-        <DropdownMenu.Item color="tomato" onClick={handleDelete}>
+        <DropdownMenu.Item color="tomato" onClick={onDeleteClick}>
           <Flex direction="row" align="center" justify="between" width="100%">
             Delete <DeleteIcon size="16" />
           </Flex>

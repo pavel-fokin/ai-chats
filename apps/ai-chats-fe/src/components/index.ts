@@ -1,5 +1,4 @@
 export * from './AuthRequired/AuthRequired';
-export * from './ChatMenu/ChatMenu';
 export * from './HamburgerMenuButton/HamburgerMenuButton';
 export * from './InputMessage/InputMessage';
 export * from '../pages/chat/components/Message/Message';

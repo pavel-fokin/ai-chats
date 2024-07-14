@@ -1,11 +1,18 @@
-import { AlertDialog, Button, Flex, Heading, Text } from '@radix-ui/themes';
+import {
+  AlertDialog,
+  Button,
+  Flex,
+  Heading,
+  Strong,
+  Text,
+} from '@radix-ui/themes';
 
 import { useDeleteOllamaModel } from 'hooks';
 import { OllamaModel } from 'types';
 
-type ModelProps = {
+interface ModelProps {
   model: OllamaModel;
-};
+}
 
 export const Model: React.FC<ModelProps> = ({ model }) => {
   return (
@@ -20,17 +27,17 @@ export const Model: React.FC<ModelProps> = ({ model }) => {
         Meta Llama 3: The most capable openly available LLM to date 8B.
       </Text>
       <Flex align="center" justify="end" flexGrow="1" mt="4" gap="4">
-        <Delete model={model} />
+        <DeleteDialog model={model} />
       </Flex>
     </Flex>
   );
 };
 
-type DeleteProps = {
+interface DeleteDialogProps {
   model: OllamaModel;
-};
+}
 
-const Delete: React.FC<DeleteProps> = ({ model }) => {
+const DeleteDialog: React.FC<DeleteDialogProps> = ({ model }) => {
   const deleteModel = useDeleteOllamaModel();
 
   const handleDelete = (model: string) => {
@@ -47,9 +54,11 @@ const Delete: React.FC<DeleteProps> = ({ model }) => {
       <AlertDialog.Content maxWidth="450px">
         <AlertDialog.Title>Delete model?</AlertDialog.Title>
         <AlertDialog.Description size="2">
-          {`Are you sure? The model `}
-          <Text weight="bold">{`${model.name}:${model.tag}`}</Text>
-          {` will not be available locally.`}
+          <Text>
+            Are you sure? The model{' '}
+            <Strong>{`${model.name}:${model.tag}`}</Strong> will not be
+            available locally.
+          </Text>
         </AlertDialog.Description>
 
         <Flex gap="4" mt="4" align="center" justify="end">
