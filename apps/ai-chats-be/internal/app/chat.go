@@ -46,7 +46,7 @@ func (a *App) CreateChat(ctx context.Context, userID uuid.UUID, model, text stri
 			return nil
 		}
 
-		message = domain.NewMessage("User", text)
+		message = domain.NewUserMessage(user, text)
 		if err := a.chats.AddMessage(ctx, chat.ID, message); err != nil {
 			return fmt.Errorf("failed to add a message: %w", err)
 		}
@@ -70,7 +70,7 @@ func (a *App) CreateChat(ctx context.Context, userID uuid.UUID, model, text stri
 }
 
 // FindChatByID finds a chat by ID.
-func (a *App) FindChatByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
+func (a *App) FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error) {
 	return a.chats.FindByID(ctx, chatID)
 }
 
@@ -80,8 +80,15 @@ func (a *App) DeleteChat(ctx context.Context, chatID domain.ChatID) error {
 }
 
 // SendMessage sends a message to the chat.
-func (a *App) SendMessage(ctx context.Context, chatID domain.ChatID, text string) (domain.Message, error) {
-	message := domain.NewMessage("User", text)
+func (a *App) SendMessage(
+	ctx context.Context, userID domain.UserID, chatID domain.ChatID, text string,
+) (domain.Message, error) {
+	user, err := a.users.FindByID(ctx, userID)
+	if err != nil {
+		return domain.Message{}, fmt.Errorf("failed to find a user: %w", err)
+	}
+
+	message := domain.NewUserMessage(user, text)
 
 	if err := a.chats.AddMessage(ctx, chatID, message); err != nil {
 		return domain.Message{}, fmt.Errorf("failed to add a message: %w", err)

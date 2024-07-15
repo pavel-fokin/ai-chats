@@ -440,14 +440,21 @@ func TestApiGetChat(t *testing.T) {
 }
 
 func TestApiPostMessages(t *testing.T) {
+	userID := uuid.New()
+	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
+
 	t.Run("success", func(t *testing.T) {
 		chatID := uuid.New()
 
 		body := `{"text": "text"}`
 		req, _ := http.NewRequest("POST", fmt.Sprintf("/api/chats/%s/messages", chatID), strings.NewReader(body))
+		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		mockChat := &MockChat{}
+		mockChat.On(
+			"FindUserByID", mock.MatchedBy(matchChiContext), mock.AnythingOfType("uuid.UUID"),
+		).Return(domain.User{}, nil)
 		mockChat.On(
 			"SendMessage", mock.MatchedBy(matchChiContext), chatID, "text",
 		).Return(domain.Message{}, nil)
@@ -465,9 +472,13 @@ func TestApiPostMessages(t *testing.T) {
 
 		body := `{"text": "text"}`
 		req, _ := http.NewRequest("POST", fmt.Sprintf("/api/chats/%s/messages", chatID), strings.NewReader(body))
+		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		mockChat := &MockChat{}
+		mockChat.On(
+			"FindUserByID", mock.MatchedBy(matchChiContext), mock.AnythingOfType("uuid.UUID"),
+		).Return(domain.User{}, nil)
 		mockChat.On(
 			"SendMessage", mock.MatchedBy(matchChiContext), chatID, "text",
 		).Return(domain.Message{}, errors.New("failed to send message"))

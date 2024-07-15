@@ -6,6 +6,8 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
 )
 
+type UserID = uuid.UUID
+
 type User struct {
 	ID           uuid.UUID
 	Username     string

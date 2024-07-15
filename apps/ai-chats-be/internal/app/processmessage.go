@@ -17,8 +17,8 @@ func (a *App) ProcessAddedMessage(ctx context.Context, event events.MessageAdded
 	}
 
 	switch {
-	case event.Message.IsFromBot():
-		// Ignore messages from bots.
+	case event.Message.IsFromModel():
+		// Ignore messages from models.
 	case event.Message.IsFromUser():
 		a.GenerateResponse(ctx, event.ChatID)
 	default:

@@ -1,5 +1,7 @@
 package domain
 
+import "fmt"
+
 // type ModelID uuid.UUID
 
 // func NewModelID() ModelID {
@@ -20,4 +22,8 @@ func NewModel(name, tag string) Model {
 		Name: name,
 		Tag:  tag,
 	}
+}
+
+func (m Model) String() string {
+	return fmt.Sprintf("%s:%s", m.Name, m.Tag)
 }

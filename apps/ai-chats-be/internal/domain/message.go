@@ -22,10 +22,18 @@ func NewMessage(sender string, text string) Message {
 	}
 }
 
+func NewUserMessage(user User, text string) Message {
+	return NewMessage("User", text)
+}
+
+func NewModelMessage(text string) Message {
+	return NewMessage("AI", text)
+}
+
 func (m Message) IsFromUser() bool {
 	return m.Sender == "User"
 }
 
-func (m Message) IsFromBot() bool {
+func (m Message) IsFromModel() bool {
 	return m.Sender == "AI"
 }

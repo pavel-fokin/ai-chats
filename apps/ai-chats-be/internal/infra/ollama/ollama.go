@@ -52,7 +52,7 @@ func (l *LLM) GenerateResponse(ctx context.Context, history []domain.Message) (d
 
 	llmMessage := domain.Message{}
 	respFunc := func(resp api.ChatResponse) error {
-		llmMessage = domain.NewMessage("AI", resp.Message.Content)
+		llmMessage = domain.NewModelMessage(resp.Message.Content)
 		return nil
 	}
 
@@ -71,10 +71,10 @@ func (l *LLM) GenerateResponseWithStream(
 	messages := []api.Message{}
 	for _, message := range history {
 		role := ""
-		switch message.Sender {
-		case "AI":
+		switch {
+		case message.IsFromModel():
 			role = "assistant"
-		case "User":
+		case message.IsFromUser():
 			role = "user"
 		default:
 			return domain.Message{}, fmt.Errorf("unknown sender: %s", message.Sender)
@@ -90,7 +90,7 @@ func (l *LLM) GenerateResponseWithStream(
 		Messages: messages,
 	}
 
-	llmMessage := domain.NewMessage("AI", "")
+	llmMessage := domain.NewModelMessage("")
 	respFunc := func(resp api.ChatResponse) error {
 		llmMessage.Text += resp.Message.Content
 

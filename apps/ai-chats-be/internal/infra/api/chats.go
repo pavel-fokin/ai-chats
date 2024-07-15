@@ -24,7 +24,7 @@ type ChatApp interface {
 	CreateChat(ctx context.Context, userID uuid.UUID, defaultModel, message string) (domain.Chat, error)
 	DeleteChat(ctx context.Context, chatID domain.ChatID) error
 	FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error)
-	SendMessage(ctx context.Context, chatID domain.ChatID, message string) (domain.Message, error)
+	SendMessage(ctx context.Context, userID domain.UserID, chatID domain.ChatID, message string) (domain.Message, error)
 }
 
 // GetChats handles the GET /api/chats endpoint.
@@ -147,6 +147,7 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 		ctx := r.Context()
 
 		chatID := chi.URLParam(r, "uuid")
+		userID := MustHaveUserID(ctx)
 
 		var req PostMessagesRequest
 		if err := ParseJSON(r, &req); err != nil {
@@ -155,7 +156,7 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 			return
 		}
 
-		_, err := chat.SendMessage(ctx, uuid.MustParse(chatID), req.Text)
+		_, err := chat.SendMessage(ctx, userID, uuid.MustParse(chatID), req.Text)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to send a message", "chatID", chatID, "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
