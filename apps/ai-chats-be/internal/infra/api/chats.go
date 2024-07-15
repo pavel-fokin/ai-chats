@@ -18,13 +18,13 @@ type Subscriber interface {
 }
 
 type ChatApp interface {
+	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
+	AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error)
+	ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error)
 	CreateChat(ctx context.Context, userID uuid.UUID, defaultModel, message string) (domain.Chat, error)
 	DeleteChat(ctx context.Context, chatID domain.ChatID) error
 	FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error)
-	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
-	AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error)
 	SendMessage(ctx context.Context, chatID domain.ChatID, message string) (domain.Message, error)
-	ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error)
 }
 
 // GetChats handles the GET /api/chats endpoint.
@@ -124,22 +124,16 @@ func GetMessages(chat ChatApp) http.HandlerFunc {
 
 		chatID := chi.URLParam(r, "uuid")
 
-		chatExists, err := chat.ChatExists(ctx, uuid.MustParse(chatID))
-		if err != nil {
-			slog.ErrorContext(ctx, "failed to check if the chat exists", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
-			return
-		}
-		if !chatExists {
-			slog.ErrorContext(ctx, "chat not found", "chatId", chatID)
-			AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
-			return
-		}
-
 		messages, err := chat.AllMessages(ctx, uuid.MustParse(chatID))
 		if err != nil {
-			slog.ErrorContext(ctx, "failed to get messages", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			switch err {
+			case domain.ErrChatNotFound:
+				slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
+				AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
+			default:
+				slog.ErrorContext(ctx, "failed to get messages", "err", err)
+				AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			}
 			return
 		}
 

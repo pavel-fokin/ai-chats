@@ -54,8 +54,14 @@ func TestCreateChat(t *testing.T) {
 	t.Run("with message", func(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("Add", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
+		mockChats.On(
+			"AddMessage",
+			ctx,
+			mock.AnythingOfType("uuid.UUID"),
+			mock.AnythingOfType("domain.Message"),
+		).Return(nil)
 
-		app := &App{chats: mockChats, users: mockUsers, messages: mockMessages, pubsub: mockPubSub, tx: mockTx}
+		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
 
 		chat, err := app.CreateChat(ctx, user.ID, "message", "model")
 		assert.NoError(t, err)

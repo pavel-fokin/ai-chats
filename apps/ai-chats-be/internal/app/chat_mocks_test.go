@@ -18,6 +18,16 @@ func (m *MockChats) Add(ctx context.Context, chat domain.Chat) error {
 	return args.Error(0)
 }
 
+func (m *MockChats) AddMessage(ctx context.Context, chatID domain.ChatID, message domain.Message) error {
+	args := m.Called(ctx, chatID, message)
+	return args.Error(0)
+}
+
+func (m *MockChats) AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
+	args := m.Called(ctx, chatID)
+	return args.Get(0).([]domain.Message), args.Error(1)
+}
+
 func (m *MockChats) Delete(ctx context.Context, chatID domain.ChatID) error {
 	args := m.Called(ctx, chatID)
 	return args.Error(0)
@@ -31,16 +41,6 @@ func (m *MockChats) UpdateTitle(ctx context.Context, chatID domain.ChatID, title
 func (m *MockChats) FindByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error) {
 	args := m.Called(ctx, chatID)
 	return args.Get(0).(domain.Chat), args.Error(1)
-}
-
-func (m *MockChats) AddMessage(ctx context.Context, chatID domain.ChatID, sender, message string) error {
-	args := m.Called(ctx, chatID, sender, message)
-	return args.Error(0)
-}
-
-func (m *MockChats) AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
-	args := m.Called(ctx, chatID)
-	return args.Get(0).([]domain.Message), args.Error(1)
 }
 
 func (m *MockChats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {

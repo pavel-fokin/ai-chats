@@ -219,3 +219,113 @@ func TestSqliteChats_Exists(t *testing.T) {
 		assert.False(t, exists)
 	})
 }
+
+func TestSqliteAddMessages(t *testing.T) {
+	ctx := context.Background()
+	assert := assert.New(t)
+
+	db := New(":memory:")
+	defer db.Close()
+	CreateTables(db)
+	crypto.InitBcryptCost(1)
+
+	users := NewUsers(db)
+	chats := NewChats(db)
+	// messages := NewMessages(db)
+
+	user := domain.NewUser("username", "password")
+	err := users.Add(ctx, user)
+	assert.NoError(err)
+
+	t.Run("success", func(t *testing.T) {
+		chat := domain.NewChat(user, "model:latest")
+		err := chats.Add(ctx, chat)
+		assert.NoError(err)
+
+		msgs := []domain.Message{
+			domain.NewMessage("User", "Hello, bot!"),
+			domain.NewMessage("AI", "Hello, user!"),
+		}
+
+		for _, message := range msgs {
+			err := chats.AddMessage(ctx, chat.ID, message)
+			assert.NoError(err)
+		}
+
+		allMessages, err := chats.AllMessages(ctx, chat.ID)
+		assert.NoError(err)
+		assert.Equal(len(msgs), len(allMessages))
+		for i, message := range allMessages {
+			assert.Equal(msgs[i], message)
+		}
+	})
+
+	t.Run("chat does not exist", func(t *testing.T) {
+		err := chats.AddMessage(ctx, uuid.New(), domain.NewMessage("User", "Hello, bot!"))
+		assert.Error(err)
+	})
+
+	t.Run("empty text", func(t *testing.T) {
+		chat := domain.NewChat(user, "model:latest")
+		err := chats.Add(ctx, chat)
+		assert.NoError(err)
+
+		err = chats.AddMessage(ctx, chat.ID, domain.NewMessage("User", ""))
+		assert.Error(err)
+	})
+
+	t.Run("empty sender", func(t *testing.T) {
+		chat := domain.NewChat(user, "model:latest")
+		err := chats.Add(ctx, chat)
+		assert.NoError(err)
+
+		err = chats.AddMessage(ctx, chat.ID, domain.NewMessage("", "Hello, bot!"))
+		assert.Error(err)
+	})
+}
+
+func TestSqliteAllMessages(t *testing.T) {
+	ctx := context.Background()
+	assert := assert.New(t)
+
+	db := New(":memory:")
+	defer db.Close()
+	CreateTables(db)
+	crypto.InitBcryptCost(1)
+
+	users := NewUsers(db)
+	chats := NewChats(db)
+	// messages := NewMessages(db)
+
+	user := domain.NewUser("username", "password")
+	err := users.Add(ctx, user)
+	assert.NoError(err)
+
+	chat := domain.NewChat(user, "model:latest")
+	err = chats.Add(ctx, chat)
+	assert.NoError(err)
+
+	t.Run("success", func(t *testing.T) {
+		msgs := []domain.Message{
+			domain.NewMessage("User", "Hello, bot!"),
+			domain.NewMessage("AI", "Hello, user!"),
+		}
+
+		for _, message := range msgs {
+			err := chats.AddMessage(ctx, chat.ID, message)
+			assert.NoError(err)
+		}
+
+		allMessages, err := chats.AllMessages(ctx, chat.ID)
+		assert.NoError(err)
+		assert.Equal(len(msgs), len(allMessages))
+		for i, message := range allMessages {
+			assert.Equal(msgs[i], message)
+		}
+	})
+
+	t.Run("chat does not exist", func(t *testing.T) {
+		_, err := chats.AllMessages(ctx, uuid.New())
+		assert.ErrorIs(err, domain.ErrChatNotFound)
+	})
+}

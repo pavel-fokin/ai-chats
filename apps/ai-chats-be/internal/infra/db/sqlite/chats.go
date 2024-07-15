@@ -38,6 +38,71 @@ func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 	return nil
 }
 
+func (m *Chats) AddMessage(ctx context.Context, chatID domain.ChatID, message domain.Message) error {
+	_, err := m.DBTX(ctx).ExecContext(
+		ctx,
+		`INSERT INTO message
+		(id, chat_id, sender, text, created_at)
+		VALUES (?, ?, ?, ?, ?)`,
+		message.ID,
+		chatID,
+		message.Sender,
+		message.Text,
+		message.CreatedAt.Format(time.RFC3339Nano),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to insert message: %w", err)
+	}
+
+	return nil
+}
+
+func (c *Chats) AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
+	chatExists, err := c.exists(ctx, chatID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check chat existence: %w", err)
+	}
+	if !chatExists {
+		return nil, domain.ErrChatNotFound
+	}
+
+	rows, err := c.DBTX(ctx).QueryContext(
+		ctx,
+		`SELECT id, sender, text, created_at
+		FROM message
+		WHERE chat_id = ?`,
+		chatID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to select messages: %w", err)
+	}
+	defer rows.Close()
+
+	var messages []domain.Message
+	for rows.Next() {
+		var (
+			message   domain.Message
+			createdAt string
+			err       error
+		)
+		if err := rows.Scan(&message.ID, &message.Sender, &message.Text, &createdAt); err != nil {
+			return nil, fmt.Errorf("failed to scan message: %w", err)
+		}
+
+		message.CreatedAt, err = time.Parse(time.RFC3339Nano, createdAt)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse message.created_at: %w", err)
+		}
+
+		messages = append(messages, message)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to select messages: %w", err)
+	}
+
+	return messages, nil
+}
+
 func (c *Chats) Delete(ctx context.Context, chatID uuid.UUID) error {
 	result, err := c.DBTX(ctx).ExecContext(
 		ctx,
@@ -143,7 +208,7 @@ func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 	return chat, nil
 }
 
-func (c *Chats) Exists(ctx context.Context, chatID uuid.UUID) (bool, error) {
+func (c *Chats) exists(ctx context.Context, chatID uuid.UUID) (bool, error) {
 	var exists bool
 	err := c.DBTX(ctx).QueryRowContext(
 		ctx,
@@ -157,4 +222,8 @@ func (c *Chats) Exists(ctx context.Context, chatID uuid.UUID) (bool, error) {
 	}
 
 	return exists, nil
+}
+
+func (c *Chats) Exists(ctx context.Context, chatID uuid.UUID) (bool, error) {
+	return c.exists(ctx, chatID)
 }

@@ -25,7 +25,7 @@ func (a *App) ProcessAddedMessage(ctx context.Context, event events.MessageAdded
 		return fmt.Errorf("unknown message type: %s", event.Message)
 	}
 
-	messages, err := a.messages.AllMessages(ctx, event.ChatID)
+	messages, err := a.chats.AllMessages(ctx, event.ChatID)
 	if err != nil {
 		return fmt.Errorf("failed to find a chat: %w", err)
 	}

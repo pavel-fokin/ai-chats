@@ -51,7 +51,7 @@ func main() {
 	app := app.New(
 		sqlite.NewChats(db),
 		sqlite.NewUsers(db),
-		sqlite.NewMessages(db),
+		// sqlite.NewMessages(db),
 		ollama.NewOllamaModels(),
 		pubsub,
 		sqlite.NewTx(db),

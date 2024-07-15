@@ -18,7 +18,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 		return fmt.Errorf("failed to find a chat: %w", err)
 	}
 
-	messages, err := a.messages.AllMessages(ctx, chatID)
+	messages, err := a.chats.AllMessages(ctx, chatID)
 	if err != nil {
 		return fmt.Errorf("failed to get messages: %w", err)
 	}
@@ -40,7 +40,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 		return fmt.Errorf("failed to generate a response: %w", err)
 	}
 
-	if err := a.messages.Add(ctx, chatID, llmMessage); err != nil {
+	if err := a.chats.AddMessage(ctx, chatID, llmMessage); err != nil {
 		return fmt.Errorf("failed to add a message: %w", err)
 	}
 
