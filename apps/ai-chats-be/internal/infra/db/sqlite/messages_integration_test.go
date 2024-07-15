@@ -119,6 +119,6 @@ func TestSqliteAllMessages(t *testing.T) {
 
 	t.Run("chat does not exist", func(t *testing.T) {
 		_, err := messages.AllMessages(ctx, uuid.New())
-		assert.NoError(err)
+		assert.NoError(err, domain.ErrChatNotFound)
 	})
 }

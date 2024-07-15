@@ -252,6 +252,9 @@ func TestApiGetMessages(t *testing.T) {
 
 		chat := &MockChat{}
 		chat.On(
+			"ChatExists", mock.MatchedBy(matchChiContext), chatID,
+		).Return(true, nil)
+		chat.On(
 			"AllMessages", mock.MatchedBy(matchChiContext), chatID,
 		).Return([]domain.Message{}, nil)
 
@@ -263,6 +266,28 @@ func TestApiGetMessages(t *testing.T) {
 		assert.Equal(t, 200, resp.StatusCode)
 	})
 
+	t.Run("chat not found", func(t *testing.T) {
+		chatID := uuid.New()
+
+		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/messages", chatID), nil)
+		w := httptest.NewRecorder()
+
+		chat := &MockChat{}
+		chat.On(
+			"ChatExists", mock.MatchedBy(matchChiContext), chatID,
+		).Return(false, nil)
+		chat.On(
+			"AllMessages", mock.MatchedBy(matchChiContext), chatID,
+		).Return([]domain.Message{}, domain.ErrChatNotFound)
+
+		router := chi.NewRouter()
+		router.Get("/api/chats/{uuid}/messages", GetMessages(chat))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 404, resp.StatusCode)
+	})
+
 	t.Run("failure", func(t *testing.T) {
 		chatID := uuid.New()
 
@@ -270,6 +295,9 @@ func TestApiGetMessages(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		chat := &MockChat{}
+		chat.On(
+			"ChatExists", mock.MatchedBy(matchChiContext), chatID,
+		).Return(true, nil)
 		chat.On(
 			"AllMessages", mock.MatchedBy(matchChiContext), chatID,
 		).Return([]domain.Message{}, errors.New("failed to get messages")).Once()

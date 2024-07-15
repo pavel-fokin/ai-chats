@@ -36,7 +36,7 @@ func GetChats(chat ChatApp) http.HandlerFunc {
 
 		chats, err := chat.AllChats(ctx, userID)
 		if err != nil {
-			slog.ErrorContext(ctx, "failed to get chats", "err", err)
+			slog.ErrorContext(ctx, "failed to get chats", "userID", userID, "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
@@ -104,13 +104,13 @@ func DeleteChat(chat ChatApp) http.HandlerFunc {
 		if err := chat.DeleteChat(ctx, uuid.MustParse(chatID)); err != nil {
 			switch err {
 			case domain.ErrChatNotFound:
+				slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
 				AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
-				return
 			default:
 				slog.ErrorContext(ctx, "failed to delete a chat", "err", err)
 				AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
-				return
 			}
+			return
 		}
 
 		AsSuccessResponse(w, nil, http.StatusNoContent)
@@ -123,6 +123,18 @@ func GetMessages(chat ChatApp) http.HandlerFunc {
 		ctx := r.Context()
 
 		chatID := chi.URLParam(r, "uuid")
+
+		chatExists, err := chat.ChatExists(ctx, uuid.MustParse(chatID))
+		if err != nil {
+			slog.ErrorContext(ctx, "failed to check if the chat exists", "err", err)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			return
+		}
+		if !chatExists {
+			slog.ErrorContext(ctx, "chat not found", "chatId", chatID)
+			AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
+			return
+		}
 
 		messages, err := chat.AllMessages(ctx, uuid.MustParse(chatID))
 		if err != nil {
@@ -144,13 +156,14 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 
 		var req PostMessagesRequest
 		if err := ParseJSON(r, &req); err != nil {
+			slog.ErrorContext(ctx, "failed to parse the request", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusBadRequest)
 			return
 		}
 
 		_, err := chat.SendMessage(ctx, uuid.MustParse(chatID), req.Text)
 		if err != nil {
-			slog.ErrorContext(ctx, "failed to send a message", "err", err)
+			slog.ErrorContext(ctx, "failed to send a message", "chatID", chatID, "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
@@ -166,11 +179,14 @@ func GetEvents(app ChatApp, sse *server.SSEConnections, subscriber Subscriber) h
 
 		chatID := chi.URLParam(r, "uuid")
 
-		if exists, err := app.ChatExists(ctx, uuid.MustParse(chatID)); err != nil {
+		chatExists, err := app.ChatExists(ctx, uuid.MustParse(chatID))
+		if err != nil {
 			slog.ErrorContext(ctx, "failed to check if the chat exists", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
-		} else if !exists {
+		}
+		if !chatExists {
+			slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
 			AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
 			return
 		}
