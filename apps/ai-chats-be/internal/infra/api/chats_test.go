@@ -282,6 +282,7 @@ func TestApiGetMessages(t *testing.T) {
 		assert.Equal(t, 500, resp.StatusCode)
 	})
 }
+
 func TestApiGetEvents(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		chatID := uuid.New()

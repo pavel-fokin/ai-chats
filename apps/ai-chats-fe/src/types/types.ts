@@ -5,8 +5,10 @@ export type Chat = {
 };
 
 export type Message = {
+  id: string;
   sender: string;
   text: string;
+  createdAt: string;
 };
 
 export type MessageChunk = {
@@ -22,7 +24,6 @@ export enum EventTypes {
 }
 
 export type OllamaModel = {
-  // id: string;
   name: string;
   tag: string;
 };

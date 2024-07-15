@@ -16,9 +16,10 @@ CREATE TABLE IF NOT EXISTS chat (
 
 CREATE TABLE IF NOT EXISTS message (
     id TEXT PRIMARY KEY,
-    chat_id TEXT NOT NULL,
-    sender TEXT NOT NULL,
-    text TEXT NOT NULL,
+    chat_id TEXT NOT NULL CHECK (length(chat_id) > 0),
+    sender TEXT NOT NULL CHECK (length(sender) > 0),
+    text TEXT NOT NULL CHECK (length(text) > 0),
+    created_at TEXT NOT NULL CHECK (length(created_at) > 0),
     FOREIGN KEY (chat_id) REFERENCES chat(id)
 );
 

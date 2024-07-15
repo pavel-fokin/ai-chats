@@ -105,7 +105,7 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 
 		chat.CreatedAt, err = time.Parse(time.RFC3339Nano, createdAt)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse created_at: %w", err)
+			return nil, fmt.Errorf("failed to parse chat.created_at: %w", err)
 		}
 
 		chats = append(chats, chat)
@@ -137,7 +137,7 @@ func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 
 	chat.CreatedAt, err = time.Parse(time.RFC3339Nano, createdAt)
 	if err != nil {
-		return domain.Chat{}, fmt.Errorf("failed to parse created_at: %w", err)
+		return domain.Chat{}, fmt.Errorf("failed to parse chat.created_at: %w", err)
 	}
 
 	return chat, nil

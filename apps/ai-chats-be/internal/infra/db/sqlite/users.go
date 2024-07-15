@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
 
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 
@@ -70,8 +69,4 @@ func (u *Users) FindByID(ctx context.Context, id uuid.UUID) (domain.User, error)
 	}
 
 	return user, nil
-}
-
-func isUniqueConstraintViolation(err error) bool {
-	return strings.Contains(err.Error(), "UNIQUE constraint failed")
 }

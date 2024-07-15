@@ -15,9 +15,10 @@ type Chat struct {
 }
 
 type Message struct {
-	ID     string `json:"id"`
-	Sender string `json:"sender"`
-	Text   string `json:"text"`
+	ID        string `json:"id"`
+	Sender    string `json:"sender"`
+	Text      string `json:"text"`
+	CreatedAt string `json:"created_at"`
 }
 
 type Error struct {
@@ -80,7 +81,12 @@ type GetMessagesResponse struct {
 func NewGetMessagesResponse(messages []domain.Message) GetMessagesResponse {
 	var res GetMessagesResponse
 	for _, message := range messages {
-		res.Messages = append(res.Messages, Message{ID: message.ID.String(), Text: message.Text})
+		res.Messages = append(res.Messages, Message{
+			ID:        message.ID.String(),
+			Text:      message.Text,
+			Sender:    message.Sender,
+			CreatedAt: message.CreatedAt.Format(time.RFC3339Nano),
+		})
 	}
 	return res
 }

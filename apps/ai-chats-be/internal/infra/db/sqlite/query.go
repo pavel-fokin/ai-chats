@@ -16,3 +16,7 @@ func QueryIn[T any](query string, items []T) (string, []any) {
 
 	return query + " IN (" + strings.Join(placeholders, ", ") + ")", args
 }
+
+func isUniqueConstraintViolation(err error) bool {
+	return strings.Contains(err.Error(), "UNIQUE constraint failed")
+}
