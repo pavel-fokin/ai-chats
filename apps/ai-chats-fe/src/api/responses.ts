@@ -40,9 +40,3 @@ export type GetMessagesResponse = {
     messages: Message[];
   };
 };
-
-export type PostMessagesResponse = {
-  data: {
-    message: Message;
-  };
-};

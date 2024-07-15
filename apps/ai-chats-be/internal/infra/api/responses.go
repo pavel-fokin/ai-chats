@@ -8,6 +8,18 @@ import (
 	"time"
 )
 
+type Chat struct {
+	ID        string `json:"id"`
+	Title     string `json:"title"`
+	CreatedAt string `json:"created_at"`
+}
+
+type Message struct {
+	ID     string `json:"id"`
+	Sender string `json:"sender"`
+	Text   string `json:"text"`
+}
+
 type Error struct {
 	Field   string `json:"field,omitempty"`
 	Message string `json:"message"`
@@ -43,10 +55,6 @@ type SignUpResponse struct {
 
 func NewSignUpResponse(accessToken string) SignUpResponse {
 	return SignUpResponse{AccessToken: accessToken}
-}
-
-type PostMessagesResponse struct {
-	Message
 }
 
 type GetChatsResponse struct {

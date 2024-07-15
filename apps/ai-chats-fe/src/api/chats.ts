@@ -8,7 +8,6 @@ import {
   GetChatsResponse,
   GetMessagesResponse,
   PostChatsResponse,
-  PostMessagesResponse,
 } from './responses';
 
 export const getChatById = async (
@@ -50,13 +49,6 @@ export const getMessages = async (
   return resp.data;
 };
 
-export const postMessages = async (
-  chatId: string,
-  message: Message,
-): Promise<PostMessagesResponse> => {
-  const resp = await client.post<PostMessagesResponse>(
-    `/chats/${chatId}/messages`,
-    message,
-  );
-  return resp.data;
+export const postMessages = async (chatId: string, message: Message) => {
+  await client.post(`/chats/${chatId}/messages`, message);
 };

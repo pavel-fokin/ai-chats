@@ -15,7 +15,12 @@ type PostChatsRequest struct {
 }
 
 type PostMessagesRequest struct {
-	Message
+	Text string `json:"text"`
+}
+
+type UserCredentials struct {
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 type SignInRequest struct {
