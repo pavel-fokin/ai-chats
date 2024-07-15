@@ -21,59 +21,6 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
 )
 
-type MockChat struct {
-	mock.Mock
-}
-
-func (m *MockChat) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
-	args := m.Called(ctx, userID)
-	return args.Get(0).([]domain.Chat), args.Error(1)
-}
-
-func (m *MockChat) CreateChat(ctx context.Context, userID uuid.UUID, defaultModel, message string) (domain.Chat, error) {
-	args := m.Called(ctx, userID, defaultModel, message)
-	return args.Get(0).(domain.Chat), args.Error(1)
-}
-
-func (m *MockChat) DeleteChat(ctx context.Context, chatID uuid.UUID) error {
-	args := m.Called(ctx, chatID)
-	return args.Error(0)
-}
-
-func (m *MockChat) FindChatByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
-	args := m.Called(ctx, chatID)
-	return args.Get(0).(domain.Chat), args.Error(1)
-}
-
-func (m *MockChat) SendMessage(ctx context.Context, chatID uuid.UUID, message string) (domain.Message, error) {
-	args := m.Called(ctx, chatID, message)
-	return args.Get(0).(domain.Message), args.Error(1)
-}
-
-func (m *MockChat) AllMessages(ctx context.Context, chatID uuid.UUID) ([]domain.Message, error) {
-	args := m.Called(ctx, chatID)
-	return args.Get(0).([]domain.Message), args.Error(1)
-}
-
-func (m *MockChat) ChatExists(ctx context.Context, chatID uuid.UUID) (bool, error) {
-	args := m.Called(ctx, chatID)
-	return args.Bool(0), args.Error(1)
-}
-
-type EventsMock struct {
-	mock.Mock
-}
-
-func (m *EventsMock) Subscribe(ctx context.Context, topic string) (chan []byte, error) {
-	args := m.Called(ctx, topic)
-	return args.Get(0).(chan []byte), args.Error(1)
-}
-
-func (m *EventsMock) Unsubscribe(ctx context.Context, topic string, channel chan []byte) error {
-	args := m.Called(ctx, topic, channel)
-	return args.Error(0)
-}
-
 func matchChiContext(ctx context.Context) bool {
 	key := ctx.Value(chi.RouteCtxKey)
 	return key != nil
@@ -443,7 +390,7 @@ func TestApiGetChat(t *testing.T) {
 		assert.Equal(t, 200, resp.StatusCode)
 	})
 
-	t.Run("fmailure", func(t *testing.T) {
+	t.Run("failure", func(t *testing.T) {
 		chatID := uuid.New()
 
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s", chatID), nil)
@@ -456,6 +403,48 @@ func TestApiGetChat(t *testing.T) {
 
 		router := chi.NewRouter()
 		router.Get("/api/chats/{uuid}", GetChat(mockChat))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 500, resp.StatusCode)
+	})
+}
+
+func TestApiPostMessages(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		chatID := uuid.New()
+
+		body := `{"text": "text"}`
+		req, _ := http.NewRequest("POST", fmt.Sprintf("/api/chats/%s/messages", chatID), strings.NewReader(body))
+		w := httptest.NewRecorder()
+
+		mockChat := &MockChat{}
+		mockChat.On(
+			"SendMessage", mock.MatchedBy(matchChiContext), chatID, "text",
+		).Return(domain.Message{}, nil)
+
+		router := chi.NewRouter()
+		router.Post("/api/chats/{uuid}/messages", PostMessages(mockChat))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 204, resp.StatusCode)
+	})
+
+	t.Run("failure", func(t *testing.T) {
+		chatID := uuid.New()
+
+		body := `{"text": "text"}`
+		req, _ := http.NewRequest("POST", fmt.Sprintf("/api/chats/%s/messages", chatID), strings.NewReader(body))
+		w := httptest.NewRecorder()
+
+		mockChat := &MockChat{}
+		mockChat.On(
+			"SendMessage", mock.MatchedBy(matchChiContext), chatID, "text",
+		).Return(domain.Message{}, errors.New("failed to send message"))
+
+		router := chi.NewRouter()
+		router.Post("/api/chats/{uuid}/messages", PostMessages(mockChat))
 		router.ServeHTTP(w, req)
 
 		resp := w.Result()

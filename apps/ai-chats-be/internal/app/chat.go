@@ -77,7 +77,7 @@ func (a *App) SendMessage(ctx context.Context, chatID domain.ChatID, text string
 		return domain.Message{}, fmt.Errorf("failed to publish a message added event: %w", err)
 	}
 
-	return domain.Message{}, nil
+	return message, nil
 }
 
 // AllMessages returns all messages in the chat.

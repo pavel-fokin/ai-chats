@@ -172,7 +172,7 @@ func WriteErrorResponse(w http.ResponseWriter, statusCode int, errs ...Error) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// WriteEvent writes an server sent event to the response.
+// WriteEvent writes a server sent event to the response.
 func WriteEvent(w http.ResponseWriter, data []byte) error {
 	fmt.Fprintf(w, "data: %s\n\n", data)
 	return nil

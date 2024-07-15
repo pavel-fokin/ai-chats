@@ -148,19 +148,14 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 			return
 		}
 
-		answer, err := chat.SendMessage(ctx, uuid.MustParse(chatID), req.Message.Text)
+		_, err := chat.SendMessage(ctx, uuid.MustParse(chatID), req.Message.Text)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to send a message", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}
 
-		AsSuccessResponse(w, PostMessagesResponse{
-			Message{
-				Sender: "AI",
-				Text:   answer.Text,
-			},
-		}, http.StatusOK)
+		AsSuccessResponse(w, nil, http.StatusNoContent)
 	}
 }
 
