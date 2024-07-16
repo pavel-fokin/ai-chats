@@ -100,7 +100,7 @@ func (l *LLM) GenerateResponseWithStream(
 
 		messageChunkReceived := events.NewMessageChunkReceived(
 			llmMessage.ID,
-			llmMessage.Sender,
+			llmMessage.Sender.String(),
 			llmMessage.Text,
 			resp.Done,
 		)

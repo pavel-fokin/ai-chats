@@ -244,8 +244,8 @@ func TestSqliteAddMessages(t *testing.T) {
 		assert.NoError(err)
 
 		msgs := []domain.Message{
-			domain.NewMessage("User", "Hello, bot!"),
-			domain.NewMessage("AI", "Hello, user!"),
+			domain.NewUserMessage(user, "Hello, model!"),
+			domain.NewModelMessage(model, "Hello, user!"),
 		}
 
 		for _, message := range msgs {
@@ -262,7 +262,7 @@ func TestSqliteAddMessages(t *testing.T) {
 	})
 
 	t.Run("chat does not exist", func(t *testing.T) {
-		err := chats.AddMessage(ctx, uuid.New(), domain.NewMessage("User", "Hello, bot!"))
+		err := chats.AddMessage(ctx, uuid.New(), domain.NewUserMessage(user, "Hello, model!"))
 		assert.Error(err)
 	})
 
@@ -271,7 +271,7 @@ func TestSqliteAddMessages(t *testing.T) {
 		err := chats.Add(ctx, chat)
 		assert.NoError(err)
 
-		err = chats.AddMessage(ctx, chat.ID, domain.NewMessage("User", ""))
+		err = chats.AddMessage(ctx, chat.ID, domain.NewUserMessage(user, ""))
 		assert.Error(err)
 	})
 
@@ -280,7 +280,7 @@ func TestSqliteAddMessages(t *testing.T) {
 		err := chats.Add(ctx, chat)
 		assert.NoError(err)
 
-		err = chats.AddMessage(ctx, chat.ID, domain.NewMessage("", "Hello, bot!"))
+		err = chats.AddMessage(ctx, chat.ID, domain.NewMessage(domain.Sender{}, "Hello, model!"))
 		assert.Error(err)
 	})
 }
@@ -308,8 +308,8 @@ func TestSqliteAllMessages(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		msgs := []domain.Message{
-			domain.NewMessage("User", "Hello, bot!"),
-			domain.NewMessage("AI", "Hello, user!"),
+			domain.NewUserMessage(user, "Hello, model!"),
+			domain.NewModelMessage(model, "Hello, user!"),
 		}
 
 		for _, message := range msgs {

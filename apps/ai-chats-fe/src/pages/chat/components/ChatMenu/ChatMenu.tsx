@@ -33,14 +33,26 @@ export const ChatMenu: React.FC<ChatMenuProps> = ({
       </DropdownMenu.Trigger>
       <DropdownMenu.Content style={{ minWidth: '192px' }}>
         <DropdownMenu.Item shortcut="">
-          <Flex direction="row" align="center" justify="start" gap="4" width="100%">
-          <ConfigurationIcon size="16" /> Configure
+          <Flex
+            direction="row"
+            align="center"
+            justify="start"
+            gap="4"
+            width="100%"
+          >
+            <ConfigurationIcon size="16" /> Configure
           </Flex>
         </DropdownMenu.Item>
         <DropdownMenu.Separator />
         <DropdownMenu.Item color="tomato" onClick={onDeleteClick}>
-          <Flex direction="row" align="center" justify="start" gap="4" width="100%">
-          <DeleteIcon size="16" /> Delete
+          <Flex
+            direction="row"
+            align="center"
+            justify="start"
+            gap="4"
+            width="100%"
+          >
+            <DeleteIcon size="16" /> Delete
           </Flex>
         </DropdownMenu.Item>
       </DropdownMenu.Content>

@@ -46,7 +46,7 @@ func (m *Chats) AddMessage(ctx context.Context, chatID domain.ChatID, message do
 		VALUES (?, ?, ?, ?, ?)`,
 		message.ID,
 		chatID,
-		message.Sender,
+		message.Sender.String(),
 		message.Text,
 		message.CreatedAt.Format(time.RFC3339Nano),
 	)
@@ -81,11 +81,12 @@ func (c *Chats) AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain
 	var messages []domain.Message
 	for rows.Next() {
 		var (
-			message   domain.Message
 			createdAt string
 			err       error
+			message   domain.Message
+			sender    string
 		)
-		if err := rows.Scan(&message.ID, &message.Sender, &message.Text, &createdAt); err != nil {
+		if err := rows.Scan(&message.ID, &sender, &message.Text, &createdAt); err != nil {
 			return nil, fmt.Errorf("failed to scan message: %w", err)
 		}
 
@@ -93,6 +94,8 @@ func (c *Chats) AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse message.created_at: %w", err)
 		}
+
+		message.Sender = domain.NewSender(sender)
 
 		messages = append(messages, message)
 	}

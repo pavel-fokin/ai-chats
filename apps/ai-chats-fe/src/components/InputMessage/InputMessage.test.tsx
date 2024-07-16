@@ -18,7 +18,6 @@ test('updates input message text on change', () => {
 
 test('calls handleSend with correct message on send click', () => {
   const handleSendMock = vi.fn();
-  const sender = 'User';
   const text = 'Hello, world!';
 
   render(<InputMessage handleSend={handleSendMock} />);
@@ -31,13 +30,12 @@ test('calls handleSend with correct message on send click', () => {
   fireEvent.change(inputElement, { target: { value: text } });
   fireEvent.click(sendButton);
 
-  expect(handleSendMock).toHaveBeenCalledWith({ sender, text });
+  expect(handleSendMock).toHaveBeenCalledWith(text);
   expect(inputElement.value).toBe('Hello, world!');
 });
 
 test('calls handleSend with correct message on enter key press', () => {
   const handleSendMock = vi.fn();
-  const sender = 'User';
   const text = 'Hello, world!';
 
   render(<InputMessage handleSend={handleSendMock} />);
@@ -51,7 +49,7 @@ test('calls handleSend with correct message on enter key press', () => {
   // fireEvent.keyDown(inputElement, { key: 'Enter', code: 13, charCode: 13 });
   fireEvent.submit(form);
 
-  expect(handleSendMock).toHaveBeenCalledWith({ sender, text });
+  expect(handleSendMock).toHaveBeenCalledWith(text);
   expect(inputElement.value).toBe('Hello, world!');
 });
 

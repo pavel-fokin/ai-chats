@@ -8,12 +8,12 @@ import (
 
 type Message struct {
 	ID        uuid.UUID `json:"id"`
-	Sender    string    `json:"sender"`
+	Sender    Sender    `json:"sender"`
 	Text      string    `json:"text"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func NewMessage(sender string, text string) Message {
+func NewMessage(sender Sender, text string) Message {
 	return Message{
 		ID:        uuid.New(),
 		Sender:    sender,
@@ -23,17 +23,21 @@ func NewMessage(sender string, text string) Message {
 }
 
 func NewUserMessage(user User, text string) Message {
-	return NewMessage("User", text)
+	return NewMessage(
+		NewUserSender(user), text,
+	)
 }
 
 func NewModelMessage(model Model, text string) Message {
-	return NewMessage("AI", text)
+	return NewMessage(
+		NewModelSender(model), text,
+	)
 }
 
 func (m Message) IsFromUser() bool {
-	return m.Sender == "User"
+	return m.Sender.IsUser()
 }
 
 func (m Message) IsFromModel() bool {
-	return m.Sender == "AI"
+	return m.Sender.IsModel()
 }

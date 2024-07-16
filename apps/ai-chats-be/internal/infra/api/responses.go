@@ -84,7 +84,7 @@ func NewGetMessagesResponse(messages []domain.Message) GetMessagesResponse {
 		res.Messages = append(res.Messages, Message{
 			ID:        message.ID.String(),
 			Text:      message.Text,
-			Sender:    message.Sender,
+			Sender:    message.Sender.Format(),
 			CreatedAt: message.CreatedAt.Format(time.RFC3339Nano),
 		})
 	}

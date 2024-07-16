@@ -33,8 +33,7 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
         <AlertDialog.Description size="2">
           <Flex direction="column" gap="2">
             <Text>
-              The chat "<Strong>{`${chat.data?.title}`}</Strong>" will be
-              deleted.
+              The chat <Strong>{`${chat.data?.title}`}</Strong> will be deleted.
             </Text>
           </Flex>
         </AlertDialog.Description>
