@@ -4,27 +4,23 @@ import { Box, Flex, IconButton } from '@radix-ui/themes';
 
 import { SendIcon } from 'components/ui/icons';
 import { TextArea } from 'components';
-import * as types from 'types';
 
 type InputMessageProps = {
-  handleSend: (msg: types.Message) => void;
+  handleSend: (text: string) => void;
 };
 
 function InputMessage({ handleSend }: InputMessageProps) {
-  const [inputMessage, setInputMessage] = useState<types.Message>({
-    sender: '',
-    text: '',
-  });
+  const [inputText, setInputText] = useState<string>('');
 
   const onInputChangeArea = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputMessage({ ...inputMessage, text: event.target.value });
+    setInputText(event.target.value);
   };
 
   const onSendClick = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputMessage.text.trim() !== '') {
-      handleSend({ sender: 'User', text: inputMessage.text });
-      setInputMessage({ sender: '', text: '' });
+    if (inputText.trim() !== '') {
+      handleSend(inputText);
+      setInputText('');
     }
   };
 
@@ -40,7 +36,7 @@ function InputMessage({ handleSend }: InputMessageProps) {
       >
         <Box flexGrow="1">
           <TextArea
-            value={inputMessage.text}
+            value={inputText}
             onChange={onInputChangeArea}
             placeholder="Type a message"
           />

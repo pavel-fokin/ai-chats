@@ -11,7 +11,6 @@ import {
 } from 'components';
 import { Header, PageLayout } from 'components/layout';
 import { useChatEvents, useMessages, useSendMessage } from 'hooks';
-import * as types from 'types';
 
 import { ChatMenu } from './components/ChatMenu';
 import { DeleteDialog } from './components/DeleteDialog/DeleteDialog';
@@ -23,8 +22,8 @@ export const Chat = () => {
   const sendMessage = useSendMessage(chatId!);
   const { messageChunk } = useChatEvents(chatId!);
 
-  const handleSend = async (msg: types.Message) => {
-    sendMessage.mutate({ sender: 'human', text: msg.text });
+  const handleSend = async (text: string) => {
+    sendMessage.mutate(text);
   };
 
   return (

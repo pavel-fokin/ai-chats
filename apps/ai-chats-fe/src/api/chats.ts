@@ -1,5 +1,3 @@
-import { Message } from 'types';
-
 import { client } from './baseAxios';
 import { PostChatsRequest } from './requests';
 import {
@@ -49,6 +47,6 @@ export const getMessages = async (
   return resp.data;
 };
 
-export const postMessages = async (chatId: string, message: Message) => {
-  await client.post(`/chats/${chatId}/messages`, message);
+export const postMessages = async (chatId: string, text: string) => {
+  await client.post(`/chats/${chatId}/messages`, { text: text });
 };

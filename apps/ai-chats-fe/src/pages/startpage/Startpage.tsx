@@ -19,11 +19,11 @@ export const Startpage: React.FC = () => {
   const createChat = useCreateChat();
   const ollamaModels = useOllamaModels();
 
-  const handleSend = async (msg: { text: string }) => {
+  const handleSend = async (text: string) => {
     createChat.mutate(
       {
         defaultModel: `${selectedModel?.name}:${selectedModel?.tag}`,
-        message: msg.text,
+        message: text,
       },
       {
         onSuccess: ({ data }) => {

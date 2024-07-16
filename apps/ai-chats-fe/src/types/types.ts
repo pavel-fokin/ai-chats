@@ -1,16 +1,3 @@
-export type Chat = {
-  id: string;
-  title: string;
-  createdAt: string;
-};
-
-export type Message = {
-  id: string;
-  sender: string;
-  text: string;
-  createdAt: string;
-};
-
 export type MessageChunk = {
   id: string;
   sender: string;

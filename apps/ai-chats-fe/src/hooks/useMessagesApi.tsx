@@ -6,7 +6,6 @@ import {
 } from '@tanstack/react-query';
 
 import { getMessages, postMessages } from 'api';
-import { Message } from 'types';
 
 export const useMessages = (chatId: string | undefined) => {
   return useQuery({
@@ -18,8 +17,8 @@ export const useMessages = (chatId: string | undefined) => {
 
 export const useSendMessage = (chatId: string) => {
   return useMutation({
-    mutationFn: (msg: Message) => {
-      return postMessages(chatId, msg);
+    mutationFn: (text: string) => {
+      return postMessages(chatId, text);
     },
   });
 };
