@@ -47,7 +47,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({ model }) => {
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger>
-        <Button size="2" variant="soft" loading={deleteModel.isPending}>
+        <Button size="2" variant="soft" color="tomato" loading={deleteModel.isPending}>
           Delete
         </Button>
       </AlertDialog.Trigger>
