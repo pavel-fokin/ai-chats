@@ -26,7 +26,7 @@ func NewUserMessage(user User, text string) Message {
 	return NewMessage("User", text)
 }
 
-func NewModelMessage(text string) Message {
+func NewModelMessage(model Model, text string) Message {
 	return NewMessage("AI", text)
 }
 

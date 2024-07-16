@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/ollama/ollama/api"
 
@@ -39,9 +38,7 @@ func (o *OllamaModels) List(ctx context.Context) ([]domain.Model, error) {
 		fmt.Println("model.Digest", model.Digest)
 		fmt.Println("model.Details", model.Details)
 		fmt.Println("")
-		name := strings.Split(model.Model, ":")[0]
-		tag := strings.Split(model.Model, ":")[1]
-		models = append(models, domain.NewModel(name, tag))
+		models = append(models, domain.NewModel(model.Model))
 	}
 
 	return models, nil

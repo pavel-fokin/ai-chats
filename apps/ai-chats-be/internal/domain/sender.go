@@ -10,6 +10,10 @@ type Sender struct {
 	sender string
 }
 
+func NewSender(sender string) Sender {
+	return Sender{sender: sender}
+}
+
 // NewUserSender creates a new user sender.
 func NewUserSender(user User) Sender {
 	return Sender{sender: fmt.Sprintf("user:%s", user.ID)}

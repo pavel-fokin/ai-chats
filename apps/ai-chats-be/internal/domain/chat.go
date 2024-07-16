@@ -23,17 +23,17 @@ type Chat struct {
 	ID           ChatID    `json:"id"`
 	Title        string    `json:"title"`
 	User         User      `json:"user"`
-	DefaultModel string    `json:"default_model"`
+	DefaultModel Model     `json:"default_model"`
 	CreatedAt    time.Time `json:"created_at"`
 	DeletedAt    time.Time `json:"deleted_at"`
 }
 
-func NewChat(user User, defaultModel string) Chat {
+func NewChat(user User, model Model) Chat {
 	return Chat{
 		ID:           NewChatID(),
 		Title:        "New chat",
 		User:         user,
-		DefaultModel: defaultModel,
+		DefaultModel: model,
 		CreatedAt:    time.Now().UTC(),
 	}
 }

@@ -49,8 +49,8 @@ func TestGetOllamaModels(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		models := []domain.Model{
-			domain.NewModel("model1", "latest"),
-			domain.NewModel("model2", "latest"),
+			domain.NewModel("model1"),
+			domain.NewModel("model2"),
 		}
 
 		mockOllamaApp := &MockOllamaApp{}

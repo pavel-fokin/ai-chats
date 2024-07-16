@@ -23,7 +23,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 		return fmt.Errorf("failed to get messages: %w", err)
 	}
 
-	llm, err := ollama.NewOllama(chat.DefaultModel)
+	llm, err := ollama.NewOllama(chat.DefaultModel.String())
 	if err != nil {
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}
@@ -64,7 +64,7 @@ func (a *App) GenerateTitle(ctx context.Context, chatID domain.ChatID) error {
 		return fmt.Errorf("failed to get messages: %w", err)
 	}
 
-	llm, err := ollama.NewOllama(chat.DefaultModel)
+	llm, err := ollama.NewOllama(chat.DefaultModel.String())
 	if err != nil {
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}

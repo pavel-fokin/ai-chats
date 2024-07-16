@@ -35,7 +35,7 @@ func (a *App) CreateChat(ctx context.Context, userID uuid.UUID, model, text stri
 	}
 
 	var message domain.Message
-	chat := domain.NewChat(user, model)
+	chat := domain.NewChat(user, domain.NewModel(model))
 	if err := a.tx.Tx(ctx, func(ctx context.Context) error {
 		if err := a.chats.Add(ctx, chat); err != nil {
 			return fmt.Errorf("failed to add a chat: %w", err)

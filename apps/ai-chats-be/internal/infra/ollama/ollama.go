@@ -30,10 +30,10 @@ func (l *LLM) GenerateResponse(ctx context.Context, history []domain.Message) (d
 	messages := []api.Message{}
 	for _, message := range history {
 		role := ""
-		switch message.Sender {
-		case "AI":
+		switch {
+		case message.IsFromModel():
 			role = "assistant"
-		case "User":
+		case message.IsFromUser():
 			role = "user"
 		default:
 			return domain.Message{}, fmt.Errorf("unknown sender: %s", message.Sender)
@@ -50,9 +50,12 @@ func (l *LLM) GenerateResponse(ctx context.Context, history []domain.Message) (d
 		Stream:   new(bool),
 	}
 
-	llmMessage := domain.Message{}
+	llmMessage := domain.NewModelMessage(
+		domain.NewModel(l.model),
+		"",
+	)
 	respFunc := func(resp api.ChatResponse) error {
-		llmMessage = domain.NewModelMessage(resp.Message.Content)
+		llmMessage.Text = resp.Message.Content
 		return nil
 	}
 
@@ -90,7 +93,8 @@ func (l *LLM) GenerateResponseWithStream(
 		Messages: messages,
 	}
 
-	llmMessage := domain.NewModelMessage("")
+	model := domain.NewModel(l.model)
+	llmMessage := domain.NewModelMessage(model, "")
 	respFunc := func(resp api.ChatResponse) error {
 		llmMessage.Text += resp.Message.Content
 
@@ -118,10 +122,10 @@ func (l *LLM) GenerateTitle(ctx context.Context, history []domain.Message) (stri
 	messages := []api.Message{}
 	for _, message := range history {
 		role := ""
-		switch message.Sender {
-		case "AI":
+		switch {
+		case message.IsFromModel():
 			role = "assistant"
-		case "User":
+		case message.IsFromUser():
 			role = "user"
 		default:
 			return "", fmt.Errorf("unknown sender: %s", message.Sender)
