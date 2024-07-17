@@ -46,7 +46,7 @@ func NewResponse(data any, errors []Error) Response {
 	return Response{Data: data, Errors: errors}
 }
 
-type SignInResponse struct {
+type LogInResponse struct {
 	AccessToken string `json:"accessToken"`
 }
 

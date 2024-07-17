@@ -11,7 +11,7 @@ import (
 func (a *App) LogIn(ctx context.Context, username, password string) (domain.User, error) {
 	user, err := a.users.FindByUsernameWithPassword(ctx, username)
 	if err != nil {
-		return domain.User{}, fmt.Errorf("failed to find a user: %w", err)
+		return domain.User{}, fmt.Errorf("failed to find a user by username: %w", err)
 	}
 
 	if err := user.VerifyPassword(password); err != nil {
@@ -26,12 +26,7 @@ func (a *App) SignUp(ctx context.Context, username, password string) (domain.Use
 	user := domain.NewUser(username, password)
 
 	if err := a.users.Add(ctx, user); err != nil {
-		switch err {
-		case domain.ErrUserAlreadyExists:
-			return domain.User{}, fmt.Errorf("failed to add a user: %w", domain.ErrUserAlreadyExists)
-		default:
-			return domain.User{}, fmt.Errorf("failed to add a user: %w", err)
-		}
+		return domain.User{}, fmt.Errorf("failed to add a user: %w", err)
 	}
 
 	return user, nil

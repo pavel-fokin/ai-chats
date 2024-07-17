@@ -37,6 +37,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
     return (
       <textarea
+        autoFocus
         ref={textareaRef}
         value={value}
         onChange={handleChange}

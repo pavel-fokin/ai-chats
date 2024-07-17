@@ -6,13 +6,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type SenderType string
-
-const (
-	AI    SenderType = "AI"
-	Human SenderType = "human"
-)
-
 type ChatID = uuid.UUID
 
 func NewChatID() ChatID {

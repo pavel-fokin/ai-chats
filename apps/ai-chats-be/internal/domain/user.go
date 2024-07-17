@@ -9,7 +9,7 @@ import (
 type UserID = uuid.UUID
 
 type User struct {
-	ID           uuid.UUID
+	ID           UserID
 	Username     string
 	PasswordHash string
 }
@@ -39,5 +39,8 @@ func (u *User) SetPassword(password string) error {
 
 // VerifyPassword compares a password with a hash.
 func (u User) VerifyPassword(password string) error {
-	return crypto.VerifyPassword(u.PasswordHash, password)
+	if err := crypto.VerifyPassword(u.PasswordHash, password); err != nil {
+		return ErrInvalidPassword
+	}
+	return nil
 }

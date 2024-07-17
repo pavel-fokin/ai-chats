@@ -23,7 +23,7 @@ type UserCredentials struct {
 	Password string `json:"password" validate:"required"`
 }
 
-type SignInRequest struct {
+type LogInRequest struct {
 	UserCredentials
 }
 

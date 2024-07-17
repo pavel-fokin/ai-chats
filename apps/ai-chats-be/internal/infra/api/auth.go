@@ -20,30 +20,35 @@ func LogIn(app Auth) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		var req SignInRequest
+		var req LogInRequest
 		if err := ParseJSON(r, &req); err != nil {
 			slog.ErrorContext(ctx, "failed to parse request body", "err", err)
-			AsErrorResponse(w, err, http.StatusBadRequest)
+			WriteErrorResponse(w, http.StatusBadRequest, BadRequest)
 			return
 		}
 
 		user, err := app.LogIn(ctx, req.Username, req.Password)
 		if err != nil {
-			slog.ErrorContext(ctx, "failed to sign in user", "err", err)
-			AsErrorResponse(w, err, http.StatusInternalServerError)
+			slog.ErrorContext(ctx, fmt.Sprintf("failed to sign in user - %s", req.Username), "err", err)
+			switch {
+			case errors.Is(err, domain.ErrUserNotFound):
+				WriteErrorResponse(w, http.StatusUnauthorized, UsernameOrPasswordIsIncorrect)
+			case errors.Is(err, domain.ErrInvalidPassword):
+				WriteErrorResponse(w, http.StatusUnauthorized, UsernameOrPasswordIsIncorrect)
+			default:
+				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
+			}
 			return
 		}
 
 		accessToken, err := NewAccessToken(user.ID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create access token", "err", err)
-			AsErrorResponse(w, err, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 
-		AsSuccessResponse(w, &SignInResponse{
-			AccessToken: accessToken,
-		}, http.StatusOK)
+		WriteSuccessResponse(w, http.StatusOK, LogInResponse{accessToken})
 	}
 }
 
@@ -65,11 +70,10 @@ func SignUp(app Auth) http.HandlerFunc {
 			switch {
 			case errors.Is(err, domain.ErrUserAlreadyExists):
 				WriteErrorResponse(w, http.StatusConflict, UsernameIsTaken)
-				return
 			default:
 				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
-				return
 			}
+			return
 		}
 
 		accessToken, err := NewAccessToken(user.ID)

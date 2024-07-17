@@ -67,6 +67,6 @@ func TestSqliteFindByUsernameWithPassword(t *testing.T) {
 
 	t.Run("user not found", func(t *testing.T) {
 		_, err := users.FindByUsernameWithPassword(context.Background(), "unknown")
-		assert.Error(t, err)
+		assert.ErrorIs(t, err, domain.ErrUserNotFound)
 	})
 }

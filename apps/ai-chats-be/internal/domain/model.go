@@ -5,16 +5,6 @@ import (
 	"strings"
 )
 
-// type ModelID uuid.UUID
-
-// func NewModelID() ModelID {
-// 	return ModelID(uuid.New())
-// }
-
-// func (m ModelID) MarshalJSON() ([]byte, error) {
-// 	return json.Marshal(uuid.UUID(m))
-// }
-
 type Model struct {
 	Name string `json:"name"`
 	Tag  string `json:"tag"`
@@ -32,6 +22,7 @@ func NewModel(model string) Model {
 		name = parts[0]
 		tag = parts[1]
 	}
+
 	return Model{
 		Name: name,
 		Tag:  tag,

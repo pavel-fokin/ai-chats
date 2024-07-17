@@ -89,4 +89,31 @@ test('validation errors are displayed when submitting an empty form', async () =
   });
 });
 
-test('displays error message on unsuccessful log in', async () => {});
+test('displays error message on unsuccessful log in', async () => {
+  server.use(
+    http.post('/api/auth/login', () => {
+      return HttpResponse.json(
+        { errors: [{ message: 'Error' }] },
+        { status: 400 },
+      );
+    }),
+  );
+
+  renderWithRouter(<LogIn />, { route: '/app/login' });
+
+  const username = 'user';
+  const password = 'password';
+
+  const usernameInput = screen.getByPlaceholderText('Your username');
+  const passwordInput = screen.getByPlaceholderText('Your password');
+  const logInButton = screen.getByRole('button', { name: 'Log in' });
+
+  await userEvent.type(usernameInput, username);
+  await userEvent.type(passwordInput, password);
+
+  await userEvent.click(logInButton);
+
+  await waitFor(() => {
+    expect(screen.getByText('Error')).toBeInTheDocument();
+  });
+});

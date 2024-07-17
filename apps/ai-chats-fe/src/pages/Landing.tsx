@@ -26,7 +26,7 @@ export const Landing = () => {
                 lg: '8',
               }}
             >
-              Create and Manage Your AI Chats
+              Create and Manage Your AI Chats [*_*]
             </Heading>
             <Heading
               as="h2"
@@ -43,7 +43,7 @@ export const Landing = () => {
       <Box p="4">
         <footer>
           <Text as="p" align="center">
-            {new Date().getFullYear()} AI Chats``
+            {new Date().getFullYear()} AI Chats
           </Text>
         </footer>
       </Box>

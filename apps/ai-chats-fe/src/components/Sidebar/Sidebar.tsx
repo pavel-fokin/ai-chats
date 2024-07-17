@@ -97,7 +97,8 @@ export const Sidebar = () => {
             <NavigationMenu.Item>
               <Link aria-label="Ollama settings" to="/app/settings">
                 <Flex align="center" gap="3">
-                  <SettingsIcon size={24} /> <Text size="2">Ollama</Text>
+                  <SettingsIcon size={24} />{' '}
+                  <Text size="2">Ollama Settings</Text>
                 </Flex>
               </Link>
             </NavigationMenu.Item>

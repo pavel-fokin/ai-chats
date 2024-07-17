@@ -49,7 +49,12 @@ func (u *Users) FindByUsernameWithPassword(ctx context.Context, username string)
 		ctx, "SELECT id, password_hash FROM user WHERE username = ?;", username,
 	).Scan(&user.ID, &user.PasswordHash)
 	if err != nil {
-		return domain.User{}, fmt.Errorf("failed to select user: %w", err)
+		switch err {
+		case sql.ErrNoRows:
+			return domain.User{}, domain.ErrUserNotFound
+		default:
+			return domain.User{}, fmt.Errorf("failed to find user by username: %w", err)
+		}
 	}
 
 	return user, nil
@@ -65,7 +70,12 @@ func (u *Users) FindByID(ctx context.Context, id uuid.UUID) (domain.User, error)
 		ctx, "SELECT username FROM user WHERE id = ?;", id,
 	).Scan(&user.Username)
 	if err != nil {
-		return domain.User{}, fmt.Errorf("failed to find user by id: %w", err)
+		switch err {
+		case sql.ErrNoRows:
+			return domain.User{}, domain.ErrUserNotFound
+		default:
+			return domain.User{}, fmt.Errorf("failed to find user by id: %w", err)
+		}
 	}
 
 	return user, nil

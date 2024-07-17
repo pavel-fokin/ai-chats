@@ -34,7 +34,7 @@ func (m *MockUsers) FindByID(ctx context.Context, id uuid.UUID) (domain.User, er
 	return args.Get(0).(domain.User), args.Error(1)
 }
 
-func TestSignUp(t *testing.T) {
+func TestAppSignUp(t *testing.T) {
 	assert := assert.New(t)
 	ctx := context.Background()
 	crypto.InitBcryptCost(1)
@@ -79,7 +79,7 @@ func TestSignUp(t *testing.T) {
 	})
 }
 
-func TestSignIn(t *testing.T) {
+func TestAppLogIn(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 	crypto.InitBcryptCost(1)
@@ -87,18 +87,18 @@ func TestSignIn(t *testing.T) {
 	t.Run("user not found", func(t *testing.T) {
 		mockUsers := &MockUsers{}
 		mockUsers.On("FindByUsernameWithPassword", ctx, "username").
-			Return(domain.User{}, errors.New("user not found"))
+			Return(domain.User{}, domain.ErrUserNotFound)
 
 		app := &App{
 			users: mockUsers,
 		}
 
 		user, err := app.LogIn(ctx, "username", "password")
-		assert.ErrorContains(err, "failed to find a user: user not found")
+		assert.ErrorIs(err, domain.ErrUserNotFound)
 		assert.Equal(domain.User{}, user)
 	})
 
-	t.Run("user found", func(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
 		hashedPassword, err := crypto.HashPassword("password")
 		assert.NoError(err)
 
@@ -113,5 +113,22 @@ func TestSignIn(t *testing.T) {
 		user, err := app.LogIn(ctx, "username", "password")
 		assert.NoError(err)
 		assert.NotNil(user)
+	})
+
+	t.Run("failed to verify password", func(t *testing.T) {
+		hashedPassword, err := crypto.HashPassword("password")
+		assert.NoError(err)
+
+		mockUsers := &MockUsers{}
+		mockUsers.On("FindByUsernameWithPassword", ctx, "username").
+			Return(domain.User{PasswordHash: hashedPassword}, nil)
+
+		app := &App{
+			users: mockUsers,
+		}
+
+		user, err := app.LogIn(ctx, "username", "wrong_password")
+		assert.ErrorContains(err, "failed to verify password")
+		assert.Equal(domain.User{}, user)
 	})
 }

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Box, Flex, Heading } from '@radix-ui/themes';
+import { Box, Flex, Heading, Code } from '@radix-ui/themes';
 
 import { OllamaModel } from 'types';
 
@@ -31,7 +31,7 @@ export const ModelsList: React.FC<ModelsListProps> = ({
     <>
       <Box mb="4">
         <Heading as="h2" size="6" weight="bold">
-          Choose a model to chat 🤖
+          Choose a model to chat <Code variant="ghost">[*_*]</Code>
         </Heading>
       </Box>
       <Flex direction="column" gap="3">
