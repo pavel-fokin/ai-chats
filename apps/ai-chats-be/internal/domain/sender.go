@@ -20,7 +20,7 @@ func NewUserSender(user User) Sender {
 }
 
 // NewModelSender creates a new model sender.
-func NewModelSender(model Model) Sender {
+func NewModelSender(model OllamaModel) Sender {
 	return NewSender(fmt.Sprintf("model:%s", model.String()))
 }
 

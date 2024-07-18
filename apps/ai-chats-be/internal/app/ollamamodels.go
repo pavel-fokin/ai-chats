@@ -6,7 +6,7 @@ import (
 	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
 )
 
-func (a *App) ListModels(ctx context.Context) ([]domain.Model, error) {
+func (a *App) ListModels(ctx context.Context) ([]domain.OllamaModel, error) {
 	return a.ollama.List(ctx)
 }
 

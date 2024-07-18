@@ -120,10 +120,10 @@ func NewPostChatsResponse(chat domain.Chat) PostChatsResponse {
 }
 
 type GetOllamaModelsResponse struct {
-	Models []domain.Model `json:"models"`
+	Models []domain.OllamaModel `json:"models"`
 }
 
-func NewGetOllamaModelsResponse(models []domain.Model) GetOllamaModelsResponse {
+func NewGetOllamaModelsResponse(models []domain.OllamaModel) GetOllamaModelsResponse {
 	return GetOllamaModelsResponse{Models: models}
 }
 

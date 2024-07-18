@@ -11,7 +11,7 @@ import (
 )
 
 type OllamaApp interface {
-	ListModels(context.Context) ([]domain.Model, error)
+	ListModels(context.Context) ([]domain.OllamaModel, error)
 	PullModel(context.Context, string) error
 	DeleteModel(context.Context, string) error
 }

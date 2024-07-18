@@ -20,14 +20,14 @@ type MockOllamaApp struct {
 	mock.Mock
 }
 
-func (m *MockOllamaApp) ListModels(ctx context.Context) ([]domain.Model, error) {
+func (m *MockOllamaApp) ListModels(ctx context.Context) ([]domain.OllamaModel, error) {
 	args := m.Called(ctx)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).([]domain.Model), args.Error(1)
+	return args.Get(0).([]domain.OllamaModel), args.Error(1)
 }
 
 func (m *MockOllamaApp) PullModel(ctx context.Context, modelName string) error {
@@ -48,7 +48,7 @@ func TestGetOllamaModels(t *testing.T) {
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
-		models := []domain.Model{
+		models := []domain.OllamaModel{
 			domain.NewModel("model1"),
 			domain.NewModel("model2"),
 		}

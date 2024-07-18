@@ -23,13 +23,13 @@ func NewOllamaModels() *OllamaModels {
 	return &OllamaModels{client: client}
 }
 
-func (o *OllamaModels) List(ctx context.Context) ([]domain.Model, error) {
+func (o *OllamaModels) List(ctx context.Context) ([]domain.OllamaModel, error) {
 	resp, err := o.client.List(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	models := []domain.Model{}
+	models := []domain.OllamaModel{}
 	for _, model := range resp.Models {
 		fmt.Println("model.Name", model.Name)
 		fmt.Println("model.Model", model.Model)
@@ -44,7 +44,7 @@ func (o *OllamaModels) List(ctx context.Context) ([]domain.Model, error) {
 	return models, nil
 }
 
-func (o *OllamaModels) Pull(ctx context.Context, model domain.Model) error {
+func (o *OllamaModels) Pull(ctx context.Context, model domain.OllamaModel) error {
 	req := &api.PullRequest{
 		Model: model.Name + ":" + model.Tag,
 	}
@@ -61,7 +61,7 @@ func (o *OllamaModels) Pull(ctx context.Context, model domain.Model) error {
 	return nil
 }
 
-func (o *OllamaModels) Delete(ctx context.Context, model domain.Model) error {
+func (o *OllamaModels) Delete(ctx context.Context, model domain.OllamaModel) error {
 	req := &api.DeleteRequest{
 		Model: model.Name + ":" + model.Tag,
 	}

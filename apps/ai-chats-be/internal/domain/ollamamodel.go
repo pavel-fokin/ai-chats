@@ -5,14 +5,14 @@ import (
 	"strings"
 )
 
-type Model struct {
+type OllamaModel struct {
 	Name string `json:"name"`
 	Tag  string `json:"tag"`
 }
 
-func NewModel(model string) Model {
+func NewModel(model string) OllamaModel {
 	if model == "" {
-		return Model{}
+		return OllamaModel{}
 	}
 
 	name := model
@@ -23,24 +23,24 @@ func NewModel(model string) Model {
 		tag = parts[1]
 	}
 
-	return Model{
+	return OllamaModel{
 		Name: name,
 		Tag:  tag,
 	}
 }
 
-func (m Model) String() string {
+func (m OllamaModel) String() string {
 	if m.Tag == "" {
 		return m.Name
 	}
 	return fmt.Sprintf("%s:%s", m.Name, m.Tag)
 }
 
-func (m *Model) Scan(value interface{}) error {
+func (m *OllamaModel) Scan(value interface{}) error {
 	*m = NewModel(value.(string))
 	return nil
 }
 
-func (m Model) Value() (interface{}, error) {
+func (m OllamaModel) Value() (interface{}, error) {
 	return m.String(), nil
 }

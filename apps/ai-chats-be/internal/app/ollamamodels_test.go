@@ -13,22 +13,22 @@ type MockModels struct {
 	mock.Mock
 }
 
-func (m *MockModels) List(ctx context.Context) ([]domain.Model, error) {
+func (m *MockModels) List(ctx context.Context) ([]domain.OllamaModel, error) {
 	args := m.Called(ctx)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).([]domain.Model), args.Error(1)
+	return args.Get(0).([]domain.OllamaModel), args.Error(1)
 }
 
-func (m *MockModels) Pull(ctx context.Context, modelID domain.Model) error {
+func (m *MockModels) Pull(ctx context.Context, modelID domain.OllamaModel) error {
 	args := m.Called(ctx, modelID)
 	return args.Error(0)
 }
 
-func (m *MockModels) Delete(ctx context.Context, modelID domain.Model) error {
+func (m *MockModels) Delete(ctx context.Context, modelID domain.OllamaModel) error {
 	args := m.Called(ctx, modelID)
 	return args.Error(0)
 }
@@ -37,7 +37,7 @@ func TestOllamaAllModels(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("success", func(t *testing.T) {
-		models := []domain.Model{
+		models := []domain.OllamaModel{
 			domain.NewModel("model1"),
 			domain.NewModel("model2"),
 		}
