@@ -8,20 +8,19 @@ import (
 
 func TestModel(t *testing.T) {
 	t.Run("empty model", func(t *testing.T) {
-		model := NewModel("")
+		model := NewOllamaModel("")
 		assert.Equal(t, "", model.String())
 	})
 
 	t.Run("create a new model", func(t *testing.T) {
-		model := NewModel("model:latest")
+		model := NewOllamaModel("model:latest")
 
-		assert.Equal(t, "model", model.Name)
-		assert.Equal(t, "latest", model.Tag)
+		assert.Equal(t, "model:latest", model.Model)
 	})
 
 	t.Run("model as string", func(t *testing.T) {
-		model := NewModel("test:latest")
+		model := NewOllamaModel("model:latest")
 
-		assert.Equal(t, "test:latest", model.String())
+		assert.Equal(t, "model:latest", model.String())
 	})
 }

@@ -13,10 +13,10 @@ export const fetchOllamaModels = async (): Promise<GetOllamaResponse> => {
   return resp.data;
 };
 
-export const postOllamaModels = async (modelName: string) => {
-  await client.post('/ollama-models', { model: modelName });
+export const postOllamaModels = async (model: string) => {
+  await client.post('/ollama-models', { model: model });
 };
 
-export const deleteOllamaModels = async (modelName: string) => {
-  await client.delete(`/ollama-models/${modelName}`);
+export const deleteOllamaModels = async (model: string) => {
+  await client.delete(`/ollama-models/${model}`);
 };

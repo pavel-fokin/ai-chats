@@ -23,13 +23,13 @@ CREATE TABLE IF NOT EXISTS message (
     FOREIGN KEY (chat_id) REFERENCES chat(id)
 );
 
-CREATE TABLE IF NOT EXISTS model (
+CREATE TABLE IF NOT EXISTS ollama_model (
     model TEXT NOT NULL CHECK (length(model) > 0),
     description TEXT NOT NULL CHECK (length(description) > 0),
     PRIMARY KEY (model)
 );
 
-CREATE TABLE IF NOT EXISTS model_tag (
+CREATE TABLE IF NOT EXISTS ollama_model_tag (
     tag TEXT NOT NULL CHECK (length(tag) > 0),
     model_id TEXT NOT NULL CHECK (length(model_id) > 0),
     FOREIGN KEY (model_id) REFERENCES model(id),

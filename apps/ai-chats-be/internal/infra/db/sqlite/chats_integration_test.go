@@ -26,7 +26,7 @@ func TestSqliteAddChat(t *testing.T) {
 	user := domain.NewUser("test", "password")
 	err := users.Add(ctx, user)
 	assert.NoError(t, err)
-	model := domain.NewModel("model:latest")
+	model := domain.NewModel("model")
 
 	t.Run("valid", func(t *testing.T) {
 		chat := domain.NewChat(user, model)
@@ -77,7 +77,7 @@ func TestSqliteDeleteChat(t *testing.T) {
 		err := users.Add(ctx, user)
 		assert.NoError(err)
 
-		chat := domain.NewChat(user, domain.NewModel("model:latest"))
+		chat := domain.NewChat(user, domain.NewModel("model"))
 		err = chats.Add(ctx, chat)
 		assert.NoError(err)
 
@@ -129,7 +129,7 @@ func TestSqliteAllChats(t *testing.T) {
 
 		// Create some chats.
 		for i := 0; i < 3; i++ {
-			chat := domain.NewChat(user, domain.NewModel("model:latest"))
+			chat := domain.NewChat(user, domain.NewModel("model"))
 			err := chats.Add(context.Background(), chat)
 			assert.NoError(t, err)
 		}
@@ -149,7 +149,7 @@ func TestSqliteAllChats(t *testing.T) {
 			)
 			assert.NoError(t, err)
 
-			chat := domain.NewChat(user, domain.NewModel("model:latest"))
+			chat := domain.NewChat(user, domain.NewModel("model"))
 			err = chats.Add(context.Background(), chat)
 			assert.NoError(t, err)
 		}
@@ -174,7 +174,7 @@ func TestSqliteFindChat(t *testing.T) {
 		err := users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
-		chat := domain.NewChat(user, domain.NewModel("model:latest"))
+		chat := domain.NewChat(user, domain.NewModel("model"))
 		err = chats.Add(context.Background(), chat)
 		assert.NoError(t, err)
 
@@ -205,7 +205,7 @@ func TestSqliteChats_Exists(t *testing.T) {
 		err := users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
-		chat := domain.NewChat(user, domain.NewModel("model:latest"))
+		chat := domain.NewChat(user, domain.NewModel("model"))
 		err = chats.Add(context.Background(), chat)
 		assert.NoError(t, err)
 
@@ -233,7 +233,7 @@ func TestSqliteAddMessages(t *testing.T) {
 	users := NewUsers(db)
 	chats := NewChats(db)
 
-	model := domain.NewModel("model:latest")
+	model := domain.NewModel("model")
 	user := domain.NewUser("username", "password")
 	err := users.Add(ctx, user)
 	assert.NoError(err)
@@ -297,7 +297,7 @@ func TestSqliteAllMessages(t *testing.T) {
 	users := NewUsers(db)
 	chats := NewChats(db)
 
-	model := domain.NewModel("model:latest")
+	model := domain.NewModel("model")
 	user := domain.NewUser("username", "password")
 	err := users.Add(ctx, user)
 	assert.NoError(err)

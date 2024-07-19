@@ -28,7 +28,7 @@ func NewUserMessage(user User, text string) Message {
 	)
 }
 
-func NewModelMessage(model OllamaModel, text string) Message {
+func NewModelMessage(model Model, text string) Message {
 	return NewMessage(
 		NewModelSender(model), text,
 	)

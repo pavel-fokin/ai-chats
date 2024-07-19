@@ -14,7 +14,7 @@ export const usePullOllamaModel = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (modelName: string) => postOllamaModels(modelName),
+    mutationFn: (model: string) => postOllamaModels(model),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['ollama-models'],
@@ -27,7 +27,7 @@ export const useDeleteOllamaModel = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (modelName: string) => deleteOllamaModels(modelName),
+    mutationFn: (model: string) => deleteOllamaModels(model),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['ollama-models'],

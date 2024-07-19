@@ -31,14 +31,13 @@ func (o *OllamaModels) List(ctx context.Context) ([]domain.OllamaModel, error) {
 
 	models := []domain.OllamaModel{}
 	for _, model := range resp.Models {
-		fmt.Println("model.Name", model.Name)
-		fmt.Println("model.Model", model.Model)
-		fmt.Println("model.ModifiedAt", model.ModifiedAt)
-		fmt.Println("model.Size", model.Size)
-		fmt.Println("model.Digest", model.Digest)
-		fmt.Println("model.Details", model.Details)
-		fmt.Println("")
-		models = append(models, domain.NewModel(model.Model))
+		// fmt.Println("model.Model", model.Model)
+		// fmt.Println("model.ModifiedAt", model.ModifiedAt)
+		// fmt.Println("model.Size", model.Size)
+		// fmt.Println("model.Digest", model.Digest)
+		// fmt.Println("model.Details", model.Details)
+		// fmt.Println("")
+		models = append(models, domain.NewOllamaModel(model.Model))
 	}
 
 	return models, nil
@@ -46,7 +45,7 @@ func (o *OllamaModels) List(ctx context.Context) ([]domain.OllamaModel, error) {
 
 func (o *OllamaModels) Pull(ctx context.Context, model domain.OllamaModel) error {
 	req := &api.PullRequest{
-		Model: model.Name + ":" + model.Tag,
+		Model: model.Model,
 	}
 
 	progressFunc := func(resp api.ProgressResponse) error {
@@ -63,7 +62,7 @@ func (o *OllamaModels) Pull(ctx context.Context, model domain.OllamaModel) error
 
 func (o *OllamaModels) Delete(ctx context.Context, model domain.OllamaModel) error {
 	req := &api.DeleteRequest{
-		Model: model.Name + ":" + model.Tag,
+		Model: model.Model,
 	}
 
 	if err := o.client.Delete(ctx, req); err != nil {

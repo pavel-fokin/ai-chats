@@ -19,10 +19,10 @@ export const Model: React.FC<ModelProps> = ({ model }) => {
     <Flex
       direction="column"
       gap="2"
-      key={`${model.name}:${model.tag}`}
+      key={`${model.model}`}
       width="100%"
     >
-      <Heading as="h2">{`${model.name}:${model.tag}`}</Heading>
+      <Heading as="h2">{`${model.model}`}</Heading>
       <Text>
         Meta Llama 3: The most capable openly available LLM to date 8B.
       </Text>
@@ -61,7 +61,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({ model }) => {
         <AlertDialog.Description size="2">
           <Text>
             Are you sure? The model{' '}
-            <Strong>{`${model.name}:${model.tag}`}</Strong> will not be
+            <Strong>{`${model.model}`}</Strong> will not be
             available locally.
           </Text>
         </AlertDialog.Description>
@@ -74,7 +74,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({ model }) => {
             <Button
               variant="solid"
               color="tomato"
-              onClick={() => handleDelete(model.name)}
+              onClick={() => handleDelete(model.model)}
             >
               Delete model
             </Button>

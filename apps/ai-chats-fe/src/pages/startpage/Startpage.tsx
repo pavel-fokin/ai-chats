@@ -22,7 +22,7 @@ export const Startpage: React.FC = () => {
   const handleSend = async (text: string) => {
     createChat.mutate(
       {
-        defaultModel: `${selectedModel?.name}:${selectedModel?.tag}`,
+        defaultModel: `${selectedModel?.model}`,
         message: text,
       },
       {

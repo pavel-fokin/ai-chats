@@ -1,46 +1,24 @@
 package domain
 
-import (
-	"fmt"
-	"strings"
-)
-
 type OllamaModel struct {
-	Name string `json:"name"`
-	Tag  string `json:"tag"`
+	Model string `json:"model"`
 }
 
-func NewModel(model string) OllamaModel {
-	if model == "" {
-		return OllamaModel{}
-	}
-
-	name := model
-	tag := "latest"
-	if strings.Contains(model, ":") {
-		parts := strings.Split(model, ":")
-		name = parts[0]
-		tag = parts[1]
-	}
-
+func NewOllamaModel(model string) OllamaModel {
 	return OllamaModel{
-		Name: name,
-		Tag:  tag,
+		Model: model,
 	}
 }
 
 func (m OllamaModel) String() string {
-	if m.Tag == "" {
-		return m.Name
-	}
-	return fmt.Sprintf("%s:%s", m.Name, m.Tag)
+	return m.Model
 }
 
-func (m *OllamaModel) Scan(value interface{}) error {
-	*m = NewModel(value.(string))
+func (m *OllamaModel) Scan(value any) error {
+	*m = NewOllamaModel(value.(string))
 	return nil
 }
 
-func (m OllamaModel) Value() (interface{}, error) {
+func (m OllamaModel) Value() (any, error) {
 	return m.String(), nil
 }

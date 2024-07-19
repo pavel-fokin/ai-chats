@@ -14,27 +14,26 @@ func TestOllamaModels(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
-	ollama, err := NewOllamaModels()
-	assert.NoError(err)
+	ollama := NewOllamaModels()
 
-	t.Run("List", func(t *testing.T) {
+	t.Run("list", func(t *testing.T) {
 		_, err := ollama.List(ctx)
 		assert.NoError(err)
 	})
 
-	t.Run("Pull", func(t *testing.T) {
-		err := ollama.Pull(ctx, domain.NewModel("all-minilm", "latest"))
+	t.Run("pull", func(t *testing.T) {
+		err := ollama.Pull(ctx, domain.NewOllamaModel("all-minilm"))
 		assert.NoError(err)
 	})
 
-	t.Run("Check if model exists", func(t *testing.T) {
+	t.Run("check if model exists", func(t *testing.T) {
 		models, err := ollama.List(ctx)
 		assert.NoError(err)
 		assert.NotEmpty(models)
 
 		modelExists := false
 		for _, model := range models {
-			if model.Name == "all-minilm" && model.Tag == "latest" {
+			if model.Model == "all-minilm:latest" {
 				modelExists = true
 				break
 			}
@@ -43,8 +42,8 @@ func TestOllamaModels(t *testing.T) {
 		assert.True(modelExists)
 	})
 
-	t.Run("Delete", func(t *testing.T) {
-		err := ollama.Delete(ctx, domain.NewModel("all-minilm", "latest"))
+	t.Run("delete", func(t *testing.T) {
+		err := ollama.Delete(ctx, domain.NewOllamaModel("all-minilm"))
 		assert.NoError(err)
 	})
 }

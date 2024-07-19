@@ -12,9 +12,7 @@ const queryClient = new QueryClient({
 });
 
 const mockModel = {
-  id: '1',
-  name: 'llama3',
-  tag: 'latest',
+  model: 'llama3:latest',
 };
 
 const renderComponent = (ui: JSX.Element) => {

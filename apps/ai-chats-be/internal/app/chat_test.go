@@ -78,7 +78,7 @@ func TestChat_Delete(t *testing.T) {
 
 		chat := domain.NewChat(
 			domain.NewUser("username", "password"),
-			domain.NewModel("model:latest"),
+			domain.NewModel("model"),
 		)
 
 		mockChats := &MockChats{}
@@ -116,7 +116,7 @@ func TestChat_FindById(t *testing.T) {
 	t.Run("chat exists", func(t *testing.T) {
 		chat := domain.NewChat(
 			domain.NewUser("username", "password"),
-			domain.NewModel("model:latest"),
+			domain.NewModel("model"),
 		)
 
 		mockChats := &MockChats{}

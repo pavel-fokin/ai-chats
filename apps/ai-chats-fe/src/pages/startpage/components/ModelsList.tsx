@@ -37,10 +37,10 @@ export const ModelsList: React.FC<ModelsListProps> = ({
       <Flex direction="column" gap="3">
         {ollamaModels.map((model) => (
           <Model
-            key={`${model.name}}`}
+            key={`${model.model}}`}
             model={model}
             isSelected={
-              selectedModel ? selectedModel.name === model.name : false
+              selectedModel ? selectedModel.model === model.model : false
             }
             onClick={onModelClick}
           />

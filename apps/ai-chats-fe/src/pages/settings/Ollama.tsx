@@ -58,7 +58,7 @@ export const OllamaSettings: React.FC = () => {
             </Flex>
           </form>
           {models.data?.map((model) => (
-            <Model key={model.name} model={model} />
+            <Model key={model.model} model={model} />
           ))}
         </Flex>
       </Box>

@@ -15,7 +15,7 @@ export const Model: React.FC<ModelProps> = ({ model, isSelected, onClick }) => {
         <Flex direction="column" gap="2" width="100%">
           <Flex align="center" justify="between">
             <Heading as="h3" size="4">
-              {model.name}
+              {model.model}
             </Heading>
             {isSelected && <Badge color="jade">Use model</Badge>}
           </Flex>

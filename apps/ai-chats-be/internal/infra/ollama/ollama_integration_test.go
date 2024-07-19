@@ -12,25 +12,29 @@ import (
 )
 
 func TestOllamaGenerateResponse(t *testing.T) {
-	llm, err := NewOllama("llama3")
+	user := domain.NewUser("username", "password")
+
+	llm, err := NewOllama(domain.NewOllamaModel("llama3"))
 	assert.NoError(t, err)
 
 	llmResponse, err := llm.GenerateResponse(context.Background(), []domain.Message{
-		{Sender: "User", Text: "Hi"},
+		{Sender: domain.NewUserSender(user), Text: "Hi"},
 	})
 	assert.NoError(t, err)
 	assert.NotEmpty(t, llmResponse.Text)
 }
 
 func TestOllamaGenerateResponseWithStream(t *testing.T) {
-	llm, err := NewOllama("llama3")
+	user := domain.NewUser("username", "password")
+
+	llm, err := NewOllama(domain.NewOllamaModel("llama3"))
 	assert.NoError(t, err)
 
 	messageChunkReceived := events.MessageChunkReceived{}
 	llmResponse, err := llm.GenerateResponseWithStream(
 		context.Background(),
 		[]domain.Message{
-			{Sender: "User", Text: "Hi"},
+			{Sender: domain.NewUserSender(user), Text: "Hi"},
 		},
 		func(messageChunk events.MessageChunkReceived) error {
 			messageChunkReceived = messageChunk

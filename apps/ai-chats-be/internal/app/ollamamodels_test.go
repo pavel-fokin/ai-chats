@@ -38,8 +38,8 @@ func TestOllamaAllModels(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		models := []domain.OllamaModel{
-			domain.NewModel("model1"),
-			domain.NewModel("model2"),
+			domain.NewOllamaModel("model1"),
+			domain.NewOllamaModel("model2"),
 		}
 
 		mockModels := new(MockModels)

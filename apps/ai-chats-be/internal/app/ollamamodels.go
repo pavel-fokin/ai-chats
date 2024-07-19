@@ -11,9 +11,9 @@ func (a *App) ListModels(ctx context.Context) ([]domain.OllamaModel, error) {
 }
 
 func (a *App) PullModel(ctx context.Context, model string) error {
-	return a.ollama.Pull(ctx, domain.NewModel(model))
+	return a.ollama.Pull(ctx, domain.NewOllamaModel(model))
 }
 
 func (a *App) DeleteModel(ctx context.Context, model string) error {
-	return a.ollama.Delete(ctx, domain.NewModel(model))
+	return a.ollama.Delete(ctx, domain.NewOllamaModel(model))
 }

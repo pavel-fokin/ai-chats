@@ -13,15 +13,15 @@ func NewChatID() ChatID {
 }
 
 type Chat struct {
-	ID           ChatID      `json:"id"`
-	Title        string      `json:"title"`
-	User         User        `json:"user"`
-	DefaultModel OllamaModel `json:"default_model"`
-	CreatedAt    time.Time   `json:"created_at"`
-	DeletedAt    time.Time   `json:"deleted_at"`
+	ID           ChatID    `json:"id"`
+	Title        string    `json:"title"`
+	User         User      `json:"user"`
+	DefaultModel Model     `json:"default_model"`
+	CreatedAt    time.Time `json:"created_at"`
+	DeletedAt    time.Time `json:"deleted_at"`
 }
 
-func NewChat(user User, model OllamaModel) Chat {
+func NewChat(user User, model Model) Chat {
 	return Chat{
 		ID:           NewChatID(),
 		Title:        "New chat",

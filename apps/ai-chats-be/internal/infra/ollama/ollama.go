@@ -12,12 +12,12 @@ import (
 
 type LLM struct {
 	client *api.Client
-	model  string
+	model  domain.OllamaModel
 }
 
 type StreamFunc func(messageChunk events.MessageChunkReceived) error
 
-func NewOllama(model string) (*LLM, error) {
+func NewOllama(model domain.OllamaModel) (*LLM, error) {
 	client, err := api.ClientFromEnvironment()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a client: %w", err)
@@ -45,13 +45,13 @@ func (l *LLM) GenerateResponse(ctx context.Context, history []domain.Message) (d
 	}
 
 	req := &api.ChatRequest{
-		Model:    l.model,
+		Model:    l.model.String(),
 		Messages: messages,
 		Stream:   new(bool),
 	}
 
 	llmMessage := domain.NewModelMessage(
-		domain.NewModel(l.model),
+		domain.NewModel(l.model.String()),
 		"",
 	)
 	respFunc := func(resp api.ChatResponse) error {
@@ -89,11 +89,11 @@ func (l *LLM) GenerateResponseWithStream(
 	}
 
 	req := &api.ChatRequest{
-		Model:    l.model,
+		Model:    l.model.String(),
 		Messages: messages,
 	}
 
-	model := domain.NewModel(l.model)
+	model := domain.NewModel(l.model.String())
 	llmMessage := domain.NewModelMessage(model, "")
 	respFunc := func(resp api.ChatResponse) error {
 		llmMessage.Text += resp.Message.Content
@@ -142,7 +142,7 @@ func (l *LLM) GenerateTitle(ctx context.Context, history []domain.Message) (stri
 	})
 
 	req := &api.ChatRequest{
-		Model:    l.model,
+		Model:    l.model.String(),
 		Messages: messages,
 		Stream:   new(bool),
 	}
