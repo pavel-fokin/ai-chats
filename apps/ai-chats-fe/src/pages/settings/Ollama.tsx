@@ -3,13 +3,14 @@ import { Box, Flex, Heading, IconButton, TextField } from '@radix-ui/themes';
 import { HamburgerMenuButton, NewChatIconButton } from 'components';
 import { Header, PageLayout } from 'components/layout';
 import { DownloadIcon } from 'components/ui/icons';
-import { useOllamaModels, usePullOllamaModel } from 'hooks';
+import { useModelsLibrary, useOllamaModels, usePullOllamaModel } from 'hooks';
 
 import { Model } from './components/Model';
 
 export const OllamaSettings: React.FC = () => {
   const models = useOllamaModels();
   const pullModel = usePullOllamaModel();
+  const modelsLibrary = useModelsLibrary();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

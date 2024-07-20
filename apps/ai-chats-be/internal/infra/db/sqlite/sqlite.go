@@ -24,6 +24,13 @@ func CreateTables(db *sql.DB) {
 	}
 }
 
+func LoadFixtures(db *sql.DB) {
+	_, err := db.Exec(FixturesSqlite)
+	if err != nil {
+		log.Fatalf("Failed to load fixtures: %v", err)
+	}
+}
+
 // DBTX is an interface for database connections or transactions.
 type DBTX interface {
 	Exec(query string, args ...interface{}) (sql.Result, error)

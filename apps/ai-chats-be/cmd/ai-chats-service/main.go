@@ -44,6 +44,7 @@ func main() {
 	defer db.Close()
 
 	sqlite.CreateTables(db)
+	sqlite.LoadFixtures(db)
 
 	pubsub := pubsub.New()
 	// defer pubsub.CloseAll()
@@ -51,6 +52,7 @@ func main() {
 	app := app.New(
 		sqlite.NewChats(db),
 		sqlite.NewUsers(db),
+		sqlite.NewModels(db),
 		ollama.NewOllamaModels(),
 		pubsub,
 		sqlite.NewTx(db),

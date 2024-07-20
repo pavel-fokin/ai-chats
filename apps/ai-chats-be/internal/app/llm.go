@@ -22,9 +22,6 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 	if err != nil {
 		return fmt.Errorf("failed to get messages: %w", err)
 	}
-
-	fmt.Println("!!!!!!!!! chat.DefaultModel", chat.DefaultModel.String(), chat.DefaultModel.Model)
-	fmt.Println("!!!!!!!!! chat.DefaultModel.AsOllamaModel():", chat.DefaultModel.AsOllamaModel())
 	llm, err := ollama.NewOllama(chat.DefaultModel.AsOllamaModel())
 	if err != nil {
 		return fmt.Errorf("failed to create a chat model: %w", err)

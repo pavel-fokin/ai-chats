@@ -23,6 +23,7 @@ type Tx interface {
 type App struct {
 	users  domain.Users
 	chats  domain.Chats
+	models domain.Models
 	ollama domain.Ollama
 	pubsub PubSub
 	tx     Tx
@@ -31,6 +32,7 @@ type App struct {
 func New(
 	chats domain.Chats,
 	users domain.Users,
+	models domain.Models,
 	ollama domain.Ollama,
 	pubsub PubSub,
 	tx Tx,
@@ -38,6 +40,7 @@ func New(
 	return &App{
 		chats:  chats,
 		users:  users,
+		models: models,
 		ollama: ollama,
 		pubsub: pubsub,
 		tx:     tx,

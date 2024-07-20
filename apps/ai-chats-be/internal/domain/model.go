@@ -3,21 +3,20 @@ package domain
 type Vendor string
 
 type Model struct {
-	Model       string `json:"model"`
-	Description string `json:"description"`
-	Vendor      Vendor `json:"vendor"`
+	Model  string `json:"model"`
+	Vendor Vendor `json:"vendor"`
 }
 
 func NewModel(model string) Model {
 	return Model{
-		Model: model,
+		Model:  model,
+		Vendor: "ollama",
 	}
 }
 
 func NewModelFromOllamaModel(om OllamaModel) Model {
 	return Model{
-		Model:  om.Model,
-		Vendor: "ollama",
+		Model: om.Model,
 	}
 }
 

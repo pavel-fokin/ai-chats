@@ -5,10 +5,9 @@ import (
 )
 
 var (
-	ErrInternal      = errors.New("internal error")
-	ErrNotFound      = errors.New("not found")
-	ErrBadRequest    = errors.New("bad request")
-	ErrUsernameTaken = errors.New("that username is already taken")
+	ErrInternal   = errors.New("internal error")
+	ErrNotFound   = errors.New("not found")
+	ErrBadRequest = errors.New("bad request")
 )
 
 var (
