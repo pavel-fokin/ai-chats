@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
-import { Model } from './Model';
+import { Model } from './OllamaModel';
 
 const queryClient = new QueryClient({
   defaultOptions: {

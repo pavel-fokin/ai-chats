@@ -5,10 +5,10 @@ import { Header, PageLayout } from 'components/layout';
 import { DownloadIcon } from 'components/ui/icons';
 import { useModelsLibrary, useOllamaModels, usePullOllamaModel } from 'hooks';
 
-import { Model } from './components/Model';
+import { OllamaModel } from './components/OllamaModel';
 
 export const OllamaSettings: React.FC = () => {
-  const models = useOllamaModels();
+  const ollamaModels = useOllamaModels();
   const pullModel = usePullOllamaModel();
   const modelsLibrary = useModelsLibrary();
 
@@ -51,15 +51,15 @@ export const OllamaSettings: React.FC = () => {
                   id="model"
                   size="3"
                   placeholder="Pull a model..."
-                />
+                />g
               </Box>
               <IconButton size="3" highContrast loading={pullModel.isPending}>
                 <DownloadIcon size={16} />
               </IconButton>
             </Flex>
           </form>
-          {models.data?.map((model) => (
-            <Model key={model.model} model={model} />
+          {ollamaModels.data?.map((model) => (
+            <OllamaModel key={model.model} model={model} />
           ))}
         </Flex>
       </Box>

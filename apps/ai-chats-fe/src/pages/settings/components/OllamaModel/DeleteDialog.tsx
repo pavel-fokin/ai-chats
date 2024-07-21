@@ -1,4 +1,4 @@
-import { AlertDialog, Button, Em, Flex, Strong, Text } from '@radix-ui/themes';
+import { AlertDialog, Button, Flex, Strong, Text } from '@radix-ui/themes';
 
 import { useDeleteOllamaModel } from 'hooks';
 import { OllamaModel } from 'types';
@@ -30,8 +30,7 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({ model }) => {
         <AlertDialog.Title>Delete model?</AlertDialog.Title>
         <AlertDialog.Description size="2">
           <Text>
-            This will delete <Em>local</Em> model{' '}
-            <Strong>{`${model.model}`}</Strong>.
+            This will delete local model <Strong>{`${model.model}`}</Strong>.
           </Text>
         </AlertDialog.Description>
 

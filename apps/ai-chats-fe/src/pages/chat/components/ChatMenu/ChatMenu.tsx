@@ -1,17 +1,18 @@
+import { useState } from 'react';
+
 import { Button, DropdownMenu, Flex } from '@radix-ui/themes';
 
 import { ConfigurationIcon, DeleteIcon } from 'components/ui/icons';
 import { useChat } from 'hooks';
 
+import { DeleteDialog } from './DeleteDialog';
+
 interface ChatMenuProps {
   chatId?: string;
-  onDeleteClick: () => void;
 }
 
-export const ChatMenu: React.FC<ChatMenuProps> = ({
-  chatId,
-  onDeleteClick,
-}) => {
+export const ChatMenu: React.FC<ChatMenuProps> = ({ chatId }) => {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const chat = useChat(chatId);
 
   return (
@@ -44,7 +45,10 @@ export const ChatMenu: React.FC<ChatMenuProps> = ({
           </Flex>
         </DropdownMenu.Item>
         <DropdownMenu.Separator />
-        <DropdownMenu.Item color="tomato" onClick={onDeleteClick}>
+        <DropdownMenu.Item
+          color="tomato"
+          onClick={() => setIsDeleteDialogOpen(true)}
+        >
           <Flex
             direction="row"
             align="center"
@@ -56,6 +60,12 @@ export const ChatMenu: React.FC<ChatMenuProps> = ({
           </Flex>
         </DropdownMenu.Item>
       </DropdownMenu.Content>
+      <DeleteDialog
+        chatId={chatId!}
+        open={isDeleteDialogOpen}
+        setOpen={setIsDeleteDialogOpen}
+        onCancelClick={() => setIsDeleteDialogOpen(false)}
+      />
     </DropdownMenu.Root>
   );
 };

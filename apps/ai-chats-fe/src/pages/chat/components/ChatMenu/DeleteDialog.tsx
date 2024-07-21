@@ -6,12 +6,14 @@ import { useChat, useDeleteChat } from 'hooks';
 interface DeleteDialogProps {
   chatId: string;
   open: boolean;
+  setOpen: (open: boolean) => void;
   onCancelClick: () => void;
 }
 
 export const DeleteDialog: React.FC<DeleteDialogProps> = ({
   chatId,
   open,
+  setOpen,
   onCancelClick,
 }) => {
   const chat = useChat(chatId);
@@ -27,13 +29,13 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
   };
 
   return (
-    <AlertDialog.Root open={open}>
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
       <AlertDialog.Content maxWidth="450px">
         <AlertDialog.Title>Delete chat?</AlertDialog.Title>
         <AlertDialog.Description size="2">
           <Flex direction="column" gap="2">
             <Text>
-              This will delete <Strong>{`${chat.data?.title}`}</Strong> .
+              This will delete <Strong>{`${chat.data?.title}`}</Strong>
             </Text>
           </Flex>
         </AlertDialog.Description>

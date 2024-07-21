@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Box, Flex } from '@radix-ui/themes';
@@ -13,10 +12,8 @@ import { Header, PageLayout } from 'components/layout';
 import { useChatEvents, useMessages, useSendMessage } from 'hooks';
 
 import { ChatMenu } from './components/ChatMenu';
-import { DeleteDialog } from './components/DeleteDialog/DeleteDialog';
 
 export const Chat = () => {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { chatId } = useParams<{ chatId: string }>();
   const messages = useMessages(chatId);
   const sendMessage = useSendMessage(chatId!);
@@ -30,16 +27,8 @@ export const Chat = () => {
     <PageLayout>
       <Header>
         <HamburgerMenuButton />
-        <ChatMenu
-          chatId={chatId}
-          onDeleteClick={() => setIsDeleteDialogOpen(true)}
-        />
+        <ChatMenu chatId={chatId} />
         <NewChatIconButton />
-        <DeleteDialog
-          chatId={chatId!}
-          open={isDeleteDialogOpen}
-          onCancelClick={() => setIsDeleteDialogOpen(false)}
-        />
       </Header>
       <Flex direction="column" height="100%" width="100%">
         <Box flexGrow="1" style={{ overflow: 'scroll' }}>
