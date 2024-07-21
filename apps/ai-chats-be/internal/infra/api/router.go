@@ -7,8 +7,8 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
-	"pavel-fokin/ai/apps/ai-bots-be/web"
+	"ai-chats/internal/server"
+	"ai-chats/web"
 )
 
 type App interface {

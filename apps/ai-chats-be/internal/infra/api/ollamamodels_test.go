@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"ai-chats/internal/domain"
 )
 
 type MockOllamaApp struct {

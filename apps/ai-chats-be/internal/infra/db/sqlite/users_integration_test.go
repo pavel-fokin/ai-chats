@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
+	"ai-chats/internal/domain"
+	"ai-chats/internal/pkg/crypto"
 )
 
 func TestSqliteAddUser(t *testing.T) {

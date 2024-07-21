@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"ai-chats/internal/domain"
 )
 
 func (a *App) ListModels(ctx context.Context) ([]domain.OllamaModel, error) {

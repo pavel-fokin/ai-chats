@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"ai-chats/internal/domain"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"

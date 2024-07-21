@@ -2,7 +2,7 @@ package app
 
 import (
 	"context"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"ai-chats/internal/domain"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

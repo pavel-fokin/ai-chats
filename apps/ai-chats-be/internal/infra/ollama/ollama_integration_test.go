@@ -4,8 +4,8 @@ package ollama
 
 import (
 	"context"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
+	"ai-chats/internal/domain"
+	"ai-chats/internal/domain/events"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

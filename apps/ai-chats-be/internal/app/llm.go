@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/ollama"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/json"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
+	"ai-chats/internal/domain"
+	"ai-chats/internal/domain/events"
+	"ai-chats/internal/infra/ollama"
+	"ai-chats/internal/pkg/json"
+	"ai-chats/internal/worker"
 )
 
 // GenerateResponse generates a LLM response for the chat.

@@ -5,7 +5,7 @@ package app
 import (
 	"context"
 	"errors"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"ai-chats/internal/domain"
 	"testing"
 
 	"github.com/google/uuid"

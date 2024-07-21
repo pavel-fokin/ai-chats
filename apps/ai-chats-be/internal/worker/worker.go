@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
+	"ai-chats/internal/domain"
+	"ai-chats/internal/domain/events"
 )
 
 type App interface {

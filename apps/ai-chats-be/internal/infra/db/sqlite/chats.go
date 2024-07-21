@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"ai-chats/internal/domain"
 )
 
 // Chats implements a repository for chats.

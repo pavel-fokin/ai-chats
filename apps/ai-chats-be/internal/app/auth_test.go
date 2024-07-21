@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
+	"ai-chats/internal/domain"
+	"ai-chats/internal/pkg/crypto"
 )
 
 type MockUsers struct {

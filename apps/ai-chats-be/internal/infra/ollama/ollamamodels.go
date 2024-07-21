@@ -7,7 +7,7 @@ import (
 
 	"github.com/ollama/ollama/api"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"ai-chats/internal/domain"
 )
 
 type OllamaModels struct {

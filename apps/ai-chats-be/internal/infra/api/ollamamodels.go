@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
+	"ai-chats/internal/domain"
 
 	"github.com/go-chi/chi/v5"
 )

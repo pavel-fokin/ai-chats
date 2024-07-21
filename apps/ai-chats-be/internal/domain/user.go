@@ -3,7 +3,7 @@ package domain
 import (
 	"github.com/google/uuid"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
+	"ai-chats/internal/pkg/crypto"
 )
 
 type UserID = uuid.UUID

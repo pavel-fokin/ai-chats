@@ -6,10 +6,10 @@ import (
 
 	"github.com/google/uuid"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/json"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
+	"ai-chats/internal/domain"
+	"ai-chats/internal/domain/events"
+	"ai-chats/internal/pkg/json"
+	"ai-chats/internal/worker"
 )
 
 // AllChats returns all chats for the user.

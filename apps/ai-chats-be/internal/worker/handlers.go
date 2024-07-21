@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
+	"ai-chats/internal/domain/events"
 )
 
 const (

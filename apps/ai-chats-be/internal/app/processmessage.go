@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/json"
+	"ai-chats/internal/domain/events"
+	"ai-chats/internal/pkg/json"
 )
 
 // ProcessAddedMessage processes a message added event.

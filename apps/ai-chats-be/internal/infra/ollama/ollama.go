@@ -6,8 +6,8 @@ import (
 
 	"github.com/ollama/ollama/api"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/domain/events"
+	"ai-chats/internal/domain"
+	"ai-chats/internal/domain/events"
 )
 
 type LLM struct {

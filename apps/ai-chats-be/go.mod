@@ -1,4 +1,4 @@
-module pavel-fokin/ai/apps/ai-bots-be
+module ai-chats
 
 go 1.22.2
 

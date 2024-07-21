@@ -8,15 +8,15 @@ import (
 
 	"github.com/caarlos0/env/v6"
 
-	"pavel-fokin/ai/apps/ai-bots-be/internal/app"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/api"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/db/sqlite"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/ollama"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/infra/pubsub"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/pkg/crypto"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/server"
-	"pavel-fokin/ai/apps/ai-bots-be/internal/worker"
+	"ai-chats/internal/app"
+	"ai-chats/internal/infra/api"
+	"ai-chats/internal/infra/db"
+	"ai-chats/internal/infra/db/sqlite"
+	"ai-chats/internal/infra/ollama"
+	"ai-chats/internal/infra/pubsub"
+	"ai-chats/internal/pkg/crypto"
+	"ai-chats/internal/server"
+	"ai-chats/internal/worker"
 )
 
 // Config is the service configuration.
