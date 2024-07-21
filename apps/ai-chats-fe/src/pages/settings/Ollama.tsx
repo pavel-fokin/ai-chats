@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { Box, Flex, Heading, IconButton, TextField } from '@radix-ui/themes';
 
 import { HamburgerMenuButton, NewChatIconButton } from 'components';
@@ -5,12 +7,12 @@ import { Header, PageLayout } from 'components/layout';
 import { DownloadIcon } from 'components/ui/icons';
 import { useModelsLibrary, useOllamaModels, usePullOllamaModel } from 'hooks';
 
-import { OllamaModel } from './components/OllamaModel';
+import { ModelCard, OllamaModel } from './components';
 
 export const OllamaSettings: React.FC = () => {
+  const modelsLibrary = useModelsLibrary();
   const ollamaModels = useOllamaModels();
   const pullModel = usePullOllamaModel();
-  const modelsLibrary = useModelsLibrary();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,16 +53,33 @@ export const OllamaSettings: React.FC = () => {
                   id="model"
                   size="3"
                   placeholder="Pull a model..."
-                />g
+                />
               </Box>
               <IconButton size="3" highContrast loading={pullModel.isPending}>
                 <DownloadIcon size={16} />
               </IconButton>
             </Flex>
           </form>
-          {ollamaModels.data?.map((model) => (
-            <OllamaModel key={model.model} model={model} />
-          ))}
+          <Box width="100%" pb="8">
+            <Box pb="4">
+              <Heading as="h3" size="3" align="left" color="gray">
+                Downloaded Models
+              </Heading>
+            </Box>
+            {ollamaModels.data?.map((model) => (
+              <OllamaModel key={model.model} model={model} />
+            ))}
+          </Box>
+          <Box width="100%">
+            <Box pb="4">
+              <Heading as="h3" size="3" align="left" color="gray">
+                Models Library
+              </Heading>
+            </Box>
+            {modelsLibrary.data?.map((model) => (
+              <ModelCard key={model.model} model={model} />
+            ))}
+          </Box>
         </Flex>
       </Box>
     </PageLayout>

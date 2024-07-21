@@ -7,7 +7,7 @@ interface ModelCard {
 
 interface GetModelsLibraryResponse {
   data: {
-    models: ModelCard[];
+    modelCards: ModelCard[];
   };
 }
 

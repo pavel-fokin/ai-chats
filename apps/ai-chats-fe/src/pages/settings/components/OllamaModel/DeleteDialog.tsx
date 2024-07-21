@@ -19,7 +19,7 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({ model }) => {
       <AlertDialog.Trigger>
         <Button
           size="2"
-          variant="soft"
+          variant="ghost"
           color="tomato"
           loading={deleteModel.isPending}
         >

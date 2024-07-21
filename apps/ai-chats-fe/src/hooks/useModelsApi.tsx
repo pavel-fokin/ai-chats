@@ -6,5 +6,5 @@ export const useModelsLibrary = () =>
   useQuery({
     queryKey: ['models-library'],
     queryFn: getModelsLibrary,
-    select: (data) => data.data.models,
+    select: (data) => data.data.modelCards,
   });

@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
-import { Model } from './OllamaModel';
+import { OllamaModel } from './OllamaModel';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,7 +22,7 @@ const renderComponent = (ui: JSX.Element) => {
 };
 
 test('renders model name and tag', () => {
-  renderComponent(<Model model={mockModel} />);
+  renderComponent(<OllamaModel model={mockModel} />);
 
   expect(screen.getByText('llama3:latest')).toBeInTheDocument();
   expect(
@@ -33,7 +33,7 @@ test('renders model name and tag', () => {
 });
 
 test('shows and hides delete dialog', async () => {
-  renderComponent(<Model model={mockModel} />);
+  renderComponent(<OllamaModel model={mockModel} />);
 
   expect(screen.queryByText('Delete model?')).toBeNull();
 

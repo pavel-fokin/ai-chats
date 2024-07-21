@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS user (
-  id TEXT PRIMARY KEY,
-  username TEXT NOT NULL UNIQUE CHECK (length(username) > 0),
-  password_hash TEXT NOT NULL CHECK (length(password_hash) > 0)
+    id TEXT PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE CHECK (length(username) > 0),
+    password_hash TEXT NOT NULL CHECK (length(password_hash) > 0)
 );
 
 CREATE TABLE IF NOT EXISTS chat (

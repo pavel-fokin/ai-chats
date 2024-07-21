@@ -12,7 +12,17 @@ type Models interface {
 	AllModelCards(context.Context) ([]domain.ModelCard, error)
 }
 
-// GetModelsLibrary returns all models cards.
+type GetModelsLibraryResponse struct {
+	ModelCards []domain.ModelCard `json:"modelCards"`
+}
+
+func NewGetModelsLibraryResponse(modelCards []domain.ModelCard) GetModelsLibraryResponse {
+	return GetModelsLibraryResponse{
+		ModelCards: modelCards,
+	}
+}
+
+// GetModelsLibrary handles the GET /api/models/library endpoint.
 func GetModelsLibrary(m Models) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -24,6 +34,6 @@ func GetModelsLibrary(m Models) http.HandlerFunc {
 			return
 		}
 
-		WriteSuccessResponse(w, http.StatusOK, models)
+		WriteSuccessResponse(w, http.StatusOK, NewGetModelsLibraryResponse(models))
 	}
 }
