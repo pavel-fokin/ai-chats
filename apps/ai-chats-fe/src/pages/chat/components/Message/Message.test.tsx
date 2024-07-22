@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { Message } from 'components';
+import { Message } from './Message';
 
 test('renders message with sender and text', () => {
   const sender = 'John Doe';

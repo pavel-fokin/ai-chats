@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import { Box, Flex, IconButton } from '@radix-ui/themes';
 
+import { TextArea, Tooltip } from 'components';
 import { SendIcon } from 'components/ui/icons';
-import { TextArea } from 'components';
 
 type InputMessageProps = {
   handleSend: (text: string) => void;
@@ -41,9 +41,11 @@ function InputMessage({ handleSend }: InputMessageProps) {
             placeholder="Type a message"
           />
         </Box>
-        <IconButton size="3" onClick={onSendClick} highContrast>
-          <SendIcon size={16} />
-        </IconButton>
+        <Tooltip content="Send a message" side="top">
+          <IconButton size="3" onClick={onSendClick} highContrast>
+            <SendIcon size={16} />
+          </IconButton>
+        </Tooltip>
       </Flex>
     </form>
   );

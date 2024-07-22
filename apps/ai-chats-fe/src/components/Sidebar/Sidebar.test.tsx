@@ -1,3 +1,4 @@
+import { Theme } from '@radix-ui/themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -5,8 +6,8 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { AuthContextProvider } from 'contexts';
 import { Sidebar } from 'components';
+import { AuthContextProvider } from 'contexts';
 
 const server = setupServer(
   http.get('/api/chats', () => {
@@ -28,7 +29,7 @@ const server = setupServer(
         },
       },
     });
-  }),
+  })
 );
 
 beforeAll(() => server.listen());
@@ -45,17 +46,19 @@ const queryClient = new QueryClient({
 
 function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
   return render(
-    <AuthContextProvider>
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={[route]}>
-          <Routes>
-            <Route path="/" element={ui} />
-            <Route path="/app" element={<div>App</div>} />
-            <Route path="/app/chats/:chatId" element={<div>Chat</div>} />
-          </Routes>
-        </MemoryRouter>
-      </QueryClientProvider>
-    </AuthContextProvider>,
+    <Theme>
+      <AuthContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter initialEntries={[route]}>
+            <Routes>
+              <Route path="/" element={ui} />
+              <Route path="/app" element={<div>App</div>} />
+              <Route path="/app/chats/:chatId" element={<div>Chat</div>} />
+            </Routes>
+          </MemoryRouter>
+        </QueryClientProvider>
+      </AuthContextProvider>
+    </Theme>
   );
 }
 

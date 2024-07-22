@@ -1,10 +1,19 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { Theme } from '@radix-ui/themes';
 import { vi } from 'vitest';
 
 import { InputMessage } from 'components';
 
+const renderComponent = (children: React.ReactNode) => {
+  return render(
+    <Theme>
+      {children}
+    </Theme>
+  );
+}
+
 test('updates input message text on change', () => {
-  render(<InputMessage handleSend={() => {}} />);
+  renderComponent(<InputMessage handleSend={() => {}} />);
 
   const inputElement = screen.getByPlaceholderText(
     'Type a message',
@@ -20,7 +29,7 @@ test('calls handleSend with correct message on send click', () => {
   const handleSendMock = vi.fn();
   const text = 'Hello, world!';
 
-  render(<InputMessage handleSend={handleSendMock} />);
+  renderComponent(<InputMessage handleSend={handleSendMock} />);
 
   const inputElement = screen.getByPlaceholderText(
     'Type a message',
@@ -38,7 +47,7 @@ test('calls handleSend with correct message on enter key press', () => {
   const handleSendMock = vi.fn();
   const text = 'Hello, world!';
 
-  render(<InputMessage handleSend={handleSendMock} />);
+  renderComponent(<InputMessage handleSend={handleSendMock} />);
 
   const inputElement = screen.getByPlaceholderText(
     'Type a message',
@@ -56,7 +65,7 @@ test('calls handleSend with correct message on enter key press', () => {
 test('does not call handleSend on empty message send click', () => {
   const handleSendMock = vi.fn();
 
-  render(<InputMessage handleSend={handleSendMock} />);
+  renderComponent(<InputMessage handleSend={handleSendMock} />);
 
   const sendButton = screen.getByRole('button');
 
@@ -68,7 +77,7 @@ test('does not call handleSend on empty message send click', () => {
 test('does not call handleSend on whitespace message send click', () => {
   const handleSendMock = vi.fn();
 
-  render(<InputMessage handleSend={handleSendMock} />);
+  renderComponent(<InputMessage handleSend={handleSendMock} />);
 
   const inputElement = screen.getByPlaceholderText(
     'Type a message',

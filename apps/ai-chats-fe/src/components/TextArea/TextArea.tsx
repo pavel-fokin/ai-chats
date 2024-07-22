@@ -31,7 +31,6 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       setValue(event.target.value);
-      // textareaRef.current?.value = event.target.value;
       props.onChange(event);
     };
 

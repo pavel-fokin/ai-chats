@@ -4,6 +4,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { Flex, Heading, IconButton, Text } from '@radix-ui/themes';
 
+import { Tooltip } from 'components';
 import { ChatIcon, SettingsIcon, SignOutIcon } from 'components/ui/icons';
 import { SidebarContext } from 'contexts';
 import { useChats } from 'hooks';
@@ -70,16 +71,18 @@ export const Sidebar = () => {
           <Heading as="h2" align="center" size="5" weight="bold">
             AI Chats
           </Heading>
-          <IconButton
-            variant="ghost"
-            size="3"
-            m="2"
-            highContrast
-            onClick={handleNewChat}
-            aria-label="New chat"
-          >
-            <ChatIcon size="28" weight="light" />
-          </IconButton>
+          <Tooltip content="Start a new chat">
+            <IconButton
+              variant="ghost"
+              size="3"
+              m="2"
+              highContrast
+              onClick={handleNewChat}
+              aria-label="New chat"
+            >
+              <ChatIcon size="28" weight="light" />
+            </IconButton>
+          </Tooltip>
         </Flex>
         <NavigationMenu.Root
           orientation="vertical"

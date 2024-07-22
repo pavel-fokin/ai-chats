@@ -5,13 +5,13 @@ import { Box, Flex } from '@radix-ui/themes';
 import {
   HamburgerMenuButton,
   InputMessage,
-  Message,
   NewChatIconButton,
 } from 'components';
 import { Header, PageLayout } from 'components/layout';
 import { useChatEvents, useMessages, useSendMessage } from 'hooks';
 
 import { ChatMenu } from './components/ChatMenu';
+import { Message } from './components/Message';
 
 export const Chat = () => {
   const { chatId } = useParams<{ chatId: string }>();
