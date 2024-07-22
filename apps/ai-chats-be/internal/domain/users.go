@@ -9,6 +9,6 @@ import (
 // Users represents a repository of users.
 type Users interface {
 	Add(ctx context.Context, user User) error
-	FindByUsernameWithPassword(ctx context.Context, username string) (User, error)
 	FindByID(ctx context.Context, id uuid.UUID) (User, error)
+	FindByUsernameWithPassword(ctx context.Context, username string) (User, error)
 }

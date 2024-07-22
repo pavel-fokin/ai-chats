@@ -23,7 +23,7 @@ func (a *App) LogIn(ctx context.Context, username, password string) (domain.User
 
 // SignUp signs up a user.
 func (a *App) SignUp(ctx context.Context, username, password string) (domain.User, error) {
-	user := domain.NewUser(username, password)
+	user := domain.NewUserWithPassword(username, password, a.config.HashCost)
 
 	if err := a.users.Add(ctx, user); err != nil {
 		return domain.User{}, fmt.Errorf("failed to add a user: %w", err)

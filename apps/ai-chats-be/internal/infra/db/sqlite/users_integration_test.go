@@ -7,41 +7,39 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"ai-chats/internal/domain"
-	"ai-chats/internal/pkg/crypto"
 )
 
-func TestSqliteAddUser(t *testing.T) {
+func TestSqliteUsers_AddUser(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
-	crypto.InitBcryptCost(1)
 
 	users := NewUsers(db)
 	t.Run("add user", func(t *testing.T) {
-		err := users.Add(context.Background(), domain.NewUser("username", "password"))
+		err := users.Add(context.Background(), domain.NewUserWithPassword("username", "password", 1))
 		assert.NoError(t, err)
 	})
 
 	t.Run("add user with empty username", func(t *testing.T) {
-		err := users.Add(context.Background(), domain.NewUser("", "password"))
+		err := users.Add(context.Background(), domain.NewUserWithPassword("", "password", 1))
 		assert.Error(t, err)
 	})
 
 	t.Run("add user with empty password", func(t *testing.T) {
-		err := users.Add(context.Background(), domain.NewUser("username", ""))
+		err := users.Add(context.Background(), domain.NewUserWithPassword("username", "", 1))
 		assert.Error(t, err)
 	})
 
 	t.Run("add user with the same username", func(t *testing.T) {
-		err := users.Add(context.Background(), domain.NewUser("another_username", "password"))
+		err := users.Add(context.Background(), domain.NewUserWithPassword("another_username", "password", 1))
 		assert.NoError(t, err)
 
-		err = users.Add(context.Background(), domain.NewUser("another_username", "password"))
+		err = users.Add(context.Background(), domain.NewUserWithPassword("another_username", "password", 1))
 		assert.ErrorIs(t, err, domain.ErrUserAlreadyExists)
 	})
 
 	t.Run("add user with the same username but different case", func(t *testing.T) {
-		err := users.Add(context.Background(), domain.NewUser("username", "password"))
+		err := users.Add(context.Background(), domain.NewUserWithPassword("username", "password", 1))
 		assert.Error(t, err)
 	})
 }
@@ -50,12 +48,11 @@ func TestSqliteFindByUsernameWithPassword(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
-	crypto.InitBcryptCost(1)
 
 	users := NewUsers(db)
 
 	t.Run("user found", func(t *testing.T) {
-		user := domain.NewUser("username", "password")
+		user := domain.NewUserWithPassword("username", "password", 1)
 		err := users.Add(context.Background(), user)
 		assert.NoError(t, err)
 

@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"ai-chats/internal/domain"
-	"ai-chats/internal/pkg/crypto"
 )
 
 func TestSqliteAddChat(t *testing.T) {
@@ -18,12 +17,11 @@ func TestSqliteAddChat(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
-	crypto.InitBcryptCost(1)
 
 	users := NewUsers(db)
 	chats := NewChats(db)
 
-	user := domain.NewUser("test", "password")
+	user := domain.NewUserWithPassword("test", "password", 1)
 	err := users.Add(ctx, user)
 	assert.NoError(t, err)
 	modelID := domain.NewModelID("model")
@@ -67,13 +65,12 @@ func TestSqliteDeleteChat(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
-	crypto.InitBcryptCost(1)
 
 	users := NewUsers(db)
 	chats := NewChats(db)
 
 	t.Run("chat exists", func(t *testing.T) {
-		user := domain.NewUser("username", "password")
+		user := domain.NewUserWithPassword("username", "password", 1)
 		err := users.Add(ctx, user)
 		assert.NoError(err)
 
@@ -106,13 +103,12 @@ func TestSqliteAllChats(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
-	crypto.InitBcryptCost(1)
 
 	users := NewUsers(db)
 	chats := NewChats(db)
 
 	t.Run("no chats", func(t *testing.T) {
-		user := domain.NewUser("user-no-chats", "password")
+		user := domain.NewUserWithPassword("user-no-chats", "password", 1)
 		err := users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
@@ -123,7 +119,7 @@ func TestSqliteAllChats(t *testing.T) {
 	})
 
 	t.Run("multiple chats", func(t *testing.T) {
-		user := domain.NewUser("user-multiple-chats", "password")
+		user := domain.NewUserWithPassword("user-multiple-chats", "password", 1)
 		err := users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
@@ -142,7 +138,7 @@ func TestSqliteAllChats(t *testing.T) {
 
 	t.Run("multiple users", func(t *testing.T) {
 		for i := 0; i < 3; i++ {
-			user := domain.NewUser(fmt.Sprintf("user-number-%d", i), "password")
+			user := domain.NewUserWithPassword(fmt.Sprintf("user-number-%d", i), "password", 1)
 			err := users.Add(
 				context.Background(),
 				user,
@@ -164,13 +160,12 @@ func TestSqliteFindChat(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
-	crypto.InitBcryptCost(1)
 
 	users := NewUsers(db)
 	chats := NewChats(db)
 
 	t.Run("chat exists", func(t *testing.T) {
-		user := domain.NewUser("username", "password")
+		user := domain.NewUserWithPassword("username", "password", 1)
 		err := users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
@@ -195,13 +190,12 @@ func TestSqliteChats_Exists(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
-	crypto.InitBcryptCost(1)
 
 	chats := NewChats(db)
 	users := NewUsers(db)
 
 	t.Run("chat exists", func(t *testing.T) {
-		user := domain.NewUser("username", "password")
+		user := domain.NewUserWithPassword("username", "password", 1)
 		err := users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
@@ -228,13 +222,12 @@ func TestSqliteAddMessages(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
-	crypto.InitBcryptCost(1)
 
 	users := NewUsers(db)
 	chats := NewChats(db)
 
 	modelID := domain.NewModelID("model")
-	user := domain.NewUser("username", "password")
+	user := domain.NewUserWithPassword("username", "password", 1)
 	err := users.Add(ctx, user)
 	assert.NoError(err)
 
@@ -292,13 +285,12 @@ func TestSqliteAllMessages(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
-	crypto.InitBcryptCost(1)
 
 	users := NewUsers(db)
 	chats := NewChats(db)
 
 	modelID := domain.NewModelID("model")
-	user := domain.NewUser("username", "password")
+	user := domain.NewUserWithPassword("username", "password", 1)
 	err := users.Add(ctx, user)
 	assert.NoError(err)
 
@@ -338,13 +330,12 @@ func TestSqliteChats_FindByIDWithMessages(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
-	crypto.InitBcryptCost(1)
 
 	users := NewUsers(db)
 	chats := NewChats(db)
 
 	modelID := domain.NewModelID("model")
-	user := domain.NewUser("username", "password")
+	user := domain.NewUserWithPassword("username", "password", 1)
 	err := users.Add(ctx, user)
 	assert.NoError(err)
 

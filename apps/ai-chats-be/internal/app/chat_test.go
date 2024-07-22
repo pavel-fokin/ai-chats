@@ -16,7 +16,7 @@ import (
 func TestCreateChat(t *testing.T) {
 	ctx := context.Background()
 
-	user := domain.NewUser("username", "password")
+	user := domain.NewUser("username")
 	mockUsers := &MockUsers{}
 	mockUsers.On("FindByID", mock.Anything, user.ID).Return(user, nil)
 
@@ -77,7 +77,7 @@ func TestChat_Delete(t *testing.T) {
 		assert := assert.New(t)
 
 		chat := domain.NewChat(
-			domain.NewUser("username", "password"),
+			domain.NewUser("username"),
 			domain.NewModelID("model"),
 		)
 
@@ -115,7 +115,7 @@ func TestChat_FindById(t *testing.T) {
 
 	t.Run("chat exists", func(t *testing.T) {
 		chat := domain.NewChat(
-			domain.NewUser("username", "password"),
+			domain.NewUser("username"),
 			domain.NewModelID("model"),
 		)
 

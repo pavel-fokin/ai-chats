@@ -10,7 +10,7 @@ import (
 func TestDomainChat(t *testing.T) {
 
 	t.Run("new chat", func(t *testing.T) {
-		user := NewUser("username", "password")
+		user := NewUser("username")
 		modelID := NewModelID("model")
 
 		chat := NewChat(user, modelID)
@@ -26,7 +26,7 @@ func TestDomainChat(t *testing.T) {
 		chat := Chat{
 			ID:           NewChatID(),
 			Title:        "New chat",
-			User:         NewUser("username", "password"),
+			User:         NewUser("username"),
 			DefaultModel: NewModelID("model"),
 			CreatedAt:    time.Now().UTC(),
 		}

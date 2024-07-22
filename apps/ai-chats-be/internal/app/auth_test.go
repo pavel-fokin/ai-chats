@@ -37,7 +37,6 @@ func (m *MockUsers) FindByID(ctx context.Context, id uuid.UUID) (domain.User, er
 func TestAppSignUp(t *testing.T) {
 	assert := assert.New(t)
 	ctx := context.Background()
-	crypto.InitBcryptCost(1)
 
 	mockUsers := &MockUsers{}
 	mockUsers.On("Add", ctx, mock.AnythingOfType("User")).Return(nil)
@@ -45,6 +44,7 @@ func TestAppSignUp(t *testing.T) {
 	app := &App{
 		users: mockUsers,
 	}
+	app.config.HashCost = 1
 
 	user, err := app.SignUp(ctx, "username", "password")
 	assert.NoError(err)
@@ -82,7 +82,6 @@ func TestAppSignUp(t *testing.T) {
 func TestAppLogIn(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
-	crypto.InitBcryptCost(1)
 
 	t.Run("user not found", func(t *testing.T) {
 		mockUsers := &MockUsers{}
@@ -99,7 +98,7 @@ func TestAppLogIn(t *testing.T) {
 	})
 
 	t.Run("success", func(t *testing.T) {
-		hashedPassword, err := crypto.HashPassword("password")
+		hashedPassword, err := crypto.HashPassword("password", 1)
 		assert.NoError(err)
 
 		mockUsers := &MockUsers{}
@@ -116,7 +115,7 @@ func TestAppLogIn(t *testing.T) {
 	})
 
 	t.Run("failed to verify password", func(t *testing.T) {
-		hashedPassword, err := crypto.HashPassword("password")
+		hashedPassword, err := crypto.HashPassword("password", 1)
 		assert.NoError(err)
 
 		mockUsers := &MockUsers{}

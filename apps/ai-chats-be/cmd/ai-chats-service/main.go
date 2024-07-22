@@ -14,7 +14,6 @@ import (
 	"ai-chats/internal/infra/db/sqlite"
 	"ai-chats/internal/infra/ollama"
 	"ai-chats/internal/infra/pubsub"
-	"ai-chats/internal/pkg/crypto"
 	"ai-chats/internal/server"
 	"ai-chats/internal/worker"
 )
@@ -60,7 +59,6 @@ func main() {
 
 	// Initialize the crypto package and the signing key.
 	api.InitSigningKey(config.Server.TokenSigningKey)
-	crypto.InitBcryptCost(14)
 
 	// Setup the server.
 	sse := server.NewSSEConnections()

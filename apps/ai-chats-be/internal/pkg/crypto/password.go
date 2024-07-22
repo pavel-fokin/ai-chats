@@ -4,15 +4,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var bcryptCost int
-
-func InitBcryptCost(value int) {
-	bcryptCost = value
-}
-
 // HashPassword hashes a password.
-func HashPassword(password string) (string, error) {
-	hashedPassowrd, err := bcrypt.GenerateFromPassword([]byte(password), bcryptCost)
+func HashPassword(password string, hashCost int) (string, error) {
+	hashedPassowrd, err := bcrypt.GenerateFromPassword([]byte(password), hashCost)
 	if err != nil {
 		return "", err
 	}
