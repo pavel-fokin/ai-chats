@@ -28,9 +28,9 @@ func NewUserMessage(user User, text string) Message {
 	)
 }
 
-func NewModelMessage(model Model, text string) Message {
+func NewModelMessage(modelID ModelID, text string) Message {
 	return NewMessage(
-		NewModelSender(model), text,
+		NewModelSender(modelID), text,
 	)
 }
 

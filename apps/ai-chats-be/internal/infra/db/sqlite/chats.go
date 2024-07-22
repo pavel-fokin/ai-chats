@@ -23,7 +23,7 @@ func NewChats(db *sql.DB) *Chats {
 func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 	_, err := c.DBTX(ctx).Exec(
 		`INSERT INTO chat
-		(id, title, user_id, default_model, created_at)
+		(id, title, user_id, default_model_id, created_at)
 		VALUES (?, ?, ?, ?, ?)`,
 		chat.ID,
 		chat.Title,
@@ -151,7 +151,7 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 	rows, err := c.DBTX(ctx).QueryContext(
 		ctx,
 		`SELECT
-		id, title, default_model, created_at
+		id, title, default_model_id, created_at
 		FROM chat
 		WHERE user_id = ? AND deleted_at IS NULL`,
 		userID,
@@ -176,7 +176,7 @@ func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, 
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse chat.created_at: %w", err)
 		}
-		chat.DefaultModel = domain.NewModel(model)
+		chat.DefaultModel = domain.NewModelID(model)
 
 		chats = append(chats, chat)
 	}
@@ -197,7 +197,7 @@ func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 	err := c.DBTX(ctx).QueryRowContext(
 		ctx,
 		`SELECT
-		id, title, default_model, created_at
+		id, title, default_model_id, created_at
 		FROM chat
 		WHERE id = ? AND deleted_at IS NULL`,
 		chatID,
@@ -210,7 +210,7 @@ func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 	if err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to parse chat.created_at: %w", err)
 	}
-	chat.DefaultModel = domain.NewModel(model)
+	chat.DefaultModel = domain.NewModelID(model)
 
 	return chat, nil
 }

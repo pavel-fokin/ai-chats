@@ -3,9 +3,9 @@
 package app
 
 import (
+	"ai-chats/internal/domain"
 	"context"
 	"errors"
-	"ai-chats/internal/domain"
 	"testing"
 
 	"github.com/google/uuid"
@@ -78,7 +78,7 @@ func TestChat_Delete(t *testing.T) {
 
 		chat := domain.NewChat(
 			domain.NewUser("username", "password"),
-			domain.NewModel("model"),
+			domain.NewModelID("model"),
 		)
 
 		mockChats := &MockChats{}
@@ -116,7 +116,7 @@ func TestChat_FindById(t *testing.T) {
 	t.Run("chat exists", func(t *testing.T) {
 		chat := domain.NewChat(
 			domain.NewUser("username", "password"),
-			domain.NewModel("model"),
+			domain.NewModelID("model"),
 		)
 
 		mockChats := &MockChats{}

@@ -16,8 +16,8 @@ func TestNewUserSender(t *testing.T) {
 }
 
 func TestNewModelSender(t *testing.T) {
-	model := NewModel("llama3")
-	sender := NewModelSender(model)
+	modelID := NewModelID("llama3")
+	sender := NewModelSender(modelID)
 	expected := Sender{sender: "model:llama3"}
 	assert.Equal(t, expected, sender)
 }

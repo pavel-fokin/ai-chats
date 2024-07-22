@@ -51,7 +51,7 @@ func (l *LLM) GenerateResponse(ctx context.Context, history []domain.Message) (d
 	}
 
 	llmMessage := domain.NewModelMessage(
-		domain.NewModel(l.model.String()),
+		domain.NewModelID(l.model.String()),
 		"",
 	)
 	respFunc := func(resp api.ChatResponse) error {
@@ -93,7 +93,7 @@ func (l *LLM) GenerateResponseWithStream(
 		Messages: messages,
 	}
 
-	model := domain.NewModel(l.model.String())
+	model := domain.NewModelID(l.model.String())
 	llmMessage := domain.NewModelMessage(model, "")
 	respFunc := func(resp api.ChatResponse) error {
 		llmMessage.Text += resp.Message.Content

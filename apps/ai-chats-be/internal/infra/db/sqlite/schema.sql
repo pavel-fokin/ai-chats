@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS chat (
     id TEXT PRIMARY KEY,
     title TEXT NOT NULL CHECK (length(title) > 0),
     user_id TEXT NOT NULL CHECK (length(user_id) > 0),
-    default_model text NOT NULL CHECK (length(default_model) > 0),
+    default_model_id text NOT NULL CHECK (length(default_model_id) > 0),
     created_at TEXT NOT NULL CHECK (length(created_at) > 0),
     deleted_at TEXT,
     FOREIGN KEY (user_id) REFERENCES user(id)
