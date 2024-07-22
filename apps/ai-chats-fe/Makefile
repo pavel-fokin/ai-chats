@@ -6,8 +6,8 @@ build:
 run:
 	@npm run dev
 
-.PHONY: test
-test:
+.PHONY: tests
+tests:
 	@npm run test
 
 .PHONY: format

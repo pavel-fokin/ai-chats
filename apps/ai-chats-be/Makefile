@@ -7,8 +7,8 @@ build:
 run:
 	@go run cmd/ai-chats-service/main.go
 
-.PHONY: test
-test:
+.PHONY: tests
+tests:
 	@echo "Running unit tests..."
 	@go test -count 1 -cover -timeout 5s ./...
 	@echo "✅ All unit tests are good"

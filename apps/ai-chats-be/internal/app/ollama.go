@@ -9,7 +9,7 @@ import (
 
 func (a *App) ListModels(ctx context.Context) ([]domain.OllamaModel, error) {
 
-	ollamaClientModels, err := a.ollama.List(ctx)
+	ollamaClientModels, err := a.ollamaClient.List(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list models: %w", err)
 	}
@@ -30,9 +30,9 @@ func (a *App) ListModels(ctx context.Context) ([]domain.OllamaModel, error) {
 }
 
 func (a *App) PullModel(ctx context.Context, model string) error {
-	return a.ollama.Pull(ctx, domain.NewOllamaModel(model))
+	return a.ollamaClient.Pull(ctx, domain.NewOllamaModel(model))
 }
 
 func (a *App) DeleteModel(ctx context.Context, model string) error {
-	return a.ollama.Delete(ctx, domain.NewOllamaModel(model))
+	return a.ollamaClient.Delete(ctx, domain.NewOllamaModel(model))
 }

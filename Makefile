@@ -9,9 +9,9 @@ build:
 	@echo ""
 
 
-.PHONY: test
-test:
-	${MAKE} -C apps test
+.PHONY: tests
+tests:
+	${MAKE} -C apps tests
 
 .PHONY: test-integration
 test-integration:

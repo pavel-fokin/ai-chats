@@ -14,12 +14,6 @@ func NewModel(model string) Model {
 	}
 }
 
-func NewModelFromOllamaModel(om OllamaModel) Model {
-	return Model{
-		Model: om.Model,
-	}
-}
-
 func (m Model) AsOllamaModel() OllamaModel {
 	return OllamaModel{
 		Model: m.Model,

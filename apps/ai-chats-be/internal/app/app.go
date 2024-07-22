@@ -21,28 +21,28 @@ type Tx interface {
 }
 
 type App struct {
-	users  domain.Users
-	chats  domain.Chats
-	models domain.Models
-	ollama domain.Ollama
-	pubsub PubSub
-	tx     Tx
+	users        domain.Users
+	chats        domain.Chats
+	models       domain.Models
+	ollamaClient domain.OllamaClient
+	pubsub       PubSub
+	tx           Tx
 }
 
 func New(
 	chats domain.Chats,
 	users domain.Users,
 	models domain.Models,
-	ollama domain.Ollama,
+	ollamaClient domain.OllamaClient,
 	pubsub PubSub,
 	tx Tx,
 ) *App {
 	return &App{
-		chats:  chats,
-		users:  users,
-		models: models,
-		ollama: ollama,
-		pubsub: pubsub,
-		tx:     tx,
+		chats:        chats,
+		users:        users,
+		models:       models,
+		ollamaClient: ollamaClient,
+		pubsub:       pubsub,
+		tx:           tx,
 	}
 }

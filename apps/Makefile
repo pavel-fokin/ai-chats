@@ -4,10 +4,10 @@ build:
 	@cp -r ai-chats-fe/dist ai-chats-be/web
 	${MAKE} -C ai-chats-be build
 
-.PHONY: test
-test:
-	${MAKE} -C ai-chats-be test
-	${MAKE} -C ai-chats-fe test
+.PHONY: tests
+tests:
+	${MAKE} -C ai-chats-be tests
+	${MAKE} -C ai-chats-fe tests
 
 .PHONY: test-integration
 test-integration:
