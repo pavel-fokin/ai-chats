@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import { Box, Flex, Heading, IconButton, TextField } from '@radix-ui/themes';
 
 import { HamburgerMenuButton, NewChatIconButton } from 'components';
@@ -62,7 +60,7 @@ export const OllamaSettings: React.FC = () => {
           </form>
           <Box width="100%" pb="8">
             <Box pb="4">
-              <Heading as="h3" size="3" align="left" color="gray">
+              <Heading as="h3" size="4" align="left" color="gray" weight="medium">
                 Downloaded Models
               </Heading>
             </Box>
@@ -72,7 +70,7 @@ export const OllamaSettings: React.FC = () => {
           </Box>
           <Box width="100%">
             <Box pb="4">
-              <Heading as="h3" size="3" align="left" color="gray">
+              <Heading as="h3" size="4" align="left" color="gray" weight="medium">
                 Models Library
               </Heading>
             </Box>

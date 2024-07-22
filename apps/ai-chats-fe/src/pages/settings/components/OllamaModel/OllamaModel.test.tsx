@@ -13,6 +13,7 @@ const queryClient = new QueryClient({
 
 const mockModel = {
   model: 'llama3:latest',
+  description: 'Meta Llama 3: The most capable openly available LLM to date 8B.',
 };
 
 const renderComponent = (ui: JSX.Element) => {

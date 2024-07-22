@@ -1,7 +1,10 @@
 package domain
 
+import "strings"
+
 type OllamaModel struct {
-	Model string `json:"model"`
+	Model       string `json:"model"`
+	Description string `json:"description"`
 }
 
 func NewOllamaModel(model string) OllamaModel {
@@ -10,15 +13,23 @@ func NewOllamaModel(model string) OllamaModel {
 	}
 }
 
-func (m OllamaModel) String() string {
-	return m.Model
+func (om OllamaModel) Name() string {
+	parts := strings.Split(om.Model, ":")
+	if len(parts) == 2 {
+		return parts[0]
+	}
+	return om.Model
 }
 
-func (m *OllamaModel) Scan(value any) error {
-	*m = NewOllamaModel(value.(string))
+func (om OllamaModel) String() string {
+	return om.Model
+}
+
+func (om *OllamaModel) Scan(value any) error {
+	*om = NewOllamaModel(value.(string))
 	return nil
 }
 
-func (m OllamaModel) Value() (any, error) {
-	return m.String(), nil
+func (om OllamaModel) Value() (any, error) {
+	return om.String(), nil
 }

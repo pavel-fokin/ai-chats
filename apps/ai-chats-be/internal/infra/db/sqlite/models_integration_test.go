@@ -71,3 +71,34 @@ func TestSqliteModels_AllModelCards(t *testing.T) {
 		assert.Equal(t, 1, len(descriptions))
 	})
 }
+
+func TestSqliteModels_FindModelCard(t *testing.T) {
+	ctx := context.Background()
+
+	db := New(":memory:")
+	defer db.Close()
+	CreateTables(db)
+
+	models := NewModels(db)
+
+	t.Run("not found", func(t *testing.T) {
+		description, err := models.FindModelCard(ctx, "model")
+		assert.Error(t, err)
+		assert.Equal(t, domain.ModelCard{}, description)
+	})
+
+	t.Run("found", func(t *testing.T) {
+		err := models.AddModelCard(ctx, domain.ModelCard{
+			Model:       "model",
+			Description: "description",
+		})
+		assert.NoError(t, err)
+
+		description, err := models.FindModelCard(ctx, "model")
+		assert.NoError(t, err)
+		assert.Equal(t, domain.ModelCard{
+			Model:       "model",
+			Description: "description",
+		}, description)
+	})
+}

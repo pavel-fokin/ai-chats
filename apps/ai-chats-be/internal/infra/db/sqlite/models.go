@@ -1,9 +1,9 @@
 package sqlite
 
 import (
+	"ai-chats/internal/domain"
 	"context"
 	"database/sql"
-	"ai-chats/internal/domain"
 )
 
 type Models struct {
@@ -52,4 +52,21 @@ func (m *Models) AllModelCards(ctx context.Context) ([]domain.ModelCard, error) 
 	}
 
 	return descriptions, nil
+}
+
+func (m *Models) FindModelCard(ctx context.Context, model string) (domain.ModelCard, error) {
+	row := m.db.DBTX(ctx).QueryRowContext(
+		ctx,
+		`SELECT model, description
+		FROM model_card
+		WHERE model = ?`,
+		model,
+	)
+
+	var modelCard domain.ModelCard
+	if err := row.Scan(&modelCard.Model, &modelCard.Description); err != nil {
+		return domain.ModelCard{}, err
+	}
+
+	return modelCard, nil
 }

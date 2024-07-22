@@ -12,6 +12,7 @@ export enum EventTypes {
 
 export type OllamaModel = {
   model: string;
+  description: string;
 };
 
 export type UserCredentials = {
