@@ -215,6 +215,22 @@ func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 	return chat, nil
 }
 
+func (c *Chats) FindByIDWithMessages(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
+	chat, err := c.FindByID(ctx, chatID)
+	if err != nil {
+		return domain.Chat{}, fmt.Errorf("failed to find chat by id: %w", err)
+	}
+
+	messages, err := c.AllMessages(ctx, chatID)
+	if err != nil {
+		return domain.Chat{}, fmt.Errorf("failed to get messages: %w", err)
+	}
+
+	chat.Messages = messages
+
+	return chat, nil
+}
+
 func (c *Chats) exists(ctx context.Context, chatID uuid.UUID) (bool, error) {
 	var exists bool
 	err := c.DBTX(ctx).QueryRowContext(

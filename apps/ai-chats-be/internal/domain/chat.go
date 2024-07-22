@@ -16,6 +16,7 @@ type Chat struct {
 	ID           ChatID    `json:"id"`
 	Title        string    `json:"title"`
 	User         User      `json:"user"`
+	Messages     []Message `json:"messages"`
 	DefaultModel ModelID   `json:"default_model"`
 	CreatedAt    time.Time `json:"created_at"`
 	DeletedAt    time.Time `json:"deleted_at"`
@@ -29,4 +30,8 @@ func NewChat(user User, modelID ModelID) Chat {
 		DefaultModel: modelID,
 		CreatedAt:    time.Now().UTC(),
 	}
+}
+
+func (c *Chat) AddMessage(message Message) {
+	c.Messages = append(c.Messages, message)
 }

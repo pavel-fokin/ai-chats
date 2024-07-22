@@ -14,5 +14,6 @@ type Chats interface {
 	Delete(ctx context.Context, chatID ChatID) error
 	Exists(ctx context.Context, chatID ChatID) (bool, error)
 	FindByID(ctx context.Context, chatID ChatID) (Chat, error)
+	FindByIDWithMessages(ctx context.Context, chatID ChatID) (Chat, error)
 	UpdateTitle(ctx context.Context, chatID ChatID, title string) error
 }

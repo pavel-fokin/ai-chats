@@ -13,15 +13,11 @@ import (
 
 // GenerateResponse generates a LLM response for the chat.
 func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error {
-	chat, err := a.chats.FindByID(ctx, chatID)
+	chat, err := a.chats.FindByIDWithMessages(ctx, chatID)
 	if err != nil {
 		return fmt.Errorf("failed to find a chat: %w", err)
 	}
 
-	messages, err := a.chats.AllMessages(ctx, chatID)
-	if err != nil {
-		return fmt.Errorf("failed to get messages: %w", err)
-	}
 	llm, err := ollama.NewOllama(chat.DefaultModel.AsOllamaModel())
 	if err != nil {
 		return fmt.Errorf("failed to create a chat model: %w", err)
@@ -34,7 +30,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 		return nil
 	}
 
-	llmMessage, err := llm.GenerateResponseWithStream(ctx, messages, streamFunc)
+	llmMessage, err := llm.GenerateResponseWithStream(ctx, chat.Messages, streamFunc)
 	if err != nil {
 		return fmt.Errorf("failed to generate a response: %w", err)
 	}
@@ -53,14 +49,9 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 
 // GenerateTitle generates a LLM title for the chat.
 func (a *App) GenerateTitle(ctx context.Context, chatID domain.ChatID) error {
-	chat, err := a.chats.FindByID(ctx, chatID)
+	chat, err := a.chats.FindByIDWithMessages(ctx, chatID)
 	if err != nil {
 		return fmt.Errorf("failed to find a chat: %w", err)
-	}
-
-	messages, err := a.AllMessages(ctx, chatID)
-	if err != nil {
-		return fmt.Errorf("failed to get messages: %w", err)
 	}
 
 	llm, err := ollama.NewOllama(chat.DefaultModel.AsOllamaModel())
@@ -68,7 +59,7 @@ func (a *App) GenerateTitle(ctx context.Context, chatID domain.ChatID) error {
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}
 
-	generatedTitle, err := llm.GenerateTitle(ctx, messages)
+	generatedTitle, err := llm.GenerateTitle(ctx, chat.Messages)
 	if err != nil {
 		return fmt.Errorf("failed to generate a title: %w", err)
 	}

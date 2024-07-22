@@ -1,9 +1,9 @@
 package app
 
 import (
+	"ai-chats/internal/domain"
 	"context"
 	"fmt"
-	"ai-chats/internal/domain"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
@@ -39,6 +39,11 @@ func (m *MockChats) UpdateTitle(ctx context.Context, chatID domain.ChatID, title
 }
 
 func (m *MockChats) FindByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error) {
+	args := m.Called(ctx, chatID)
+	return args.Get(0).(domain.Chat), args.Error(1)
+}
+
+func (m *MockChats) FindByIDWithMessages(ctx context.Context, chatID domain.ChatID) (domain.Chat, error) {
 	args := m.Called(ctx, chatID)
 	return args.Get(0).(domain.Chat), args.Error(1)
 }

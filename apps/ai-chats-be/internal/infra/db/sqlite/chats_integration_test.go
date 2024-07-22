@@ -330,3 +330,42 @@ func TestSqliteAllMessages(t *testing.T) {
 		assert.ErrorIs(err, domain.ErrChatNotFound)
 	})
 }
+
+func TestSqliteChats_FindByIDWithMessages(t *testing.T) {
+	ctx := context.Background()
+	assert := assert.New(t)
+
+	db := New(":memory:")
+	defer db.Close()
+	CreateTables(db)
+	crypto.InitBcryptCost(1)
+
+	users := NewUsers(db)
+	chats := NewChats(db)
+
+	modelID := domain.NewModelID("model")
+	user := domain.NewUser("username", "password")
+	err := users.Add(ctx, user)
+	assert.NoError(err)
+
+	chat := domain.NewChat(user, modelID)
+	err = chats.Add(ctx, chat)
+	assert.NoError(err)
+
+	msgs := []domain.Message{
+		domain.NewUserMessage(user, "Hello, model!"),
+		domain.NewModelMessage(modelID, "Hello, user!"),
+	}
+
+	for _, message := range msgs {
+		err := chats.AddMessage(ctx, chat.ID, message)
+		assert.NoError(err)
+	}
+
+	foundChat, err := chats.FindByIDWithMessages(ctx, chat.ID)
+	assert.NoError(err)
+	assert.Equal(len(msgs), len(foundChat.Messages))
+	for i, message := range foundChat.Messages {
+		assert.Equal(msgs[i], message)
+	}
+}
