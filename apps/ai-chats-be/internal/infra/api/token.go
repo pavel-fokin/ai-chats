@@ -1,11 +1,11 @@
 package api
 
 import (
+	"ai-chats/internal/domain"
 	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 )
 
 const (
@@ -24,7 +24,7 @@ func InitSigningKey(key string) {
 // JWTClaims represents the claims of a JSON Web Token (JWT).
 type JWTClaims struct {
 	jwt.RegisteredClaims
-	UserID uuid.UUID `json:"userId"`
+	UserID domain.UserID `json:"userId"`
 }
 
 // NewAccessToken generates a new access token for the given user ID.
@@ -32,7 +32,7 @@ type JWTClaims struct {
 // It includes the issuer, subject, audience, expiration time, and the user ID as claims.
 // The access token is signed using a signing key.
 // It returns the generated access token as a string and any error encountered during the process.
-func NewAccessToken(userID uuid.UUID) (string, error) {
+func NewAccessToken(userID domain.UserID) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JWTClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    accessTokenIssuer,

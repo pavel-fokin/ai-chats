@@ -7,8 +7,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	"ai-chats/internal/domain"
 )
 
 func TestAuthToken(t *testing.T) {
@@ -22,7 +23,7 @@ func TestAuthToken(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	accessToken, err := NewAccessToken(uuid.New())
+	accessToken, err := NewAccessToken(domain.NewUserID())
 	assert.NoError(t, err)
 
 	// Create a test request with a valid access token.
@@ -37,7 +38,7 @@ func TestAuthToken(t *testing.T) {
 
 func TestMustHaveUserID(t *testing.T) {
 	t.Run("Must have UserID", func(t *testing.T) {
-		userID := uuid.New()
+		userID := domain.NewUserID()
 		ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
 		gotUserID := MustHaveUserID(ctx)
@@ -64,7 +65,7 @@ func TestAuthParam(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 		})
 
-		accessToken, err := NewAccessToken(uuid.New())
+		accessToken, err := NewAccessToken(domain.NewUserID())
 		assert.NoError(t, err)
 
 		// Create a test request with a valid access token.

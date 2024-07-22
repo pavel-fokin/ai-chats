@@ -18,10 +18,10 @@ type Subscriber interface {
 }
 
 type ChatApp interface {
-	AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error)
+	AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat, error)
 	AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error)
 	ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error)
-	CreateChat(ctx context.Context, userID uuid.UUID, defaultModel, message string) (domain.Chat, error)
+	CreateChat(ctx context.Context, userID domain.UserID, defaultModel, message string) (domain.Chat, error)
 	DeleteChat(ctx context.Context, chatID domain.ChatID) error
 	FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error)
 	SendMessage(ctx context.Context, userID domain.UserID, chatID domain.ChatID, message string) (domain.Message, error)

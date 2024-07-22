@@ -6,8 +6,6 @@ import (
 	"fmt"
 
 	"ai-chats/internal/domain"
-
-	"github.com/google/uuid"
 )
 
 // Users represents a repository of users.
@@ -61,7 +59,7 @@ func (u *Users) FindByUsernameWithPassword(ctx context.Context, username string)
 }
 
 // FindByID finds a user by ID.
-func (u *Users) FindByID(ctx context.Context, id uuid.UUID) (domain.User, error) {
+func (u *Users) FindByID(ctx context.Context, id domain.UserID) (domain.User, error) {
 	user := domain.User{
 		ID: id,
 	}

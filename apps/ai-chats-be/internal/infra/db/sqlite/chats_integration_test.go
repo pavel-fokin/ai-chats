@@ -46,7 +46,7 @@ func TestSqliteAddChat(t *testing.T) {
 	})
 
 	t.Run("add chat with invalid user", func(t *testing.T) {
-		chat := domain.NewChat(domain.User{ID: uuid.New()}, modelID)
+		chat := domain.NewChat(domain.NewUser(""), modelID)
 		err = chats.Add(ctx, chat)
 		assert.Error(t, err)
 	})
@@ -150,7 +150,7 @@ func TestSqliteAllChats(t *testing.T) {
 			assert.NoError(t, err)
 		}
 
-		allChats, err := chats.AllChats(context.Background(), uuid.New())
+		allChats, err := chats.AllChats(context.Background(), domain.NewUserID())
 		assert.NoError(t, err)
 		assert.Empty(t, allChats)
 	})

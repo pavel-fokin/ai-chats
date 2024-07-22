@@ -44,7 +44,7 @@ func TestSqliteUsers_AddUser(t *testing.T) {
 	})
 }
 
-func TestSqliteFindByUsernameWithPassword(t *testing.T) {
+func TestSqliteUsers_FindByUsernameWithPassword(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)

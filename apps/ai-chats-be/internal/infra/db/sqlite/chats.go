@@ -147,7 +147,7 @@ func (c *Chats) UpdateTitle(ctx context.Context, chatID uuid.UUID, title string)
 	return nil
 }
 
-func (c *Chats) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
+func (c *Chats) AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
 	rows, err := c.DBTX(ctx).QueryContext(
 		ctx,
 		`SELECT

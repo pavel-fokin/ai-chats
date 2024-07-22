@@ -7,7 +7,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
@@ -29,7 +28,7 @@ func (m *MockUsers) FindByUsernameWithPassword(ctx context.Context, username str
 	return args.Get(0).(domain.User), args.Error(1)
 }
 
-func (m *MockUsers) FindByID(ctx context.Context, id uuid.UUID) (domain.User, error) {
+func (m *MockUsers) FindByID(ctx context.Context, id domain.UserID) (domain.User, error) {
 	args := m.Called(ctx, id)
 	return args.Get(0).(domain.User), args.Error(1)
 }

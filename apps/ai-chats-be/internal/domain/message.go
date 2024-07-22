@@ -24,7 +24,7 @@ func NewMessage(sender Sender, text string) Message {
 
 func NewUserMessage(user User, text string) Message {
 	return NewMessage(
-		NewUserSender(user), text,
+		NewUserSender(user.ID), text,
 	)
 }
 

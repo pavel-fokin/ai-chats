@@ -1,12 +1,11 @@
 package api
 
 import (
+	"ai-chats/internal/domain"
 	"context"
 	"log/slog"
 	"net/http"
 	"strings"
-
-	"github.com/google/uuid"
 )
 
 type UserID string
@@ -17,13 +16,13 @@ const (
 )
 
 // MustHaveUserID returns the user ID from the context or panics if it is not present.
-func MustHaveUserID(ctx context.Context) uuid.UUID {
+func MustHaveUserID(ctx context.Context) domain.UserID {
 	v := ctx.Value(UserIDCtxKey)
 	if v == nil {
 		panic("missing user ID")
 	}
 
-	userID, ok := v.(uuid.UUID)
+	userID, ok := v.(domain.UserID)
 	if !ok {
 		panic("invalid user ID")
 	}

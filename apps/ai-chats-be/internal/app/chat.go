@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
-
 	"ai-chats/internal/domain"
 	"ai-chats/internal/domain/events"
 	"ai-chats/internal/pkg/json"
@@ -13,7 +11,7 @@ import (
 )
 
 // AllChats returns all chats for the user.
-func (a *App) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
+func (a *App) AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
 	return a.chats.AllChats(ctx, userID)
 }
 
@@ -28,7 +26,7 @@ func (a *App) ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error
 }
 
 // CreateChat creates a chat for the user.
-func (a *App) CreateChat(ctx context.Context, userID uuid.UUID, model, text string) (domain.Chat, error) {
+func (a *App) CreateChat(ctx context.Context, userID domain.UserID, model, text string) (domain.Chat, error) {
 	user, err := a.users.FindByID(ctx, userID)
 	if err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to find a user: %w", err)

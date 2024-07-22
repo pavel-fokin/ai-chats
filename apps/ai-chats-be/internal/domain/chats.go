@@ -2,14 +2,12 @@ package domain
 
 import (
 	"context"
-
-	"github.com/google/uuid"
 )
 
 type Chats interface {
 	Add(ctx context.Context, chat Chat) error
 	AddMessage(ctx context.Context, chatID ChatID, message Message) error
-	AllChats(ctx context.Context, userID uuid.UUID) ([]Chat, error)
+	AllChats(ctx context.Context, userID UserID) ([]Chat, error)
 	AllMessages(ctx context.Context, chatID ChatID) ([]Message, error)
 	Delete(ctx context.Context, chatID ChatID) error
 	Exists(ctx context.Context, chatID ChatID) (bool, error)

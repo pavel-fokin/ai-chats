@@ -1,16 +1,16 @@
 package api
 
 import (
+	"ai-chats/internal/domain"
 	"testing"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewAccessToken(t *testing.T) {
-	userID := uuid.New()
+	userID := domain.NewUserID()
 	InitSigningKey("secret")
 	tokenString, err := NewAccessToken(userID)
 	assert.NoError(t, err)

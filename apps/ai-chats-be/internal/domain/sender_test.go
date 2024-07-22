@@ -3,14 +3,12 @@ package domain
 import (
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewUserSender(t *testing.T) {
-	id := uuid.New()
-	user := User{ID: id}
-	sender := NewUserSender(user)
+	id := NewUserID()
+	sender := NewUserSender(id)
 	expected := Sender{sender: "user:" + id.String()}
 	assert.Equal(t, expected, sender)
 }

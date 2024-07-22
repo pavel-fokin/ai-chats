@@ -15,8 +15,8 @@ func NewSender(sender string) Sender {
 }
 
 // NewUserSender creates a new user sender.
-func NewUserSender(user User) Sender {
-	return NewSender(fmt.Sprintf("user:%s", user.ID))
+func NewUserSender(userID UserID) Sender {
+	return NewSender(fmt.Sprintf("user:%s", userID))
 }
 
 // NewModelSender creates a new model sender.

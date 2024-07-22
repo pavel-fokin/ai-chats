@@ -2,22 +2,22 @@ package api
 
 import (
 	"context"
-	"ai-chats/internal/domain"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
+
+	"ai-chats/internal/domain"
 )
 
 type MockChat struct {
 	mock.Mock
 }
 
-func (m *MockChat) AllChats(ctx context.Context, userID uuid.UUID) ([]domain.Chat, error) {
+func (m *MockChat) AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
 	args := m.Called(ctx, userID)
 	return args.Get(0).([]domain.Chat), args.Error(1)
 }
 
-func (m *MockChat) CreateChat(ctx context.Context, userID uuid.UUID, defaultModel, message string) (domain.Chat, error) {
+func (m *MockChat) CreateChat(ctx context.Context, userID domain.UserID, defaultModel, message string) (domain.Chat, error) {
 	args := m.Called(ctx, userID, defaultModel, message)
 	return args.Get(0).(domain.Chat), args.Error(1)
 }

@@ -26,8 +26,8 @@ func matchChiContext(ctx context.Context) bool {
 	return key != nil
 }
 
-func TestApiCreateChat(t *testing.T) {
-	userID := uuid.New()
+func TestApiChats_CreateChat(t *testing.T) {
+	userID := domain.NewUserID()
 	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
 	t.Run("Missed UserID", func(t *testing.T) {
@@ -148,10 +148,10 @@ func TestApiCreateChat(t *testing.T) {
 	})
 }
 
-func TestApiDeleteChat(t *testing.T) {
+func TestApiChats_DeleteChat(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		chatID := uuid.New()
-		ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
+		ctx := context.WithValue(context.Background(), UserIDCtxKey, domain.NewUserID())
 
 		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/chats/%s", chatID), nil)
 		req = req.WithContext(ctx)
@@ -210,8 +210,8 @@ func TestApiDeleteChat(t *testing.T) {
 	})
 }
 
-func TestApiGetChats(t *testing.T) {
-	userID := uuid.New()
+func TestApiChats_GetChats(t *testing.T) {
+	userID := domain.NewUserID()
 	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
 	t.Run("success", func(t *testing.T) {
@@ -243,7 +243,7 @@ func TestApiGetChats(t *testing.T) {
 	})
 }
 
-func TestApiGetMessages(t *testing.T) {
+func TestApiChats_GetMessages(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		chatID := uuid.New()
 
@@ -311,7 +311,7 @@ func TestApiGetMessages(t *testing.T) {
 	})
 }
 
-func TestApiGetEvents(t *testing.T) {
+func TestApiChats_GetEvents(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		chatID := uuid.New()
 
@@ -440,7 +440,7 @@ func TestApiGetChat(t *testing.T) {
 }
 
 func TestApiPostMessages(t *testing.T) {
-	userID := uuid.New()
+	userID := domain.NewUserID()
 	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
 	t.Run("success", func(t *testing.T) {
