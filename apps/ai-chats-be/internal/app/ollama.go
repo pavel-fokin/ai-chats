@@ -11,7 +11,7 @@ func (a *App) ListModels(ctx context.Context) ([]domain.OllamaModel, error) {
 
 	ollamaClientModels, err := a.ollamaClient.List(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to list models: %w", err)
+		return nil, fmt.Errorf("failed to list ollame models: %w", err)
 	}
 
 	var ollamaModels []domain.OllamaModel
@@ -30,9 +30,9 @@ func (a *App) ListModels(ctx context.Context) ([]domain.OllamaModel, error) {
 }
 
 func (a *App) PullModel(ctx context.Context, model string) error {
-	return a.ollamaClient.Pull(ctx, domain.NewOllamaModel(model))
+	return a.ollamaClient.Pull(ctx, model)
 }
 
 func (a *App) DeleteModel(ctx context.Context, model string) error {
-	return a.ollamaClient.Delete(ctx, domain.NewOllamaModel(model))
+	return a.ollamaClient.Delete(ctx, model)
 }

@@ -23,10 +23,4 @@ func TestModel(t *testing.T) {
 
 		assert.Equal(t, "model:latest", model.String())
 	})
-
-	t.Run("model name", func(t *testing.T) {
-		model := NewOllamaModel("model:latest")
-
-		assert.Equal(t, "model", model.Name())
-	})
 }

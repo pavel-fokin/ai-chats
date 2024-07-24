@@ -23,23 +23,23 @@ func NewOllamaModels() *OllamaModels {
 	return &OllamaModels{client: client}
 }
 
-func (o *OllamaModels) List(ctx context.Context) ([]domain.OllamaModel, error) {
+func (o *OllamaModels) List(ctx context.Context) ([]domain.OllamaClientModel, error) {
 	resp, err := o.client.List(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	models := []domain.OllamaModel{}
+	models := []domain.OllamaClientModel{}
 	for _, model := range resp.Models {
-		models = append(models, domain.NewOllamaModel(model.Model))
+		models = append(models, domain.NewOllamaClientModel(model.Model))
 	}
 
 	return models, nil
 }
 
-func (o *OllamaModels) Pull(ctx context.Context, model domain.OllamaModel) error {
+func (o *OllamaModels) Pull(ctx context.Context, model string) error {
 	req := &api.PullRequest{
-		Model: model.Model,
+		Model: model,
 	}
 
 	progressFunc := func(resp api.ProgressResponse) error {
@@ -54,9 +54,9 @@ func (o *OllamaModels) Pull(ctx context.Context, model domain.OllamaModel) error
 	return nil
 }
 
-func (o *OllamaModels) Delete(ctx context.Context, model domain.OllamaModel) error {
+func (o *OllamaModels) Delete(ctx context.Context, model string) error {
 	req := &api.DeleteRequest{
-		Model: model.Model,
+		Model: model,
 	}
 
 	if err := o.client.Delete(ctx, req); err != nil {
