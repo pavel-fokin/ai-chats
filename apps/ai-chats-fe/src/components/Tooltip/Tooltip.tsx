@@ -8,5 +8,5 @@ interface TooltipProps extends React.ComponentProps<typeof RadixTooltip> {}
 export const Tooltip = forwardRef<TooltipElement, TooltipProps>(
   (props, ref) => {
     return <RadixTooltip {...props} ref={ref} />;
-  }
+  },
 );

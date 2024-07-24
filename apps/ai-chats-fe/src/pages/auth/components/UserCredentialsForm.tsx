@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { userCredentialsSchema, UserCredentialsSchema } from 'schemas';
+import { Flex, Text, TextField } from '@radix-ui/themes';
 
-import { Button, Flex, Text, TextField } from '@radix-ui/themes';
+import { Button } from 'components';
+import { userCredentialsSchema, UserCredentialsSchema } from 'schemas';
 
 interface Props {
   onSubmit: SubmitHandler<UserCredentialsSchema>;

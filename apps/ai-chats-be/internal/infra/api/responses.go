@@ -1,10 +1,10 @@
 package api
 
 import (
+	"ai-chats/internal/domain"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"ai-chats/internal/domain"
 	"time"
 )
 

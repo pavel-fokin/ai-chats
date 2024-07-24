@@ -1,5 +1,6 @@
-import { AlertDialog, Button, Flex, Strong, Text } from '@radix-ui/themes';
+import { AlertDialog, Flex, Strong, Text } from '@radix-ui/themes';
 
+import { Button } from 'components';
 import { useDeleteOllamaModel } from 'hooks';
 import { OllamaModel } from 'types';
 

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
-import { Button, DropdownMenu, Flex } from '@radix-ui/themes';
+import { DropdownMenu, Flex } from '@radix-ui/themes';
 
+import { Button } from 'components';
 import { ConfigurationIcon, DeleteIcon } from 'components/ui/icons';
 import { useChat } from 'hooks';
 

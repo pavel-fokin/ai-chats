@@ -3,9 +3,9 @@
 package ollama
 
 import (
-	"context"
 	"ai-chats/internal/domain"
 	"ai-chats/internal/domain/events"
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

@@ -5,12 +5,8 @@ import { vi } from 'vitest';
 import { InputMessage } from 'components';
 
 const renderComponent = (children: React.ReactNode) => {
-  return render(
-    <Theme>
-      {children}
-    </Theme>
-  );
-}
+  return render(<Theme>{children}</Theme>);
+};
 
 test('updates input message text on change', () => {
   renderComponent(<InputMessage handleSend={() => {}} />);

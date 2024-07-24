@@ -1,6 +1,7 @@
-import { AlertDialog, Button, Flex, Strong, Text } from '@radix-ui/themes';
+import { AlertDialog, Flex, Strong, Text } from '@radix-ui/themes';
 import { useNavigate } from 'react-router-dom';
 
+import { Button } from 'components';
 import { useChat, useDeleteChat } from 'hooks';
 
 interface DeleteDialogProps {

@@ -10,7 +10,7 @@ test.skip('renders tooltip content when hovered', async () => {
       <Tooltip content="This is a tooltip">
         <button>Hover me</button>
       </Tooltip>
-    </Theme>
+    </Theme>,
   );
 
   const button = screen.getByRole('button', { name: 'Hover me' });
@@ -29,7 +29,7 @@ test('does not render tooltip content when not hovered', () => {
       <Tooltip content="This is a tooltip">
         <button>Hover me</button>
       </Tooltip>
-    </Theme>
+    </Theme>,
   );
 
   expect(screen.getByRole('button', { name: 'Hover me' })).toBeInTheDocument();

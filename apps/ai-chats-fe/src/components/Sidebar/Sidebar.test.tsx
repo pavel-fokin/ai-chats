@@ -29,7 +29,7 @@ const server = setupServer(
         },
       },
     });
-  })
+  }),
 );
 
 beforeAll(() => server.listen());
@@ -58,7 +58,7 @@ function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
           </MemoryRouter>
         </QueryClientProvider>
       </AuthContextProvider>
-    </Theme>
+    </Theme>,
   );
 }
 
