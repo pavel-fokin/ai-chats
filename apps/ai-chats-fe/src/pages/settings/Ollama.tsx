@@ -3,12 +3,11 @@ import { Box, Flex, Heading, IconButton, TextField } from '@radix-ui/themes';
 import { HamburgerMenuButton, NewChatIconButton } from 'components';
 import { Header, PageLayout } from 'components/layout';
 import { DownloadIcon } from 'components/ui/icons';
-import { useModelsLibrary, useOllamaModels, usePullOllamaModel } from 'hooks';
+import { useOllamaModels, usePullOllamaModel } from 'hooks';
 
-import { ModelCard, OllamaModel } from './components';
+import { OllamaModel } from './components';
 
 export const OllamaSettings: React.FC = () => {
-  const modelsLibrary = useModelsLibrary();
   const ollamaModels = useOllamaModels();
   const pullModel = usePullOllamaModel();
 
@@ -59,23 +58,8 @@ export const OllamaSettings: React.FC = () => {
             </Flex>
           </form>
           <Box width="100%" pb="8">
-            <Box pb="4">
-              <Heading as="h3" size="4" align="left" color="gray" weight="medium">
-                Downloaded Models
-              </Heading>
-            </Box>
             {ollamaModels.data?.map((model) => (
               <OllamaModel key={model.model} model={model} />
-            ))}
-          </Box>
-          <Box width="100%">
-            <Box pb="4">
-              <Heading as="h3" size="4" align="left" color="gray" weight="medium">
-                Models Library
-              </Heading>
-            </Box>
-            {modelsLibrary.data?.map((model) => (
-              <ModelCard key={model.model} model={model} />
             ))}
           </Box>
         </Flex>

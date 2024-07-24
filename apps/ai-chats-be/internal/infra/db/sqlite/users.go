@@ -18,7 +18,7 @@ func NewUsers(db *sql.DB) *Users {
 	return &Users{DB{db: db}}
 }
 
-// AddUser adds a new user to the database.
+// Add adds a new user to the database.
 func (u *Users) Add(ctx context.Context, user domain.User) error {
 	_, err := u.DBTX(ctx).ExecContext(
 		ctx,
@@ -37,7 +37,9 @@ func (u *Users) Add(ctx context.Context, user domain.User) error {
 	return nil
 }
 
-// FindUser finds a user by username.
+// FindByUsernameWithPassword retrieves a user from the database by their username,
+// including their password hash. It returns the found user and any error encountered.
+// If the user is not found, it returns domain.ErrUserNotFound.
 func (u *Users) FindByUsernameWithPassword(ctx context.Context, username string) (domain.User, error) {
 	user := domain.User{
 		Username: username,
