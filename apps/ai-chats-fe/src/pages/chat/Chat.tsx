@@ -7,8 +7,8 @@ import {
   InputMessage,
   NewChatIconButton,
 } from 'components';
-import { Header, PageLayout } from 'components/layout';
 import { useChatEvents, useMessages, useSendMessage } from 'hooks';
+import { Header, PageLayout } from 'layout';
 
 import { ChatMenu } from './components/ChatMenu';
 import { Message } from './components/Message';

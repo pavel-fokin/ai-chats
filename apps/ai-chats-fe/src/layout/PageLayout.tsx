@@ -1,5 +1,6 @@
 import { Sidebar } from 'components';
-import { Aside, Root } from 'components/layout';
+
+import { Aside, Root } from './';
 
 type PageLayoutProps = {
   children: React.ReactNode;

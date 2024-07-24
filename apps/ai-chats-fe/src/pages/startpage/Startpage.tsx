@@ -7,8 +7,8 @@ import {
   InputMessage,
   NewChatIconButton,
 } from 'components';
-import { Header, PageLayout } from 'components/layout';
 import { useCreateChat, useOllamaModels } from 'hooks';
+import { Header, PageLayout } from 'layout';
 import { OllamaModel } from 'types';
 
 import { ModelsList } from './components/ModelsList';
