@@ -9,9 +9,10 @@ import {
 import styles from './TextArea.module.css';
 
 interface TextAreaProps {
+  onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onEnterPress?: () => void;
   placeholder: string;
   value: string;
-  onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
@@ -42,6 +43,14 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         onChange={handleChange}
         className={styles.TextArea}
         placeholder={props.placeholder}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (props.onEnterPress) {
+              props.onEnterPress();
+            }
+          }
+        }}
       />
     );
   },

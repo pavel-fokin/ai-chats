@@ -16,8 +16,7 @@ function InputMessage({ handleSend }: InputMessageProps) {
     setInputText(event.target.value);
   };
 
-  const onSendClick = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSendClick = async () => {
     if (inputText.trim() !== '') {
       handleSend(inputText);
       setInputText('');
@@ -25,29 +24,28 @@ function InputMessage({ handleSend }: InputMessageProps) {
   };
 
   return (
-    <form role="form" onSubmit={onSendClick}>
-      <Flex
-        gap="2"
-        justify="center"
-        p={{
-          initial: '2',
-          sm: '4',
-        }}
-      >
-        <Box flexGrow="1">
-          <TextArea
-            value={inputText}
-            onChange={onInputChangeArea}
-            placeholder="Type a message"
-          />
-        </Box>
-        <Tooltip content="Send a message" side="top">
-          <IconButton size="3" onClick={onSendClick} highContrast>
-            <SendIcon size={16} />
-          </IconButton>
-        </Tooltip>
-      </Flex>
-    </form>
+    <Flex
+      gap="2"
+      justify="center"
+      p={{
+        initial: '2',
+        sm: '4',
+      }}
+    >
+      <Box flexGrow="1">
+        <TextArea
+          onChange={onInputChangeArea}
+          onEnterPress={onSendClick}
+          placeholder="Type a message"
+          value={inputText}
+        />
+      </Box>
+      <Tooltip content="Send a message" side="top">
+        <IconButton size="3" onClick={onSendClick} highContrast>
+          <SendIcon size={16} />
+        </IconButton>
+      </Tooltip>
+    </Flex>
   );
 }
 

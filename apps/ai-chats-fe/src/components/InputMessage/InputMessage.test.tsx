@@ -12,7 +12,7 @@ test('updates input message text on change', () => {
   renderComponent(<InputMessage handleSend={() => {}} />);
 
   const inputElement = screen.getByPlaceholderText(
-    'Type a message',
+    'Type a message'
   ) as HTMLInputElement;
   const newText = 'Hello, world!';
 
@@ -28,8 +28,8 @@ test('calls handleSend with correct message on send click', () => {
   renderComponent(<InputMessage handleSend={handleSendMock} />);
 
   const inputElement = screen.getByPlaceholderText(
-    'Type a message',
-  ) as HTMLInputElement;
+    'Type a message'
+  ) as HTMLTextAreaElement;
   const sendButton = screen.getByRole('button');
 
   fireEvent.change(inputElement, { target: { value: text } });
@@ -45,14 +45,10 @@ test('calls handleSend with correct message on enter key press', () => {
 
   renderComponent(<InputMessage handleSend={handleSendMock} />);
 
-  const inputElement = screen.getByPlaceholderText(
-    'Type a message',
-  ) as HTMLInputElement;
-  const form = screen.getByRole('form');
+  const inputElement = screen.getByRole('textbox') as HTMLTextAreaElement;
 
   fireEvent.change(inputElement, { target: { value: text } });
-  // fireEvent.keyDown(inputElement, { key: 'Enter', code: 13, charCode: 13 });
-  fireEvent.submit(form);
+  fireEvent.keyDown(inputElement, { key: 'Enter', code: 13, charCode: 13 });
 
   expect(handleSendMock).toHaveBeenCalledWith(text);
   expect(inputElement.value).toBe('Hello, world!');
@@ -76,8 +72,8 @@ test('does not call handleSend on whitespace message send click', () => {
   renderComponent(<InputMessage handleSend={handleSendMock} />);
 
   const inputElement = screen.getByPlaceholderText(
-    'Type a message',
-  ) as HTMLInputElement;
+    'Type a message'
+  ) as HTMLTextAreaElement;
   const sendButton = screen.getByRole('button');
 
   fireEvent.change(inputElement, { target: { value: ' ' } });
