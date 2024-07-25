@@ -10,20 +10,20 @@ import (
 	"ai-chats/internal/domain"
 )
 
-type OllamaModels struct {
+type OllamaClient struct {
 	client *api.Client
 }
 
-func NewOllamaModels() *OllamaModels {
+func NewOllamaClient() *OllamaClient {
 	client, err := api.ClientFromEnvironment()
 	if err != nil {
 		log.Fatalf("Failed to create Ollama client: %v", err)
 	}
 
-	return &OllamaModels{client: client}
+	return &OllamaClient{client: client}
 }
 
-func (o *OllamaModels) List(ctx context.Context) ([]domain.OllamaClientModel, error) {
+func (o *OllamaClient) List(ctx context.Context) ([]domain.OllamaClientModel, error) {
 	resp, err := o.client.List(ctx)
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (o *OllamaModels) List(ctx context.Context) ([]domain.OllamaClientModel, er
 	return models, nil
 }
 
-func (o *OllamaModels) Pull(ctx context.Context, model string) error {
+func (o *OllamaClient) Pull(ctx context.Context, model string) error {
 	req := &api.PullRequest{
 		Model: model,
 	}
@@ -54,7 +54,7 @@ func (o *OllamaModels) Pull(ctx context.Context, model string) error {
 	return nil
 }
 
-func (o *OllamaModels) Delete(ctx context.Context, model string) error {
+func (o *OllamaClient) Delete(ctx context.Context, model string) error {
 	req := &api.DeleteRequest{
 		Model: model,
 	}

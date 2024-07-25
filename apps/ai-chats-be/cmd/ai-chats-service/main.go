@@ -52,7 +52,8 @@ func main() {
 		sqlite.NewChats(db),
 		sqlite.NewUsers(db),
 		sqlite.NewModels(db),
-		ollama.NewOllamaModels(),
+		ollama.NewOllamaClient(),
+		sqlite.NewOllamaModels(db),
 		pubsub,
 		sqlite.NewTx(db),
 	)

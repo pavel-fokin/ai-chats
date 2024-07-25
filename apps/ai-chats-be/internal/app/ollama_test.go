@@ -61,24 +61,24 @@ func TestOllamaAllModels(t *testing.T) {
 			domain.NewOllamaClientModel("model1:latest"),
 		}
 
-		mockOllamaModels := &MockOllamaClient{}
-		mockOllamaModels.On("List", ctx).Return(models, nil)
+		mockOllamaClient := &MockOllamaClient{}
+		mockOllamaClient.On("List", ctx).Return(models, nil)
 		mockModels := &MockModels{}
 		mockModels.On("FindModelCard", ctx, "model1").Return(domain.ModelCard{Description: "description1"}, nil)
 
-		app := New(nil, nil, mockModels, mockOllamaModels, nil, nil)
+		app := New(nil, nil, mockModels, mockOllamaClient, nil, nil, nil)
 
 		_, err := app.ListModels(ctx)
 		assert.NoError(t, err)
-		mockOllamaModels.AssertExpectations(t)
+		mockOllamaClient.AssertExpectations(t)
 	})
 
 	t.Run("error", func(t *testing.T) {
-		mockOllamaModels := &MockOllamaClient{}
-		mockOllamaModels.On("List", ctx).Return(nil, assert.AnError)
+		mockOllamaClient := &MockOllamaClient{}
+		mockOllamaClient.On("List", ctx).Return(nil, assert.AnError)
 		mockModels := &MockModels{}
 
-		app := New(nil, nil, mockModels, mockOllamaModels, nil, nil)
+		app := New(nil, nil, mockModels, mockOllamaClient, nil, nil, nil)
 
 		_, err := app.ListModels(ctx)
 		assert.Error(t, err)

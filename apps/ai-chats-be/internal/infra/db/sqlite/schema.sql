@@ -31,7 +31,10 @@ CREATE TABLE IF NOT EXISTS model_card (
 
 CREATE TABLE IF NOT EXISTS ollama_model (
     model TEXT NOT NULL CHECK (length(model) > 0),
-    description TEXT NOT NULL CHECK (length(description) > 0),
+    added_at TEXT NOT NULL CHECK (length(added_at) > 0),
+    updated_at TEXT NOT NULL CHECK (length(updated_at) > 0),
+    deleted_at TEXT,
+    status TEXT NOT NULL CHECK (length(status) > 0),
     PRIMARY KEY (model)
 );
 
