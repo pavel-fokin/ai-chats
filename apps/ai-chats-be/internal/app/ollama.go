@@ -7,7 +7,7 @@ import (
 	"ai-chats/internal/domain"
 )
 
-func (a *App) ListModels(ctx context.Context) ([]domain.OllamaModel, error) {
+func (a *App) ListOllamaModels(ctx context.Context) ([]domain.OllamaModel, error) {
 
 	ollamaClientModels, err := a.ollamaClient.List(ctx)
 	if err != nil {
@@ -29,10 +29,10 @@ func (a *App) ListModels(ctx context.Context) ([]domain.OllamaModel, error) {
 	return ollamaModels, nil
 }
 
-func (a *App) PullModel(ctx context.Context, model string) error {
+func (a *App) PullOllamaModel(ctx context.Context, model string) error {
 	return a.ollamaClient.Pull(ctx, model)
 }
 
-func (a *App) DeleteModel(ctx context.Context, model string) error {
+func (a *App) DeleteOllamaModel(ctx context.Context, model string) error {
 	return a.ollamaClient.Delete(ctx, model)
 }

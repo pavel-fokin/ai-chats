@@ -11,17 +11,17 @@ import (
 )
 
 type OllamaApp interface {
-	ListModels(context.Context) ([]domain.OllamaModel, error)
-	PullModel(context.Context, string) error
-	DeleteModel(context.Context, string) error
+	ListOllamaModels(context.Context) ([]domain.OllamaModel, error)
+	PullOllamaModel(context.Context, string) error
+	DeleteOllamaModel(context.Context, string) error
 }
 
-// GetOllamaModels handles the GET /api/ollama-models endpoint.
+// GetOllamaModels handles the GET /api/ollama/models endpoint.
 func GetOllamaModels(ollama OllamaApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		models, err := ollama.ListModels(ctx)
+		models, err := ollama.ListOllamaModels(ctx)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get ollama models", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
@@ -32,7 +32,7 @@ func GetOllamaModels(ollama OllamaApp) http.HandlerFunc {
 	}
 }
 
-// PostOllamaModels handles the POST /api/ollama-models endpoint.
+// PostOllamaModels handles the POST /api/ollama/models endpoint.
 func PostOllamaModels(ollama OllamaApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -44,7 +44,7 @@ func PostOllamaModels(ollama OllamaApp) http.HandlerFunc {
 			return
 		}
 
-		err := ollama.PullModel(ctx, req.Model)
+		err := ollama.PullOllamaModel(ctx, req.Model)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to pull ollama model", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
@@ -55,14 +55,14 @@ func PostOllamaModels(ollama OllamaApp) http.HandlerFunc {
 	}
 }
 
-// DeleteOllamaModels handles the DELETE /api/ollama-models/{model} endpoint.
+// DeleteOllamaModels handles the DELETE /api/ollama/models/{model} endpoint.
 func DeleteOllamaModel(ollama OllamaApp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
 		model := chi.URLParam(r, "model")
 
-		err := ollama.DeleteModel(ctx, model)
+		err := ollama.DeleteOllamaModel(ctx, model)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to delete ollama model", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)

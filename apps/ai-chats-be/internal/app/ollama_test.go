@@ -53,7 +53,7 @@ func (m *MockModels) FindModelCard(ctx context.Context, model string) (domain.Mo
 	return args.Get(0).(domain.ModelCard), args.Error(1)
 }
 
-func TestOllamaAllModels(t *testing.T) {
+func TestAppOllama_ListModels(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("success", func(t *testing.T) {
@@ -68,7 +68,7 @@ func TestOllamaAllModels(t *testing.T) {
 
 		app := New(nil, nil, mockModels, mockOllamaClient, nil, nil, nil)
 
-		_, err := app.ListModels(ctx)
+		_, err := app.ListOllamaModels(ctx)
 		assert.NoError(t, err)
 		mockOllamaClient.AssertExpectations(t)
 	})
@@ -80,7 +80,7 @@ func TestOllamaAllModels(t *testing.T) {
 
 		app := New(nil, nil, mockModels, mockOllamaClient, nil, nil, nil)
 
-		_, err := app.ListModels(ctx)
+		_, err := app.ListOllamaModels(ctx)
 		assert.Error(t, err)
 		mockModels.AssertExpectations(t)
 	})
