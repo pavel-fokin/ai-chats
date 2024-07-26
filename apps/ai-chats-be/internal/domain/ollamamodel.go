@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 // Status represents the status of a model.
 type Status string
@@ -43,6 +46,14 @@ func (om *OllamaModel) Delete() {
 }
 
 func (om OllamaModel) String() string {
+	return om.Model
+}
+
+func (om OllamaModel) Name() string {
+	parts := strings.Split(om.Model, ":")
+	if len(parts) == 2 {
+		return parts[0]
+	}
 	return om.Model
 }
 

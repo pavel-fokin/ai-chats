@@ -65,6 +65,27 @@ func (m *OllamaModels) AllAdded(ctx context.Context) ([]domain.OllamaModel, erro
 
 		models = append(models, model)
 	}
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate over ollama_model rows: %w", err)
+	}
+
+	for i := range models {
+		var description string
+		err = m.db.DBTX(ctx).QueryRowContext(
+			ctx,
+			"SELECT description FROM model_card WHERE model = ?",
+			models[i].Name(),
+		).Scan(&description)
+		if err != nil {
+			switch err {
+			case sql.ErrNoRows:
+				continue
+			default:
+				return nil, fmt.Errorf("failed to get model card description: %w", err)
+			}
+		}
+		models[i].Description = description
+	}
 
 	return models, nil
 }
