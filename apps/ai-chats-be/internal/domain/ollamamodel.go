@@ -10,8 +10,6 @@ const (
 	StatusAdded Status = "added"
 	// StatusPulling represents a model that is being pulled.
 	StatusPulling Status = "pulling"
-	// StatusAvaialable represents an available model.
-	StatusAvailable Status = "available"
 	// StatusDeleted represents a model that has been deleted.
 	StatusDeleted Status = "deleted"
 )
@@ -20,9 +18,9 @@ const (
 type OllamaModel struct {
 	Model       string    `json:"model"`
 	Description string    `json:"description"`
-	AddedAt     time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	DeletedAt   time.Time `json:"deleted_at"`
+	AddedAt     time.Time `json:"addedAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	DeletedAt   time.Time `json:"deletedAt"`
 	Status      Status    `json:"status"`
 }
 
@@ -35,19 +33,11 @@ func NewOllamaModel(model string) *OllamaModel {
 	}
 }
 
-func (om *OllamaModel) Update(model string) {
-	om.UpdatedAt = time.Now().UTC()
-}
-
-func (om *OllamaModel) Available() {
-	om.Status = StatusAvailable
-}
-
-func (om *OllamaModel) Pulling() {
+func (om *OllamaModel) Pull() {
 	om.Status = StatusPulling
 }
 
-func (om *OllamaModel) Deleted() {
+func (om *OllamaModel) Delete() {
 	om.DeletedAt = time.Now().UTC()
 	om.Status = StatusDeleted
 }

@@ -57,11 +57,11 @@ export const OllamaSettings: React.FC = () => {
               </IconButton>
             </Flex>
           </form>
-          <Box width="100%" pb="8">
+          <Flex direction="column" width="100%" gap="4">
             {ollamaModels.data?.map((model) => (
               <OllamaModel key={model.model} model={model} />
             ))}
-          </Box>
+          </Flex>
         </Flex>
       </Box>
     </PageLayout>

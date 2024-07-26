@@ -11,7 +11,7 @@ interface ModelProps {
 export const Model: React.FC<ModelProps> = ({ model, isSelected, onClick }) => {
   return (
     <Card asChild onClick={() => onClick(model)}>
-      <button>
+      <a href="#">
         <Flex direction="column" gap="2" width="100%">
           <Flex align="center" justify="between">
             <Heading as="h3" size="4">
@@ -21,7 +21,7 @@ export const Model: React.FC<ModelProps> = ({ model, isSelected, onClick }) => {
           </Flex>
           <Text>{model.description || 'No description provided'}</Text>
         </Flex>
-      </button>
+      </a>
     </Card>
   );
 };

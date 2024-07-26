@@ -31,11 +31,11 @@ func (m *OllamaModels) Add(ctx context.Context, model domain.OllamaModel) error 
 	return err
 }
 
-func (m *OllamaModels) AllAvailable(ctx context.Context) ([]domain.OllamaModel, error) {
+func (m *OllamaModels) AllAdded(ctx context.Context) ([]domain.OllamaModel, error) {
 	rows, err := m.db.DBTX(ctx).QueryContext(
 		ctx,
 		"SELECT model, added_at, updated_at, status FROM ollama_model WHERE status = ?",
-		domain.StatusAvailable,
+		domain.StatusAdded,
 	)
 	if err != nil {
 		return nil, err
@@ -70,9 +70,17 @@ func (m *OllamaModels) AllAvailable(ctx context.Context) ([]domain.OllamaModel, 
 }
 
 func (m *OllamaModels) Delete(ctx context.Context, model domain.OllamaModel) error {
+	if model.Status != domain.StatusDeleted {
+		return domain.ErrOllamaModelNotMarkedAsDelted
+	}
+
 	_, err := m.db.DBTX(ctx).ExecContext(
 		ctx,
-		"DELETE FROM ollama_model WHERE model = ?",
+		`UPDATE ollama_model
+		SET deleted_at = ?, status = ?
+		WHERE model = ?`,
+		model.DeletedAt.Format(time.RFC3339Nano),
+		model.Status,
 		model.Model,
 	)
 	return err
@@ -86,6 +94,38 @@ func (m *OllamaModels) Exists(ctx context.Context, model string) (bool, error) {
 		model,
 	).Scan(&exists)
 	return exists, err
+}
+
+func (o *OllamaModels) Find(ctx context.Context, model string) (domain.OllamaModel, error) {
+	var (
+		om                 domain.OllamaModel
+		addedAt, updatedAt string
+	)
+	err := o.db.DBTX(ctx).QueryRowContext(
+		ctx,
+		"SELECT model, added_at, updated_at, status FROM ollama_model WHERE model = ?",
+		model,
+	).Scan(&om.Model, &addedAt, &updatedAt, &om.Status)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return om, domain.ErrOllamaModelNotFound
+		default:
+			return om, err
+		}
+	}
+
+	om.AddedAt, err = time.Parse(time.RFC3339Nano, addedAt)
+	if err != nil {
+		return om, fmt.Errorf("failed to parse ollama_model.added_at: %w", err)
+	}
+
+	om.UpdatedAt, err = time.Parse(time.RFC3339Nano, updatedAt)
+	if err != nil {
+		return om, fmt.Errorf("failed to parse ollama_model.updated_at: %w", err)
+	}
+
+	return om, nil
 }
 
 func (m *OllamaModels) Save(ctx context.Context, model domain.OllamaModel) error {

@@ -43,7 +43,7 @@ func TestSender_IsModel(t *testing.T) {
 }
 func TestSender_Format_User(t *testing.T) {
 	sender := Sender{sender: "user:123"}
-	expected := "User"
+	expected := "You"
 	assert.Equal(t, expected, sender.Format())
 }
 

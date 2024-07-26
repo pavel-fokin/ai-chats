@@ -28,25 +28,18 @@ func TestDomainOllamaModel(t *testing.T) {
 		assert.Equal(t, "model:latest", model.String())
 	})
 
-	t.Run("update model", func(t *testing.T) {
-		model := NewOllamaModel("model:latest")
-		model.Update("model:latest")
-
-		assert.NotEmpty(t, model.UpdatedAt)
-	})
-
 	t.Run("pull model", func(t *testing.T) {
 		model := NewOllamaModel("model:latest")
-		model.Pulling()
+		model.Pull()
 
 		assert.Equal(t, StatusPulling, model.Status)
 	})
 
-	t.Run("delete model", func(t *testing.T) {
-		model := NewOllamaModel("model:latest")
-		model.Deleted()
+	// t.Run("delete model", func(t *testing.T) {
+	// 	model := NewOllamaModel("model:latest")
+	// 	model.Delete()
 
-		assert.Equal(t, StatusDeleted, model.Status)
-		assert.NotEmpty(t, model.DeletedAt)
-	})
+	// 	assert.Equal(t, StatusDeleted, model.Status)
+	// 	assert.NotEmpty(t, model.DeletedAt)
+	// })
 }

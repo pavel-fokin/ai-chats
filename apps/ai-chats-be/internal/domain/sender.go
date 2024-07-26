@@ -43,7 +43,7 @@ func (s *Sender) UnmarshalJSON(data []byte) error {
 // Format returns the sender in the format "type:id".
 func (s Sender) Format() string {
 	if s.IsUser() {
-		return "User"
+		return "You"
 	} else if s.IsModel() {
 		parts := strings.Split(s.sender, ":")
 		if len(parts) == 3 {

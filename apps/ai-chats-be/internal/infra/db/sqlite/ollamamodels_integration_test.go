@@ -18,6 +18,12 @@ func TestSqliteOllamaModels(t *testing.T) {
 
 	ollamaModels := NewOllamaModels(db)
 
+	t.Run("all added is empty", func(t *testing.T) {
+		models, err := ollamaModels.AllAdded(ctx)
+		assert.NoError(t, err)
+		assert.Empty(t, models)
+	})
+
 	t.Run("valid", func(t *testing.T) {
 		err := ollamaModels.Add(ctx, *domain.NewOllamaModel("model"))
 		assert.NoError(t, err)
@@ -28,28 +34,32 @@ func TestSqliteOllamaModels(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("all available is empty", func(t *testing.T) {
-		models, err := ollamaModels.AllAvailable(ctx)
-		assert.NoError(t, err)
-		assert.Empty(t, models)
-	})
-
 	t.Run("delete model", func(t *testing.T) {
-		err := ollamaModels.Delete(ctx, *domain.NewOllamaModel("model"))
+		model := domain.NewOllamaModel("model")
+		model.Delete()
+		err := ollamaModels.Delete(ctx, *model)
 		assert.NoError(t, err)
 	})
 
-	t.Run("all available", func(t *testing.T) {
-		db.Exec(
-			`INSERT INTO ollama_model
-		(model, added_at, updated_at, status)
-		VALUES ('model1', '2006-01-02T15:04:05.999999999Z', '2006-01-02T15:04:05.999999999Z', 'available')`)
-		db.Exec(
-			`INSERT INTO ollama_model
-		(model, added_at, updated_at, status)
-		VALUES ('model2', '2006-01-02T15:04:05.999999999Z', '2006-01-02T15:04:05.999999999Z', 'available')`)
+	t.Run("all added", func(t *testing.T) {
+		db := New(":memory:")
+		defer db.Close()
+		CreateTables(db)
 
-		models, err := ollamaModels.AllAvailable(ctx)
+		ollamaModels := NewOllamaModels(db)
+
+		_, err := db.Exec(
+			`INSERT INTO ollama_model
+			(model, added_at, updated_at, status)
+			VALUES ('model1', '2006-01-02T15:04:05.999999999Z', '2006-01-02T15:04:05.999999999Z', 'added')`)
+		assert.NoError(t, err)
+		_, err = db.Exec(
+			`INSERT INTO ollama_model
+			(model, added_at, updated_at, status)
+			VALUES ('model2', '2006-01-02T15:04:05.999999999Z', '2006-01-02T15:04:05.999999999Z', 'added')`)
+		assert.NoError(t, err)
+
+		models, err := ollamaModels.AllAdded(ctx)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, models)
 		assert.Len(t, models, 2)

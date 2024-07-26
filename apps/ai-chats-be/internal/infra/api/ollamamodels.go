@@ -24,11 +24,11 @@ func GetOllamaModels(ollama OllamaApp) http.HandlerFunc {
 		models, err := ollama.ListOllamaModels(ctx)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get ollama models", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 
-		AsSuccessResponse(w, NewGetOllamaModelsResponse(models), http.StatusOK)
+		WriteSuccessResponse(w, http.StatusOK, NewGetOllamaModelsResponse(models))
 	}
 }
 
