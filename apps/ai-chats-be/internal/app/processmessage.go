@@ -11,16 +11,15 @@ import (
 // ProcessAddedMessage processes a message added event.
 func (a *App) ProcessAddedMessage(ctx context.Context, event events.MessageAdded) error {
 
-	messageAdded := events.NewMessageAdded(event.ChatID, event.Message)
-	if err := a.pubsub.Publish(ctx, event.ChatID.String(), json.MustMarshal(ctx, messageAdded)); err != nil {
+	if err := a.pubsub.Publish(ctx, event.ChatID.String(), json.MustMarshal(ctx, event)); err != nil {
 		return fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
 	switch {
-	case event.Message.IsFromModel():
-		// Ignore messages from models.
 	case event.Message.IsFromUser():
 		a.GenerateResponse(ctx, event.ChatID)
+	case event.Message.IsFromModel():
+		// Ignore messages from models.
 	default:
 		return fmt.Errorf("unknown message type: %s", event.Message)
 	}

@@ -2,7 +2,6 @@ package domain
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -23,14 +22,7 @@ func TestDomainChat(t *testing.T) {
 	})
 
 	t.Run("add message", func(t *testing.T) {
-		chat := Chat{
-			ID:           NewChatID(),
-			Title:        "New chat",
-			User:         NewUser("username"),
-			DefaultModel: NewModelID("model"),
-			CreatedAt:    time.Now().UTC(),
-		}
-
+		chat := NewChat(NewUser("username"), NewModelID("model"))
 		message := NewMessage(NewSender("user:1"), "Hello, world!")
 
 		chat.AddMessage(message)

@@ -17,7 +17,7 @@ type Subscriber interface {
 	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
 }
 
-type ChatApp interface {
+type Chats interface {
 	AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat, error)
 	AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error)
 	ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error)
@@ -28,13 +28,13 @@ type ChatApp interface {
 }
 
 // GetChats handles the GET /api/chats endpoint.
-func GetChats(chat ChatApp) http.HandlerFunc {
+func GetChats(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
 		userID := MustHaveUserID(ctx)
 
-		chats, err := chat.AllChats(ctx, userID)
+		chats, err := app.AllChats(ctx, userID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get chats", "userID", userID, "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
@@ -46,7 +46,7 @@ func GetChats(chat ChatApp) http.HandlerFunc {
 }
 
 // PostChats handles the POST /api/chats endpoint.
-func PostChats(chat ChatApp) http.HandlerFunc {
+func PostChats(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -65,7 +65,7 @@ func PostChats(chat ChatApp) http.HandlerFunc {
 			message = req.Message
 		}
 
-		chat, err := chat.CreateChat(ctx, userID, defaultModel, message)
+		chat, err := app.CreateChat(ctx, userID, defaultModel, message)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create a chat", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
@@ -77,13 +77,13 @@ func PostChats(chat ChatApp) http.HandlerFunc {
 }
 
 // GetChat handles the GET /api/chats/{uuid} endpoint.
-func GetChat(chat ChatApp) http.HandlerFunc {
+func GetChat(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
 		chatID := chi.URLParam(r, "uuid")
 
-		chat, err := chat.FindChatByID(ctx, uuid.MustParse(chatID))
+		chat, err := app.FindChatByID(ctx, uuid.MustParse(chatID))
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get a chat", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
@@ -95,13 +95,13 @@ func GetChat(chat ChatApp) http.HandlerFunc {
 }
 
 // DeleteChat handles the DELETE /api/chats/{uuid} endpoint.
-func DeleteChat(chat ChatApp) http.HandlerFunc {
+func DeleteChat(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
 		chatID := chi.URLParam(r, "uuid")
 
-		if err := chat.DeleteChat(ctx, uuid.MustParse(chatID)); err != nil {
+		if err := app.DeleteChat(ctx, uuid.MustParse(chatID)); err != nil {
 			switch err {
 			case domain.ErrChatNotFound:
 				slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
@@ -118,13 +118,13 @@ func DeleteChat(chat ChatApp) http.HandlerFunc {
 }
 
 // GetMessages handles the GET /api/chats/{uuid}/messages endpoint.
-func GetMessages(chat ChatApp) http.HandlerFunc {
+func GetMessages(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
 		chatID := chi.URLParam(r, "uuid")
 
-		messages, err := chat.AllMessages(ctx, uuid.MustParse(chatID))
+		messages, err := app.AllMessages(ctx, uuid.MustParse(chatID))
 		if err != nil {
 			switch err {
 			case domain.ErrChatNotFound:
@@ -142,7 +142,7 @@ func GetMessages(chat ChatApp) http.HandlerFunc {
 }
 
 // PostMessages handles the POST /api/chats/{uuid}/messages endpoint.
-func PostMessages(chat ChatApp) http.HandlerFunc {
+func PostMessages(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -156,7 +156,7 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 			return
 		}
 
-		_, err := chat.SendMessage(ctx, userID, uuid.MustParse(chatID), req.Text)
+		_, err := app.SendMessage(ctx, userID, uuid.MustParse(chatID), req.Text)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to send a message", "chatID", chatID, "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
@@ -168,7 +168,7 @@ func PostMessages(chat ChatApp) http.HandlerFunc {
 }
 
 // GetEvents handles the GET /api/chats/{uuid}/events endpoint.
-func GetEvents(app ChatApp, sse *server.SSEConnections, subscriber Subscriber) http.HandlerFunc {
+func GetEvents(app Chats, sse *server.SSEConnections, subscriber Subscriber) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 

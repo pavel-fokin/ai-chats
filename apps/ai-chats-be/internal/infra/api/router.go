@@ -13,9 +13,9 @@ import (
 
 type App interface {
 	Auth
-	ChatApp
-	OllamaApp
+	Chats
 	Models
+	Ollama
 }
 
 func NewRouter(app App, sse *server.SSEConnections, pubsub Subscriber) *chi.Mux {
@@ -43,7 +43,7 @@ func NewRouter(app App, sse *server.SSEConnections, pubsub Subscriber) *chi.Mux 
 
 	r.Group(func(r chi.Router) {
 		r.Use(AuthHeader)
-		r.Get("/api/models/library", GetModelsLibrary(app))
+		// r.Get("/api/models/library", GetModelsLibrary(app))
 		r.Get("/api/ollama/models", GetOllamaModels(app))
 		r.Post("/api/ollama/models", PostOllamaModels(app))
 		r.Delete("/api/ollama/models/{model}", DeleteOllamaModel(app))

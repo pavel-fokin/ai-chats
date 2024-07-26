@@ -10,18 +10,18 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-type OllamaApp interface {
+type Ollama interface {
 	ListOllamaModels(context.Context) ([]domain.OllamaModel, error)
 	PullOllamaModel(context.Context, string) error
 	DeleteOllamaModel(context.Context, string) error
 }
 
 // GetOllamaModels handles the GET /api/ollama/models endpoint.
-func GetOllamaModels(ollama OllamaApp) http.HandlerFunc {
+func GetOllamaModels(app Ollama) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		models, err := ollama.ListOllamaModels(ctx)
+		models, err := app.ListOllamaModels(ctx)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get ollama models", "err", err)
 			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
@@ -33,7 +33,7 @@ func GetOllamaModels(ollama OllamaApp) http.HandlerFunc {
 }
 
 // PostOllamaModels handles the POST /api/ollama/models endpoint.
-func PostOllamaModels(ollama OllamaApp) http.HandlerFunc {
+func PostOllamaModels(app Ollama) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -44,7 +44,7 @@ func PostOllamaModels(ollama OllamaApp) http.HandlerFunc {
 			return
 		}
 
-		err := ollama.PullOllamaModel(ctx, req.Model)
+		err := app.PullOllamaModel(ctx, req.Model)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to pull ollama model", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
@@ -56,13 +56,13 @@ func PostOllamaModels(ollama OllamaApp) http.HandlerFunc {
 }
 
 // DeleteOllamaModels handles the DELETE /api/ollama/models/{model} endpoint.
-func DeleteOllamaModel(ollama OllamaApp) http.HandlerFunc {
+func DeleteOllamaModel(app Ollama) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
 		model := chi.URLParam(r, "model")
 
-		err := ollama.DeleteOllamaModel(ctx, model)
+		err := app.DeleteOllamaModel(ctx, model)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to delete ollama model", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
