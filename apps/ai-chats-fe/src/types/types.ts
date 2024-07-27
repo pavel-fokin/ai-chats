@@ -33,9 +33,8 @@ export type OllamaModel = {
 };
 
 export enum OllamaModelStatus {
-  ADDDED = 'added',
+  ADDED = 'added',
   PULLING = 'pulling',
-  AVAILABLE = 'available',
   ERROR = 'error',
 }
 
