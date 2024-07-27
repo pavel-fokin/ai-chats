@@ -3,6 +3,11 @@ build:
 	@echo "Building..."
 	@go build -o bin/ai-chats-service cmd/ai-chats-service/main.go
 
+.PHONY: build-desktop
+build-desktop:
+	@echo "Building for desktop..."
+	@go build -o bin/ai-chats-desktop cmd/ai-chats-desktop/main.go
+
 .PHONY: run
 run:
 	@go run cmd/ai-chats-service/main.go
