@@ -34,25 +34,6 @@ func (m *MockOllamaClient) Delete(ctx context.Context, model string) error {
 	return args.Error(0)
 }
 
-type MockModels struct {
-	mock.Mock
-}
-
-func (m *MockModels) AllModelCards(ctx context.Context) ([]domain.ModelCard, error) {
-	args := m.Called(ctx)
-	return args.Get(0).([]domain.ModelCard), args.Error(1)
-}
-
-func (m *MockModels) AddModelCard(ctx context.Context, model domain.ModelCard) error {
-	args := m.Called(ctx, model)
-	return args.Error(0)
-}
-
-func (m *MockModels) FindModelCard(ctx context.Context, model string) (domain.ModelCard, error) {
-	args := m.Called(ctx, model)
-	return args.Get(0).(domain.ModelCard), args.Error(1)
-}
-
 type MockOllamaModels struct {
 	mock.Mock
 }
@@ -107,14 +88,11 @@ func TestAppOllama_ListModels(t *testing.T) {
 		mockOllamaModels.On("AllAdded", ctx).Return([]domain.OllamaModel{}, nil)
 		mockOllamaModels.On("Find", ctx, "model1:latest").Return(domain.OllamaModel{Model: "model1:latest"}, nil)
 		mockOllamaModels.On("Save", ctx, mock.Anything).Return(nil)
-		mockModels := &MockModels{}
-		mockModels.On("FindModelCard", ctx, "model1").Return(domain.ModelCard{Description: "description1"}, nil)
 
 		// app := New(nil, nil, mockModels, mockOllamaClient, nil, nil, nil)
 		app := &App{
 			ollamaClient: mockOllamaClient,
 			ollamaModels: mockOllamaModels,
-			models:       mockModels,
 		}
 
 		_, err := app.ListOllamaModels(ctx)
@@ -125,12 +103,13 @@ func TestAppOllama_ListModels(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		mockOllamaClient := &MockOllamaClient{}
 		mockOllamaClient.On("List", ctx).Return(nil, assert.AnError)
-		mockModels := &MockModels{}
 
-		app := New(nil, nil, mockModels, mockOllamaClient, nil, nil, nil)
+		app := &App{
+			ollamaClient: mockOllamaClient,
+		}
 
 		_, err := app.ListOllamaModels(ctx)
 		assert.Error(t, err)
-		mockModels.AssertExpectations(t)
+		mockOllamaClient.AssertExpectations(t)
 	})
 }

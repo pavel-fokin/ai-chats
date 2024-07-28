@@ -1,10 +1,7 @@
 package main
 
 import (
-	"context"
 	"log"
-	"os/signal"
-	"syscall"
 
 	"github.com/caarlos0/env/v6"
 	webview "github.com/webview/webview_go"
@@ -35,8 +32,8 @@ func NewConfig() Config {
 }
 
 func main() {
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
+	// ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	// defer stop()
 
 	config := NewConfig()
 
@@ -52,7 +49,6 @@ func main() {
 	app := app.New(
 		sqlite.NewChats(db),
 		sqlite.NewUsers(db),
-		sqlite.NewModels(db),
 		ollama.NewOllamaClient(),
 		sqlite.NewOllamaModels(db),
 		pubsub,
@@ -89,7 +85,7 @@ func main() {
 	w.Run()
 
 	// Wait for the shutdown signal.
-	<-ctx.Done()
+	// <-ctx.Done()
 	sse.CloseAll()
 
 	log.Println("Shutting down the AIChats worker...")
