@@ -23,26 +23,10 @@ CREATE TABLE IF NOT EXISTS message (
     FOREIGN KEY (chat_id) REFERENCES chat(id)
 );
 
-CREATE TABLE IF NOT EXISTS model_card (
-    model TEXT NOT NULL CHECK (length(model) > 0),
+CREATE TABLE IF NOT EXISTS model_description (
+    name TEXT NOT NULL CHECK (length(name) > 0),
     description TEXT NOT NULL CHECK (length(description) > 0),
-    PRIMARY KEY (model)
-);
-
-CREATE TABLE IF NOT EXISTS ollama_model (
-    model TEXT NOT NULL CHECK (length(model) > 0),
-    added_at TEXT NOT NULL CHECK (length(added_at) > 0),
-    updated_at TEXT NOT NULL CHECK (length(updated_at) > 0),
-    deleted_at TEXT,
-    status TEXT NOT NULL CHECK (length(status) > 0),
-    PRIMARY KEY (model)
-);
-
-CREATE TABLE IF NOT EXISTS ollama_model_tag (
-    tag TEXT NOT NULL CHECK (length(tag) > 0),
-    model TEXT NOT NULL CHECK (length(model) > 0),
-    FOREIGN KEY (model) REFERENCES model(ollama_model),
-    PRIMARY KEY (tag, model)
+    PRIMARY KEY (name)
 );
 
 PRAGMA foreign_keys = ON;
