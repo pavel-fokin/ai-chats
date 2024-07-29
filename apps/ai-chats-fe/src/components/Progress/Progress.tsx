@@ -8,5 +8,5 @@ interface ProgressProps extends React.ComponentProps<typeof RadixProgress> {}
 export const Progress = forwardRef<ProgressElement, ProgressProps>(
   (props, ref) => {
     return <RadixProgress highContrast {...props} ref={ref} />;
-  }
+  },
 );

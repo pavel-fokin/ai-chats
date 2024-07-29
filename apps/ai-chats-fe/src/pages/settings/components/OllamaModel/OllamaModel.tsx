@@ -15,7 +15,7 @@ export const OllamaModel: React.FC<OllamaModelProps> = ({ model }) => {
       <Heading as="h2" size="3">{`${model.model}`}</Heading>
       <Text>{model.description}</Text>
       {model.isPulling ? (
-        <Progress  mt="4" mb="8"/>
+        <Progress mt="4" mb="8" />
       ) : (
         <Flex align="center" justify="end" flexGrow="1" mt="4" gap="4">
           <DeleteDialog model={model} />

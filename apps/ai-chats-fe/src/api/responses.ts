@@ -1,4 +1,4 @@
-import { Chat, Message } from "types";
+import { Chat, Message } from 'types';
 
 export type Response<T> = {
   data?: T;

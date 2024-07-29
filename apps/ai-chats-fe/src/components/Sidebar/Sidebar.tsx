@@ -90,9 +90,11 @@ export const Sidebar = () => {
         >
           <NavigationMenu.List className={styles.NavigationMenuList}>
             {chats.data?.map((chat) => (
-              <NavigationMenu.Item key={chat.id}>
-                <Link to={`/app/chats/${chat.id}`}>{chat.title}</Link>
-              </NavigationMenu.Item>
+              <Tooltip content={chat.title}>
+                <NavigationMenu.Item key={chat.id}>
+                  <Link to={`/app/chats/${chat.id}`}>{chat.title}</Link>
+                </NavigationMenu.Item>
+              </Tooltip>
             ))}
           </NavigationMenu.List>
 
