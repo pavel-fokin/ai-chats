@@ -9,12 +9,29 @@ import (
 
 // ListOllamaModels retrieves a list of Ollama models from the Ollama client.
 func (a *App) ListOllamaModels(ctx context.Context) ([]domain.OllamaModel, error) {
+	var ollamaModels []domain.OllamaModel
+
+	ollamaModelsStrings, err := a.ollamaModels.AllModelsWithPullingInProgress(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get ollama models with pulling in progress: %w", err)
+	}
+
+	for _, model := range ollamaModelsStrings {
+		description, err := a.models.FindDescription(ctx, model)
+		if err != nil {
+			description = "Description is not available."
+		}
+
+		ollamaModel := domain.NewOllamaModel(model, description)
+		ollamaModel.IsPulling = true
+		ollamaModels = append(ollamaModels, ollamaModel)
+	}
+
 	ollamaClientModels, err := a.ollamaClient.List(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to request ollama models from client: %w", err)
 	}
 
-	var ollamaModels []domain.OllamaModel
 	for _, ollamaClientModel := range ollamaClientModels {
 		description, err := a.models.FindDescription(ctx, ollamaClientModel.Name())
 		if err != nil {
@@ -29,8 +46,31 @@ func (a *App) ListOllamaModels(ctx context.Context) ([]domain.OllamaModel, error
 }
 
 func (a *App) PullOllamaModel(ctx context.Context, model string) error {
+	ollamaModel := domain.NewOllamaModel(model, "")
+
+	err := a.ollamaModels.AddModelPullingStarted(ctx, ollamaModel.Name())
+	if err != nil {
+		return fmt.Errorf("failed to add ollama model pulling started: %w", err)
+	}
+
 	if err := a.ollamaClient.Pull(ctx, model); err != nil {
+		if err := a.ollamaModels.AddModelPullingFinished(
+			ctx,
+			ollamaModel.Name(),
+			domain.OllamaPullingFinalStatusFailed,
+		); err != nil {
+			return fmt.Errorf("failed to add ollama model pulling finished: %w", err)
+		}
+
 		return fmt.Errorf("failed to pull ollama model: %w", err)
+	}
+
+	if err := a.ollamaModels.AddModelPullingFinished(
+		ctx,
+		ollamaModel.Name(),
+		domain.OllamaPullingFinalStatusSuccess,
+	); err != nil {
+		return fmt.Errorf("failed to add ollama model pulling finished: %w", err)
 	}
 
 	return nil

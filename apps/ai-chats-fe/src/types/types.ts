@@ -26,17 +26,8 @@ export type Message = {
 export type OllamaModel = {
   model: string;
   description: string;
-  addedAt: string;
-  updateAt: string;
-  deletedAt: string;
-  status: OllamaModelStatus;
+  isPulling: boolean;
 };
-
-export enum OllamaModelStatus {
-  ADDED = 'added',
-  PULLING = 'pulling',
-  ERROR = 'error',
-}
 
 export type UserCredentials = {
   username: string;

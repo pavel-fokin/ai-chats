@@ -3,6 +3,7 @@ export * from './Button';
 export * from './HamburgerMenuButton/HamburgerMenuButton';
 export * from './InputMessage/InputMessage';
 export * from './NewChatIconButton/NewChatIconButton';
+export { Progress } from './Progress';
 export * from './Sidebar/Sidebar';
 export * from './TextArea';
 export * from './Tooltip';

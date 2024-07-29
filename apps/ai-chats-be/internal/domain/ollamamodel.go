@@ -4,10 +4,18 @@ import (
 	"strings"
 )
 
+type OllamaPullingFinalStatus string
+
+const (
+	OllamaPullingFinalStatusSuccess OllamaPullingFinalStatus = "success"
+	OllamaPullingFinalStatusFailed  OllamaPullingFinalStatus = "failed"
+)
+
 // OllamaModel represents an Ollama model.
 type OllamaModel struct {
 	Model       string `json:"model"`
 	Description string `json:"description"`
+	IsPulling   bool   `json:"isPulling"`
 }
 
 func NewOllamaModel(model, description string) OllamaModel {

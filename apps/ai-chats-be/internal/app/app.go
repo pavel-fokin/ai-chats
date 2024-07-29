@@ -30,6 +30,7 @@ type App struct {
 	chats        domain.Chats
 	models       domain.Models
 	ollamaClient domain.OllamaClient
+	ollamaModels domain.OllamaModels
 	pubsub       PubSub
 	tx           Tx
 }
@@ -39,6 +40,7 @@ func New(
 	users domain.Users,
 	models domain.Models,
 	ollamaClient domain.OllamaClient,
+	ollamaModels domain.OllamaModels,
 	pubsub PubSub,
 	tx Tx,
 ) *App {
@@ -50,6 +52,7 @@ func New(
 		users:        users,
 		models:       models,
 		ollamaClient: ollamaClient,
+		ollamaModels: ollamaModels,
 		pubsub:       pubsub,
 		tx:           tx,
 	}

@@ -53,6 +53,7 @@ func main() {
 		sqlite.NewUsers(db),
 		sqlite.NewModels(db),
 		ollama.NewOllamaClient(),
+		sqlite.NewOllamaModels(db),
 		pubsub,
 		sqlite.NewTx(db),
 	)

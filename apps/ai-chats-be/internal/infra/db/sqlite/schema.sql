@@ -29,4 +29,12 @@ CREATE TABLE IF NOT EXISTS model_description (
     PRIMARY KEY (name)
 );
 
+CREATE TABLE IF NOT EXISTS ollama_model_pulling (
+    id TEXT PRIMARY KEY,
+    model TEXT NOT NULL CHECK (length(model) > 0),
+    started_at TEXT NOT NULL CHECK (length(started_at) > 0),
+    finished_at TEXT,
+    final_status TEXT
+);
+
 PRAGMA foreign_keys = ON;
