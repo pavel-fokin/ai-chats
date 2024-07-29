@@ -30,7 +30,7 @@ func (m *MockOllamaApp) ListOllamaModels(ctx context.Context) ([]domain.OllamaMo
 	return args.Get(0).([]domain.OllamaModel), args.Error(1)
 }
 
-func (m *MockOllamaApp) PullOllamaModel(ctx context.Context, modelName string) error {
+func (m *MockOllamaApp) PullOllamaModelAsync(ctx context.Context, modelName string) error {
 	args := m.Called(ctx, modelName)
 	return args.Error(0)
 }

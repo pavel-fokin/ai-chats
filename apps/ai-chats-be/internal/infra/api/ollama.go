@@ -12,7 +12,7 @@ import (
 
 type Ollama interface {
 	ListOllamaModels(context.Context) ([]domain.OllamaModel, error)
-	PullOllamaModel(context.Context, string) error
+	PullOllamaModelAsync(context.Context, string) error
 	DeleteOllamaModel(context.Context, string) error
 }
 
@@ -44,7 +44,7 @@ func PostOllamaModels(app Ollama) http.HandlerFunc {
 			return
 		}
 
-		err := app.PullOllamaModel(ctx, req.Model)
+		err := app.PullOllamaModelAsync(ctx, req.Model)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to pull ollama model", "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)

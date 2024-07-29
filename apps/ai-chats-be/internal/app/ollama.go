@@ -4,7 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"ai-chats/internal/app/commands"
 	"ai-chats/internal/domain"
+	"ai-chats/internal/pkg/json"
+	"ai-chats/internal/worker"
 )
 
 // ListOllamaModels retrieves a list of Ollama models from the Ollama client.
@@ -45,32 +48,14 @@ func (a *App) ListOllamaModels(ctx context.Context) ([]domain.OllamaModel, error
 	return ollamaModels, nil
 }
 
-func (a *App) PullOllamaModel(ctx context.Context, model string) error {
-	ollamaModel := domain.NewOllamaModel(model, "")
-
-	err := a.ollamaModels.AddModelPullingStarted(ctx, ollamaModel.Name())
-	if err != nil {
-		return fmt.Errorf("failed to add ollama model pulling started: %w", err)
-	}
-
-	if err := a.ollamaClient.Pull(ctx, model); err != nil {
-		if err := a.ollamaModels.AddModelPullingFinished(
-			ctx,
-			ollamaModel.Name(),
-			domain.OllamaPullingFinalStatusFailed,
-		); err != nil {
-			return fmt.Errorf("failed to add ollama model pulling finished: %w", err)
-		}
-
-		return fmt.Errorf("failed to pull ollama model: %w", err)
-	}
-
-	if err := a.ollamaModels.AddModelPullingFinished(
+func (a *App) PullOllamaModelAsync(ctx context.Context, model string) error {
+	pullOllamaModelCommand := commands.NewPullOllamaModel(model)
+	if err := a.pubsub.Publish(
 		ctx,
-		ollamaModel.Name(),
-		domain.OllamaPullingFinalStatusSuccess,
+		worker.PullOllamaModelTopic,
+		json.MustMarshal(ctx, pullOllamaModelCommand),
 	); err != nil {
-		return fmt.Errorf("failed to add ollama model pulling finished: %w", err)
+		return fmt.Errorf("failed to publish pull ollama model command: %w", err)
 	}
 
 	return nil

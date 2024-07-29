@@ -12,3 +12,6 @@ VALUES ('phi3', 'Phi-3 is a family of lightweight 3B (Mini) and 14B (Medium) sta
 
 INSERT OR IGNORE INTO model_description (name, description)
 VALUES ('llama3.1', 'Llama 3.1 is a new state-of-the-art model from Meta available in 8B, 70B and 405B parameter sizes.');
+
+INSERT OR IGNORE INTO model_description (name, description)
+VALUES ('qwen2', 'Qwen2 is a new series of large language models from Alibaba group.');
