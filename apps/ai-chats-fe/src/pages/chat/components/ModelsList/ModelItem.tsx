@@ -2,13 +2,13 @@ import { Badge, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
 import { OllamaModel } from 'types';
 
-interface ModelProps {
+interface ModelItemProps {
   model: OllamaModel;
   isSelected: boolean;
   onClick: (model: OllamaModel) => void;
 }
 
-export const Model: React.FC<ModelProps> = ({ model, isSelected, onClick }) => {
+export const ModelItem: React.FC<ModelItemProps> = ({ model, isSelected, onClick }) => {
   return (
     <Card asChild onClick={() => onClick(model)}>
       <a href="#">

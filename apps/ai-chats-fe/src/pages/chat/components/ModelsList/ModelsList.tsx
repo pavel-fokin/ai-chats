@@ -1,9 +1,9 @@
+import { Flex } from '@radix-ui/themes';
 import { useEffect } from 'react';
-import { Box, Flex, Heading, Code } from '@radix-ui/themes';
 
 import { OllamaModel } from 'types';
 
-import { Model } from './Model';
+import { ModelItem } from './ModelItem';
 
 interface ModelsListProps {
   models: OllamaModel[];
@@ -28,24 +28,17 @@ export const ModelsList: React.FC<ModelsListProps> = ({
   }, [ollamaModels, selectedModel, setSelectedModel]);
 
   return (
-    <>
-      <Box mb="4">
-        <Heading as="h2" size="6" weight="bold">
-          Choose a model to chat <Code variant="ghost">[*_*]</Code>
-        </Heading>
-      </Box>
-      <Flex direction="column" gap="3">
-        {ollamaModels.map((model) => (
-          <Model
-            key={`${model.model}}`}
-            model={model}
-            isSelected={
-              selectedModel ? selectedModel.model === model.model : false
-            }
-            onClick={onModelClick}
-          />
-        ))}
-      </Flex>
-    </>
+    <Flex direction="column" gap="3">
+      {ollamaModels.map((model) => (
+        <ModelItem
+          key={`${model.model}}`}
+          model={model}
+          isSelected={
+            selectedModel ? selectedModel.model === model.model : false
+          }
+          onClick={onModelClick}
+        />
+      ))}
+    </Flex>
   );
 };

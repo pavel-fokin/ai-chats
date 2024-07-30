@@ -1,4 +1,4 @@
-import { Box, Flex, Heading } from '@radix-ui/themes';
+import { Box, Code, Flex, Heading } from '@radix-ui/themes';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,7 +25,7 @@ export const NewChatPage: React.FC = () => {
         onSuccess: ({ data }) => {
           navigate(`/app/chats/${data.chat.id}`);
         },
-      },
+      }
     );
   };
 
@@ -40,6 +40,11 @@ export const NewChatPage: React.FC = () => {
       </Header>
       <Flex direction="column" height="100%" width="100%">
         <Flex direction="column" align="center" justify="center" flexGrow="1">
+          <Box mb="4">
+            <Heading as="h2" size="6" weight="bold">
+              Choose a model <Code variant="ghost">[*_*]</Code>
+            </Heading>
+          </Box>
           <ModelsList
             models={ollamaModels.data || []}
             selectedModel={selectedModel}

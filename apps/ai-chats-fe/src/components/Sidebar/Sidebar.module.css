@@ -8,7 +8,6 @@
 .NavigationMenuList {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
   justify-content: center;
   background-color: var(--color-background);
   border-radius: var(--radius-3);
