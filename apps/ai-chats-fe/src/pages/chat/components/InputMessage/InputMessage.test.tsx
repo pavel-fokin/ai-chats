@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
 import { vi } from 'vitest';
 
-import { InputMessage } from 'components';
+import { InputMessage } from './InputMessage';
 
 const renderComponent = (children: React.ReactNode) => {
   return render(<Theme>{children}</Theme>);
@@ -13,7 +13,7 @@ test('updates input message text on change', () => {
 
   const inputElement = screen.getByPlaceholderText(
     'Type a message',
-  ) as HTMLInputElement;
+  ) as HTMLTextAreaElement;
   const newText = 'Hello, world!';
 
   fireEvent.change(inputElement, { target: { value: newText } });

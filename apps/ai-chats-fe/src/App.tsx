@@ -1,4 +1,9 @@
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+  RouterProvider,
+} from 'react-router-dom';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -7,21 +12,21 @@ import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 
 import { AuthRequired } from 'components';
+import { AuthContextProvider, SidebarContextProvider } from 'contexts';
 import {
-  Chat,
-  Landing,
-  Startpage,
+  ChatPage,
+  LandingPage,
   LogIn,
-  SignUp,
+  NewChatPage,
   OllamaSettings,
   SignOut,
+  SignUp,
 } from 'pages';
-import { AuthContextProvider, SidebarContextProvider } from 'contexts';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Landing />,
+    element: <LandingPage />,
   },
   {
     path: '/app/login',
@@ -47,11 +52,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Startpage />,
+        element: <Navigate to="chats/new" />,
+      },
+      {
+        path: 'chats/new',
+        element: <NewChatPage />,
       },
       {
         path: 'chats/:chatId',
-        element: <Chat />,
+        element: <ChatPage />,
       },
       {
         path: 'settings',

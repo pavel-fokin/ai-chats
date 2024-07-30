@@ -45,10 +45,6 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const chats = useChats();
 
-  const handleNewChat = () => {
-    navigate('/app');
-  };
-
   return (
     <Flex direction="column" gap="2" height="100%" justify="between">
       <Flex direction="column" flexGrow="1">
@@ -72,7 +68,7 @@ export const Sidebar = () => {
               size="3"
               m="2"
               highContrast
-              onClick={handleNewChat}
+              onClick={() => navigate('/app/chats/new')}
               aria-label="New chat"
             >
               <ChatIcon size="24" weight="light" />
@@ -85,7 +81,7 @@ export const Sidebar = () => {
         >
           <NavigationMenu.List className={styles.NavigationMenuList}>
             {chats.data?.map((chat) => (
-              <Tooltip  key={`key-${chat.id}`} content={chat.title}>
+              <Tooltip key={`key-${chat.id}`} content={chat.title}>
                 <NavigationMenu.Item key={chat.id}>
                   <Link to={`/app/chats/${chat.id}`}>{chat.title}</Link>
                 </NavigationMenu.Item>

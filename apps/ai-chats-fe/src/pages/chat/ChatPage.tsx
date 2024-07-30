@@ -2,18 +2,13 @@ import { useParams } from 'react-router-dom';
 
 import { Box, Flex } from '@radix-ui/themes';
 
-import {
-  HamburgerMenuButton,
-  InputMessage,
-  NewChatIconButton,
-} from 'components';
+import { HamburgerMenuButton, NewChatIconButton } from 'components';
 import { useChatEvents, useMessages, useSendMessage } from 'hooks';
 import { Header, PageLayout } from 'layout';
 
-import { ChatMenu } from './components/ChatMenu';
-import { Message } from './components/Message';
+import { ChatMenu, InputMessage, Message } from './components';
 
-export const Chat = () => {
+export const ChatPage: React.FC = () => {
   const { chatId } = useParams<{ chatId: string }>();
   const messages = useMessages(chatId);
   const sendMessage = useSendMessage(chatId!);

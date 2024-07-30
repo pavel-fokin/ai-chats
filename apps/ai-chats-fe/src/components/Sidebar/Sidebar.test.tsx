@@ -52,7 +52,10 @@ function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
           <MemoryRouter initialEntries={[route]}>
             <Routes>
               <Route path="/" element={ui} />
-              <Route path="/app" element={<div>App</div>} />
+              <Route
+                path="/app/chats/new"
+                element={<div>Start a new chat</div>}
+              />
               <Route path="/app/chats/:chatId" element={<div>Chat</div>} />
             </Routes>
           </MemoryRouter>
@@ -88,7 +91,7 @@ test('calls handleNewChat on new chat button click', async () => {
 
   await waitFor(async () => {
     await userEvent.click(screen.getByLabelText('New chat'));
-    expect(screen.getByText('App')).toBeInTheDocument();
+    expect(screen.getByText('Start a new chat')).toBeInTheDocument();
   });
 });
 

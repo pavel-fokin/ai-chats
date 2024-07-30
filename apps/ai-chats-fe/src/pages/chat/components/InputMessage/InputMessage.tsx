@@ -5,11 +5,11 @@ import { Box, Flex, IconButton } from '@radix-ui/themes';
 import { TextArea, Tooltip } from 'components';
 import { SendIcon } from 'components/ui/icons';
 
-type InputMessageProps = {
+interface InputMessageProps {
   handleSend: (text: string) => void;
-};
+}
 
-function InputMessage({ handleSend }: InputMessageProps) {
+export const InputMessage: React.FC<InputMessageProps> = ({ handleSend }) => {
   const [inputText, setInputText] = useState<string>('');
 
   const onInputChangeArea = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -47,6 +47,4 @@ function InputMessage({ handleSend }: InputMessageProps) {
       </Tooltip>
     </Flex>
   );
-}
-
-export { InputMessage };
+};

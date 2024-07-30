@@ -13,7 +13,7 @@ export const NewChatIconButton: React.FC = () => {
   const { closeSidebar } = useContext(SidebarContext);
 
   const handleClick = () => {
-    navigate('/app');
+    navigate('/app/chats/new');
     closeSidebar();
   };
 
@@ -27,7 +27,7 @@ export const NewChatIconButton: React.FC = () => {
       highContrast
       onClick={handleClick}
     >
-      <ChatIcon size="28" weight="light" />
+      <ChatIcon size="24" weight="light" />
     </IconButton>
   );
 };

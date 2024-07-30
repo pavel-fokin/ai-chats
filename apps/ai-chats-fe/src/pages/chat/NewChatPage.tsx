@@ -2,18 +2,14 @@ import { Box, Flex, Heading } from '@radix-ui/themes';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  HamburgerMenuButton,
-  InputMessage,
-  NewChatIconButton,
-} from 'components';
+import { HamburgerMenuButton, NewChatIconButton } from 'components';
 import { useCreateChat, useOllamaModels } from 'hooks';
 import { Header, PageLayout } from 'layout';
 import { OllamaModel } from 'types';
 
-import { ModelsList } from './components/ModelsList';
+import { InputMessage, ModelsList } from './components';
 
-export const Startpage: React.FC = () => {
+export const NewChatPage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedModel, setSelectedModel] = useState<OllamaModel | null>(null);
   const createChat = useCreateChat();
@@ -37,7 +33,9 @@ export const Startpage: React.FC = () => {
     <PageLayout>
       <Header>
         <HamburgerMenuButton />
-        <Heading as="h2" size="3" weight="regular" />
+        <Heading as="h2" size="3" weight="regular">
+          Start a new chat
+        </Heading>
         <NewChatIconButton />
       </Header>
       <Flex direction="column" height="100%" width="100%">

@@ -1,9 +1,9 @@
-import { Flex, Avatar, Text } from '@radix-ui/themes';
+import { Avatar, Flex, Text } from '@radix-ui/themes';
 import Markdown from 'react-markdown';
 
 import styles from './Message.module.css';
 
-const Message = (props: { sender: string; text: string }) => {
+export const Message = (props: { sender: string; text: string }) => {
   return (
     <Flex direction="column" gap="1" p="2">
       <Flex gap="2">
@@ -14,5 +14,3 @@ const Message = (props: { sender: string; text: string }) => {
     </Flex>
   );
 };
-
-export { Message };

@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Heading, Text } from '@radix-ui/themes';
 
-export const Landing = () => {
+export const LandingPage: React.FC = () => {
   return (
     <Flex direction="column" height="100vh" gap="2">
       <Flex p="4" direction="column" align="end">
@@ -50,5 +50,3 @@ export const Landing = () => {
     </Flex>
   );
 };
-
-export default Landing;
