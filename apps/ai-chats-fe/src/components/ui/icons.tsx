@@ -1,5 +1,6 @@
 export {
   Cards as ModelsIcon,
+  DotsThreeVertical as ThreeDotsIcon,
   DownloadSimple as DownloadIcon,
   GearSix as SettingsIcon,
   List as HamburgerMenuIcon,

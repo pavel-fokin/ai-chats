@@ -27,7 +27,7 @@
   line-height: 1;
   outline: none;
   overflow: hidden;
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-2);
   text-decoration: none;
   text-overflow: ellipsis;
   user-select: none;

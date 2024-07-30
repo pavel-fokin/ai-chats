@@ -94,7 +94,7 @@ func TestPostOllamaModels(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		mockOllamaApp := &MockOllamaApp{}
-		mockOllamaApp.On("PullOllamaModel", mock.MatchedBy(matchChiContext), "model1").Return(nil)
+		mockOllamaApp.On("PullOllamaModelAsync", mock.MatchedBy(matchChiContext), "model1").Return(nil)
 
 		router := chi.NewRouter()
 		router.Post("/api/ollama/models", PostOllamaModels(mockOllamaApp))
@@ -113,7 +113,7 @@ func TestPostOllamaModels(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		mockOllamaApp := &MockOllamaApp{}
-		mockOllamaApp.On("PullOllamaModel", mock.MatchedBy(matchChiContext), "model1").Return(assert.AnError)
+		mockOllamaApp.On("PullOllamaModelAsync", mock.MatchedBy(matchChiContext), "model1").Return(assert.AnError)
 
 		router := chi.NewRouter()
 		router.Post("/api/ollama/models", PostOllamaModels(mockOllamaApp))

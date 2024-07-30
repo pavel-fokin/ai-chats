@@ -2,9 +2,9 @@ import { useContext } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
-import { Flex, Heading, IconButton, Text } from '@radix-ui/themes';
+import { Flex, Heading, Text } from '@radix-ui/themes';
 
-import { Tooltip } from 'components';
+import { Tooltip, IconButton } from 'components';
 import { ChatIcon, SettingsIcon, SignOutIcon } from 'components/ui/icons';
 import { SidebarContext } from 'contexts';
 import { useChats } from 'hooks';
@@ -12,10 +12,10 @@ import { useChats } from 'hooks';
 import 'styles/styles.css';
 import styles from './Sidebar.module.css';
 
-type LinkProps = {
+interface LinkProps {
   to: string;
   children: React.ReactNode;
-};
+}
 
 const Link: React.FC<LinkProps> = ({ to, children, ...props }) => {
   const { pathname } = useLocation();
@@ -49,11 +49,6 @@ export const Sidebar = () => {
     navigate('/app');
   };
 
-  // const handleSignOut = (e) => {
-  //   e.preventDefault();
-  //   signout();
-  // };
-
   return (
     <Flex direction="column" gap="2" height="100%" justify="between">
       <Flex direction="column" flexGrow="1">
@@ -80,7 +75,7 @@ export const Sidebar = () => {
               onClick={handleNewChat}
               aria-label="New chat"
             >
-              <ChatIcon size="28" weight="light" />
+              <ChatIcon size="24" weight="light" />
             </IconButton>
           </Tooltip>
         </Flex>
@@ -90,7 +85,7 @@ export const Sidebar = () => {
         >
           <NavigationMenu.List className={styles.NavigationMenuList}>
             {chats.data?.map((chat) => (
-              <Tooltip content={chat.title}>
+              <Tooltip  key={`key-${chat.id}`} content={chat.title}>
                 <NavigationMenu.Item key={chat.id}>
                   <Link to={`/app/chats/${chat.id}`}>{chat.title}</Link>
                 </NavigationMenu.Item>
@@ -108,11 +103,7 @@ export const Sidebar = () => {
               </Link>
             </NavigationMenu.Item>
             <NavigationMenu.Item>
-              <Link
-                aria-label="Sign out"
-                to="/app/signout"
-                // onClick={handleSignOut}
-              >
+              <Link aria-label="Sign out" to="/app/signout">
                 <Flex align="center" gap="3">
                   <SignOutIcon size={24} /> <Text size="2">Sign Out</Text>
                 </Flex>
