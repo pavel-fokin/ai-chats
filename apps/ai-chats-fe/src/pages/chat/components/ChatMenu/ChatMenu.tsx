@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { DropdownMenu, Flex } from '@radix-ui/themes';
 
 import { Button } from 'components';
-import { ConfigurationIcon, DeleteIcon } from 'components/ui/icons';
+import { ConfigurationIcon, DeleteIcon } from 'components/icons';
 import { useChat } from 'hooks';
 
 import { DeleteDialog } from './DeleteDialog';

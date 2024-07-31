@@ -11,7 +11,7 @@ const renderWithRouter = (ui: JSX.Element) => {
       <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route path="/" element={ui} />
-          <Route path="/app/chats/new" element={<div>Start a new chat</div>} />
+          <Route path="/app/new-chat" element={<div>Start a new chat</div>} />
         </Routes>
       </MemoryRouter>
     </SidebarContextProvider>,
@@ -24,7 +24,7 @@ test('renders the NewChatIconButton component', () => {
   expect(buttonElement).toBeInTheDocument();
 });
 
-test('navigates to /app/chats/new on button click', async () => {
+test('navigates to /app/new-chat on button click', async () => {
   renderWithRouter(<NewChatIconButton />);
   const buttonElement = screen.getByRole('button');
   await userEvent.click(buttonElement);

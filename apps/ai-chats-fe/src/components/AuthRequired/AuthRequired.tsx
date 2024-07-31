@@ -5,7 +5,7 @@ import { AuthContext } from 'contexts';
 
 interface AuthRequiredProps {
   children: React.ReactNode;
-};
+}
 
 export const AuthRequired: React.FC<AuthRequiredProps> = ({ children }) => {
   const { isAuthenticated } = useContext(AuthContext);

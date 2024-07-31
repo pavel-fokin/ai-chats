@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Box, Flex, IconButton } from '@radix-ui/themes';
 
 import { TextArea, Tooltip } from 'components';
-import { SendIcon } from 'components/ui/icons';
+import { SendIcon } from 'components/icons';
 
 interface InputMessageProps {
   handleSend: (text: string) => void;

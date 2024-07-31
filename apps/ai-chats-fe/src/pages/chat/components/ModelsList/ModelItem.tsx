@@ -8,7 +8,11 @@ interface ModelItemProps {
   onClick: (model: OllamaModel) => void;
 }
 
-export const ModelItem: React.FC<ModelItemProps> = ({ model, isSelected, onClick }) => {
+export const ModelItem: React.FC<ModelItemProps> = ({
+  model,
+  isSelected,
+  onClick,
+}) => {
   return (
     <Card asChild onClick={() => onClick(model)}>
       <a href="#">

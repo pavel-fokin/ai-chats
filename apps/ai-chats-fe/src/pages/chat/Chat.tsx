@@ -8,7 +8,7 @@ import { Header, PageLayout } from 'layout';
 
 import { ChatMenu, InputMessage, Message } from './components';
 
-export const ChatPage: React.FC = () => {
+export const Chat: React.FC = () => {
   const { chatId } = useParams<{ chatId: string }>();
   const messages = useMessages(chatId);
   const sendMessage = useSendMessage(chatId!);

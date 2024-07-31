@@ -1,6 +1,6 @@
-import { Sidebar } from 'components';
+import { Sidebar } from 'features/sidebar';
 
-import { Aside, Root } from './';
+import { Aside, Root, Main } from './';
 
 type PageLayoutProps = {
   children: React.ReactNode;
@@ -12,7 +12,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
       <Aside>
         <Sidebar />
       </Aside>
-      {children}
+      <Main>{children}</Main>
     </Root>
   );
 };

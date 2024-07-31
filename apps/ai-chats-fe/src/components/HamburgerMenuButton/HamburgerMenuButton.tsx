@@ -20,9 +20,9 @@ export const HamburgerMenuButton: React.FC = () => {
       onClick={toggleSidebar}
     >
       {isOpen ? (
-        <CloseIcon size="28" weight="light" />
+        <CloseIcon size="24" weight="light" />
       ) : (
-        <HamburgerMenuIcon size="28" weight="light" />
+        <HamburgerMenuIcon size="24" weight="light" />
       )}
     </IconButton>
   );

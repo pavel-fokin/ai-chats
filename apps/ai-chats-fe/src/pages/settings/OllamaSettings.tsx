@@ -1,7 +1,7 @@
 import { Box, Flex, Heading, IconButton, TextField } from '@radix-ui/themes';
 
 import { HamburgerMenuButton, NewChatIconButton } from 'components';
-import { DownloadIcon } from 'components/ui/icons';
+import { DownloadIcon } from 'components/icons';
 import { useOllamaModels, usePullOllamaModel } from 'hooks';
 import { Header, PageLayout } from 'layout';
 

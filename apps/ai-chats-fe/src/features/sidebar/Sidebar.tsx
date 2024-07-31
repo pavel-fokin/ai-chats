@@ -1,45 +1,14 @@
-import { useContext } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { Flex, Heading, Text } from '@radix-ui/themes';
 
-import { Tooltip, IconButton } from 'components';
-import { ChatIcon, SettingsIcon, SignOutIcon } from 'components/ui/icons';
-import { SidebarContext } from 'contexts';
+import { IconButton, Tooltip } from 'components';
+import { ChatIcon, SettingsIcon, SignOutIcon } from 'components/icons';
 import { useChats } from 'hooks';
 
-import 'styles/styles.css';
+import { Link } from './components/Link';
 import styles from './Sidebar.module.css';
-
-interface LinkProps {
-  to: string;
-  children: React.ReactNode;
-}
-
-const Link: React.FC<LinkProps> = ({ to, children, ...props }) => {
-  const { pathname } = useLocation();
-  const isActive = to === pathname;
-
-  const { toggleSidebar } = useContext(SidebarContext);
-
-  const classNames = isActive
-    ? `${styles.NavigationMenuLink} ${styles.NavigationMenuLinkActive}`
-    : styles.NavigationMenuLink;
-
-  return (
-    <NavigationMenu.Link asChild active={isActive}>
-      <NavLink
-        to={to}
-        className={classNames}
-        onClick={toggleSidebar}
-        {...props}
-      >
-        {children}
-      </NavLink>
-    </NavigationMenu.Link>
-  );
-};
 
 export const Sidebar = () => {
   const navigate = useNavigate();
@@ -49,7 +18,6 @@ export const Sidebar = () => {
     <Flex direction="column" gap="2" height="100%" justify="between">
       <Flex direction="column" flexGrow="1">
         <Flex
-          className="mobile-hidden"
           align="center"
           justify="between"
           gap="2"
@@ -68,7 +36,7 @@ export const Sidebar = () => {
               size="3"
               m="2"
               highContrast
-              onClick={() => navigate('/app/chats/new')}
+              onClick={() => navigate('/app/new-chat')}
               aria-label="New chat"
             >
               <ChatIcon size="24" weight="light" />

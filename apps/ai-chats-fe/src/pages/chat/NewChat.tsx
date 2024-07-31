@@ -9,7 +9,7 @@ import { OllamaModel } from 'types';
 
 import { InputMessage, ModelsList } from './components';
 
-export const NewChatPage: React.FC = () => {
+export const NewChat: React.FC = () => {
   const navigate = useNavigate();
   const [selectedModel, setSelectedModel] = useState<OllamaModel | null>(null);
   const createChat = useCreateChat();
@@ -25,7 +25,7 @@ export const NewChatPage: React.FC = () => {
         onSuccess: ({ data }) => {
           navigate(`/app/chats/${data.chat.id}`);
         },
-      }
+      },
     );
   };
 

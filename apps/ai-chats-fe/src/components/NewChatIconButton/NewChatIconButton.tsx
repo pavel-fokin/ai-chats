@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@radix-ui/themes';
 
 import { SidebarContext } from 'contexts';
-import { ChatIcon } from 'components/ui/icons';
+import { ChatIcon } from 'components/icons';
 
 import 'styles/styles.css';
 
@@ -13,7 +13,7 @@ export const NewChatIconButton: React.FC = () => {
   const { closeSidebar } = useContext(SidebarContext);
 
   const handleClick = () => {
-    navigate('/app/chats/new');
+    navigate('/app/new-chat');
     closeSidebar();
   };
 

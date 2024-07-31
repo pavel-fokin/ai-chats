@@ -6,8 +6,8 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { Sidebar } from 'components';
 import { AuthContextProvider } from 'contexts';
+import { Sidebar } from './Sidebar';
 
 const server = setupServer(
   http.get('/api/chats', () => {
@@ -53,7 +53,7 @@ function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
             <Routes>
               <Route path="/" element={ui} />
               <Route
-                path="/app/chats/new"
+                path="/app/new-chat"
                 element={<div>Start a new chat</div>}
               />
               <Route path="/app/chats/:chatId" element={<div>Chat</div>} />
