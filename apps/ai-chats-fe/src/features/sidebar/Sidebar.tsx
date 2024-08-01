@@ -7,7 +7,7 @@ import { IconButton, Tooltip } from 'components';
 import { ChatIcon, SettingsIcon, SignOutIcon } from 'components/icons';
 import { useChats } from 'hooks';
 
-import { Link } from './components/Link';
+import { CloseSidebarButton, Link } from './components';
 import styles from './Sidebar.module.css';
 
 export const Sidebar = () => {
@@ -27,6 +27,7 @@ export const Sidebar = () => {
             sm: '5',
           }}
         >
+          <CloseSidebarButton />
           <Heading as="h2" align="center" size="5" weight="bold">
             AI Chats
           </Heading>

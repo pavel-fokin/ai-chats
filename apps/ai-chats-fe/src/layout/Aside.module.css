@@ -14,10 +14,10 @@
   display: var(--sidebar-display, none);
   height: var(--sidebar-height, 100vh);
   min-width: 300px;
-  padding: var(--sidebar-padding, var(--space-9)) var(--space-2) var(--space-2);
+  padding: var(--sidebar-padding, var(--space-3)) var(--space-2) var(--space-2);
   position: var(--sidebar-position, fixed);
   width: var(--sidebar-width, 100vw);
-  z-index: 1;
+  z-index: 2;
 }
 
 .AsideOpen {
