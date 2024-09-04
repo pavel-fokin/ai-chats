@@ -5,5 +5,5 @@
 }
 
 .CloseSidebarButton {
-    display: var(--close-sidebar-button-display, block);
+  display: var(--close-sidebar-button-display, block);
 }

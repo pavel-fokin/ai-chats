@@ -28,7 +28,8 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         const scrollHeight = textareaRef.current.scrollHeight;
         textareaRef.current.style.height = scrollHeight + 'px';
       }
-    }, [value]);
+      setValue(props.value);
+    }, [props.value]);
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       setValue(event.target.value);
@@ -55,3 +56,4 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     );
   },
 );
+TextArea.displayName = 'TextArea';

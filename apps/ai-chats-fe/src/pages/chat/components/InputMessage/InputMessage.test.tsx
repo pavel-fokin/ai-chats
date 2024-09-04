@@ -33,10 +33,11 @@ test('calls handleSend with correct message on send click', () => {
   const sendButton = screen.getByRole('button');
 
   fireEvent.change(inputElement, { target: { value: text } });
-  fireEvent.click(sendButton);
-
-  expect(handleSendMock).toHaveBeenCalledWith(text);
   expect(inputElement.value).toBe('Hello, world!');
+
+  fireEvent.click(sendButton);
+  expect(handleSendMock).toHaveBeenCalledWith(text);
+  expect(inputElement.value).toBe('');
 });
 
 test('calls handleSend with correct message on enter key press', () => {
@@ -48,10 +49,11 @@ test('calls handleSend with correct message on enter key press', () => {
   const inputElement = screen.getByRole('textbox') as HTMLTextAreaElement;
 
   fireEvent.change(inputElement, { target: { value: text } });
-  fireEvent.keyDown(inputElement, { key: 'Enter', code: 13, charCode: 13 });
-
-  expect(handleSendMock).toHaveBeenCalledWith(text);
   expect(inputElement.value).toBe('Hello, world!');
+
+  fireEvent.keyDown(inputElement, { key: 'Enter', code: 13, charCode: 13 });
+  expect(handleSendMock).toHaveBeenCalledWith(text);
+  expect(inputElement.value).toBe('');
 });
 
 test('does not call handleSend on empty message send click', () => {
