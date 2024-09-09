@@ -23,7 +23,7 @@ func TestAuthToken(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	accessToken, err := NewAccessToken(domain.NewUserID())
+	accessToken, err := NewAccessToken(domain.NewUserID(), "signingKey")
 	assert.NoError(t, err)
 
 	// Create a test request with a valid access token.
@@ -31,7 +31,7 @@ func TestAuthToken(t *testing.T) {
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 	res := httptest.NewRecorder()
 
-	AuthHeader(handler).ServeHTTP(res, req)
+	AuthHeader("signingKey")(handler).ServeHTTP(res, req)
 
 	assert.Equal(t, http.StatusOK, res.Code)
 }
@@ -65,7 +65,7 @@ func TestAuthParam(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 		})
 
-		accessToken, err := NewAccessToken(domain.NewUserID())
+		accessToken, err := NewAccessToken(domain.NewUserID(), "signingKey")
 		assert.NoError(t, err)
 
 		// Create a test request with a valid access token.
@@ -73,7 +73,7 @@ func TestAuthParam(t *testing.T) {
 		res := httptest.NewRecorder()
 
 		// Call the AuthParam middleware.
-		AuthParam(handler).ServeHTTP(res, req)
+		AuthParam("signingKey")(handler).ServeHTTP(res, req)
 
 		// Check the response status code.
 		assert.Equal(t, http.StatusOK, res.Code)
@@ -90,7 +90,7 @@ func TestAuthParam(t *testing.T) {
 		res := httptest.NewRecorder()
 
 		// Call the AuthParam middleware.
-		AuthParam(handler).ServeHTTP(res, req)
+		AuthParam("signingKey")(handler).ServeHTTP(res, req)
 
 		// Check the response status code.
 		assert.Equal(t, http.StatusUnauthorized, res.Code)

@@ -15,12 +15,6 @@ const (
 	accessTokenAudience = "ai-chats-fe"
 )
 
-var signingKey string
-
-func InitSigningKey(key string) {
-	signingKey = key
-}
-
 // JWTClaims represents the claims of a JSON Web Token (JWT).
 type JWTClaims struct {
 	jwt.RegisteredClaims
@@ -32,7 +26,7 @@ type JWTClaims struct {
 // It includes the issuer, subject, audience, expiration time, and the user ID as claims.
 // The access token is signed using a signing key.
 // It returns the generated access token as a string and any error encountered during the process.
-func NewAccessToken(userID domain.UserID) (string, error) {
+func NewAccessToken(userID domain.UserID, signingKey string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JWTClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    accessTokenIssuer,
@@ -52,7 +46,7 @@ func NewAccessToken(userID domain.UserID) (string, error) {
 
 // VerifyAccessToken verifies the given access token.
 // It returns the claims of the access token and any error encountered during the process.
-func VerifyAccessToken(tokenString string) (*JWTClaims, error) {
+func VerifyAccessToken(tokenString, signingKey string) (*JWTClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(signingKey), nil
 	})

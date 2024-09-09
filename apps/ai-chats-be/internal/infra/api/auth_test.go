@@ -37,7 +37,7 @@ func TestAuthAPILogIn(t *testing.T) {
 		auth := &AuthMock{}
 		auth.On("LogIn", context.Background(), "username", "password").Return(domain.User{}, nil)
 
-		LogIn(auth)(w, req)
+		LogIn(auth, "signingKey")(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 200, resp.StatusCode)
@@ -58,7 +58,7 @@ func TestAuthAPILogIn(t *testing.T) {
 			domain.User{}, fmt.Errorf("some error"),
 		)
 
-		LogIn(auth)(w, req)
+		LogIn(auth, "signingKey")(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 500, resp.StatusCode)
@@ -73,7 +73,7 @@ func TestAuthAPILogIn(t *testing.T) {
 
 		auth := &AuthMock{}
 
-		LogIn(auth)(w, req)
+		LogIn(auth, "signingKey")(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 400, resp.StatusCode)
@@ -94,7 +94,7 @@ func TestAuthAPILogIn(t *testing.T) {
 			domain.User{}, domain.ErrUserNotFound,
 		)
 
-		LogIn(auth)(w, req)
+		LogIn(auth, "signingKey")(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 401, resp.StatusCode)
@@ -115,7 +115,7 @@ func TestAuthAPILogIn(t *testing.T) {
 			domain.User{}, domain.ErrInvalidPassword,
 		)
 
-		LogIn(auth)(w, req)
+		LogIn(auth, "signingKey")(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 401, resp.StatusCode)
@@ -133,7 +133,7 @@ func TestAuthAPISignUP(t *testing.T) {
 		auth := &AuthMock{}
 		auth.On("SignUp", context.Background(), "username", "password").Return(domain.User{}, nil)
 
-		SignUp(auth)(w, req)
+		SignUp(auth, "signingKey")(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 200, resp.StatusCode)
@@ -154,7 +154,7 @@ func TestAuthAPISignUP(t *testing.T) {
 			domain.User{}, fmt.Errorf("some error"),
 		)
 
-		SignUp(auth)(w, req)
+		SignUp(auth, "signingKey")(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 500, resp.StatusCode)
@@ -169,7 +169,7 @@ func TestAuthAPISignUP(t *testing.T) {
 
 		auth := &AuthMock{}
 
-		SignUp(auth)(w, req)
+		SignUp(auth, "signingKey")(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 400, resp.StatusCode)
@@ -190,7 +190,7 @@ func TestAuthAPISignUP(t *testing.T) {
 			domain.User{}, domain.ErrUserAlreadyExists,
 		)
 
-		SignUp(auth)(w, req)
+		SignUp(auth, "signingKey")(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 409, resp.StatusCode)

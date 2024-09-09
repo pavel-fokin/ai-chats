@@ -14,13 +14,14 @@ import (
 	"ai-chats/internal/infra/db/sqlite"
 	"ai-chats/internal/infra/ollama"
 	"ai-chats/internal/infra/pubsub"
-	"ai-chats/internal/server"
+
+	// "ai-chats/internal/server"
 	"ai-chats/internal/worker"
 )
 
 // Config is the service configuration.
 type Config struct {
-	Server server.Config
+	Server api.Config
 	DB     db.Config
 }
 
@@ -58,15 +59,12 @@ func main() {
 		sqlite.NewTx(db),
 	)
 
-	// Initialize the crypto package and the signing key.
-	api.InitSigningKey(config.Server.TokenSigningKey)
-
 	// Setup the server.
-	sse := server.NewSSEConnections()
+	// sse := server.NewSSEConnections()
 	// defer sse.CloseAll()
 
-	router := api.NewRouter(app, sse, pubsub)
-	server := server.New(config.Server, router)
+	server := api.NewServer(config.Server)
+	server.SetupRoutes(app, pubsub)
 
 	// Setup the worker.
 	worker := worker.New(pubsub)
@@ -80,7 +78,7 @@ func main() {
 
 	// Wait for the shutdown signal.
 	<-ctx.Done()
-	sse.CloseAll()
+	// sse.CloseAll()
 
 	log.Println("Shutting down the AIChats worker...")
 	worker.Shutdown()

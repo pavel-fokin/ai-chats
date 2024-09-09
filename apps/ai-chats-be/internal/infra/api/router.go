@@ -7,7 +7,6 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 
-	"ai-chats/internal/server"
 	"ai-chats/web"
 )
 
@@ -17,16 +16,18 @@ type App interface {
 	Ollama
 }
 
-func NewRouter(app App, sse *server.SSEConnections, pubsub Subscriber) *chi.Mux {
+func (s *Server) SetupRoutes(app App, pubsub Subscriber) {
 	r := chi.NewRouter()
+	s.server.Handler = r
+
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Post("/api/auth/login", LogIn(app))
-	r.Post("/api/auth/signup", SignUp(app))
+	r.Post("/api/auth/login", LogIn(app, s.config.TokenSigningKey))
+	r.Post("/api/auth/signup", SignUp(app, s.config.TokenSigningKey))
 
 	r.Group(func(r chi.Router) {
-		r.Use(AuthHeader)
+		r.Use(AuthHeader(s.config.TokenSigningKey))
 		r.Post("/api/chats", PostChats(app))
 		r.Get("/api/chats", GetChats(app))
 		r.Get("/api/chats/{uuid}", GetChat(app))
@@ -36,12 +37,12 @@ func NewRouter(app App, sse *server.SSEConnections, pubsub Subscriber) *chi.Mux 
 	})
 
 	r.Group(func(r chi.Router) {
-		r.Use(AuthParam)
-		r.Get("/api/chats/{uuid}/events", GetEvents(app, sse, pubsub))
+		r.Use(AuthParam(s.config.TokenSigningKey))
+		r.Get("/api/chats/{uuid}/events", GetEvents(app, s.sse, pubsub))
 	})
 
 	r.Group(func(r chi.Router) {
-		r.Use(AuthHeader)
+		r.Use(AuthHeader(s.config.TokenSigningKey))
 		r.Get("/api/ollama/models", GetOllamaModels(app))
 		r.Post("/api/ollama/models", PostOllamaModels(app))
 		r.Delete("/api/ollama/models/{model}", DeleteOllamaModel(app))
@@ -58,6 +59,4 @@ func NewRouter(app App, sse *server.SSEConnections, pubsub Subscriber) *chi.Mux 
 	r.Get(
 		"/assets/*", fs.ServeHTTP,
 	)
-
-	return r
 }

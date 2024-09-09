@@ -11,8 +11,8 @@ import (
 
 func TestNewAccessToken(t *testing.T) {
 	userID := domain.NewUserID()
-	InitSigningKey("secret")
-	tokenString, err := NewAccessToken(userID)
+	// InitSigningKey("secret")
+	tokenString, err := NewAccessToken(userID, "secret")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, tokenString)
 

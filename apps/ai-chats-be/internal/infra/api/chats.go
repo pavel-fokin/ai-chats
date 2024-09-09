@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 
 	"ai-chats/internal/domain"
-	"ai-chats/internal/server"
 )
 
 type Subscriber interface {
@@ -168,7 +167,7 @@ func PostMessages(app Chats) http.HandlerFunc {
 }
 
 // GetEvents handles the GET /api/chats/{uuid}/events endpoint.
-func GetEvents(app Chats, sse *server.SSEConnections, subscriber Subscriber) http.HandlerFunc {
+func GetEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 

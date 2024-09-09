@@ -16,7 +16,7 @@ type Auth interface {
 }
 
 // LogIn logs in a user.
-func LogIn(app Auth) http.HandlerFunc {
+func LogIn(app Auth, signingKey string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -41,7 +41,7 @@ func LogIn(app Auth) http.HandlerFunc {
 			return
 		}
 
-		accessToken, err := NewAccessToken(user.ID)
+		accessToken, err := NewAccessToken(user.ID, signingKey)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create access token", "err", err)
 			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
@@ -53,7 +53,7 @@ func LogIn(app Auth) http.HandlerFunc {
 }
 
 // SignUp signs up a user.
-func SignUp(app Auth) http.HandlerFunc {
+func SignUp(app Auth, signingKey string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -76,7 +76,7 @@ func SignUp(app Auth) http.HandlerFunc {
 			return
 		}
 
-		accessToken, err := NewAccessToken(user.ID)
+		accessToken, err := NewAccessToken(user.ID, signingKey)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create access token", "err", err)
 			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)

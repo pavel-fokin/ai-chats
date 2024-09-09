@@ -30,49 +30,55 @@ func MustHaveUserID(ctx context.Context) domain.UserID {
 	return userID
 }
 
-// AuthHeader is a middleware that checks for the presence of an Authorization header.
-func AuthHeader(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authToken := r.Header.Get("Authorization")
+type MiddlewareFunc func(http.Handler) http.Handler
 
-		if authToken == "" {
-			slog.ErrorContext(r.Context(), "missing auth token")
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-			return
-		}
+// AuthHeader creates a middleware that checks for the presence of an Authorization header.
+func AuthHeader(signingKey string) MiddlewareFunc {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authToken := r.Header.Get("Authorization")
 
-		accessToken := strings.TrimPrefix(authToken, "Bearer ")
-		claims, err := VerifyAccessToken(accessToken)
-		if err != nil {
-			slog.ErrorContext(r.Context(), "failed to verify access token", "err", err)
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-			return
-		}
+			if authToken == "" {
+				slog.ErrorContext(r.Context(), "missing auth token")
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				return
+			}
 
-		ctx := context.WithValue(r.Context(), UserIDCtxKey, claims.UserID)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+			accessToken := strings.TrimPrefix(authToken, "Bearer ")
+			claims, err := VerifyAccessToken(accessToken, signingKey)
+			if err != nil {
+				slog.ErrorContext(r.Context(), "failed to verify access token", "err", err)
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				return
+			}
+
+			ctx := context.WithValue(r.Context(), UserIDCtxKey, claims.UserID)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
 }
 
-// AuthParam is a middleware that checks an access token in the URL query parameters.
-func AuthParam(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authToken := r.URL.Query().Get("accessToken")
+// AuthParam creates a middleware that checks an access token in the URL query parameters.
+func AuthParam(signingKey string) MiddlewareFunc {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authToken := r.URL.Query().Get("accessToken")
 
-		if authToken == "" {
-			slog.ErrorContext(r.Context(), "missing auth token")
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-			return
-		}
+			if authToken == "" {
+				slog.ErrorContext(r.Context(), "missing auth token")
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				return
+			}
 
-		claims, err := VerifyAccessToken(authToken)
-		if err != nil {
-			slog.ErrorContext(r.Context(), "failed to verify access token", "err", err)
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-			return
-		}
+			claims, err := VerifyAccessToken(authToken, signingKey)
+			if err != nil {
+				slog.ErrorContext(r.Context(), "failed to verify access token", "err", err)
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				return
+			}
 
-		ctx := context.WithValue(r.Context(), UserIDCtxKey, claims.UserID)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+			ctx := context.WithValue(r.Context(), UserIDCtxKey, claims.UserID)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
 }

@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"ai-chats/internal/domain"
-	"ai-chats/internal/server"
+	// "ai-chats/internal/server"
 )
 
 func matchChiContext(ctx context.Context) bool {
@@ -318,7 +318,7 @@ func TestApiChats_GetEvents(t *testing.T) {
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
 		w := httptest.NewRecorder()
 
-		sse := server.NewSSEConnections()
+		sse := NewSSEConnections()
 
 		app := &MockChat{}
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
@@ -356,7 +356,7 @@ func TestApiChats_GetEvents(t *testing.T) {
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
 		w := httptest.NewRecorder()
 
-		sse := server.NewSSEConnections()
+		sse := NewSSEConnections()
 
 		app := &MockChat{}
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
@@ -384,7 +384,7 @@ func TestApiChats_GetEvents(t *testing.T) {
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/chats/%s/events", chatID), nil)
 		w := httptest.NewRecorder()
 
-		sse := server.NewSSEConnections()
+		sse := NewSSEConnections()
 
 		app := &MockChat{}
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).

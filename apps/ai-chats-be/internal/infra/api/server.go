@@ -1,4 +1,4 @@
-package server
+package api
 
 import (
 	"context"
@@ -17,18 +17,21 @@ type Config struct {
 
 // Server is the main server struct.
 type Server struct {
+	config Config
 	server *http.Server
+	sse    *SSEConnections
 }
 
 // NewServer creates a new server.
-func New(config Config, router http.Handler) *Server {
+func NewServer(config Config) *Server {
 	server := &http.Server{
-		Addr:    ":" + config.Port,
-		Handler: router,
+		Addr: ":" + config.Port,
 	}
 
 	return &Server{
+		config: config,
 		server: server,
+		sse:    NewSSEConnections(),
 	}
 }
 
@@ -45,6 +48,8 @@ func (s *Server) Shutdown() {
 		context.Background(), time.Duration(maxShutdownTimeout)*time.Second,
 	)
 	defer cancel()
+
+	s.sse.CloseAll()
 
 	if err := s.server.Shutdown(ctx); err != nil {
 		log.Fatalf("Failed to shutdown the server: %v", err)
