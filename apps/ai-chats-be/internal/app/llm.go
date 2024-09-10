@@ -7,8 +7,8 @@ import (
 	"ai-chats/internal/domain"
 	"ai-chats/internal/domain/events"
 	"ai-chats/internal/infra/ollama"
+	"ai-chats/internal/infra/worker"
 	"ai-chats/internal/pkg/json"
-	"ai-chats/internal/worker"
 )
 
 // GenerateResponse generates a LLM response for the chat.

@@ -6,8 +6,8 @@ import (
 
 	"ai-chats/internal/domain"
 	"ai-chats/internal/domain/events"
+	"ai-chats/internal/infra/worker"
 	"ai-chats/internal/pkg/json"
-	"ai-chats/internal/worker"
 )
 
 // AllChats returns all chats for the user.

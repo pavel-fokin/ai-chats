@@ -6,8 +6,8 @@ import (
 
 	"ai-chats/internal/app/commands"
 	"ai-chats/internal/domain"
+	"ai-chats/internal/infra/worker"
 	"ai-chats/internal/pkg/json"
-	"ai-chats/internal/worker"
 )
 
 // ListOllamaModels retrieves a list of Ollama models from the Ollama client.

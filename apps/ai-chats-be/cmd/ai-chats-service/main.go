@@ -14,9 +14,7 @@ import (
 	"ai-chats/internal/infra/db/sqlite"
 	"ai-chats/internal/infra/ollama"
 	"ai-chats/internal/infra/pubsub"
-
-	// "ai-chats/internal/server"
-	"ai-chats/internal/worker"
+	"ai-chats/internal/infra/worker"
 )
 
 // Config is the service configuration.
@@ -60,9 +58,6 @@ func main() {
 	)
 
 	// Setup the server.
-	// sse := server.NewSSEConnections()
-	// defer sse.CloseAll()
-
 	server := api.NewServer(config.Server)
 	server.SetupRoutes(app, pubsub)
 
@@ -78,7 +73,6 @@ func main() {
 
 	// Wait for the shutdown signal.
 	<-ctx.Done()
-	// sse.CloseAll()
 
 	log.Println("Shutting down the AIChats worker...")
 	worker.Shutdown()
