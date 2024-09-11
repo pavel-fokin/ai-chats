@@ -26,7 +26,7 @@ export const Chat: React.FC = () => {
         <NewChatIconButton />
       </Header>
       <Flex direction="column" height="100%" width="100%">
-        <Box flexGrow="1" style={{ overflow: 'scroll' }}>
+        <Box flexGrow="1" style={{ overflow: 'auto' }}>
           <Box height="100%" style={{ maxWidth: '688px', margin: '0 auto' }}>
             <Flex flexGrow="1" justify="end" direction="column" gap="2">
               {messages.data?.length !== 0 && (

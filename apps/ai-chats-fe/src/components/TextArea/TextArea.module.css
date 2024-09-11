@@ -5,6 +5,7 @@
   padding: 10px;
   border-radius: var(--radius-2);
   border: 1px solid #ccc;
+  overflow: hidden;
 
   font-size: var(--font-size-regular);
   font-family: var(--default-font-family);
