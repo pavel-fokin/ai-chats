@@ -18,7 +18,7 @@ const (
 type MessageAdded struct {
 	ID      uuid.UUID      `json:"id"`
 	Type    EventType      `json:"type"`
-	ChatID  domain.ChatID  `json:"chat_id"`
+	ChatID  domain.ChatID  `json:"chatId"`
 	Message domain.Message `json:"message"`
 }
 

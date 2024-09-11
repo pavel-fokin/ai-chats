@@ -12,8 +12,8 @@ import (
 // ProcessAddedMessage processes a message added event.
 func (a *App) ProcessAddedMessage(ctx context.Context, event events.MessageAdded) error {
 
-	if err := a.pubsub.Publish(ctx, event.ChatID.String(), json.MustMarshal(ctx, event)); err != nil {
-		return fmt.Errorf("failed to publish a message sent event: %w", err)
+	if err := a.notifyInChat(ctx, event.ChatID.String(), json.MustMarshal(ctx, event)); err != nil {
+		return fmt.Errorf("failed to notify in chat: %w", err)
 	}
 
 	switch {

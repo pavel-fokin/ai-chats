@@ -17,9 +17,9 @@ type Chat struct {
 	Title        string    `json:"title"`
 	User         User      `json:"user"`
 	Messages     []Message `json:"messages"`
-	DefaultModel ModelID   `json:"default_model"`
-	CreatedAt    time.Time `json:"created_at"`
-	DeletedAt    time.Time `json:"deleted_at"`
+	DefaultModel ModelID   `json:"defaultModel"`
+	CreatedAt    time.Time `json:"createdAt"`
+	DeletedAt    time.Time `json:"deletedAt"`
 }
 
 func NewChat(user User, modelID ModelID) Chat {

@@ -10,7 +10,7 @@ type Message struct {
 	ID        uuid.UUID `json:"id"`
 	Sender    Sender    `json:"sender"`
 	Text      string    `json:"text"`
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 func NewMessage(sender Sender, text string) Message {
