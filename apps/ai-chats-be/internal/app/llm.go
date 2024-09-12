@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"ai-chats/internal/app/commands"
 	"ai-chats/internal/domain"
 	"ai-chats/internal/domain/events"
 	"ai-chats/internal/infra/ollama"
@@ -24,8 +25,8 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 	}
 
 	streamFunc := func(messageChunk events.MessageChunkReceived) error {
-		if err := a.pubsub.Publish(ctx, chatID.String(), json.MustMarshal(ctx, messageChunk)); err != nil {
-			return fmt.Errorf("failed to publish a message chunk received event: %w", err)
+		if err := a.notifyInChat(ctx, chatID.String(), json.MustMarshal(ctx, messageChunk)); err != nil {
+			return fmt.Errorf("failed to notify in chat: %w", err)
 		}
 		return nil
 	}
@@ -42,6 +43,20 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 	messageAdded := events.NewMessageAdded(chatID, llmMessage)
 	if err := a.pubsub.Publish(ctx, worker.MessageAddedTopic, json.MustMarshal(ctx, messageAdded)); err != nil {
 		return fmt.Errorf("failed to publish a message sent event: %w", err)
+	}
+
+	return nil
+}
+
+// GenerateChatTitle generates a chat title.
+func (a *App) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) error {
+	generateChatTitleCommand := commands.GenerateChatTitle{ChatID: chatID.String()}
+	if err := a.pubsub.Publish(
+		ctx,
+		worker.GenerateChatTitleTopic,
+		json.MustMarshal(ctx, generateChatTitleCommand),
+	); err != nil {
+		return fmt.Errorf("failed to publish a generate chat title command: %w", err)
 	}
 
 	return nil

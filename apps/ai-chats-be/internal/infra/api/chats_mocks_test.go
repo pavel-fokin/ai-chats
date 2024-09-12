@@ -47,6 +47,11 @@ func (m *MockChat) ChatExists(ctx context.Context, chatID domain.ChatID) (bool, 
 	return args.Bool(0), args.Error(1)
 }
 
+func (m *MockChat) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) error {
+	args := m.Called(ctx, chatID)
+	return args.Error(0)
+}
+
 type EventsMock struct {
 	mock.Mock
 }

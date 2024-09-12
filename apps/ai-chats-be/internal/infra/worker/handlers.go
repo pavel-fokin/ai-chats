@@ -5,18 +5,38 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/google/uuid"
+
 	"ai-chats/internal/app/commands"
 	"ai-chats/internal/domain/events"
 )
 
 const (
-	MessageAddedTopic    Topic = "message-added"
-	PullOllamaModelTopic Topic = "pull-ollama-model"
+	GenerateChatTitleTopic Topic = "generate-chat-title"
+	MessageAddedTopic      Topic = "message-added"
+	PullOllamaModelTopic   Topic = "pull-ollama-model"
 )
 
 func (w *Worker) SetupHandlers(app App) {
+	w.RegisterHandler(GenerateChatTitleTopic, 1, w.GenerateChatTitle(app))
 	w.RegisterHandler(MessageAddedTopic, 1, w.MessageAdded(app))
 	w.RegisterHandler(PullOllamaModelTopic, 1, w.PullOllamaModel(app))
+}
+
+func (w *Worker) GenerateChatTitle(app App) HandlerFunc {
+	return func(ctx context.Context, e []byte) error {
+		var generateChatTitle commands.GenerateChatTitle
+		if err := json.Unmarshal(e, &generateChatTitle); err != nil {
+			return fmt.Errorf("failed to unmarshal event: %w", err)
+		}
+
+		err := app.GenerateTitle(ctx, uuid.MustParse(generateChatTitle.ChatID))
+		if err != nil {
+			return fmt.Errorf("failed to generate title: %w", err)
+		}
+
+		return nil
+	}
 }
 
 func (w *Worker) MessageAdded(app App) HandlerFunc {
@@ -42,7 +62,7 @@ func (w *Worker) PullOllamaModel(app App) HandlerFunc {
 			return fmt.Errorf("failed to unmarshal event: %w", err)
 		}
 
-		err := app.PullOllamaModelJob(ctx, pullOllamaModel.Model)
+		err := app.PullOllamaModel(ctx, pullOllamaModel.Model)
 		if err != nil {
 			return fmt.Errorf("failed to pull ollama model: %w", err)
 		}

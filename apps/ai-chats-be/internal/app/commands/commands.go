@@ -9,3 +9,13 @@ func NewPullOllamaModel(model string) PullOllamaModel {
 		Model: model,
 	}
 }
+
+type GenerateChatTitle struct {
+	ChatID string `json:"chatID"`
+}
+
+func NewGenerateChatTitle(chatID string) GenerateChatTitle {
+	return GenerateChatTitle{
+		ChatID: chatID,
+	}
+}

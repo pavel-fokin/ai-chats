@@ -61,6 +61,38 @@ func (a *App) PullOllamaModelAsync(ctx context.Context, model string) error {
 	return nil
 }
 
+// PullOllamaModelJob pulls an Ollama model.
+func (a *App) PullOllamaModel(ctx context.Context, model string) error {
+	ollamaModel := domain.NewOllamaModel(model, "")
+
+	err := a.ollamaModels.AddModelPullingStarted(ctx, ollamaModel.Name())
+	if err != nil {
+		return fmt.Errorf("failed to add ollama model pulling started: %w", err)
+	}
+
+	if err := a.ollamaClient.Pull(ctx, model); err != nil {
+		if err := a.ollamaModels.AddModelPullingFinished(
+			ctx,
+			ollamaModel.Name(),
+			domain.OllamaPullingFinalStatusFailed,
+		); err != nil {
+			return fmt.Errorf("failed to add ollama model pulling finished: %w", err)
+		}
+
+		return fmt.Errorf("failed to pull ollama model: %w", err)
+	}
+
+	if err := a.ollamaModels.AddModelPullingFinished(
+		ctx,
+		ollamaModel.Name(),
+		domain.OllamaPullingFinalStatusSuccess,
+	); err != nil {
+		return fmt.Errorf("failed to add ollama model pulling finished: %w", err)
+	}
+
+	return nil
+}
+
 func (a *App) DeleteOllamaModel(ctx context.Context, model string) error {
 	return a.ollamaClient.Delete(ctx, model)
 }

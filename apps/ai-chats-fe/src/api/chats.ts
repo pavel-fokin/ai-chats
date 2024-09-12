@@ -50,3 +50,7 @@ export const getMessages = async (
 export const postMessages = async (chatId: string, text: string) => {
   await client.post(`/chats/${chatId}/messages`, { text: text });
 };
+
+export const postGenerateChatTitle = async (chatId: string) => {
+  await client.post(`/chats/${chatId}/generate-title`);
+};

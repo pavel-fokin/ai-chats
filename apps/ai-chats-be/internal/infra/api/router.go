@@ -32,6 +32,7 @@ func (s *Server) SetupRoutes(app App, pubsub Subscriber) {
 		r.Get("/api/chats", GetChats(app))
 		r.Get("/api/chats/{uuid}", GetChat(app))
 		r.Delete("/api/chats/{uuid}", DeleteChat(app))
+		r.Post("/api/chats/{uuid}/generate-title", PostGenerateChatTitle(app))
 		r.Post("/api/chats/{uuid}/messages", PostMessages(app))
 		r.Get("/api/chats/{uuid}/messages", GetMessages(app))
 	})

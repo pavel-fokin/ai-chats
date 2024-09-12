@@ -4,6 +4,7 @@ export {
   DownloadSimple as DownloadIcon,
   GearSix as SettingsIcon,
   List as HamburgerMenuIcon,
+  Sparkle as AIActionIcon,
   MagnifyingGlass as SearchIcon,
   NotePencil as ChatIcon,
   PaperPlaneTilt as SendIcon,

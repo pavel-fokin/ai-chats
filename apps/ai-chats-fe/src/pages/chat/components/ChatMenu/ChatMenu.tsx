@@ -3,18 +3,19 @@ import { useState } from 'react';
 import { DropdownMenu, Flex } from '@radix-ui/themes';
 
 import { Button } from 'components';
-import { ConfigurationIcon, DeleteIcon } from 'components/icons';
-import { useChat } from 'hooks';
+import { AIActionIcon, DeleteIcon } from 'components/icons';
+import { useChat, useGenerateChatTitle } from 'hooks';
 
 import { DeleteDialog } from './DeleteDialog';
 
 interface ChatMenuProps {
-  chatId?: string;
+  chatId: string;
 }
 
 export const ChatMenu: React.FC<ChatMenuProps> = ({ chatId }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const chat = useChat(chatId);
+  const generateChatTitle = useGenerateChatTitle();
 
   return (
     <DropdownMenu.Root>
@@ -34,7 +35,7 @@ export const ChatMenu: React.FC<ChatMenuProps> = ({ chatId }) => {
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content style={{ minWidth: '192px' }}>
-        <DropdownMenu.Item shortcut="">
+        <DropdownMenu.Item shortcut="" onClick={() => generateChatTitle.mutate(chatId)}>
           <Flex
             direction="row"
             align="center"
@@ -42,7 +43,7 @@ export const ChatMenu: React.FC<ChatMenuProps> = ({ chatId }) => {
             gap="4"
             width="100%"
           >
-            <ConfigurationIcon size="16" /> Configure
+            <AIActionIcon size="16" /> Generate title
           </Flex>
         </DropdownMenu.Item>
         <DropdownMenu.Separator />

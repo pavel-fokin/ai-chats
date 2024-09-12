@@ -10,10 +10,9 @@ import (
 )
 
 type App interface {
-	GenerateResponse(ctx context.Context, chatID domain.ChatID) error
 	GenerateTitle(ctx context.Context, chatID domain.ChatID) error
 	ProcessAddedMessage(ctx context.Context, event events.MessageAdded) error
-	PullOllamaModelJob(ctx context.Context, model string) error
+	PullOllamaModel(ctx context.Context, model string) error
 }
 
 type PubSub interface {

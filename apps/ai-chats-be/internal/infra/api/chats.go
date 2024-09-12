@@ -23,6 +23,7 @@ type Chats interface {
 	CreateChat(ctx context.Context, userID domain.UserID, defaultModel, message string) (domain.Chat, error)
 	DeleteChat(ctx context.Context, chatID domain.ChatID) error
 	FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error)
+	GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) error
 	SendMessage(ctx context.Context, userID domain.UserID, chatID domain.ChatID, message string) (domain.Message, error)
 }
 
@@ -158,6 +159,24 @@ func PostMessages(app Chats) http.HandlerFunc {
 		_, err := app.SendMessage(ctx, userID, uuid.MustParse(chatID), req.Text)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to send a message", "chatID", chatID, "err", err)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			return
+		}
+
+		AsSuccessResponse(w, nil, http.StatusNoContent)
+	}
+}
+
+// PostGenerateChatTitle handles the POST /api/chats/{uuid}/generate-title endpoint.
+func PostGenerateChatTitle(app Chats) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		chatID := chi.URLParam(r, "uuid")
+
+		err := app.GenerateChatTitleAsync(ctx, uuid.MustParse(chatID))
+		if err != nil {
+			slog.ErrorContext(ctx, "failed to generate a chat title", "chatID", chatID, "err", err)
 			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
 			return
 		}

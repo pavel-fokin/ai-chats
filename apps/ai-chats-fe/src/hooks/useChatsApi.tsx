@@ -5,7 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { deleteChats, getChatById, getChats, postChats } from 'api';
+import { deleteChats, getChatById, getChats, postChats, postGenerateChatTitle } from 'api';
 import { PostChatsRequest } from 'api/requests';
 
 export const useChats = () => {
@@ -42,3 +42,9 @@ export const useDeleteChat = () => {
     mutationFn: (chatId: string) => deleteChats(chatId),
   });
 };
+
+export const useGenerateChatTitle = () => {
+  return useMutation({
+    mutationFn: (chatId: string) => postGenerateChatTitle(chatId),
+  });
+}
