@@ -83,10 +83,10 @@ func (a *App) GenerateTitle(ctx context.Context, chatID domain.ChatID) error {
 		return fmt.Errorf("failed to update chat title: %w", err)
 	}
 
-	// titleUpdated := events.NewChatTitleUpdated(chatID, generatedTitle)
-	// if err := a.events.Publish(ctx, chatID.String(), json.MustMarshal(ctx, titleUpdated)); err != nil {
-	// 	return fmt.Errorf("failed to publish a title updated event: %w", err)
-	// }
+	titleUpdated := events.NewChatTitleUpdated(chatID, generatedTitle)
+	if err := a.notifyApp(ctx, chat.User.ID, json.MustMarshal(ctx, titleUpdated)); err != nil {
+		return fmt.Errorf("failed to publish a title updated event: %w", err)
+	}
 
 	return nil
 }

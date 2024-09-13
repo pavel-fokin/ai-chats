@@ -14,6 +14,10 @@ export const Chat: React.FC = () => {
   const sendMessage = useSendMessage(chatId!);
   const { messageChunk } = useChatEvents(chatId!);
 
+  if (!chatId) {
+    return null;
+  }
+
   const handleSend = async (text: string) => {
     sendMessage.mutate(text);
   };

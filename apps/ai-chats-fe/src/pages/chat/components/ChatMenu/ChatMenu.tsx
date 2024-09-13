@@ -35,7 +35,7 @@ export const ChatMenu: React.FC<ChatMenuProps> = ({ chatId }) => {
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content style={{ minWidth: '192px' }}>
-        <DropdownMenu.Item shortcut="" onClick={() => generateChatTitle.mutate(chatId)}>
+        <DropdownMenu.Item onClick={() => generateChatTitle.mutate(chatId)}>
           <Flex
             direction="row"
             align="center"

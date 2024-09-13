@@ -333,7 +333,7 @@ func TestApiChats_GetEvents(t *testing.T) {
 			Return(nil)
 
 		router := chi.NewRouter()
-		router.Get("/api/chats/{uuid}/events", GetEvents(app, sse, events))
+		router.Get("/api/chats/{uuid}/events", GetChatEvents(app, sse, events))
 		go router.ServeHTTP(w, req)
 
 		eventsCh <- []byte("event")
@@ -369,7 +369,7 @@ func TestApiChats_GetEvents(t *testing.T) {
 			Return(errors.New("failed to unsubscribe"))
 
 		router := chi.NewRouter()
-		router.Get("/api/chats/{uuid}/events", GetEvents(app, sse, events))
+		router.Get("/api/chats/{uuid}/events", GetChatEvents(app, sse, events))
 		router.ServeHTTP(w, req)
 
 		resp := w.Result()
@@ -391,7 +391,7 @@ func TestApiChats_GetEvents(t *testing.T) {
 			Return(false, nil)
 
 		router := chi.NewRouter()
-		router.Get("/api/chats/{uuid}/events", GetEvents(app, sse, &EventsMock{}))
+		router.Get("/api/chats/{uuid}/events", GetChatEvents(app, sse, &EventsMock{}))
 		router.ServeHTTP(w, req)
 
 		resp := w.Result()

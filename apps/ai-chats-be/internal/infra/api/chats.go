@@ -185,8 +185,8 @@ func PostGenerateChatTitle(app Chats) http.HandlerFunc {
 	}
 }
 
-// GetEvents handles the GET /api/chats/{uuid}/events endpoint.
-func GetEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.HandlerFunc {
+// GetChatEvents handles the GET /api/chats/{uuid}/events endpoint.
+func GetChatEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -228,7 +228,7 @@ func GetEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.Handl
 			case <-ctx.Done():
 				return
 			case event := <-events:
-				if err := WriteEvent(w, event); err != nil {
+				if err := WriteServerSentEvent(w, event); err != nil {
 					slog.ErrorContext(ctx, "failed to write an event", "err", err)
 					return
 				}

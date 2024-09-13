@@ -187,7 +187,7 @@ func WriteErrorResponse(w http.ResponseWriter, statusCode int, errs ...Error) {
 }
 
 // WriteEvent writes a server sent event to the response.
-func WriteEvent(w http.ResponseWriter, data []byte) error {
+func WriteServerSentEvent(w http.ResponseWriter, data []byte) error {
 	fmt.Fprintf(w, "data: %s\n\n", data)
 	return nil
 }

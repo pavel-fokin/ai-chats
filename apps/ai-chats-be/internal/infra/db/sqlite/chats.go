@@ -151,9 +151,10 @@ func (c *Chats) AllChats(ctx context.Context, userID domain.UserID) ([]domain.Ch
 	rows, err := c.DBTX(ctx).QueryContext(
 		ctx,
 		`SELECT
-		id, title, default_model_id, created_at
+		chat.id, chat.title, chat.default_model_id, chat.created_at, user.id, user.username
 		FROM chat
-		WHERE user_id = ? AND deleted_at IS NULL`,
+		LEFT JOIN user ON chat.user_id = user.id
+		WHERE chat.user_id = ? AND chat.deleted_at IS NULL`,
 		userID,
 	)
 	if err != nil {
@@ -166,9 +167,16 @@ func (c *Chats) AllChats(ctx context.Context, userID domain.UserID) ([]domain.Ch
 		var (
 			chat      domain.Chat
 			createdAt string
-			model     string
+			modelID   string
 		)
-		if err := rows.Scan(&chat.ID, &chat.Title, &model, &createdAt); err != nil {
+		if err := rows.Scan(
+			&chat.ID,
+			&chat.Title,
+			&modelID,
+			&createdAt,
+			&chat.User.ID,
+			&chat.User.Username,
+		); err != nil {
 			return nil, fmt.Errorf("failed to scan chat: %w", err)
 		}
 
@@ -176,7 +184,7 @@ func (c *Chats) AllChats(ctx context.Context, userID domain.UserID) ([]domain.Ch
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse chat.created_at: %w", err)
 		}
-		chat.DefaultModel = domain.NewModelID(model)
+		chat.DefaultModel = domain.NewModelID(modelID)
 
 		chats = append(chats, chat)
 	}
@@ -192,16 +200,17 @@ func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 	var (
 		chat      domain.Chat
 		createdAt string
-		model     string
+		modelID   string
 	)
 	err := c.DBTX(ctx).QueryRowContext(
 		ctx,
 		`SELECT
-		id, title, default_model_id, created_at
+		chat.id, chat.title, chat.default_model_id, chat.created_at, user.id, user.username
 		FROM chat
-		WHERE id = ? AND deleted_at IS NULL`,
+		LEFT JOIN user ON chat.user_id = user.id
+		WHERE chat.id = ? AND chat.deleted_at IS NULL`,
 		chatID,
-	).Scan(&chat.ID, &chat.Title, &model, &createdAt)
+	).Scan(&chat.ID, &chat.Title, &modelID, &createdAt, &chat.User.ID, &chat.User.Username)
 	if err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to find chat by id: %w", err)
 	}
@@ -210,7 +219,7 @@ func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 	if err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to parse chat.created_at: %w", err)
 	}
-	chat.DefaultModel = domain.NewModelID(model)
+	chat.DefaultModel = domain.NewModelID(modelID)
 
 	return chat, nil
 }

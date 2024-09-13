@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import * as types from 'types';
 import { useInvalidateMessages } from 'hooks/useMessagesApi';
 
 export function useChatEvents(chatId: string) {
+  const eventSourceRef = useRef<EventSource | null>(null);
   const [messageChunk, setMessageChunk] = useState<types.MessageChunk>(
     {} as types.MessageChunk,
   );
@@ -15,6 +16,7 @@ export function useChatEvents(chatId: string) {
     const eventSource = new EventSource(
       `/api/chats/${chatId}/events?accessToken=${accessToken}`,
     );
+    eventSourceRef.current = eventSource;
 
     eventSource.onopen = () => {
       console.log('Connection to server opened.');
