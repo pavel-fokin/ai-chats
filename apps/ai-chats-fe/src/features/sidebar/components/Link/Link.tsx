@@ -1,9 +1,8 @@
-import { useContext } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 
-import { SidebarContext } from 'contexts';
+import { useSidebarContext } from '../../hooks/useSidebarContext';
 
 import styles from './Link.module.css';
 
@@ -16,7 +15,7 @@ export const Link: React.FC<LinkProps> = ({ to, children, ...props }) => {
   const { pathname } = useLocation();
   const isActive = to === pathname;
 
-  const { toggleSidebar } = useContext(SidebarContext);
+  const { toggleSidebar } = useSidebarContext();
 
   const classNames = isActive
     ? `${styles.NavigationMenuLink} ${styles.NavigationMenuLinkActive}`

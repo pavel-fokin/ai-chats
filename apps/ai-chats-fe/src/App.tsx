@@ -11,7 +11,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@radix-ui/themes/styles.css';
 
 import { AuthRequired } from 'components';
-import { AuthContextProvider, SidebarContextProvider } from 'contexts';
+import { AuthContextProvider } from 'contexts';
+import { SidebarContextProvider } from 'features/sidebar';
 import {
   Chat,
   Landing,

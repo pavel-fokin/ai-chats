@@ -2,7 +2,8 @@ import { useParams } from 'react-router-dom';
 
 import { Box, Flex } from '@radix-ui/themes';
 
-import { HamburgerMenuButton, NewChatIconButton } from 'components';
+import { NewChatIconButton } from 'components';
+import { OpenSidebarButton } from 'features/sidebar';
 import { useChatEvents, useMessages, useSendMessage } from 'hooks';
 import { Header, PageLayout } from 'layout';
 
@@ -25,7 +26,7 @@ export const Chat: React.FC = () => {
   return (
     <PageLayout>
       <Header>
-        <HamburgerMenuButton />
+        <OpenSidebarButton />
         <ChatMenu chatId={chatId} />
         <NewChatIconButton />
       </Header>

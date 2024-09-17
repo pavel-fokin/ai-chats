@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { SidebarContextProvider } from 'contexts';
 import { NewChatIconButton } from 'components';
+import { SidebarContextProvider } from 'features/sidebar';
 
 const renderWithRouter = (ui: JSX.Element) => {
   return render(

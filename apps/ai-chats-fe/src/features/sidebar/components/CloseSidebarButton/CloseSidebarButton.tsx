@@ -1,13 +1,11 @@
-import { useContext } from 'react';
-
-import { IconButton } from 'components/IconButton';
+import { IconButton } from 'components';
 import { CloseIcon } from 'components/icons';
-import { SidebarContext } from 'contexts';
+import { useSidebarContext } from 'features/sidebar';
 
 import styles from './CloseSidebarButton.module.css';
 
 export const CloseSidebarButton: React.FC = () => {
-  const { closeSidebar } = useContext(SidebarContext);
+  const { closeSidebar } = useSidebarContext();
 
   return (
     <IconButton

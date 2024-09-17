@@ -1,7 +1,8 @@
 import { Box, Flex, Heading, IconButton, TextField } from '@radix-ui/themes';
 
-import { HamburgerMenuButton, NewChatIconButton } from 'components';
+import { NewChatIconButton } from 'components';
 import { DownloadIcon } from 'components/icons';
+import { OpenSidebarButton } from 'features/sidebar';
 import { useOllamaModels, usePullOllamaModel } from 'hooks';
 import { Header, PageLayout } from 'layout';
 
@@ -20,7 +21,7 @@ export const OllamaSettings: React.FC = () => {
   return (
     <PageLayout>
       <Header>
-        <HamburgerMenuButton />
+        <OpenSidebarButton />
         <Heading as="h2" size="3" weight="regular">
           Ollama Settings
         </Heading>

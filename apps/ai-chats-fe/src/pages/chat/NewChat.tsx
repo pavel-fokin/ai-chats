@@ -2,7 +2,8 @@ import { Box, Code, Flex, Heading } from '@radix-ui/themes';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { HamburgerMenuButton, NewChatIconButton } from 'components';
+import { NewChatIconButton } from 'components';
+import { OpenSidebarButton } from 'features/sidebar';
 import { useCreateChat, useOllamaModels } from 'hooks';
 import { Header, PageLayout } from 'layout';
 import { OllamaModel } from 'types';
@@ -32,7 +33,7 @@ export const NewChat: React.FC = () => {
   return (
     <PageLayout>
       <Header>
-        <HamburgerMenuButton />
+        <OpenSidebarButton />
         <Heading as="h2" size="3" weight="regular">
           Start a new chat
         </Heading>
