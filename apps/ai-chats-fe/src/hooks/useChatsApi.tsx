@@ -5,7 +5,13 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { deleteChats, getChatById, getChats, postChats, postGenerateChatTitle } from 'api';
+import {
+  deleteChats,
+  getChatById,
+  getChats,
+  postChats,
+  postGenerateChatTitle,
+} from 'api';
 import { PostChatsRequest } from 'api/requests';
 
 export const useChats = () => {
@@ -47,4 +53,24 @@ export const useGenerateChatTitle = () => {
   return useMutation({
     mutationFn: (chatId: string) => postGenerateChatTitle(chatId),
   });
-}
+};
+
+export const useInvalidateChats = () => {
+  const queryClient = useQueryClient();
+
+  return () => {
+    queryClient.invalidateQueries({
+      queryKey: ['chats'],
+    });
+  };
+};
+
+export const useInvalidateChat = () => {
+  const queryClient = useQueryClient();
+
+  return (chatId: string) => {
+    queryClient.invalidateQueries({
+      queryKey: ['chat', chatId],
+    });
+  };
+};

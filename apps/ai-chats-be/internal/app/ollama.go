@@ -7,7 +7,6 @@ import (
 	"ai-chats/internal/app/commands"
 	"ai-chats/internal/domain"
 	"ai-chats/internal/infra/worker"
-	"ai-chats/internal/pkg/json"
 )
 
 // ListOllamaModels retrieves a list of Ollama models from the Ollama client.
@@ -53,7 +52,7 @@ func (a *App) PullOllamaModelAsync(ctx context.Context, model string) error {
 	if err := a.pubsub.Publish(
 		ctx,
 		worker.PullOllamaModelTopic,
-		json.MustMarshal(ctx, pullOllamaModelCommand),
+		pullOllamaModelCommand,
 	); err != nil {
 		return fmt.Errorf("failed to publish pull ollama model command: %w", err)
 	}

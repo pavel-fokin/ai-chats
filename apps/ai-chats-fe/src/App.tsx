@@ -21,7 +21,6 @@ import {
   SignOut,
   SignUp,
 } from 'pages';
-import { useAppEvents } from 'hooks/useAppEventsApi';
 
 const router = createBrowserRouter([
   {
@@ -73,8 +72,6 @@ const router = createBrowserRouter([
 const queryClient = new QueryClient();
 
 function App() {
-  useAppEvents();
-
   return (
     <Theme appearance="light" accentColor="gray" grayColor="slate">
       <QueryClientProvider client={queryClient}>

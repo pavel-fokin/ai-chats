@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"ai-chats/internal/domain"
+	"ai-chats/internal/domain/events"
 )
 
 type MockChat struct {
@@ -56,12 +57,12 @@ type EventsMock struct {
 	mock.Mock
 }
 
-func (m *EventsMock) Subscribe(ctx context.Context, topic string) (chan []byte, error) {
+func (m *EventsMock) Subscribe(ctx context.Context, topic string) (chan events.Event, error) {
 	args := m.Called(ctx, topic)
-	return args.Get(0).(chan []byte), args.Error(1)
+	return args.Get(0).(chan events.Event), args.Error(1)
 }
 
-func (m *EventsMock) Unsubscribe(ctx context.Context, topic string, channel chan []byte) error {
+func (m *EventsMock) Unsubscribe(ctx context.Context, topic string, channel chan events.Event) error {
 	args := m.Called(ctx, topic, channel)
 	return args.Error(0)
 }

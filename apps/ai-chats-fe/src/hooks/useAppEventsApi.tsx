@@ -1,18 +1,28 @@
 import { useEffect, useRef } from 'react';
 
-type EventHandler = (event: Event) => void;
-const eventHandlers = new Map<string, EventHandler>();
+import { useInvalidateChat, useInvalidateChats } from './useChatsApi';
 
-eventHandlers.set('message', (event) => {
-  console.log('Message added:', event);
-});
+type EventHandler = (event: MessageEvent) => void;
+const eventHandlers = new Map<string, EventHandler>();
 
 export function useAppEvents() {
   const eventSourceRef = useRef<EventSource | null>(null);
   const accessToken = localStorage.getItem('accessToken') || '';
 
+  const invalidateChat = useInvalidateChat();
+  const invalidateChats = useInvalidateChats();
+
+  eventHandlers.set('chatTitleUpdated', (event) => {
+    const chatTitleUpdated = JSON.parse(event.data);
+
+    invalidateChat(chatTitleUpdated.chatId);
+    invalidateChats();
+  });
+
   useEffect(() => {
-    const eventSource = new EventSource(`/api/events/app?accessToken=${accessToken}`);
+    const eventSource = new EventSource(
+      `/api/events/app?accessToken=${accessToken}`,
+    );
     eventSourceRef.current = eventSource;
 
     eventSource.onopen = () => {

@@ -25,7 +25,7 @@ func TestCreateChat(t *testing.T) {
 		"Publish",
 		ctx,
 		mock.AnythingOfType("string"),
-		mock.AnythingOfType("[]uint8"),
+		mock.AnythingOfType("events.MessageAdded"),
 	).Return(nil)
 
 	mockMessages := &MockMessages{}

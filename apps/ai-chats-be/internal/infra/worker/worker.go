@@ -16,15 +16,15 @@ type App interface {
 }
 
 type PubSub interface {
-	Subscribe(ctx context.Context, topic string) (chan []byte, error)
-	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
+	Subscribe(ctx context.Context, topic string) (chan events.Event, error)
+	Unsubscribe(ctx context.Context, topic string, channel chan events.Event) error
 }
 
 // type Handler interface {
 // 	Handle(ctx context.Context, events Events, topic string, concurrency int, handler HandlerFunc) error
 // }
 
-type HandlerFunc func(ctx context.Context, event []byte) error
+type HandlerFunc func(ctx context.Context, event events.Event) error
 
 func (hf HandlerFunc) Handle(ctx context.Context, pubsub PubSub, topic string, concurrency int) error {
 	channel, err := pubsub.Subscribe(ctx, topic)

@@ -9,11 +9,12 @@ import (
 	"github.com/google/uuid"
 
 	"ai-chats/internal/domain"
+	"ai-chats/internal/domain/events"
 )
 
 type Subscriber interface {
-	Subscribe(ctx context.Context, topic string) (chan []byte, error)
-	Unsubscribe(ctx context.Context, topic string, channel chan []byte) error
+	Subscribe(ctx context.Context, topic string) (chan events.Event, error)
+	Unsubscribe(ctx context.Context, topic string, channel chan events.Event) error
 }
 
 type Chats interface {

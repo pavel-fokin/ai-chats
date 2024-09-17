@@ -18,6 +18,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"ai-chats/internal/domain"
+	"ai-chats/internal/domain/events"
 	// "ai-chats/internal/server"
 )
 
@@ -324,19 +325,19 @@ func TestApiChats_GetEvents(t *testing.T) {
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
 			Return(true, nil)
 
-		eventsCh := make(chan []byte)
+		eventsCh := make(chan events.Event)
 		defer close(eventsCh)
-		events := &EventsMock{}
-		events.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String()).
+		eventsMock := &EventsMock{}
+		eventsMock.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String()).
 			Return(eventsCh, nil)
-		events.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
+		eventsMock.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
 			Return(nil)
 
 		router := chi.NewRouter()
-		router.Get("/api/chats/{uuid}/events", GetChatEvents(app, sse, events))
+		router.Get("/api/chats/{uuid}/events", GetChatEvents(app, sse, eventsMock))
 		go router.ServeHTTP(w, req)
 
-		eventsCh <- []byte("event")
+		eventsCh <- events.MessageAdded{}
 		time.Sleep(time.Millisecond)
 
 		resp := w.Result()
@@ -344,9 +345,9 @@ func TestApiChats_GetEvents(t *testing.T) {
 		assert.Equal(t, 200, resp.StatusCode)
 		body := make([]byte, 1024)
 		resp.Body.Read(body)
-		assert.Contains(t, string(body), "data: event\n\n")
+		assert.Contains(t, string(body), "event: messageAdded\ndata:")
 
-		events.AssertNumberOfCalls(t, "Subscribe", 1)
+		eventsMock.AssertNumberOfCalls(t, "Subscribe", 1)
 		// events.AssertNumberOfCalls(t, "Unsubscribe", 1)
 	})
 
@@ -362,20 +363,20 @@ func TestApiChats_GetEvents(t *testing.T) {
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
 			Return(true, nil)
 
-		events := &EventsMock{}
-		events.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String()).
-			Return(make(chan []byte), errors.New("failed to subscribe"))
-		events.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
+		eventsMock := &EventsMock{}
+		eventsMock.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String()).
+			Return(make(chan events.Event), errors.New("failed to subscribe"))
+		eventsMock.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
 			Return(errors.New("failed to unsubscribe"))
 
 		router := chi.NewRouter()
-		router.Get("/api/chats/{uuid}/events", GetChatEvents(app, sse, events))
+		router.Get("/api/chats/{uuid}/events", GetChatEvents(app, sse, eventsMock))
 		router.ServeHTTP(w, req)
 
 		resp := w.Result()
 		assert.Equal(t, 500, resp.StatusCode)
-		events.AssertNumberOfCalls(t, "Subscribe", 1)
-		events.AssertNumberOfCalls(t, "Unsubscribe", 0)
+		eventsMock.AssertNumberOfCalls(t, "Subscribe", 1)
+		eventsMock.AssertNumberOfCalls(t, "Unsubscribe", 0)
 	})
 
 	t.Run("chat not found", func(t *testing.T) {

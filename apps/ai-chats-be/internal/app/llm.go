@@ -9,7 +9,6 @@ import (
 	"ai-chats/internal/domain/events"
 	"ai-chats/internal/infra/ollama"
 	"ai-chats/internal/infra/worker"
-	"ai-chats/internal/pkg/json"
 )
 
 // GenerateResponse generates a LLM response for the chat.
@@ -25,7 +24,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 	}
 
 	streamFunc := func(messageChunk events.MessageChunkReceived) error {
-		if err := a.notifyInChat(ctx, chatID.String(), json.MustMarshal(ctx, messageChunk)); err != nil {
+		if err := a.notifyInChat(ctx, chatID.String(), messageChunk); err != nil {
 			return fmt.Errorf("failed to notify in chat: %w", err)
 		}
 		return nil
@@ -41,7 +40,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 	}
 
 	messageAdded := events.NewMessageAdded(chatID, llmMessage)
-	if err := a.pubsub.Publish(ctx, worker.MessageAddedTopic, json.MustMarshal(ctx, messageAdded)); err != nil {
+	if err := a.pubsub.Publish(ctx, worker.MessageAddedTopic, messageAdded); err != nil {
 		return fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
@@ -54,7 +53,7 @@ func (a *App) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) 
 	if err := a.pubsub.Publish(
 		ctx,
 		worker.GenerateChatTitleTopic,
-		json.MustMarshal(ctx, generateChatTitleCommand),
+		generateChatTitleCommand,
 	); err != nil {
 		return fmt.Errorf("failed to publish a generate chat title command: %w", err)
 	}
@@ -84,7 +83,7 @@ func (a *App) GenerateTitle(ctx context.Context, chatID domain.ChatID) error {
 	}
 
 	titleUpdated := events.NewChatTitleUpdated(chatID, generatedTitle)
-	if err := a.notifyApp(ctx, chat.User.ID, json.MustMarshal(ctx, titleUpdated)); err != nil {
+	if err := a.notifyApp(ctx, chat.User.ID, titleUpdated); err != nil {
 		return fmt.Errorf("failed to publish a title updated event: %w", err)
 	}
 

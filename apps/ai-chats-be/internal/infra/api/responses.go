@@ -1,11 +1,15 @@
 package api
 
 import (
-	"ai-chats/internal/domain"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
+
+	"ai-chats/internal/domain"
+	"ai-chats/internal/domain/events"
+	pkgJson "ai-chats/internal/pkg/json"
 )
 
 type Chat struct {
@@ -159,7 +163,7 @@ func AsSuccessResponse(
 	json.NewEncoder(w).Encode(res)
 }
 
-// WriteResponse writes a JSON response.
+// WriteSuccessResponse writes a JSON response.
 func WriteSuccessResponse(w http.ResponseWriter, statusCode int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
@@ -176,7 +180,7 @@ func WriteSuccessResponse(w http.ResponseWriter, statusCode int, data any) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// WriteResponse writes a JSON response.
+// WriteErrorResponse writes a JSON response.
 func WriteErrorResponse(w http.ResponseWriter, statusCode int, errs ...Error) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
@@ -186,8 +190,13 @@ func WriteErrorResponse(w http.ResponseWriter, statusCode int, errs ...Error) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// WriteEvent writes a server sent event to the response.
-func WriteServerSentEvent(w http.ResponseWriter, data []byte) error {
-	fmt.Fprintf(w, "data: %s\n\n", data)
+// WriteServerSentEvent writes a server sent event to the response.
+func WriteServerSentEvent(w http.ResponseWriter, event events.Event) error {
+	if event == nil {
+		// Ignore nil events.
+		return nil
+	}
+	fmt.Fprintf(w, "event: %s\n", event.Type())
+	fmt.Fprintf(w, "data: %s\n\n", pkgJson.MustMarshal(context.Background(), event))
 	return nil
 }

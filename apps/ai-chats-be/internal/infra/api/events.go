@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 )
@@ -37,7 +36,6 @@ func GetAppEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.Ha
 			case <-ctx.Done():
 				return
 			case event := <-events:
-				fmt.Println("event", event)
 				if err := WriteServerSentEvent(w, event); err != nil {
 					slog.ErrorContext(ctx, "failed to write an event", "err", err)
 					return

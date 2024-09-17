@@ -3,6 +3,9 @@ import { useEffect, useState, useRef } from 'react';
 import * as types from 'types';
 import { useInvalidateMessages } from 'hooks/useMessagesApi';
 
+type EventHandler = (event: MessageEvent) => void;
+const eventHandlers = new Map<string, EventHandler>();
+
 export function useChatEvents(chatId: string) {
   const eventSourceRef = useRef<EventSource | null>(null);
   const [messageChunk, setMessageChunk] = useState<types.MessageChunk>(
@@ -11,6 +14,19 @@ export function useChatEvents(chatId: string) {
   const invalidateMessages = useInvalidateMessages();
 
   const accessToken = localStorage.getItem('accessToken') || '';
+
+  eventHandlers.set(types.EventTypes.MESSAGE_ADDED, (event) => {
+    const messageAdded = JSON.parse(event.data);
+    invalidateMessages(messageAdded.chatId);
+  });
+
+  eventHandlers.set(types.EventTypes.MESSAGE_CHUNK_RECEIVED, (event) => {
+    const messageChunk = JSON.parse(event.data);
+    if (messageChunk.done) {
+      setMessageChunk({} as types.MessageChunk);
+    }
+    setMessageChunk(messageChunk);
+  });
 
   useEffect(() => {
     const eventSource = new EventSource(
@@ -22,23 +38,9 @@ export function useChatEvents(chatId: string) {
       console.log('Connection to server opened.');
     };
 
-    eventSource.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      switch (message.type) {
-        case types.EventTypes.MESSAGE_ADDED:
-          invalidateMessages(chatId);
-          break;
-        case types.EventTypes.MESSAGE_CHUNK_RECEIVED:
-          if (message.done) {
-            setMessageChunk({} as types.MessageChunk);
-            break;
-          }
-          setMessageChunk(message);
-          break;
-        default:
-          console.error('Unknown message type:', message.type);
-      }
-    };
+    for (const [eventType, eventHandler] of eventHandlers) {
+      eventSource.addEventListener(eventType, eventHandler);
+    }
 
     eventSource.onerror = (error) => {
       console.error('EventSource failed:', error);
@@ -48,7 +50,7 @@ export function useChatEvents(chatId: string) {
       console.log('Closing connection to server.');
       eventSource.close();
     };
-  }, [chatId]);
+  }, [chatId, accessToken]);
 
   return { messageChunk };
 }

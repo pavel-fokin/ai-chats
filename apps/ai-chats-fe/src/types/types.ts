@@ -6,8 +6,8 @@ export type MessageChunk = {
 };
 
 export enum EventTypes {
-  MESSAGE_ADDED = 'message_added',
-  MESSAGE_CHUNK_RECEIVED = 'message_chunk_received',
+  MESSAGE_ADDED = 'messageAdded',
+  MESSAGE_CHUNK_RECEIVED = 'messageChunkReceived',
 }
 
 export type Chat = {

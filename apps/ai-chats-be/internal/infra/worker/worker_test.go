@@ -8,18 +8,20 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	"ai-chats/internal/domain/events"
 )
 
 type EventsMock struct {
 	mock.Mock
 }
 
-func (m *EventsMock) Subscribe(ctx context.Context, topic string) (chan []byte, error) {
+func (m *EventsMock) Subscribe(ctx context.Context, topic string) (chan events.Event, error) {
 	args := m.Called(ctx, topic)
-	return args.Get(0).(chan []byte), args.Error(1)
+	return args.Get(0).(chan events.Event), args.Error(1)
 }
 
-func (m *EventsMock) Unsubscribe(ctx context.Context, topic string, channel chan []byte) error {
+func (m *EventsMock) Unsubscribe(ctx context.Context, topic string, channel chan events.Event) error {
 	args := m.Called(ctx, topic, channel)
 	return args.Error(0)
 }
@@ -27,11 +29,11 @@ func (m *EventsMock) Unsubscribe(ctx context.Context, topic string, channel chan
 func TestWorker(t *testing.T) {
 	t.Run("TestWorker", func(t *testing.T) {
 		eventsMock := &EventsMock{}
-		eventsMock.On("Subscribe", mock.Anything, mock.Anything).Return(make(chan []byte), nil)
+		eventsMock.On("Subscribe", mock.Anything, mock.Anything).Return(make(chan events.Event), nil)
 		eventsMock.On("Unsubscribe", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 
 		w := New(eventsMock)
-		w.RegisterHandler("topic", 1, func(ctx context.Context, e []byte) error {
+		w.RegisterHandler("topic", 1, func(ctx context.Context, e events.Event) error {
 			return nil
 		})
 

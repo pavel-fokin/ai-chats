@@ -2,7 +2,6 @@ package worker
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -24,10 +23,10 @@ func (w *Worker) SetupHandlers(app App) {
 }
 
 func (w *Worker) GenerateChatTitle(app App) HandlerFunc {
-	return func(ctx context.Context, e []byte) error {
-		var generateChatTitle commands.GenerateChatTitle
-		if err := json.Unmarshal(e, &generateChatTitle); err != nil {
-			return fmt.Errorf("failed to unmarshal event: %w", err)
+	return func(ctx context.Context, e events.Event) error {
+		generateChatTitle, ok := e.(commands.GenerateChatTitle)
+		if !ok {
+			return fmt.Errorf("failed to cast event to generatechatTitle")
 		}
 
 		err := app.GenerateTitle(ctx, uuid.MustParse(generateChatTitle.ChatID))
@@ -40,10 +39,10 @@ func (w *Worker) GenerateChatTitle(app App) HandlerFunc {
 }
 
 func (w *Worker) MessageAdded(app App) HandlerFunc {
-	return func(ctx context.Context, e []byte) error {
-		var messageAdded events.MessageAdded
-		if err := json.Unmarshal(e, &messageAdded); err != nil {
-			return fmt.Errorf("failed to unmarshal event: %w", err)
+	return func(ctx context.Context, e events.Event) error {
+		messageAdded, ok := e.(events.MessageAdded)
+		if !ok {
+			return fmt.Errorf("failed to cast event to messageadded")
 		}
 
 		err := app.ProcessAddedMessage(ctx, messageAdded)
@@ -56,10 +55,10 @@ func (w *Worker) MessageAdded(app App) HandlerFunc {
 }
 
 func (w *Worker) PullOllamaModel(app App) HandlerFunc {
-	return func(ctx context.Context, e []byte) error {
-		var pullOllamaModel commands.PullOllamaModel
-		if err := json.Unmarshal(e, &pullOllamaModel); err != nil {
-			return fmt.Errorf("failed to unmarshal event: %w", err)
+	return func(ctx context.Context, e events.Event) error {
+		pullOllamaModel, ok := e.(commands.PullOllamaModel)
+		if !ok {
+			return fmt.Errorf("failed to cast event to pullollamamodel")
 		}
 
 		err := app.PullOllamaModel(ctx, pullOllamaModel.Model)
