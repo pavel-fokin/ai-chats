@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { useInvalidateChat, useInvalidateChats } from './useChatsApi';
+import { useInvalidateChat, useInvalidateChats } from 'hooks';
 
 type EventHandler = (event: MessageEvent) => void;
 const eventHandlers = new Map<string, EventHandler>();

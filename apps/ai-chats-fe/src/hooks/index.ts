@@ -1,4 +1,3 @@
-export * from './useAppEventsApi';
 export * from './useAuthApi';
 export * from './useChatEventsApi';
 export * from './useChatsApi';
