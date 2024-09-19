@@ -8,6 +8,7 @@ import (
 
 	"ai-chats/internal/app/commands"
 	"ai-chats/internal/domain/events"
+	"ai-chats/internal/pkg/types"
 )
 
 const (
@@ -23,7 +24,7 @@ func (w *Worker) SetupHandlers(app App) {
 }
 
 func (w *Worker) GenerateChatTitle(app App) HandlerFunc {
-	return func(ctx context.Context, e events.Event) error {
+	return func(ctx context.Context, e types.Message) error {
 		generateChatTitle, ok := e.(commands.GenerateChatTitle)
 		if !ok {
 			return fmt.Errorf("failed to cast event to generatechatTitle")
@@ -39,7 +40,7 @@ func (w *Worker) GenerateChatTitle(app App) HandlerFunc {
 }
 
 func (w *Worker) MessageAdded(app App) HandlerFunc {
-	return func(ctx context.Context, e events.Event) error {
+	return func(ctx context.Context, e types.Message) error {
 		messageAdded, ok := e.(events.MessageAdded)
 		if !ok {
 			return fmt.Errorf("failed to cast event to messageadded")
@@ -55,7 +56,7 @@ func (w *Worker) MessageAdded(app App) HandlerFunc {
 }
 
 func (w *Worker) PullOllamaModel(app App) HandlerFunc {
-	return func(ctx context.Context, e events.Event) error {
+	return func(ctx context.Context, e types.Message) error {
 		pullOllamaModel, ok := e.(commands.PullOllamaModel)
 		if !ok {
 			return fmt.Errorf("failed to cast event to pullollamamodel")

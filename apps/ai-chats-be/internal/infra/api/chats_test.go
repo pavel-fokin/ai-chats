@@ -19,6 +19,7 @@ import (
 
 	"ai-chats/internal/domain"
 	"ai-chats/internal/domain/events"
+	"ai-chats/internal/pkg/types"
 	// "ai-chats/internal/server"
 )
 
@@ -325,7 +326,7 @@ func TestApiChats_GetEvents(t *testing.T) {
 		app.On("ChatExists", mock.MatchedBy(matchChiContext), chatID).
 			Return(true, nil)
 
-		eventsCh := make(chan events.Event)
+		eventsCh := make(chan types.Message)
 		defer close(eventsCh)
 		eventsMock := &EventsMock{}
 		eventsMock.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String()).
@@ -365,7 +366,7 @@ func TestApiChats_GetEvents(t *testing.T) {
 
 		eventsMock := &EventsMock{}
 		eventsMock.On("Subscribe", mock.MatchedBy(matchChiContext), chatID.String()).
-			Return(make(chan events.Event), errors.New("failed to subscribe"))
+			Return(make(chan types.Message), errors.New("failed to subscribe"))
 		eventsMock.On("Unsubscribe", mock.MatchedBy(matchChiContext), chatID.String(), mock.Anything).
 			Return(errors.New("failed to unsubscribe"))
 

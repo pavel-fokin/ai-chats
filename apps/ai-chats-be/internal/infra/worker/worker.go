@@ -7,6 +7,7 @@ import (
 
 	"ai-chats/internal/domain"
 	"ai-chats/internal/domain/events"
+	"ai-chats/internal/pkg/types"
 )
 
 type App interface {
@@ -16,15 +17,15 @@ type App interface {
 }
 
 type PubSub interface {
-	Subscribe(ctx context.Context, topic string) (chan events.Event, error)
-	Unsubscribe(ctx context.Context, topic string, channel chan events.Event) error
+	Subscribe(ctx context.Context, topic string) (chan types.Message, error)
+	Unsubscribe(ctx context.Context, topic string, channel chan types.Message) error
 }
 
 // type Handler interface {
 // 	Handle(ctx context.Context, events Events, topic string, concurrency int, handler HandlerFunc) error
 // }
 
-type HandlerFunc func(ctx context.Context, event events.Event) error
+type HandlerFunc func(ctx context.Context, event types.Message) error
 
 func (hf HandlerFunc) Handle(ctx context.Context, pubsub PubSub, topic string, concurrency int) error {
 	channel, err := pubsub.Subscribe(ctx, topic)

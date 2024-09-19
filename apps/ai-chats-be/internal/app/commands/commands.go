@@ -1,10 +1,12 @@
 package commands
 
-import "ai-chats/internal/domain/events"
+import (
+	"ai-chats/internal/pkg/types"
+)
 
 const (
-	GenerateTitleType   events.EventType = "GenerateTitle"
-	PullOllamaModelType events.EventType = "PullOllamaModel"
+	GenerateTitleType   types.MessageType = "GenerateTitle"
+	PullOllamaModelType types.MessageType = "PullOllamaModel"
 )
 
 type PullOllamaModel struct {
@@ -17,7 +19,7 @@ func NewPullOllamaModel(model string) PullOllamaModel {
 	}
 }
 
-func (PullOllamaModel) Type() events.EventType {
+func (PullOllamaModel) Type() types.MessageType {
 	return PullOllamaModelType
 }
 
@@ -31,6 +33,6 @@ func NewGenerateChatTitle(chatID string) GenerateChatTitle {
 	}
 }
 
-func (GenerateChatTitle) Type() events.EventType {
+func (GenerateChatTitle) Type() types.MessageType {
 	return GenerateTitleType
 }

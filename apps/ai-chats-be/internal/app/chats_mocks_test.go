@@ -2,7 +2,7 @@ package app
 
 import (
 	"ai-chats/internal/domain"
-	"ai-chats/internal/domain/events"
+	"ai-chats/internal/pkg/types"
 	"context"
 	"fmt"
 
@@ -62,17 +62,17 @@ type MockPubSub struct {
 	mock.Mock
 }
 
-func (m *MockPubSub) Subscribe(ctx context.Context, topic string) (chan events.Event, error) {
+func (m *MockPubSub) Subscribe(ctx context.Context, topic string) (chan types.Message, error) {
 	args := m.Called(ctx, topic)
-	return args.Get(0).(chan events.Event), args.Error(1)
+	return args.Get(0).(chan types.Message), args.Error(1)
 }
 
-func (m *MockPubSub) Unsubscribe(ctx context.Context, topic string, channel chan events.Event) error {
+func (m *MockPubSub) Unsubscribe(ctx context.Context, topic string, channel chan types.Message) error {
 	args := m.Called(ctx, topic, channel)
 	return args.Error(0)
 }
 
-func (m *MockPubSub) Publish(ctx context.Context, topic string, data events.Event) error {
+func (m *MockPubSub) Publish(ctx context.Context, topic string, data types.Message) error {
 	args := m.Called(ctx, topic, data)
 	return args.Error(0)
 }

@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"ai-chats/internal/domain"
-	"ai-chats/internal/domain/events"
 	pkgJson "ai-chats/internal/pkg/json"
+	"ai-chats/internal/pkg/types"
 )
 
 type Chat struct {
@@ -191,7 +191,7 @@ func WriteErrorResponse(w http.ResponseWriter, statusCode int, errs ...Error) {
 }
 
 // WriteServerSentEvent writes a server sent event to the response.
-func WriteServerSentEvent(w http.ResponseWriter, event events.Event) error {
+func WriteServerSentEvent(w http.ResponseWriter, event types.Message) error {
 	if event == nil {
 		// Ignore nil events.
 		return nil

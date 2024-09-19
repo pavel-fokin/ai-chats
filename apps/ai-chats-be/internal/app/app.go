@@ -4,16 +4,16 @@ import (
 	"context"
 
 	"ai-chats/internal/domain"
-	"ai-chats/internal/domain/events"
+	"ai-chats/internal/pkg/types"
 )
 
 type Topic = string
 
 // PubSub is a publish/subscribe interface.
 type PubSub interface {
-	Subscribe(context.Context, Topic) (chan events.Event, error)
-	Unsubscribe(context.Context, Topic, chan events.Event) error
-	Publish(context.Context, Topic, events.Event) error
+	Subscribe(context.Context, Topic) (chan types.Message, error)
+	Unsubscribe(context.Context, Topic, chan types.Message) error
+	Publish(context.Context, Topic, types.Message) error
 }
 
 // Tx is a transaction interface.
