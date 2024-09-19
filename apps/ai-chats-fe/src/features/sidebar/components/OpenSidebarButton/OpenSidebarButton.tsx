@@ -2,14 +2,14 @@ import { IconButton } from 'components';
 import { HamburgerMenuIcon } from 'components/icons';
 import { useSidebarContext } from 'features/sidebar';
 
-import 'styles/styles.css';
+import styles from './OpenSidebarButton.module.css';
 
 export const OpenSidebarButton: React.FC = () => {
   const { toggleSidebar } = useSidebarContext();
 
   return (
     <IconButton
-      className="mobile-only"
+      className={styles.OpenSidebarButton}
       variant="ghost"
       size="3"
       m="2"
@@ -20,3 +20,4 @@ export const OpenSidebarButton: React.FC = () => {
     </IconButton>
   );
 };
+OpenSidebarButton.displayName = 'OpenSidebarButton';

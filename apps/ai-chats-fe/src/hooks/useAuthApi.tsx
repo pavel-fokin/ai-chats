@@ -8,7 +8,10 @@ export const useLogIn = () => {
     mutationFn: ({ username, password }: UserCredentials) =>
       postLogIn(username, password),
     onSuccess: (response) => {
-      localStorage.setItem('accessToken', response.data?.accessToken!);
+      const accessToken = response.data?.accessToken;
+      if (accessToken) {
+        localStorage.setItem('accessToken', accessToken);
+      }
     },
   });
 };
@@ -18,7 +21,10 @@ export const useSignUp = () => {
     mutationFn: ({ username, password }: UserCredentials) =>
       postSignUp(username, password),
     onSuccess: (response) => {
-      localStorage.setItem('accessToken', response.data?.accessToken!);
+      const accessToken = response.data?.accessToken;
+      if (accessToken) {
+        localStorage.setItem('accessToken', accessToken);
+      }
     },
   });
 };

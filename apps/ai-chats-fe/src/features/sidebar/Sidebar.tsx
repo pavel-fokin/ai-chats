@@ -21,11 +21,11 @@ export const Sidebar = () => {
           align="center"
           justify="between"
           gap="2"
-          px="2"
           pb={{
             initial: '4',
             sm: '5',
           }}
+          px="2"
         >
           <CloseSidebarButton />
           <Heading as="h2" align="center" size="5" weight="bold">
@@ -33,20 +33,20 @@ export const Sidebar = () => {
           </Heading>
           <Tooltip content="Start a new chat">
             <IconButton
-              variant="ghost"
-              size="3"
-              m="2"
+              aria-label="Start a new chat"
               highContrast
+              m="2"
               onClick={() => navigate('/app/new-chat')}
-              aria-label="New chat"
+              size="3"
+              variant="ghost"
             >
               <ChatIcon size="24" weight="light" />
             </IconButton>
           </Tooltip>
         </Flex>
         <NavigationMenu.Root
-          orientation="vertical"
           className={styles.NavigationMenuRoot}
+          orientation="vertical"
         >
           <NavigationMenu.List className={styles.NavigationMenuList}>
             {chats.data?.map((chat) => (
