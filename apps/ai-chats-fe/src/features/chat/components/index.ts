@@ -1,4 +1,4 @@
-export { ModelsList } from './ModelsList';
+export { ChatMenu } from './ChatMenu';
 export { InputMessage } from './InputMessage';
 export { Message } from './Message';
-export { ChatMenu } from './ChatMenu';
+export { ModelsList } from './ModelsList';

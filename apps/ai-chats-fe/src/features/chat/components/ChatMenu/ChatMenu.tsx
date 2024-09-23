@@ -63,7 +63,7 @@ export const ChatMenu: React.FC<ChatMenuProps> = ({ chatId }) => {
         </DropdownMenu.Item>
       </DropdownMenu.Content>
       <DeleteDialog
-        chatId={chatId!}
+        chatId={chatId}
         open={isDeleteDialogOpen}
         setOpen={setIsDeleteDialogOpen}
         onCancelClick={() => setIsDeleteDialogOpen(false)}

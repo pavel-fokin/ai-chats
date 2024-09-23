@@ -1,29 +1,29 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-import * as types from 'types';
-import { useInvalidateMessages } from 'hooks/useMessagesApi';
+import { useInvalidateMessages } from 'hooks';
+import { EventTypes, MessageChunk } from 'types';
+
+import { useChatContext } from '../contexts/ChatContext';
 
 type EventHandler = (event: MessageEvent) => void;
 const eventHandlers = new Map<string, EventHandler>();
 
 export function useChatEvents(chatId: string) {
   const eventSourceRef = useRef<EventSource | null>(null);
-  const [messageChunk, setMessageChunk] = useState<types.MessageChunk>(
-    {} as types.MessageChunk,
-  );
+  const { setMessageChunk } = useChatContext();
   const invalidateMessages = useInvalidateMessages();
 
   const accessToken = localStorage.getItem('accessToken') || '';
 
-  eventHandlers.set(types.EventTypes.MESSAGE_ADDED, (event) => {
+  eventHandlers.set(EventTypes.MESSAGE_ADDED, (event) => {
     const messageAdded = JSON.parse(event.data);
     invalidateMessages(messageAdded.chatId);
   });
 
-  eventHandlers.set(types.EventTypes.MESSAGE_CHUNK_RECEIVED, (event) => {
+  eventHandlers.set(EventTypes.MESSAGE_CHUNK_RECEIVED, (event) => {
     const messageChunk = JSON.parse(event.data);
     if (messageChunk.done) {
-      setMessageChunk({} as types.MessageChunk);
+      setMessageChunk({} as MessageChunk);
     }
     setMessageChunk(messageChunk);
   });
@@ -51,6 +51,4 @@ export function useChatEvents(chatId: string) {
       eventSource.close();
     };
   }, [chatId, accessToken]);
-
-  return { messageChunk };
 }
