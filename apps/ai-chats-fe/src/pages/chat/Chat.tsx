@@ -2,11 +2,11 @@ import { useParams } from 'react-router-dom';
 
 import { Box, Flex } from '@radix-ui/themes';
 
-import { NewChatIconButton } from 'components';
 import { ChatMenu, InputMessage, Message, useChatEvents } from 'features/chat';
 import { OpenSidebarButton } from 'features/sidebar';
 import { useMessages, useSendMessage } from 'hooks';
 import { Header, PageLayout } from 'layout';
+import { NewChatIconButton } from 'shared/components';
 
 import { MessageChunk } from './components';
 

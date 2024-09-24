@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import { Box, Flex, IconButton } from '@radix-ui/themes';
 
-import { TextArea, Tooltip } from 'components';
-import { SendIcon } from 'components/icons';
+import { TextArea, Tooltip } from 'shared/components';
+import { SendIcon } from 'shared/components/icons';
 
 interface InputMessageProps {
   handleSend: (text: string) => void;

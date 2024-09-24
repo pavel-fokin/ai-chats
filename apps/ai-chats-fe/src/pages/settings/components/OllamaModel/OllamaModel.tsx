@@ -1,9 +1,9 @@
 import { Flex, Heading, Text } from '@radix-ui/themes';
 
-import { Progress } from 'components';
+import { Progress } from 'shared/components';
 import * as types from 'types';
 
-import { DeleteDialog } from './DeleteDialog';
+import { DeleteOllamaModelDialog } from './DeleteOllamaModelDialog';
 
 interface OllamaModelProps {
   model: types.OllamaModel;
@@ -18,7 +18,7 @@ export const OllamaModel: React.FC<OllamaModelProps> = ({ model }) => {
         <Progress mt="4" mb="8" />
       ) : (
         <Flex align="center" justify="end" flexGrow="1" mt="4" gap="4">
-          <DeleteDialog model={model} />
+          <DeleteOllamaModelDialog model={model} />
         </Flex>
       )}
     </Flex>

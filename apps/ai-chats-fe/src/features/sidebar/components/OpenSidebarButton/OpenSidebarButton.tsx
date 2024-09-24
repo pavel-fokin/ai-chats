@@ -1,6 +1,6 @@
-import { IconButton } from 'components';
-import { HamburgerMenuIcon } from 'components/icons';
 import { useSidebarContext } from 'features/sidebar';
+import { IconButton } from 'shared/components';
+import { HamburgerMenuIcon } from 'shared/components/icons';
 
 import styles from './OpenSidebarButton.module.css';
 

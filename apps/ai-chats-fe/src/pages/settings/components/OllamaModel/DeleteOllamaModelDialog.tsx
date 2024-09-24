@@ -1,14 +1,16 @@
 import { AlertDialog, Flex, Strong, Text } from '@radix-ui/themes';
 
-import { Button } from 'components';
 import { useDeleteOllamaModel } from 'hooks';
+import { Button } from 'shared/components';
 import { OllamaModel } from 'types';
 
-interface DeleteDialogProps {
+interface DeleteOllamaModelDialogProps {
   model: OllamaModel;
 }
 
-export const DeleteDialog: React.FC<DeleteDialogProps> = ({ model }) => {
+export const DeleteOllamaModelDialog: React.FC<
+  DeleteOllamaModelDialogProps
+> = ({ model }) => {
   const deleteModel = useDeleteOllamaModel();
 
   const handleDelete = (model: string) => {

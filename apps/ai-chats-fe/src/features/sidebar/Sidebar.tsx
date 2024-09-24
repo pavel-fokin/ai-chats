@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { Flex, Heading, Text } from '@radix-ui/themes';
 
-import { IconButton, Tooltip } from 'components';
-import { ChatIcon, SettingsIcon, SignOutIcon } from 'components/icons';
 import { useChats } from 'hooks';
+import { IconButton, Tooltip } from 'shared/components';
+import { ChatIcon, SettingsIcon, SignOutIcon } from 'shared/components/icons';
 
 import { CloseSidebarButton, Link } from './components';
 import styles from './Sidebar.module.css';
