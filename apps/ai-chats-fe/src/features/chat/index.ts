@@ -1,5 +1,3 @@
-export { Chat } from './Chat';
-export { ChatMenu } from './components';
-export { ChatContextProvider, useChatContext } from './contexts/ChatContext';
+export { ChatMenu, InputMessage, Message } from './components';
+export { ChatContextProvider, useChatContext } from './contexts';
 export { useChatEvents } from './hooks/useChatEvents';
-export { NewChat } from './NewChat';

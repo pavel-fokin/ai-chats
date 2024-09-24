@@ -6,7 +6,7 @@ import { Button } from 'components';
 import { AIActionIcon, DeleteIcon } from 'components/icons';
 import { useChat, useGenerateChatTitle } from 'hooks';
 
-import { DeleteDialog } from './DeleteDialog';
+import { DeleteChatDialog } from './DeleteChatDialog';
 
 interface ChatMenuProps {
   chatId: string;
@@ -62,7 +62,7 @@ export const ChatMenu: React.FC<ChatMenuProps> = ({ chatId }) => {
           </Flex>
         </DropdownMenu.Item>
       </DropdownMenu.Content>
-      <DeleteDialog
+      <DeleteChatDialog
         chatId={chatId}
         open={isDeleteDialogOpen}
         setOpen={setIsDeleteDialogOpen}

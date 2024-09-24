@@ -15,10 +15,10 @@ import { AuthContextProvider } from 'contexts';
 import { AppEvents } from 'features/events';
 import { SidebarContextProvider } from 'features/sidebar';
 import {
-  ChatPage,
+  Chat,
   Landing,
   LogIn,
-  NewChatPage,
+  NewChat,
   OllamaSettings,
   SignOut,
   SignUp,
@@ -59,11 +59,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'new-chat',
-        element: <NewChatPage />,
+        element: <NewChat />,
       },
       {
         path: 'chats/:chatId',
-        element: <ChatPage />,
+        element: <Chat />,
       },
       {
         path: 'settings',

@@ -3,8 +3,8 @@ import { createContext, useState, useContext } from 'react';
 import { MessageChunk } from 'types';
 
 interface ChatContextValue {
-  messageChunk: MessageChunk;
-  setMessageChunk: (messageChunk: MessageChunk) => void;
+  messageChunk: MessageChunk | null;
+  setMessageChunk: (messageChunk: MessageChunk | null) => void;
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null);
@@ -23,9 +23,7 @@ export const ChatContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [messageChunk, setMessageChunk] = useState<MessageChunk>(
-    {} as MessageChunk,
-  );
+  const [messageChunk, setMessageChunk] = useState<MessageChunk | null>(null);
 
   return (
     <ChatContext.Provider value={{ messageChunk, setMessageChunk }}>

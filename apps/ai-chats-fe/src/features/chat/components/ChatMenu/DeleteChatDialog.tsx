@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from 'components';
 import { useChat, useDeleteChat } from 'hooks';
 
-interface DeleteDialogProps {
+interface DeleteChatDialogProps {
   chatId: string;
   open: boolean;
   setOpen: (open: boolean) => void;
   onCancelClick: () => void;
 }
 
-export const DeleteDialog: React.FC<DeleteDialogProps> = ({
+export const DeleteChatDialog: React.FC<DeleteChatDialogProps> = ({
   chatId,
   open,
   setOpen,
