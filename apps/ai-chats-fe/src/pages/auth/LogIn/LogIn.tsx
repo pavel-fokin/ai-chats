@@ -1,22 +1,23 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { Container, Flex, Heading, Link, Text } from '@radix-ui/themes';
 
-import { AuthContext } from 'contexts';
+import {
+  useAuthContext,
+  UserCredentialsForm,
+  UserCredentials,
+} from 'features/auth';
 import { useLogIn } from 'hooks';
-import { UserCredentialsSchema } from 'schemas';
-
-import { UserCredentialsForm } from '../components/UserCredentialsForm';
 
 export const LogIn = () => {
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated } = useAuthContext();
   const logIn = useLogIn();
   const [error, setError] = useState<string | null>(null);
 
-  const onSubmit: SubmitHandler<UserCredentialsSchema> = async ({
+  const onSubmit: SubmitHandler<UserCredentials> = async ({
     username,
     password,
   }) => {

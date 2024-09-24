@@ -1,4 +1,3 @@
-export { AuthRequired } from './AuthRequired/AuthRequired';
 export { Button } from './Button';
 export { IconButton } from './IconButton';
 export { Progress } from './Progress';

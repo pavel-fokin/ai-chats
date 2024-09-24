@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import '@radix-ui/themes/styles.css';
 
-import { AuthContextProvider } from 'contexts';
+import { AuthContextProvider } from 'features/auth';
 
 import { Router } from './Router';
 

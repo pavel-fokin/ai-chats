@@ -5,7 +5,7 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { AuthContextProvider } from 'contexts';
+import { AuthContextProvider } from 'features/auth';
 import { LogIn } from 'pages';
 
 import { generateToken } from 'utils/utilsTests';

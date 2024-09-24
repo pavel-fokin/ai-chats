@@ -1,4 +1,10 @@
-import { ReactNode, createContext, useEffect, useState } from 'react';
+import {
+  ReactNode,
+  createContext,
+  useEffect,
+  useState,
+  useContext,
+} from 'react';
 
 type AuthContextValue = {
   isAuthenticated: boolean;
@@ -8,6 +14,9 @@ type AuthContextValue = {
 export const AuthContext = createContext<AuthContextValue>(
   {} as AuthContextValue,
 );
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useAuthContext = () => useContext(AuthContext);
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(

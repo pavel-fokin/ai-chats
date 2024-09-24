@@ -1,18 +1,26 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 import { Flex, Text, TextField } from '@radix-ui/themes';
 
-import { userCredentialsSchema, UserCredentialsSchema } from 'schemas';
 import { Button } from 'shared/components';
 
-interface Props {
-  onSubmit: SubmitHandler<UserCredentialsSchema>;
+const UserCredentialsSchema = z.object({
+  username: z.string().min(1, 'Username is required'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+export type UserCredentials = z.infer<typeof UserCredentialsSchema>;
+
+interface UserCredentialsFormProps {
+  onSubmit: SubmitHandler<UserCredentials>;
   isLoading: boolean;
   submitButtonText: string;
 }
 
-export const UserCredentialsForm: React.FC<Props> = ({
+export const UserCredentialsForm: React.FC<UserCredentialsFormProps> = ({
   onSubmit,
   isLoading,
   submitButtonText,
@@ -21,8 +29,8 @@ export const UserCredentialsForm: React.FC<Props> = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<UserCredentialsSchema>({
-    resolver: zodResolver(userCredentialsSchema),
+  } = useForm<UserCredentials>({
+    resolver: zodResolver(UserCredentialsSchema),
   });
 
   return (

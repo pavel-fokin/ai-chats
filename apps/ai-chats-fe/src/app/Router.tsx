@@ -10,7 +10,7 @@ import {
   SignUp,
 } from 'pages';
 
-import { AuthRequired } from 'shared/components';
+import { AuthRequired } from 'features/auth';
 import { ChatContextProvider } from 'features/chat';
 import { AppEvents } from 'features/events';
 import { SidebarContextProvider } from 'features/sidebar';

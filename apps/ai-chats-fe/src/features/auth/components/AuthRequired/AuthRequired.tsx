@@ -1,14 +1,13 @@
-import { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 
-import { AuthContext } from 'contexts';
+import { useAuthContext } from 'features/auth';
 
 interface AuthRequiredProps {
   children: React.ReactNode;
 }
 
 export const AuthRequired: React.FC<AuthRequiredProps> = ({ children }) => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuthContext();
   if (!isAuthenticated) {
     return <Navigate to="/app/login" />;
   }
