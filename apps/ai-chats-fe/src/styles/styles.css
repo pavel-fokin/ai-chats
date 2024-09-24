@@ -2,16 +2,8 @@
   .mobile-only {
     --mobile-only: hidden;
   }
-
-  .mobile-hidden {
-    --mobile-hidden: flex;
-  }
 }
 
 .mobile-only {
   visibility: var(--mobile-only, visible);
-}
-
-.mobile-hidden {
-  display: var(--mobile-hidden, none);
 }
