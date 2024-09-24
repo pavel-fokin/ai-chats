@@ -12,6 +12,7 @@ import '@radix-ui/themes/styles.css';
 
 import { AuthRequired } from 'components';
 import { AuthContextProvider } from 'contexts';
+import { ChatContextProvider } from 'features/chat';
 import { AppEvents } from 'features/events';
 import { SidebarContextProvider } from 'features/sidebar';
 import {
@@ -63,7 +64,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'chats/:chatId',
-        element: <Chat />,
+        element: (
+          <ChatContextProvider>
+            <Chat />
+          </ChatContextProvider>
+        ),
       },
       {
         path: 'settings',

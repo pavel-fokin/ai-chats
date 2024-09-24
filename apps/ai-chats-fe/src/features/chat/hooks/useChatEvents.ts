@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import { useInvalidateMessages } from 'hooks';
-import { EventTypes, MessageChunk } from 'types';
+import { EventTypes} from 'types';
 
 import { useChatContext } from '../contexts/ChatContext';
 
@@ -18,12 +18,13 @@ export function useChatEvents(chatId: string) {
   eventHandlers.set(EventTypes.MESSAGE_ADDED, (event) => {
     const messageAdded = JSON.parse(event.data);
     invalidateMessages(messageAdded.chatId);
+    setMessageChunk(null);
   });
 
   eventHandlers.set(EventTypes.MESSAGE_CHUNK_RECEIVED, (event) => {
     const messageChunk = JSON.parse(event.data);
     if (messageChunk.done) {
-      setMessageChunk({} as MessageChunk);
+      setMessageChunk(null);
     }
     setMessageChunk(messageChunk);
   });
