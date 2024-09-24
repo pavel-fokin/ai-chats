@@ -4,7 +4,7 @@ import { IconButton } from 'shared/components';
 import { ChatIcon } from 'shared/components/icons';
 import { useSidebarContext } from 'features/sidebar';
 
-import 'styles/styles.css';
+import styles from './NewChatIconButton.module.css';
 
 export const NewChatIconButton: React.FC = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export const NewChatIconButton: React.FC = () => {
   return (
     <IconButton
       aria-label="New chat"
-      className="mobile-only"
+      className={styles.NewChatIconButton}
       variant="ghost"
       size="3"
       m="2"

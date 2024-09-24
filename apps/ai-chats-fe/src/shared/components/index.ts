@@ -1,8 +1,6 @@
-export * from './AuthRequired/AuthRequired';
-export * from './Button';
+export { AuthRequired } from './AuthRequired/AuthRequired';
+export { Button } from './Button';
 export { IconButton } from './IconButton';
-export * from './NewChatIconButton/NewChatIconButton';
 export { Progress } from './Progress';
-export * from './TextArea';
-export * from './Tooltip';
-export * from './icons';
+export { TextArea } from './TextArea';
+export { Tooltip } from './Tooltip';

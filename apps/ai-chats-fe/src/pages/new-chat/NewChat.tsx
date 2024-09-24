@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { Box, Code, Flex, Heading } from '@radix-ui/themes';
 
-import { InputMessage } from 'features/chat';
+import { InputMessage, NewChatIconButton } from 'features/chat';
 import { OpenSidebarButton } from 'features/sidebar';
 import { useCreateChat, useOllamaModels } from 'hooks';
 import { Header, PageLayout } from 'layout';
-import { NewChatIconButton } from 'shared/components';
 import { OllamaModel } from 'types';
 
 import { ModelsList } from './components';
