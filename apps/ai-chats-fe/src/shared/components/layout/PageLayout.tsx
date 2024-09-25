@@ -2,9 +2,9 @@ import { Sidebar } from 'features/sidebar';
 
 import { Aside, Root } from './';
 
-type PageLayoutProps = {
+interface PageLayoutProps {
   children: React.ReactNode;
-};
+}
 
 export const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
   return (

@@ -5,7 +5,7 @@ import { Box, Code, Flex, Heading } from '@radix-ui/themes';
 
 import { InputMessage, NewChatIconButton } from 'features/chat';
 import { OpenSidebarButton } from 'features/sidebar';
-import { Header, PageLayout } from 'layout';
+import { Header, PageLayout } from 'shared/components/layout';
 import { useCreateChat, useOllamaModels } from 'shared/hooks';
 import { OllamaModel } from 'types';
 

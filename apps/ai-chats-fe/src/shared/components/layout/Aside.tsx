@@ -2,9 +2,9 @@ import { useSidebarContext } from 'features/sidebar';
 
 import styles from './Aside.module.css';
 
-type AsideProps = {
+interface AsideProps {
   children: React.ReactNode;
-};
+}
 
 export const Aside: React.FC<AsideProps> = ({ children }) => {
   const { isOpen } = useSidebarContext();

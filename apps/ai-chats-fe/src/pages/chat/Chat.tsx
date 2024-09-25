@@ -10,7 +10,7 @@ import {
   useChatEvents,
 } from 'features/chat';
 import { OpenSidebarButton } from 'features/sidebar';
-import { Header, PageLayout } from 'layout';
+import { Header, PageLayout } from 'shared/components/layout';
 import { useMessages, useSendMessage } from 'shared/hooks';
 
 import { MessageChunk } from './components';
