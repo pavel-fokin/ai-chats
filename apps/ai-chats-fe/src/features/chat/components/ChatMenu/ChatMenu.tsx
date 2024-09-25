@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { DropdownMenu, Flex } from '@radix-ui/themes';
 
-import { useChat, useGenerateChatTitle } from 'hooks';
+import { useChat, useGenerateChatTitle } from 'shared/hooks';
 import { Button } from 'shared/components';
 import { AIActionIcon, DeleteIcon } from 'shared/components/icons';
 

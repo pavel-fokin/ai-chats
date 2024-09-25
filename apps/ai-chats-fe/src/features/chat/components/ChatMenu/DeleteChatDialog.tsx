@@ -1,7 +1,7 @@
 import { AlertDialog, Flex, Strong, Text } from '@radix-ui/themes';
 import { useNavigate } from 'react-router-dom';
 
-import { useChat, useDeleteChat } from 'hooks';
+import { useChat, useDeleteChat } from 'shared/hooks';
 import { Button } from 'shared/components';
 
 interface DeleteChatDialogProps {
