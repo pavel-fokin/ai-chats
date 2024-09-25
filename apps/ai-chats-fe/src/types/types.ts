@@ -28,8 +28,3 @@ export type OllamaModel = {
   description: string;
   isPulling: boolean;
 };
-
-export type UserCredentials = {
-  username: string;
-  password: string;
-};
