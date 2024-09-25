@@ -1,7 +1,9 @@
 import { Flex, Heading, Text, Button } from '@radix-ui/themes';
 
+import { OllamaModel } from 'types';
+
 interface ModelCardProps {
-  model: any;
+  model: OllamaModel;
 }
 
 export const ModelCard: React.FC<ModelCardProps> = ({ model }) => {

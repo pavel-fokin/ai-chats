@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { postLogIn, postSignUp } from 'api';
-import { UserCredentials } from 'types';
+import { UserCredentials } from 'features/auth';
 
 export const useLogIn = () => {
   return useMutation({

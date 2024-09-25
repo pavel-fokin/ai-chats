@@ -3,13 +3,14 @@ import { SubmitHandler } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { Container, Flex, Heading, Link, Text } from '@radix-ui/themes';
+import { AxiosError } from 'axios';
 
 import {
   useAuthContext,
-  UserCredentialsForm,
   UserCredentials,
+  UserCredentialsForm,
+  useSignUp,
 } from 'features/auth';
-import { useSignUp } from 'hooks';
 
 export const SignUp = () => {
   const navigate = useNavigate();
@@ -25,9 +26,9 @@ export const SignUp = () => {
           setIsAuthenticated(true);
           navigate('/app');
         },
-        onError: (error: any) => {
-          if (error.response.data.errors) {
-            setError(error.response.data.errors[0].message);
+        onError: (error) => {
+          if (error instanceof AxiosError) {
+            setError(error.response?.data.errors[0].message);
           }
         },
       },
