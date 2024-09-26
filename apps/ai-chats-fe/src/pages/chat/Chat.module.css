@@ -1,0 +1,29 @@
+@import 'styles/spacing.css';
+
+.Chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.Chat__scrollable {
+  flex: 1;
+  overflow: auto;
+}
+
+.Chat__messagesList {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0 auto;
+  max-width: 688px;
+  margin-top: var(--spacing-8);
+  width: 100%;
+}
+
+.Chat__inputMessage {
+  margin: 0 auto;
+  max-width: 688px;
+  width: 100%;
+}

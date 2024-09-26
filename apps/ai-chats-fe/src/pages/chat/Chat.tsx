@@ -1,63 +1,47 @@
 import { useParams } from 'react-router-dom';
 
-import { Box, Flex } from '@radix-ui/themes';
+import { InputMessage } from 'features/chat';
+import { PageLayout } from 'shared/components/layout';
 
-import {
-  ChatMenu,
-  InputMessage,
-  Message,
-  NewChatIconButton,
-  useChatEvents,
-} from 'features/chat';
-import { OpenSidebarButton } from 'features/sidebar';
-import { Header, PageLayout } from 'shared/components/layout';
-import { useMessages, useSendMessage } from 'shared/hooks';
+import { ChatHeader, MessageChunk, MessagesList } from './components';
+import { useChatLogic } from './hooks/useChatLogic';
 
-import { MessageChunk } from './components';
+import styles from './Chat.module.css';
 
-export const Chat: React.FC = () => {
-  const { chatId } = useParams<{ chatId: string }>();
-  const messages = useMessages(chatId);
-  const sendMessage = useSendMessage(chatId ?? '');
-  useChatEvents(chatId ?? '');
-
-  const handleSend = async (text: string) => {
-    sendMessage.mutate(text);
-  };
+export const Chat = () => {
+  const { chatId } = useParams();
+  const { messages, sendMessage } = useChatLogic(chatId ?? '');
 
   if (!chatId) {
     return null;
   }
 
+  const handleSendMessage = (text: string) => {
+    sendMessage.mutate(text);
+  };
+
+  if (messages.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (messages.isError) {
+    return <div>Error: {messages.error.message}</div>;
+  }
+
   return (
     <PageLayout>
-      <Header>
-        <OpenSidebarButton />
-        <ChatMenu chatId={chatId} />
-        <NewChatIconButton />
-      </Header>
-      <Flex direction="column" height="100%" width="100%">
-        <Box flexGrow="1" style={{ overflow: 'auto' }}>
-          <Box height="100%" style={{ maxWidth: '688px', margin: '0 auto' }}>
-            <Flex flexGrow="1" justify="end" direction="column" gap="2">
-              {messages.data?.length !== 0 && (
-                <Box style={{ height: '64px' }}></Box>
-              )}
-              {messages.data?.map((message, index) => (
-                <Message
-                  key={index}
-                  sender={message.sender}
-                  text={message.text}
-                />
-              ))}
-              <MessageChunk />
-            </Flex>
-          </Box>
-        </Box>
-        <Box style={{ maxWidth: '688px', width: '100%', margin: '0 auto' }}>
-          <InputMessage handleSend={handleSend} />
-        </Box>
-      </Flex>
+      <ChatHeader chatId={chatId} />
+      <div className={styles.Chat}>
+        <div className={styles.Chat__scrollable}>
+          <div className={styles.Chat__messagesList}>
+            <MessagesList messages={messages.data ?? []} />
+            <MessageChunk />
+          </div>
+        </div>
+        <div className={styles.Chat__inputMessage}>
+          <InputMessage handleSend={handleSendMessage} />
+        </div>
+      </div>
     </PageLayout>
   );
 };
