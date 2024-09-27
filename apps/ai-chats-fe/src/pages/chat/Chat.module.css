@@ -1,11 +1,9 @@
-@import 'styles/spacing.css';
-
-.Chat__scrollable {
+.scrollable {
   flex: 1;
   overflow: auto;
 }
 
-.Chat__messagesList {
+.messagesList {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -15,7 +13,7 @@
   width: 100%;
 }
 
-.Chat__inputMessage {
+.inputMessage {
   margin: 0 auto;
   max-width: 688px;
   width: 100%;

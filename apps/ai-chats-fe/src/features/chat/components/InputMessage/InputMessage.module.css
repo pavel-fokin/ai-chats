@@ -1,5 +1,3 @@
-@import 'styles/spacing.css';
-
 .inputMessageContainer {
   display: flex;
   flex-direction: row;

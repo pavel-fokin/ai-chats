@@ -4,6 +4,7 @@ import { Theme } from '@radix-ui/themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import '@radix-ui/themes/styles.css';
+import 'styles/spacing.css';
 
 import { AuthContextProvider } from 'features/auth';
 

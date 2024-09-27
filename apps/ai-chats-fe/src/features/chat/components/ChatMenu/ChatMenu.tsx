@@ -12,7 +12,7 @@ interface ChatMenuProps {
   chatId: string;
 }
 
-export const ChatMenu: React.FC<ChatMenuProps> = ({ chatId }) => {
+export const ChatMenu = ({ chatId }: ChatMenuProps): JSX.Element => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const chat = useChat(chatId);
   const generateChatTitle = useGenerateChatTitle();

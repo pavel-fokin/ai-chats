@@ -32,13 +32,13 @@ export const Chat = () => {
     <PageLayout>
       <ChatHeader chatId={chatId} />
       <Main>
-        <div className={styles.Chat__scrollable}>
-          <section className={styles.Chat__messagesList}>
+        <div className={styles.scrollable}>
+          <section className={styles.messagesList}>
             <MessagesList messages={messages.data ?? []} />
             <MessageChunk />
           </section>
         </div>
-        <section className={styles.Chat__inputMessage}>
+        <section className={styles.inputMessage}>
           <InputMessage onSendMessage={handleSendMessage} />
         </section>
       </Main>
