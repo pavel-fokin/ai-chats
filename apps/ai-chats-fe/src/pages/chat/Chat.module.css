@@ -1,12 +1,5 @@
 @import 'styles/spacing.css';
 
-.Chat {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-}
-
 .Chat__scrollable {
   flex: 1;
   overflow: auto;

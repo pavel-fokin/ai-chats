@@ -1,6 +1,7 @@
 import { Sidebar } from 'features/sidebar';
 
-import { Aside, Root } from './';
+import { Aside } from './Aside';
+import { Root } from './Root';
 
 interface PageLayoutProps {
   children: React.ReactNode;

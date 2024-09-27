@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 
 import { InputMessage } from 'features/chat';
-import { PageLayout } from 'shared/components/layout';
+import { PageLayout, Main } from 'shared/components/layout';
 
 import { ChatHeader, MessageChunk, MessagesList } from './components';
 import { useChatLogic } from './hooks/useChatLogic';
@@ -31,17 +31,17 @@ export const Chat = () => {
   return (
     <PageLayout>
       <ChatHeader chatId={chatId} />
-      <div className={styles.Chat}>
+      <Main>
         <div className={styles.Chat__scrollable}>
-          <div className={styles.Chat__messagesList}>
+          <section className={styles.Chat__messagesList}>
             <MessagesList messages={messages.data ?? []} />
             <MessageChunk />
-          </div>
+          </section>
         </div>
-        <div className={styles.Chat__inputMessage}>
+        <section className={styles.Chat__inputMessage}>
           <InputMessage handleSend={handleSendMessage} />
-        </div>
-      </div>
+        </section>
+      </Main>
     </PageLayout>
   );
 };
