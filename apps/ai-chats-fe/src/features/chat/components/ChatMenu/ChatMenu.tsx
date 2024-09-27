@@ -2,37 +2,26 @@ import { useState } from 'react';
 
 import { DropdownMenu, Flex } from '@radix-ui/themes';
 
-import { useChat, useGenerateChatTitle } from 'shared/hooks';
-import { Button } from 'shared/components';
+import { useGenerateChatTitle } from 'shared/hooks';
 import { AIActionIcon, DeleteIcon } from 'shared/components/icons';
 
 import { DeleteChatDialog } from './DeleteChatDialog';
+import { useChatMenu } from './ChatMenyContext';
 
 interface ChatMenuProps {
   chatId: string;
+  trigger: React.ReactNode;
 }
 
-export const ChatMenu = ({ chatId }: ChatMenuProps): JSX.Element => {
+export const ChatMenu = ({ chatId, trigger }: ChatMenuProps): JSX.Element => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const chat = useChat(chatId);
+  const {isOpen, setIsOpen} = useChatMenu();
   const generateChatTitle = useGenerateChatTitle();
 
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenu.Trigger>
-        <Button variant="ghost" size="3" highContrast>
-          <span
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              maxWidth: '192px',
-            }}
-          >
-            {chat.data?.title || 'Chat'}
-          </span>
-          <DropdownMenu.TriggerIcon />
-        </Button>
+        <div>{trigger}</div>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content style={{ minWidth: '192px' }}>
         <DropdownMenu.Item onClick={() => generateChatTitle.mutate(chatId)}>

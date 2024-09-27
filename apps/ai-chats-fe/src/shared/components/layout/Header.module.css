@@ -2,6 +2,7 @@
   .Header {
     --header-margin-left: 300px;
     --header-width: calc(100vw - 300px);
+    --header-justify-content: center;
   }
 }
 
@@ -9,7 +10,7 @@
   align-items: center;
   background-color: var(--color-panel-translucent);
   display: flex;
-  justify-content: space-between;
+  justify-content: var(--header-justify-content, space-between);
   margin-left: var(--header-margin-left, 0);
   padding: var(--space-2) var(--space-2);
   position: absolute;
