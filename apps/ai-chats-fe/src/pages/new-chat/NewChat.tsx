@@ -17,7 +17,7 @@ export const NewChat: React.FC = () => {
   const navigate = useNavigate();
   const ollamaModels = useOllamaModels();
 
-  const handleSend = async (text: string) => {
+  const handleSendMessage = async (text: string) => {
     if (!selectedModel) return;
 
     createChat.mutate(
@@ -56,7 +56,7 @@ export const NewChat: React.FC = () => {
           />
         </Flex>
         <Box style={{ maxWidth: '688px', width: '100%', margin: '0 auto' }}>
-          <InputMessage handleSend={handleSend} />
+          <InputMessage onSendMessage={handleSendMessage} />
         </Box>
       </Flex>
     </PageLayout>

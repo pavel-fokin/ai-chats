@@ -1,0 +1,9 @@
+@import 'styles/spacing.css';
+
+.inputMessageContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) 0;
+}

@@ -39,7 +39,7 @@ export const Chat = () => {
           </section>
         </div>
         <section className={styles.Chat__inputMessage}>
-          <InputMessage handleSend={handleSendMessage} />
+          <InputMessage onSendMessage={handleSendMessage} />
         </section>
       </Main>
     </PageLayout>

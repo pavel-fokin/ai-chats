@@ -9,7 +9,7 @@ const renderComponent = (children: React.ReactNode) => {
 };
 
 test('updates input message text on change', () => {
-  renderComponent(<InputMessage handleSend={() => {}} />);
+  renderComponent(<InputMessage onSendMessage={() => {}} />);
 
   const inputElement = screen.getByPlaceholderText(
     'Type a message',
@@ -25,7 +25,7 @@ test('calls handleSend with correct message on send click', () => {
   const handleSendMock = vi.fn();
   const text = 'Hello, world!';
 
-  renderComponent(<InputMessage handleSend={handleSendMock} />);
+  renderComponent(<InputMessage onSendMessage={handleSendMock} />);
 
   const inputElement = screen.getByPlaceholderText(
     'Type a message',
@@ -44,7 +44,7 @@ test('calls handleSend with correct message on enter key press', () => {
   const handleSendMock = vi.fn();
   const text = 'Hello, world!';
 
-  renderComponent(<InputMessage handleSend={handleSendMock} />);
+  renderComponent(<InputMessage onSendMessage={handleSendMock} />);
 
   const inputElement = screen.getByRole('textbox') as HTMLTextAreaElement;
 
@@ -59,7 +59,7 @@ test('calls handleSend with correct message on enter key press', () => {
 test('does not call handleSend on empty message send click', () => {
   const handleSendMock = vi.fn();
 
-  renderComponent(<InputMessage handleSend={handleSendMock} />);
+  renderComponent(<InputMessage onSendMessage={handleSendMock} />);
 
   const sendButton = screen.getByRole('button');
 
@@ -71,7 +71,7 @@ test('does not call handleSend on empty message send click', () => {
 test('does not call handleSend on whitespace message send click', () => {
   const handleSendMock = vi.fn();
 
-  renderComponent(<InputMessage handleSend={handleSendMock} />);
+  renderComponent(<InputMessage onSendMessage={handleSendMock} />);
 
   const inputElement = screen.getByPlaceholderText(
     'Type a message',

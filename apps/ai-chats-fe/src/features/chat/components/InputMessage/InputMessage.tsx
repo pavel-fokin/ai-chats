@@ -1,50 +1,53 @@
 import { useState } from 'react';
 
-import { Box, Flex, IconButton } from '@radix-ui/themes';
-
-import { TextArea, Tooltip } from 'shared/components';
+import { IconButton, TextArea, Tooltip } from 'shared/components';
 import { SendIcon } from 'shared/components/icons';
 
+import styles from './InputMessage.module.css';
+
 interface InputMessageProps {
-  handleSend: (text: string) => void;
+  onSendMessage: (message: string) => void;
 }
 
-export const InputMessage: React.FC<InputMessageProps> = ({ handleSend }) => {
-  const [inputText, setInputText] = useState<string>('');
+export const InputMessage = ({
+  onSendMessage,
+}: InputMessageProps): JSX.Element => {
+  const [message, setMessage] = useState<string>('');
 
-  const onInputChangeArea = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputText(event.target.value);
+  const handleInputChange = ({
+    target,
+  }: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(target.value);
   };
 
-  const onSendClick = async () => {
-    if (inputText.trim() !== '') {
-      handleSend(inputText);
-      setInputText('');
+  const handleSendMessage = () => {
+    if (message.trim() === '') {
+      return;
     }
+
+    onSendMessage(message);
+    setMessage('');
   };
 
   return (
-    <Flex
-      gap="2"
-      justify="center"
-      p={{
-        initial: '2',
-        sm: '4',
-      }}
-    >
-      <Box flexGrow="1">
-        <TextArea
-          onChange={onInputChangeArea}
-          onEnterPress={onSendClick}
-          placeholder="Type a message"
-          value={inputText}
-        />
-      </Box>
+    <div className={styles.inputMessageContainer}>
+      <TextArea
+        aria-label="Type a message here"
+        onChange={handleInputChange}
+        onEnterPress={handleSendMessage}
+        placeholder="Type a message"
+        value={message}
+      />
       <Tooltip content="Send a message" side="top">
-        <IconButton size="3" onClick={onSendClick} highContrast>
+        <IconButton
+          aria-label="Send a message button"
+          size="3"
+          onClick={handleSendMessage}
+          highContrast
+        >
           <SendIcon size={16} />
         </IconButton>
       </Tooltip>
-    </Flex>
+    </div>
   );
 };
