@@ -47,7 +47,7 @@ export const ChatMenu = ({ chatId, trigger }: ChatMenuProps): JSX.Element => {
             gap="4"
             width="100%"
           >
-            <DeleteIcon size="16" /> Delete
+            <DeleteIcon size="16" /> Delete chat
           </Flex>
         </DropdownMenu.Item>
       </DropdownMenu.Content>

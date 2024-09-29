@@ -1,0 +1,10 @@
+@media (max-width: 768px) {
+    .onlyMobile {
+        --only-mobile-display: block;
+    }
+}
+
+.onlyMobile {
+    display: var(--only-mobile-display, none);
+    width: 100%;
+}

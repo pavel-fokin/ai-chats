@@ -1,9 +1,9 @@
 @media only screen and (min-width: 768px) {
   .NewChatIconButton {
-    --new-chat-icon-button-visibility: hidden;
+    --new-chat-icon-button-display: none;
   }
 }
 
 .NewChatIconButton {
-  visibility: var(--new-chat-icon-button-visibility, visible);
+  display: var(--new-chat-icon-button-display, flex);
 }

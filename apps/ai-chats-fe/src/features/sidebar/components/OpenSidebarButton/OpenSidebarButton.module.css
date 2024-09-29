@@ -1,9 +1,9 @@
 @media screen and (min-width: 768px) {
   .OpenSidebarButton {
-    --open-sidebar-button-display: hidden;
+    --open-sidebar-button-display: none;
   }
 }
 
 .OpenSidebarButton {
-  visibility: var(--open-sidebar-button-display, visible);
+  display: var(--open-sidebar-button-display, flex);
 }

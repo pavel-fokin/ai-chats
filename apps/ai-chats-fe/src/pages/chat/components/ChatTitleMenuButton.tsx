@@ -2,16 +2,14 @@ import { DropdownMenu } from '@radix-ui/themes';
 
 import { useChatMenu } from 'features/chat';
 
-import { useChat } from 'shared/hooks';
 import { Button } from 'shared/components';
 
 interface ChatTitleButtonProps {
-  chatId: string;
+  title: string;
 }
 
-export const ChatTitleButton = ({ chatId }: ChatTitleButtonProps) => {
-  const chat = useChat(chatId);
-  const {isOpen, setIsOpen} = useChatMenu();
+export const ChatTitleMenuButton = ({ title }: ChatTitleButtonProps) => {
+  const { isOpen, setIsOpen } = useChatMenu();
 
   return (
     <Button
@@ -28,7 +26,7 @@ export const ChatTitleButton = ({ chatId }: ChatTitleButtonProps) => {
           maxWidth: '192px',
         }}
       >
-        {chat.data?.title || 'Chat'}
+        {title || 'Chat'}
       </span>
       <DropdownMenu.TriggerIcon />
     </Button>
