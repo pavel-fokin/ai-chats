@@ -41,7 +41,7 @@ test('shows and hides delete dialog', async () => {
 
   expect(screen.queryByText('Delete model?')).toBeNull();
 
-  const deleteButton = screen.getByRole('button', { name: 'Delete' });
+  const deleteButton = screen.getByRole('button', { name: 'Delete model' });
   userEvent.click(deleteButton);
 
   await waitFor(() => {

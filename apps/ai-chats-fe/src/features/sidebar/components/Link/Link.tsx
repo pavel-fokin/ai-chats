@@ -9,9 +9,10 @@ import styles from './Link.module.css';
 interface LinkProps {
   to: string;
   children: React.ReactNode;
+  onClick?: () => void;
 }
 
-export const Link: React.FC<LinkProps> = ({ to, children, ...props }) => {
+export const Link = ({ to, children, ...props }: LinkProps): JSX.Element => {
   const { pathname } = useLocation();
   const isActive = to === pathname;
 

@@ -26,7 +26,7 @@ export const DeleteOllamaModelDialog: React.FC<
           color="tomato"
           loading={deleteModel.isPending}
         >
-          Delete
+          Delete model
         </Button>
       </AlertDialog.Trigger>
       <AlertDialog.Content maxWidth="450px">

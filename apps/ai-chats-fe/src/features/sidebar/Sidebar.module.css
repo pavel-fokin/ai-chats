@@ -4,15 +4,3 @@
   height: 100%;
   justify-content: space-between;
 }
-
-.NavigationMenuList {
-  background-color: var(--color-background);
-  border-radius: var(--radius-3);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: center;
-  list-style: none;
-  margin: 0;
-  padding: var(--space-1);
-}

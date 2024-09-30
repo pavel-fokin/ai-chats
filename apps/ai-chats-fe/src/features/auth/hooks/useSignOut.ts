@@ -1,17 +1,14 @@
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from 'features/auth';
 
-export const SignOut = () => {
+export const useSignOut = () => {
   const navigate = useNavigate();
   const { setIsAuthenticated } = useAuthContext();
 
-  useEffect(() => {
-    setIsAuthenticated(false);
+ return () => {
     localStorage.removeItem('accessToken');
+    setIsAuthenticated(false);
     navigate('/app/login');
-  }, [navigate, setIsAuthenticated]);
-
-  return null;
+  };
 };

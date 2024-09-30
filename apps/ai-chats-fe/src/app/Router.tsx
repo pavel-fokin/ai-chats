@@ -6,7 +6,6 @@ import {
   LogIn,
   NewChat,
   OllamaSettings,
-  SignOut,
   SignUp,
 } from 'pages';
 
@@ -27,10 +26,6 @@ export const Router = createBrowserRouter([
   {
     path: '/app/signup',
     element: <SignUp />,
-  },
-  {
-    path: '/app/signout',
-    element: <SignOut />,
   },
   {
     path: '/app',
