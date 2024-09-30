@@ -1,10 +1,10 @@
 @media (min-width: 768px) {
-    .onlyDesktop {
-        --only-desktop-display: block;
-    }
+  .onlyDesktop {
+    --only-desktop-display: block;
+  }
 }
 
 .onlyDesktop {
-    display: var(--only-desktop-display, none);
-    width: 100%;
+  display: var(--only-desktop-display, none);
+  width: 100%;
 }

@@ -3,7 +3,13 @@ import { Flex, Text } from '@radix-ui/themes';
 
 import { SettingsIcon } from 'shared/components/icons';
 
-import { Link, SidebarHeader, ChatsList, MenuList, SignOutButton } from './components';
+import {
+  Link,
+  SidebarHeader,
+  ChatsList,
+  MenuList,
+  SignOutButton,
+} from './components';
 import styles from './Sidebar.module.css';
 
 export const Sidebar = () => {

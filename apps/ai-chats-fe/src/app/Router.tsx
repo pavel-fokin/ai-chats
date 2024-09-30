@@ -1,13 +1,6 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 
-import {
-  Chat,
-  Landing,
-  LogIn,
-  NewChat,
-  OllamaSettings,
-  SignUp,
-} from 'pages';
+import { Chat, Landing, LogIn, NewChat, OllamaSettings, SignUp } from 'pages';
 
 import { AuthRequired } from 'features/auth';
 import { ChatContextProvider } from 'features/chat';

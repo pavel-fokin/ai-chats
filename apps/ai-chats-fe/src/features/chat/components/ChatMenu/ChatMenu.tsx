@@ -15,7 +15,7 @@ interface ChatMenuProps {
 
 export const ChatMenu = ({ chatId, trigger }: ChatMenuProps): JSX.Element => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const {isOpen, setIsOpen} = useChatMenu();
+  const { isOpen, setIsOpen } = useChatMenu();
   const generateChatTitle = useGenerateChatTitle();
 
   return (

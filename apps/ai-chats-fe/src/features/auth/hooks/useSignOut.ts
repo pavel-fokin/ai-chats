@@ -6,7 +6,7 @@ export const useSignOut = () => {
   const navigate = useNavigate();
   const { setIsAuthenticated } = useAuthContext();
 
- return () => {
+  return () => {
     localStorage.removeItem('accessToken');
     setIsAuthenticated(false);
     navigate('/app/login');

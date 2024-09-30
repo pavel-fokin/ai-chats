@@ -7,7 +7,9 @@ interface MenuListProps {
 }
 
 export const MenuList = ({ children }: MenuListProps) => {
-  return (<NavigationMenu.List className={styles.menuList}>
-    {children}
-  </NavigationMenu.List>);
+  return (
+    <NavigationMenu.List className={styles.menuList}>
+      {children}
+    </NavigationMenu.List>
+  );
 };

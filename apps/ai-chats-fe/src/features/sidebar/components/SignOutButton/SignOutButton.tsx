@@ -12,7 +12,11 @@ export const SignOutButton = () => {
   };
 
   return (
-    <a aria-label="Sign out" onClick={handleSignOut} className={styles.signOutButton}>
+    <a
+      aria-label="Sign out"
+      onClick={handleSignOut}
+      className={styles.signOutButton}
+    >
       <div className={styles.signOutButton__inner}>
         <SignOutIcon size={24} />
         Sign Out

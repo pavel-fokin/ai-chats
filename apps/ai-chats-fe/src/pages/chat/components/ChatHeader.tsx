@@ -34,12 +34,9 @@ export const ChatHeader = ({ chatId }: ChatHeaderProps): JSX.Element => {
       </OnlyMobile>
       <OnlyDesktop>
         <div className={styles.chatHeaderDesktop}>
-          <div>{title}</div>
+          {title}
           <ChatMenuProvider>
-            <ChatMenu
-              chatId={chatId}
-              trigger={<MenuButton />}
-            />
+            <ChatMenu chatId={chatId} trigger={<MenuButton />} />
           </ChatMenuProvider>
         </div>
       </OnlyDesktop>

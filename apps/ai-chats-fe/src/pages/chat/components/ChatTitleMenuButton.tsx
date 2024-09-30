@@ -13,6 +13,7 @@ export const ChatTitleMenuButton = ({ title }: ChatTitleButtonProps) => {
 
   return (
     <Button
+      aria-label="Open chat menu"
       variant="ghost"
       size="3"
       highContrast
@@ -26,7 +27,7 @@ export const ChatTitleMenuButton = ({ title }: ChatTitleButtonProps) => {
           maxWidth: '192px',
         }}
       >
-        {title || 'Chat'}
+        {title}
       </span>
       <DropdownMenu.TriggerIcon />
     </Button>

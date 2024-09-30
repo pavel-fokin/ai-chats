@@ -1,8 +1,10 @@
 export {
-  ChatMenu, ChatMenuProvider, InputMessage,
+  ChatMenu,
+  ChatMenuProvider,
+  InputMessage,
   Message,
-  NewChatIconButton, useChatMenu
+  NewChatIconButton,
+  useChatMenu,
 } from './components';
 export { ChatContextProvider, useChatContext } from './contexts';
 export { useChatEvents } from './hooks/useChatEvents';
-
