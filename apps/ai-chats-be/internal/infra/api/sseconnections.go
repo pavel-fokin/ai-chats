@@ -27,34 +27,35 @@ func NewSSEConnections() *SSEConnections {
 
 // NewConnection creates a new connection and adds it to the set.
 func (s *SSEConnections) AddConnection() *Connection {
+	s.Lock()
+	defer s.Unlock()
+
 	c := &Connection{
 		Closed: make(chan struct{}),
 	}
-	s.Lock()
 	s.connections[c] = struct{}{}
-	s.Unlock()
 	return c
 }
 
 // Add adds a new connection to the set.
 func (s *SSEConnections) Add(c *Connection) {
 	s.Lock()
+	defer s.Unlock()
 	s.connections[c] = struct{}{}
-	s.Unlock()
 }
 
 // Remove removes a connection from the set.
 func (s *SSEConnections) Remove(c *Connection) {
 	s.Lock()
+	defer s.Unlock()
 	delete(s.connections, c)
-	s.Unlock()
 }
 
 // CloseAll closes all connections in the set.
 func (s *SSEConnections) CloseAll() {
 	s.Lock()
+	defer s.Unlock()
 	for c := range s.connections {
 		c.Close()
 	}
-	s.Unlock()
 }

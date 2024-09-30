@@ -41,6 +41,7 @@ func (s *Server) SetupRoutes(app App, pubsub Subscriber) {
 		r.Use(AuthParam(s.config.TokenSigningKey))
 		r.Get("/api/events/app", GetAppEvents(app, s.sse, pubsub))
 		r.Get("/api/chats/{uuid}/events", GetChatEvents(app, s.sse, pubsub))
+		// "/api/events/settings"
 	})
 
 	r.Group(func(r chi.Router) {

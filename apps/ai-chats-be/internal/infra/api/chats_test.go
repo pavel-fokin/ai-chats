@@ -348,8 +348,12 @@ func TestApiChats_GetEvents(t *testing.T) {
 		resp.Body.Read(body)
 		assert.Contains(t, string(body), "event: messageAdded\ndata:")
 
+		// Close all connections and wait for goroutines to finish.
+		sse.CloseAll()
+		time.Sleep(time.Millisecond)
+
 		eventsMock.AssertNumberOfCalls(t, "Subscribe", 1)
-		// events.AssertNumberOfCalls(t, "Unsubscribe", 1)
+		eventsMock.AssertNumberOfCalls(t, "Unsubscribe", 1)
 	})
 
 	t.Run("failure", func(t *testing.T) {
@@ -376,6 +380,7 @@ func TestApiChats_GetEvents(t *testing.T) {
 
 		resp := w.Result()
 		assert.Equal(t, 500, resp.StatusCode)
+
 		eventsMock.AssertNumberOfCalls(t, "Subscribe", 1)
 		eventsMock.AssertNumberOfCalls(t, "Unsubscribe", 0)
 	})
