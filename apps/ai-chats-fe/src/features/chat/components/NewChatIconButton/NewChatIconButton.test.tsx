@@ -3,18 +3,18 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import { NewChatIconButton } from './NewChatIconButton';
-import { SidebarContextProvider } from 'features/sidebar';
+import { SidebarProvider } from 'features/sidebar';
 
 const renderWithRouter = (ui: JSX.Element) => {
   return render(
-    <SidebarContextProvider>
+    <SidebarProvider>
       <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route path="/" element={ui} />
           <Route path="/app/new-chat" element={<div>Start a new chat</div>} />
         </Routes>
       </MemoryRouter>
-    </SidebarContextProvider>,
+    </SidebarProvider>,
   );
 };
 

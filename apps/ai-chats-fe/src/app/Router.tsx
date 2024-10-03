@@ -5,7 +5,7 @@ import { Chat, Landing, LogIn, NewChat, OllamaSettings, SignUp } from 'pages';
 import { AuthRequired } from 'features/auth';
 import { ChatContextProvider } from 'features/chat';
 import { AppEvents } from 'features/events';
-import { SidebarContextProvider } from 'features/sidebar';
+import { SidebarProvider } from 'features/sidebar';
 
 export const Router = createBrowserRouter([
   {
@@ -25,9 +25,9 @@ export const Router = createBrowserRouter([
     element: (
       <AuthRequired>
         <AppEvents>
-          <SidebarContextProvider>
+          <SidebarProvider>
             <Outlet />
-          </SidebarContextProvider>
+          </SidebarProvider>
         </AppEvents>
       </AuthRequired>
     ),

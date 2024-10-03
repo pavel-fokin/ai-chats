@@ -8,7 +8,7 @@ interface SidebarContextValue {
 
 export const SidebarContext = createContext({} as SidebarContextValue);
 
-export const SidebarContextProvider = ({
+export const SidebarProvider = ({
   children,
 }: {
   children: React.ReactNode;
