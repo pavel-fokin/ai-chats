@@ -1,0 +1,10 @@
+.ollamaStatus__container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.ollamaStatus__container h3 {
+    font-size: var(--font-size-3);
+    font-weight: 500;
+}
