@@ -6,7 +6,7 @@ import { DownloadIcon } from 'shared/components/icons';
 import { Header, PageLayout } from 'shared/components/layout';
 import { useOllamaModels, usePullOllamaModel } from 'shared/hooks';
 
-import { OllamaModel } from './components';
+import { OllamaModel, OllamaStatus } from './components';
 
 export const OllamaSettings: React.FC = () => {
   const ollamaModels = useOllamaModels();
@@ -37,6 +37,7 @@ export const OllamaSettings: React.FC = () => {
           mt="9"
           px="4"
         >
+          <OllamaStatus />
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             <Flex
               gap="3"
@@ -50,7 +51,7 @@ export const OllamaSettings: React.FC = () => {
                 <TextField.Root
                   id="model"
                   size="3"
-                  placeholder="Pull a model..."
+                  placeholder="Enter model name"
                 />
               </Box>
               <IconButton size="3" highContrast loading={pullModel.isPending}>

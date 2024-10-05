@@ -9,7 +9,7 @@ interface OllamaModelProps {
   model: types.OllamaModel;
 }
 
-export const OllamaModel: React.FC<OllamaModelProps> = ({ model }) => {
+export const OllamaModel = ({ model }: OllamaModelProps): JSX.Element => {
   return (
     <Flex direction="column" gap="2" key={`${model.model}`} width="100%">
       <Heading as="h2" size="3">{`${model.model}`}</Heading>
