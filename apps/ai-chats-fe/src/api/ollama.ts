@@ -8,8 +8,13 @@ type GetOllamaResponse = {
   };
 };
 
-export const fetchOllamaModels = async (): Promise<GetOllamaResponse> => {
-  const resp = await client.get<GetOllamaResponse>('/ollama/models');
+export const getOllamaModels = async (
+  onlyPulling: boolean,
+): Promise<GetOllamaResponse> => {
+  const params = onlyPulling ? { onlyPulling: '' } : {};
+  const resp = await client.get<GetOllamaResponse>('/ollama/models', {
+    params,
+  });
   return resp.data;
 };
 

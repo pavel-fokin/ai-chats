@@ -9,19 +9,24 @@ import (
 	"ai-chats/internal/infra/worker"
 )
 
-// ListOllamaModels retrieves a list of Ollama models from the Ollama client.
-func (a *App) ListOllamaModels(ctx context.Context) ([]domain.OllamaModel, error) {
+// FindOllamaModelsPullingInProgress returns all Ollama models with pulling in progress.
+func (a *App) FindOllamaModelsPullingInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
+	return a.ollamaModels.FindOllamaModelsPullingInProgress(ctx)
+}
+
+// AllOllamaModels retrieves a list of Ollama models from the Ollama client.
+func (a *App) AllOllamaModels(ctx context.Context) ([]domain.OllamaModel, error) {
 	var ollamaModels []domain.OllamaModel
 
-	ollamaModelsStrings, err := a.ollamaModels.AllModelsWithPullingInProgress(ctx)
+	ollamaModelsPullingInProgress, err := a.ollamaModels.FindOllamaModelsPullingInProgress(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get ollama models with pulling in progress: %w", err)
 	}
 
-	for _, model := range ollamaModelsStrings {
-		ollamaModel := domain.NewOllamaModel(model, "")
+	for _, model := range ollamaModelsPullingInProgress {
+		ollamaModel := domain.NewOllamaModel(model.Model, "")
 
-		description, err := a.models.FindDescription(ctx, model)
+		description, err := a.models.FindDescription(ctx, model.Name())
 		if err != nil {
 			description = "Description is not available."
 		}

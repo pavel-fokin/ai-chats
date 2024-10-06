@@ -20,7 +20,7 @@ export const useOllamaModelPullingEvents = (model: OllamaModel): void => {
     }
 
     eventSourceRef.current = new EventSource(
-      `/api/ollama/models/${model.model}/pulling-events?accessToken=${accessToken}`
+      `/api/ollama/models/${model.model}/pulling-events?accessToken=${accessToken}`,
     );
 
     for (const [eventType, eventHandler] of eventHandlers) {

@@ -38,21 +38,21 @@ func (m *OllamaModels) AddModelPullingFinished(ctx context.Context, model string
 	return nil
 }
 
-func (m *OllamaModels) AllModelsWithPullingInProgress(ctx context.Context) ([]string, error) {
+func (m *OllamaModels) FindOllamaModelsPullingInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
 	rows, err := m.DB.db.Query("SELECT model FROM ollama_model_pulling WHERE finished_at IS NULL")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var models []string
+	var models []domain.OllamaModel
 	for rows.Next() {
 		var model string
 		if err := rows.Scan(&model); err != nil {
 			return nil, err
 		}
 
-		models = append(models, model)
+		models = append(models, domain.NewOllamaModel(model, ""))
 	}
 	if rows.Err() != nil {
 		return nil, rows.Err()

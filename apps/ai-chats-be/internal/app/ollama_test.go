@@ -47,9 +47,9 @@ type MockOllamaModels struct {
 	mock.Mock
 }
 
-func (m *MockOllamaModels) AllModelsWithPullingInProgress(ctx context.Context) ([]string, error) {
+func (m *MockOllamaModels) FindOllamaModelsPullingInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
 	args := m.Called(ctx)
-	return args.Get(0).([]string), args.Error(1)
+	return args.Get(0).([]domain.OllamaModel), args.Error(1)
 }
 
 func (m *MockOllamaModels) AddModelPullingStarted(ctx context.Context, model string) error {
@@ -77,7 +77,7 @@ func TestAppOllama_ListModels(t *testing.T) {
 		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
 
 		mockOllamaModels := &MockOllamaModels{}
-		mockOllamaModels.On("AllModelsWithPullingInProgress", ctx).Return([]string{}, nil)
+		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{}, nil)
 		mockOllamaModels.On("AddModelPullingStarted", ctx, "model1").Return(nil)
 		mockOllamaModels.On("AddModelPullingFinished", ctx, "model1", mock.Anything).Return(nil)
 
@@ -87,7 +87,7 @@ func TestAppOllama_ListModels(t *testing.T) {
 			ollamaModels: mockOllamaModels,
 		}
 
-		_, err := app.ListOllamaModels(ctx)
+		_, err := app.AllOllamaModels(ctx)
 		assert.NoError(t, err)
 		mockOllamaClient.AssertExpectations(t)
 	})
@@ -96,14 +96,14 @@ func TestAppOllama_ListModels(t *testing.T) {
 		mockOllamaClient := &MockOllamaClient{}
 		mockOllamaClient.On("List", ctx).Return(nil, assert.AnError)
 		mockOllamaModels := &MockOllamaModels{}
-		mockOllamaModels.On("AllModelsWithPullingInProgress", ctx).Return([]string{}, nil)
+		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{}, nil)
 
 		app := &App{
 			ollamaClient: mockOllamaClient,
 			ollamaModels: mockOllamaModels,
 		}
 
-		_, err := app.ListOllamaModels(ctx)
+		_, err := app.AllOllamaModels(ctx)
 		assert.Error(t, err)
 		mockOllamaClient.AssertExpectations(t)
 	})
