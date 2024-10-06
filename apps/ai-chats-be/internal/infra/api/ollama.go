@@ -72,3 +72,43 @@ func DeleteOllamaModel(app Ollama) http.HandlerFunc {
 		AsSuccessResponse(w, nil, http.StatusNoContent)
 	}
 }
+
+// GetOllamaModelPullingEvents handles the GET /api/ollama/models/{model}/pulling-events endpoint.
+func GetOllamaModelPullingEvents(app Ollama, sse *SSEConnections, subscriber Subscriber) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		conn := sse.AddConnection()
+		defer sse.Remove(conn)
+
+		w.Header().Set("Content-Type", "text/event-stream")
+		w.Header().Set("Cache-Control", "no-cache")
+		w.Header().Set("Connection", "keep-alive")
+
+		model := chi.URLParam(r, "model")
+
+		events, err := subscriber.Subscribe(ctx, model)
+		if err != nil {
+			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
+			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			return
+		}
+		defer subscriber.Unsubscribe(ctx, model, events)
+
+		flusher := w.(http.Flusher)
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-conn.Closed:
+				return
+			case event := <-events:
+				if err := WriteServerSentEvent(w, event); err != nil {
+					slog.ErrorContext(ctx, "failed to write an event", "err", err)
+					return
+				}
+				flusher.Flush()
+			}
+		}
+	}
+}

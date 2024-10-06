@@ -19,12 +19,14 @@ func (a *App) ListOllamaModels(ctx context.Context) ([]domain.OllamaModel, error
 	}
 
 	for _, model := range ollamaModelsStrings {
+		ollamaModel := domain.NewOllamaModel(model, "")
+
 		description, err := a.models.FindDescription(ctx, model)
 		if err != nil {
 			description = "Description is not available."
 		}
 
-		ollamaModel := domain.NewOllamaModel(model, description)
+		ollamaModel.Description = description
 		ollamaModel.IsPulling = true
 		ollamaModels = append(ollamaModels, ollamaModel)
 	}
@@ -64,15 +66,22 @@ func (a *App) PullOllamaModelAsync(ctx context.Context, model string) error {
 func (a *App) PullOllamaModel(ctx context.Context, model string) error {
 	ollamaModel := domain.NewOllamaModel(model, "")
 
-	err := a.ollamaModels.AddModelPullingStarted(ctx, ollamaModel.Name())
+	err := a.ollamaModels.AddModelPullingStarted(ctx, ollamaModel.Model)
 	if err != nil {
 		return fmt.Errorf("failed to add ollama model pulling started: %w", err)
 	}
 
-	if err := a.ollamaClient.Pull(ctx, model); err != nil {
+	streamFunc := func(progress domain.OllamaModelPullingProgress) error {
+		if err := a.notifyOllamaModelPulling(ctx, model, progress); err != nil {
+			return fmt.Errorf("failed to notify ollama model pulling progress: %w", err)
+		}
+		return nil
+	}
+
+	if err := a.ollamaClient.Pull(ctx, model, streamFunc); err != nil {
 		if err := a.ollamaModels.AddModelPullingFinished(
 			ctx,
-			ollamaModel.Name(),
+			ollamaModel.Model,
 			domain.OllamaPullingFinalStatusFailed,
 		); err != nil {
 			return fmt.Errorf("failed to add ollama model pulling finished: %w", err)
@@ -83,7 +92,7 @@ func (a *App) PullOllamaModel(ctx context.Context, model string) error {
 
 	if err := a.ollamaModels.AddModelPullingFinished(
 		ctx,
-		ollamaModel.Name(),
+		ollamaModel.Model,
 		domain.OllamaPullingFinalStatusSuccess,
 	); err != nil {
 		return fmt.Errorf("failed to add ollama model pulling finished: %w", err)
@@ -92,6 +101,7 @@ func (a *App) PullOllamaModel(ctx context.Context, model string) error {
 	return nil
 }
 
+// DeleteOllamaModel deletes an Ollama model.
 func (a *App) DeleteOllamaModel(ctx context.Context, model string) error {
 	return a.ollamaClient.Delete(ctx, model)
 }

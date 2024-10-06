@@ -2,7 +2,6 @@ package ollama
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/ollama/ollama/api"
@@ -37,21 +36,23 @@ func (o *OllamaClient) List(ctx context.Context) ([]domain.OllamaClientModel, er
 	return models, nil
 }
 
-func (o *OllamaClient) Pull(ctx context.Context, model string) error {
+// Pull sends request to the Ollama server to pull a model and streams the progress to the given function.
+func (o *OllamaClient) Pull(ctx context.Context, model string, fn domain.PullingStreamFunc) error {
 	req := &api.PullRequest{
 		Model: model,
 	}
 
 	progressFunc := func(resp api.ProgressResponse) error {
-		fmt.Println(resp)
-		return nil
+		progress := domain.OllamaModelPullingProgress{
+			Status:    resp.Status,
+			Total:     resp.Total,
+			Completed: resp.Completed,
+		}
+
+		return fn(progress)
 	}
 
-	if err := o.client.Pull(ctx, req, progressFunc); err != nil {
-		return err
-	}
-
-	return nil
+	return o.client.Pull(ctx, req, progressFunc)
 }
 
 func (o *OllamaClient) Delete(ctx context.Context, model string) error {

@@ -24,8 +24,8 @@ func (m *MockOllamaClient) List(ctx context.Context) ([]domain.OllamaClientModel
 	return args.Get(0).([]domain.OllamaClientModel), args.Error(1)
 }
 
-func (m *MockOllamaClient) Pull(ctx context.Context, model string) error {
-	args := m.Called(ctx, model)
+func (m *MockOllamaClient) Pull(ctx context.Context, model string, fn domain.PullingStreamFunc) error {
+	args := m.Called(ctx, model, fn)
 	return args.Error(0)
 }
 
@@ -72,8 +72,10 @@ func TestAppOllama_ListModels(t *testing.T) {
 
 		mockOllamaClient := &MockOllamaClient{}
 		mockOllamaClient.On("List", ctx).Return(models, nil)
+
 		mockModels := &MockModels{}
 		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
+
 		mockOllamaModels := &MockOllamaModels{}
 		mockOllamaModels.On("AllModelsWithPullingInProgress", ctx).Return([]string{}, nil)
 		mockOllamaModels.On("AddModelPullingStarted", ctx, "model1").Return(nil)

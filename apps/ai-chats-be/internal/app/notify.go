@@ -21,3 +21,10 @@ func (a *App) notifyApp(ctx context.Context, userID domain.UserID, event types.M
 	}
 	return nil
 }
+
+func (a *App) notifyOllamaModelPulling(ctx context.Context, model string, event types.Message) error {
+	if err := a.pubsub.Publish(ctx, model, event); err != nil {
+		return fmt.Errorf("failed to publish an event: %w", err)
+	}
+	return nil
+}

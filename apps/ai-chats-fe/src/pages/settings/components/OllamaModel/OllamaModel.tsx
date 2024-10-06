@@ -3,6 +3,8 @@ import { Flex, Heading, Text } from '@radix-ui/themes';
 import { Progress } from 'shared/components';
 import * as types from 'types';
 
+import { useOllamaModelPullingEvents } from 'features/ollama';
+
 import { DeleteOllamaModelDialog } from './DeleteOllamaModelDialog';
 
 interface OllamaModelProps {
@@ -10,6 +12,8 @@ interface OllamaModelProps {
 }
 
 export const OllamaModel = ({ model }: OllamaModelProps): JSX.Element => {
+  useOllamaModelPullingEvents(model);
+
   return (
     <Flex direction="column" gap="2" key={`${model.model}`} width="100%">
       <Heading as="h2" size="3">{`${model.model}`}</Heading>
