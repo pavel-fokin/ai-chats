@@ -1,26 +1,38 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+import { useInvalidateOllamaModels } from 'shared/hooks';
 
 import { EventTypes, OllamaModel } from 'types';
 
 type EventHandler = (event: MessageEvent) => void;
 const eventHandlers = new Map<string, EventHandler>();
 
-export const useOllamaModelPullingEvents = (model: OllamaModel): void => {
+interface ProgressEvent {
+  status: string;
+  total: number;
+  completed: number;
+}
+
+export const useOllamaModelPullingEvents = (model: OllamaModel) => {
+  const invalidateOllamaModels = useInvalidateOllamaModels();
+  const [progress, setProgress] = useState<ProgressEvent | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
   const accessToken = localStorage.getItem('accessToken') || '';
 
   eventHandlers.set(EventTypes.OLLAMA_MODEL_PULLING_PROGRESS, (event) => {
-    const progress = JSON.parse(event.data);
-    console.log(progress);
+    const progress: ProgressEvent = JSON.parse(event.data);
+    if (progress.status === 'success') {
+      invalidateOllamaModels();
+    } else if (progress.status === 'error') {
+      invalidateOllamaModels();
+    } else {
+      setProgress(progress);
+    }
   });
 
   useEffect(() => {
-    if (!model.isPulling) {
-      return;
-    }
-
     eventSourceRef.current = new EventSource(
-      `/api/ollama/models/${model.model}/pulling-events?accessToken=${accessToken}`,
+      `/api/ollama/models/${model.model}/pulling-events?accessToken=${accessToken}`
     );
 
     for (const [eventType, eventHandler] of eventHandlers) {
@@ -35,4 +47,6 @@ export const useOllamaModelPullingEvents = (model: OllamaModel): void => {
       eventSourceRef.current?.close();
     };
   }, [accessToken, model]);
+
+  return { progress };
 };

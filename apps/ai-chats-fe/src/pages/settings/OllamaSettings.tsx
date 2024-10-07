@@ -4,12 +4,11 @@ import { NewChatIconButton } from 'features/chat';
 import { OpenSidebarButton } from 'features/sidebar';
 import { DownloadIcon } from 'shared/components/icons';
 import { Header, PageLayout } from 'shared/components/layout';
-import { useOllamaModels, usePullOllamaModel } from 'shared/hooks';
+import { usePullOllamaModel } from 'shared/hooks';
 
-import { OllamaModel, OllamaStatus } from './components';
+import { OllamaStatus, OllamaModelsList } from './components';
 
 export const OllamaSettings: React.FC = () => {
-  const ollamaModels = useOllamaModels();
   const pullModel = usePullOllamaModel();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,11 +58,7 @@ export const OllamaSettings: React.FC = () => {
               </IconButton>
             </Flex>
           </form>
-          <Flex direction="column" width="100%" gap="4">
-            {ollamaModels.data?.map((model) => (
-              <OllamaModel key={model.model} model={model} />
-            ))}
-          </Flex>
+          <OllamaModelsList />
         </Flex>
       </Box>
     </PageLayout>

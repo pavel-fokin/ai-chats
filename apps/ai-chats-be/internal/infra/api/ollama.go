@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -11,10 +12,11 @@ import (
 )
 
 type Ollama interface {
-	FindOllamaModelsPullingInProgress(context.Context) ([]domain.OllamaModel, error)
 	AllOllamaModels(context.Context) ([]domain.OllamaModel, error)
-	PullOllamaModelAsync(context.Context, string) error
 	DeleteOllamaModel(context.Context, string) error
+	FindOllamaModelsAvailable(context.Context) ([]domain.OllamaModel, error)
+	FindOllamaModelsPullingInProgress(context.Context) ([]domain.OllamaModel, error)
+	PullOllamaModelAsync(context.Context, string) error
 }
 
 // GetOllamaModels handles the GET /api/ollama/models endpoint.
@@ -31,8 +33,13 @@ func GetOllamaModels(app Ollama) http.HandlerFunc {
 
 		if query.OnlyPulling {
 			models, err := app.FindOllamaModelsPullingInProgress(ctx)
+			fmt.Println(models)
 			if err != nil {
-				slog.ErrorContext(ctx, "failed to get ollama models", "err", err)
+				slog.ErrorContext(
+					ctx,
+					"failed to get ollama models with pulling in progress",
+					"err", err,
+				)
 				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 				return
 			}
@@ -41,7 +48,7 @@ func GetOllamaModels(app Ollama) http.HandlerFunc {
 			return
 		}
 
-		models, err := app.AllOllamaModels(ctx)
+		models, err := app.FindOllamaModelsAvailable(ctx)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get ollama models", "err", err)
 			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)

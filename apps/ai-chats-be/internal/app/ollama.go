@@ -11,7 +11,47 @@ import (
 
 // FindOllamaModelsPullingInProgress returns all Ollama models with pulling in progress.
 func (a *App) FindOllamaModelsPullingInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
-	return a.ollamaModels.FindOllamaModelsPullingInProgress(ctx)
+	var ollamaModels []domain.OllamaModel
+
+	ollamaModelsPullingInProgress, err := a.ollamaModels.FindOllamaModelsPullingInProgress(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get ollama models with pulling in progress: %w", err)
+	}
+
+	for _, ollamaModel := range ollamaModelsPullingInProgress {
+		description, err := a.models.FindDescription(ctx, ollamaModel.Name())
+		if err != nil {
+			description = "Description is not available."
+		}
+
+		ollamaModel := domain.NewOllamaModel(ollamaModel.Model, description)
+		ollamaModel.IsPulling = true
+		ollamaModels = append(ollamaModels, ollamaModel)
+	}
+
+	return ollamaModels, nil
+}
+
+// FindOllamaModelsAvailable returns all Ollama models available.
+func (a *App) FindOllamaModelsAvailable(ctx context.Context) ([]domain.OllamaModel, error) {
+	var ollamaModels []domain.OllamaModel
+
+	ollamaClientModels, err := a.ollamaClient.List(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to request ollama models from client: %w", err)
+	}
+
+	for _, ollamaClientModel := range ollamaClientModels {
+		description, err := a.models.FindDescription(ctx, ollamaClientModel.Name())
+		if err != nil {
+			description = "Description is not available."
+		}
+
+		ollamaModel := domain.NewOllamaModel(ollamaClientModel.Model, description)
+		ollamaModels = append(ollamaModels, ollamaModel)
+	}
+
+	return ollamaModels, nil
 }
 
 // AllOllamaModels retrieves a list of Ollama models from the Ollama client.

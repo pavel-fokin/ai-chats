@@ -26,6 +26,12 @@ func TestParseOllamaModelsQuery(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name:    "onlyPulling parameter present",
+			query:   "onlyPulling=",
+			want:    OllamaModelsQuery{OnlyPulling: true},
+			wantErr: false,
+		},
+		{
 			name:    "onlyPulling with value",
 			query:   "onlyPulling=true",
 			want:    OllamaModelsQuery{},

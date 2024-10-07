@@ -4,7 +4,7 @@ import { deleteOllamaModels, getOllamaModels, postOllamaModels } from 'api';
 
 export const useOllamaModels = (onlyPulling?: boolean) => {
   return useQuery({
-    queryKey: ['ollama-models'],
+    queryKey: ['ollama-models', onlyPulling],
     queryFn: () => getOllamaModels(onlyPulling ?? false),
     select: (data) => data.data.models,
   });
@@ -34,4 +34,14 @@ export const useDeleteOllamaModel = () => {
       });
     },
   });
+};
+
+export const useInvalidateOllamaModels = () => {
+  const queryClient = useQueryClient();
+
+  return () => {
+    queryClient.invalidateQueries({
+      queryKey: ['ollama-models'],
+    });
+  };
 };

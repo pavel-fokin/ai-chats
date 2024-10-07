@@ -30,6 +30,11 @@ func (m *MockOllamaApp) AllOllamaModels(ctx context.Context) ([]domain.OllamaMod
 	return args.Get(0).([]domain.OllamaModel), args.Error(1)
 }
 
+func (m *MockOllamaApp) FindOllamaModelsAvailable(ctx context.Context) ([]domain.OllamaModel, error) {
+	args := m.Called(ctx)
+	return args.Get(0).([]domain.OllamaModel), args.Error(1)
+}
+
 func (m *MockOllamaApp) FindOllamaModelsPullingInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
 	args := m.Called(ctx)
 	return args.Get(0).([]domain.OllamaModel), args.Error(1)
@@ -60,7 +65,7 @@ func TestGetOllamaModels(t *testing.T) {
 
 		mockOllamaApp := &MockOllamaApp{}
 		mockOllamaApp.
-			On("AllOllamaModels", mock.MatchedBy(matchChiContext)).
+			On("FindOllamaModelsAvailable", mock.MatchedBy(matchChiContext)).
 			Return(models, nil)
 		mockOllamaApp.
 			On("FindOllamaModelsPullingInProgress", mock.MatchedBy(matchChiContext)).
@@ -82,8 +87,8 @@ func TestGetOllamaModels(t *testing.T) {
 
 		mockOllamaApp := &MockOllamaApp{}
 		mockOllamaApp.
-			On("AllOllamaModels", mock.MatchedBy(matchChiContext)).
-			Return(nil, assert.AnError)
+			On("FindOllamaModelsAvailable", mock.MatchedBy(matchChiContext)).
+			Return([]domain.OllamaModel{}, assert.AnError)
 		mockOllamaApp.
 			On("FindOllamaModelsPullingInProgress", mock.MatchedBy(matchChiContext)).
 			Return([]domain.OllamaModel{}, assert.AnError)
@@ -104,7 +109,7 @@ func TestGetOllamaModels(t *testing.T) {
 
 		mockOllamaApp := &MockOllamaApp{}
 		mockOllamaApp.
-			On("AllOllamaModels", mock.MatchedBy(matchChiContext)).
+			On("FindOllamaModelsAvailable", mock.MatchedBy(matchChiContext)).
 			Return([]domain.OllamaModel{}, assert.AnError)
 		mockOllamaApp.
 			On("FindOllamaModelsPullingInProgress", mock.MatchedBy(matchChiContext)).
@@ -127,7 +132,9 @@ func TestGetOllamaModels(t *testing.T) {
 		mockOllamaApp := &MockOllamaApp{}
 		mockOllamaApp.
 			On("FindOllamaModelsPullingInProgress", mock.MatchedBy(matchChiContext)).
-			Return([]domain.OllamaModel{}, nil)
+			Return([]domain.OllamaModel{
+				domain.NewOllamaModel("model1", "description1"),
+			}, nil)
 
 		router := chi.NewRouter()
 		router.Get("/api/ollama/models", GetOllamaModels(mockOllamaApp))
