@@ -38,11 +38,11 @@ func GetChats(app Chats) http.HandlerFunc {
 		chats, err := app.AllChats(ctx, userID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get chats", "userID", userID, "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 
-		AsSuccessResponse(w, NewGetChatsResponse(chats), http.StatusOK)
+		WriteSuccessResponse(w, http.StatusOK, NewGetChatsResponse(chats))
 	}
 }
 
@@ -59,7 +59,7 @@ func PostChats(app Chats) http.HandlerFunc {
 			var req PostChatsRequest
 			if err := ParseJSON(r, &req); err != nil {
 				slog.ErrorContext(ctx, "failed to parse the request", "err", err)
-				AsErrorResponse(w, ErrBadRequest, http.StatusBadRequest)
+				WriteErrorResponse(w, http.StatusBadRequest, BadRequest)
 				return
 			}
 			defaultModel = req.DefaultModel
@@ -69,11 +69,11 @@ func PostChats(app Chats) http.HandlerFunc {
 		chat, err := app.CreateChat(ctx, userID, defaultModel, message)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create a chat", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 
-		AsSuccessResponse(w, NewPostChatsResponse(chat), http.StatusOK)
+		WriteSuccessResponse(w, http.StatusOK, NewPostChatsResponse(chat))
 	}
 }
 
@@ -87,11 +87,11 @@ func GetChat(app Chats) http.HandlerFunc {
 		chat, err := app.FindChatByID(ctx, uuid.MustParse(chatID))
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get a chat", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 
-		AsSuccessResponse(w, NewGetChatResponse(chat), http.StatusOK)
+		WriteSuccessResponse(w, http.StatusOK, NewGetChatResponse(chat))
 	}
 }
 
@@ -106,15 +106,15 @@ func DeleteChat(app Chats) http.HandlerFunc {
 			switch err {
 			case domain.ErrChatNotFound:
 				slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
-				AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
+				WriteErrorResponse(w, http.StatusNotFound, NotFound)
 			default:
 				slog.ErrorContext(ctx, "failed to delete a chat", "err", err)
-				AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			}
 			return
 		}
 
-		AsSuccessResponse(w, nil, http.StatusNoContent)
+		WriteSuccessResponse(w, http.StatusNoContent, nil)
 	}
 }
 
@@ -130,15 +130,15 @@ func GetMessages(app Chats) http.HandlerFunc {
 			switch err {
 			case domain.ErrChatNotFound:
 				slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
-				AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
+				WriteErrorResponse(w, http.StatusNotFound, NotFound)
 			default:
 				slog.ErrorContext(ctx, "failed to get messages", "err", err)
-				AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			}
 			return
 		}
 
-		AsSuccessResponse(w, NewGetMessagesResponse(messages), http.StatusOK)
+		WriteSuccessResponse(w, http.StatusOK, NewGetMessagesResponse(messages))
 	}
 }
 
@@ -153,18 +153,18 @@ func PostMessages(app Chats) http.HandlerFunc {
 		var req PostMessagesRequest
 		if err := ParseJSON(r, &req); err != nil {
 			slog.ErrorContext(ctx, "failed to parse the request", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusBadRequest)
+			WriteErrorResponse(w, http.StatusBadRequest, BadRequest)
 			return
 		}
 
 		_, err := app.SendMessage(ctx, userID, uuid.MustParse(chatID), req.Text)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to send a message", "chatID", chatID, "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 
-		AsSuccessResponse(w, nil, http.StatusNoContent)
+		WriteSuccessResponse(w, http.StatusNoContent, nil)
 	}
 }
 
@@ -178,11 +178,11 @@ func PostGenerateChatTitle(app Chats) http.HandlerFunc {
 		err := app.GenerateChatTitleAsync(ctx, uuid.MustParse(chatID))
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to generate a chat title", "chatID", chatID, "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 
-		AsSuccessResponse(w, nil, http.StatusNoContent)
+		WriteSuccessResponse(w, http.StatusNoContent, nil)
 	}
 }
 
@@ -196,12 +196,12 @@ func GetChatEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.H
 		chatExists, err := app.ChatExists(ctx, uuid.MustParse(chatID))
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to check if the chat exists", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 		if !chatExists {
 			slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
-			AsErrorResponse(w, ErrNotFound, http.StatusNotFound)
+			WriteErrorResponse(w, http.StatusNotFound, NotFound)
 			return
 		}
 
@@ -211,7 +211,7 @@ func GetChatEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.H
 		events, err := subscriber.Subscribe(ctx, chatID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 		defer subscriber.Unsubscribe(ctx, chatID, events)

@@ -67,18 +67,18 @@ func PostOllamaModels(app Ollama) http.HandlerFunc {
 		var req PostOllamaModelsRequest
 		if err := ParseJSON(r, &req); err != nil {
 			slog.ErrorContext(ctx, "failed to parse the request", "err", err)
-			AsErrorResponse(w, ErrBadRequest, http.StatusBadRequest)
+			WriteErrorResponse(w, http.StatusBadRequest, BadRequest)
 			return
 		}
 
 		err := app.PullOllamaModelAsync(ctx, req.Model)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to pull ollama model", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 
-		AsSuccessResponse(w, nil, http.StatusNoContent)
+		WriteSuccessResponse(w, http.StatusNoContent, nil)
 	}
 }
 
@@ -92,11 +92,11 @@ func DeleteOllamaModel(app Ollama) http.HandlerFunc {
 		err := app.DeleteOllamaModel(ctx, model)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to delete ollama model", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 
-		AsSuccessResponse(w, nil, http.StatusNoContent)
+		WriteSuccessResponse(w, http.StatusNoContent, nil)
 	}
 }
 
@@ -117,7 +117,7 @@ func GetOllamaModelPullingEvents(app Ollama, sse *SSEConnections, subscriber Sub
 		events, err := subscriber.Subscribe(ctx, model)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 		defer subscriber.Unsubscribe(ctx, model, events)

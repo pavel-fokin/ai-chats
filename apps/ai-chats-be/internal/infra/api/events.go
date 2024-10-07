@@ -18,7 +18,7 @@ func GetAppEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.Ha
 		events, err := subscriber.Subscribe(ctx, userID.String())
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
-			AsErrorResponse(w, ErrInternal, http.StatusInternalServerError)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}
 		defer subscriber.Unsubscribe(ctx, userID.String(), events)

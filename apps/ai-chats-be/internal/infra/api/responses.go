@@ -131,38 +131,6 @@ func NewGetOllamaModelsResponse(models []domain.OllamaModel) GetOllamaModelsResp
 	return GetOllamaModelsResponse{Models: models}
 }
 
-// AsErrorResponse.
-func AsErrorResponse(
-	w http.ResponseWriter, err error, statusCode int,
-) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-
-	res := Response{
-		Errors: []Error{{Message: err.Error()}},
-	}
-
-	json.NewEncoder(w).Encode(res)
-}
-
-func AsSuccessResponse(
-	w http.ResponseWriter, data any, statusCode int,
-) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-
-	if data == nil {
-		if statusCode != http.StatusNoContent {
-			panic("payload is nil")
-		}
-		return
-	}
-
-	res := Response{Data: data}
-
-	json.NewEncoder(w).Encode(res)
-}
-
 // WriteSuccessResponse writes a JSON response.
 func WriteSuccessResponse(w http.ResponseWriter, statusCode int, data any) {
 	w.Header().Set("Content-Type", "application/json")
