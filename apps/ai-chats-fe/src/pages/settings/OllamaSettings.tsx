@@ -2,9 +2,9 @@ import { Box, Flex, Heading, IconButton, TextField } from '@radix-ui/themes';
 
 import { NewChatIconButton } from 'features/chat';
 import { OpenSidebarButton } from 'features/sidebar';
-import { DownloadIcon } from 'shared/components/icons';
-import { Header, PageLayout } from 'shared/components/layout';
-import { usePullOllamaModel } from 'shared/hooks';
+import { DownloadIcon } from 'components/icons';
+import { Header, PageLayout } from 'components/layout';
+import { usePullOllamaModel } from 'hooks';
 
 import { OllamaStatus, OllamaModelsList } from './components';
 

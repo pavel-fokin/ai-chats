@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import { DropdownMenu, Flex } from '@radix-ui/themes';
 
-import { useGenerateChatTitle } from 'shared/hooks';
-import { AIActionIcon, DeleteIcon } from 'shared/components/icons';
+import { useGenerateChatTitle } from 'hooks';
+import { AIActionIcon, DeleteIcon } from 'components/icons';
 
 import { DeleteChatDialog } from './DeleteChatDialog';
 import { useChatMenu } from './ChatMenyContext';

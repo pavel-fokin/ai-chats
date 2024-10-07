@@ -1,8 +1,8 @@
 import { ChatMenu, ChatMenuProvider, NewChatIconButton } from 'features/chat';
 import { OpenSidebarButton } from 'features/sidebar';
-import { OnlyDesktop, OnlyMobile } from 'shared/components';
-import { useChat } from 'shared/hooks';
-import { Header } from 'shared/components/layout';
+import { OnlyDesktop, OnlyMobile } from 'components';
+import { useChat } from 'hooks';
+import { Header } from 'components/layout';
 
 import { ChatTitleMenuButton } from './ChatTitleMenuButton';
 import { MenuButton } from './MenuButton';

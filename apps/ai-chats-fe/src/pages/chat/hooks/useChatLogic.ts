@@ -1,5 +1,5 @@
 import { useChatEvents } from 'features/chat';
-import { useMessages, useSendMessage } from 'shared/hooks';
+import { useMessages, useSendMessage } from 'hooks';
 
 export const useChatLogic = (chatId: string) => {
   useChatEvents(chatId);

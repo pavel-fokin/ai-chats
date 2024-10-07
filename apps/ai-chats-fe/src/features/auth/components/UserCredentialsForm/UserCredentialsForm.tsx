@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { Flex, Text, TextField } from '@radix-ui/themes';
 
-import { Button } from 'shared/components';
+import { Button } from 'components';
 
 const UserCredentialsSchema = z.object({
   username: z.string().min(1, 'Username is required'),

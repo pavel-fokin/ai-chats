@@ -1,6 +1,6 @@
 import { useSidebarContext } from 'features/sidebar';
-import { IconButton } from 'shared/components';
-import { CloseIcon } from 'shared/components/icons';
+import { IconButton } from 'components';
+import { CloseIcon } from 'components/icons';
 
 import styles from './CloseSidebarButton.module.css';
 

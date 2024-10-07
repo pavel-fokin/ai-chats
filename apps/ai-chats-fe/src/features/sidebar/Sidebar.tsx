@@ -1,7 +1,7 @@
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { Flex, Text } from '@radix-ui/themes';
 
-import { SettingsIcon } from 'shared/components/icons';
+import { SettingsIcon } from 'components/icons';
 
 import {
   Link,

@@ -2,7 +2,7 @@ import { DropdownMenu } from '@radix-ui/themes';
 
 import { useChatMenu } from 'features/chat';
 
-import { Button } from 'shared/components';
+import { Button } from 'components';
 
 interface ChatTitleButtonProps {
   title: string;

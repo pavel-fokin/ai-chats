@@ -1,6 +1,6 @@
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 
-import { useChats } from 'shared/hooks';
+import { useChats } from 'hooks';
 
 import { Link } from '../Link';
 

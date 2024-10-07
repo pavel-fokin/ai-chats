@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { useInvalidateMessages } from 'shared/hooks';
+import { useInvalidateMessages } from 'hooks';
 import { EventTypes } from 'types';
 
 import { useChatContext } from '../contexts/ChatContext';

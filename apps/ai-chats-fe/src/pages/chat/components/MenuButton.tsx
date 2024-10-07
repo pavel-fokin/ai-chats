@@ -1,5 +1,5 @@
-import { IconButton } from 'shared/components';
-import { MenuIcon } from 'shared/components/icons';
+import { IconButton } from 'components';
+import { MenuIcon } from 'components/icons';
 
 export const MenuButton = () => {
   return (

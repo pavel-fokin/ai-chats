@@ -1,4 +1,4 @@
-import { useOllamaModels } from 'shared/hooks';
+import { useOllamaModels } from 'hooks';
 
 import { OllamaModelAvailable } from './OllamaModelAvailable';
 import { OllamaModelPulling } from './OllamaModelPulling';

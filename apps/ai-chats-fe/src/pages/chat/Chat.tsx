@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 
 import { InputMessage } from 'features/chat';
-import { PageLayout, Main } from 'shared/components/layout';
+import { PageLayout, Main } from 'components/layout';
 
 import { ChatHeader, MessageChunk, MessagesList } from './components';
 import { useChatLogic } from './hooks/useChatLogic';

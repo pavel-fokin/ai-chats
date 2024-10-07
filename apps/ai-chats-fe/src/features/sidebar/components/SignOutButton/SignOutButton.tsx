@@ -1,6 +1,6 @@
 import { useSignOut } from 'features/auth';
 
-import { SignOutIcon } from 'shared/components/icons';
+import { SignOutIcon } from 'components/icons';
 
 import styles from './SignOutButton.module.css';
 

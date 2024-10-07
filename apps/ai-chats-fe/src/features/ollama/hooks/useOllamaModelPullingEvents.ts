@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useInvalidateOllamaModels } from 'shared/hooks';
+import { useInvalidateOllamaModels } from 'hooks';
 
 import { EventTypes, OllamaModel } from 'types';
 
