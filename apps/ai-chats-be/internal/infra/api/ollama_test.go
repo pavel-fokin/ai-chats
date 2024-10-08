@@ -30,6 +30,11 @@ func (m *MockOllamaApp) AllOllamaModels(ctx context.Context) ([]domain.OllamaMod
 	return args.Get(0).([]domain.OllamaModel), args.Error(1)
 }
 
+func (m *MockOllamaApp) FindOllamaModels(ctx context.Context, filter domain.OllamaModelsFilter) ([]domain.OllamaModel, error) {
+	args := m.Called(ctx, filter)
+	return args.Get(0).([]domain.OllamaModel), args.Error(1)
+}
+
 func (m *MockOllamaApp) FindOllamaModelsAvailable(ctx context.Context) ([]domain.OllamaModel, error) {
 	args := m.Called(ctx)
 	return args.Get(0).([]domain.OllamaModel), args.Error(1)
@@ -65,10 +70,11 @@ func TestGetOllamaModels(t *testing.T) {
 
 		mockOllamaApp := &MockOllamaApp{}
 		mockOllamaApp.
-			On("FindOllamaModelsAvailable", mock.MatchedBy(matchChiContext)).
-			Return(models, nil)
-		mockOllamaApp.
-			On("FindOllamaModelsPullingInProgress", mock.MatchedBy(matchChiContext)).
+			On(
+				"FindOllamaModels",
+				mock.MatchedBy(matchChiContext),
+				domain.OllamaModelsFilter{Status: domain.OllamaModelStatusAny},
+			).
 			Return(models, nil)
 
 		router := chi.NewRouter()
@@ -87,10 +93,11 @@ func TestGetOllamaModels(t *testing.T) {
 
 		mockOllamaApp := &MockOllamaApp{}
 		mockOllamaApp.
-			On("FindOllamaModelsAvailable", mock.MatchedBy(matchChiContext)).
-			Return([]domain.OllamaModel{}, assert.AnError)
-		mockOllamaApp.
-			On("FindOllamaModelsPullingInProgress", mock.MatchedBy(matchChiContext)).
+			On(
+				"FindOllamaModels",
+				mock.MatchedBy(matchChiContext),
+				domain.OllamaModelsFilter{Status: domain.OllamaModelStatusAny},
+			).
 			Return([]domain.OllamaModel{}, assert.AnError)
 
 		router := chi.NewRouter()
@@ -103,16 +110,17 @@ func TestGetOllamaModels(t *testing.T) {
 	})
 
 	t.Run("invalid query", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "/api/ollama/models?onlyPulling=invalid", nil)
+		req, _ := http.NewRequest("GET", "/api/ollama/models?status=invalid", nil)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		mockOllamaApp := &MockOllamaApp{}
 		mockOllamaApp.
-			On("FindOllamaModelsAvailable", mock.MatchedBy(matchChiContext)).
-			Return([]domain.OllamaModel{}, assert.AnError)
-		mockOllamaApp.
-			On("FindOllamaModelsPullingInProgress", mock.MatchedBy(matchChiContext)).
+			On(
+				"FindOllamaModels",
+				mock.MatchedBy(matchChiContext),
+				domain.OllamaModelsFilter{Status: domain.OllamaModelStatusAny},
+			).
 			Return([]domain.OllamaModel{}, assert.AnError)
 
 		router := chi.NewRouter()
@@ -124,14 +132,18 @@ func TestGetOllamaModels(t *testing.T) {
 		assert.Equal(t, 400, resp.StatusCode)
 	})
 
-	t.Run("onlyPulling", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "/api/ollama/models?onlyPulling", nil)
+	t.Run("status=pulling", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/ollama/models?status=pulling", nil)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		mockOllamaApp := &MockOllamaApp{}
 		mockOllamaApp.
-			On("FindOllamaModelsPullingInProgress", mock.MatchedBy(matchChiContext)).
+			On(
+				"FindOllamaModels",
+				mock.MatchedBy(matchChiContext),
+				domain.OllamaModelsFilter{Status: domain.OllamaModelStatusPulling},
+			).
 			Return([]domain.OllamaModel{
 				domain.NewOllamaModel("model1", "description1"),
 			}, nil)

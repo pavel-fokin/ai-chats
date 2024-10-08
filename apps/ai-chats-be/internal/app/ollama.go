@@ -9,6 +9,78 @@ import (
 	"ai-chats/internal/infra/worker"
 )
 
+// FindOllamaModels retrieves Ollama models based on the provided filter.
+func (a *App) FindOllamaModels(ctx context.Context, filter domain.OllamaModelsFilter) ([]domain.OllamaModel, error) {
+	if filter.Status == domain.OllamaModelStatusPulling {
+		return a.findPullingOllamaModels(ctx)
+	}
+
+	if filter.Status == domain.OllamaModelStatusAvailable {
+		return a.findAvailableOllamaModels(ctx)
+	}
+
+	// Find ollama models with any status.
+	var ollamaModels []domain.OllamaModel
+
+	pullingOllamaModels, err := a.findPullingOllamaModels(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get ollama models with pulling in progress: %w", err)
+	}
+
+	availableOllamaModels, err := a.findAvailableOllamaModels(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get ollama models available: %w", err)
+	}
+
+	ollamaModels = append(ollamaModels, pullingOllamaModels...)
+	ollamaModels = append(ollamaModels, availableOllamaModels...)
+
+	return ollamaModels, nil
+}
+
+func (a *App) findPullingOllamaModels(ctx context.Context) ([]domain.OllamaModel, error) {
+	var ollamaModels []domain.OllamaModel
+
+	ollamaModelsPullingInProgress, err := a.ollamaModels.FindOllamaModelsPullingInProgress(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get ollama models with pulling in progress: %w", err)
+	}
+
+	for _, ollamaModel := range ollamaModelsPullingInProgress {
+		description, err := a.models.FindDescription(ctx, ollamaModel.Name())
+		if err != nil {
+			description = "Description is not available."
+		}
+
+		ollamaModel := domain.NewOllamaModel(ollamaModel.Model, description)
+		ollamaModel.IsPulling = true
+		ollamaModels = append(ollamaModels, ollamaModel)
+	}
+
+	return ollamaModels, nil
+}
+
+func (a *App) findAvailableOllamaModels(ctx context.Context) ([]domain.OllamaModel, error) {
+	var ollamaModels []domain.OllamaModel
+
+	ollamaClientModels, err := a.ollamaClient.List(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to request ollama models from client: %w", err)
+	}
+
+	for _, ollamaClientModel := range ollamaClientModels {
+		description, err := a.models.FindDescription(ctx, ollamaClientModel.Name())
+		if err != nil {
+			description = "Description is not available."
+		}
+
+		ollamaModel := domain.NewOllamaModel(ollamaClientModel.Model, description)
+		ollamaModels = append(ollamaModels, ollamaModel)
+	}
+
+	return ollamaModels, nil
+}
+
 // FindOllamaModelsPullingInProgress returns all Ollama models with pulling in progress.
 func (a *App) FindOllamaModelsPullingInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
 	var ollamaModels []domain.OllamaModel

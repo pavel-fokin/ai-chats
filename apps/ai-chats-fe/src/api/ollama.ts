@@ -1,4 +1,4 @@
-import { OllamaModel } from 'types';
+import { OllamaModel, OllamaModelStatus } from 'types';
 
 import { client } from './baseAxios';
 
@@ -9,9 +9,9 @@ type GetOllamaResponse = {
 };
 
 export const getOllamaModels = async (
-  onlyPulling: boolean,
+  status: OllamaModelStatus,
 ): Promise<GetOllamaResponse> => {
-  const params = onlyPulling ? { onlyPulling: '' } : {};
+  const params = status === OllamaModelStatus.ANY ? {} : { status };
   const resp = await client.get<GetOllamaResponse>('/ollama/models', {
     params,
   });

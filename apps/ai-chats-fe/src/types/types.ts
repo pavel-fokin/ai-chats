@@ -29,3 +29,9 @@ export type OllamaModel = {
   description: string;
   isPulling: boolean;
 };
+
+export enum OllamaModelStatus {
+  ANY = 'any',
+  AVAILABLE = 'available',
+  PULLING = 'pulling',
+}

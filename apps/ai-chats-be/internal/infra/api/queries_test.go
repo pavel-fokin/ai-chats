@@ -1,6 +1,7 @@
 package api
 
 import (
+	"ai-chats/internal/domain"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,50 +11,46 @@ func TestParseOllamaModelsQuery(t *testing.T) {
 	tests := []struct {
 		name    string
 		query   string
-		want    OllamaModelsQuery
+		want    domain.OllamaModelsFilter
 		wantErr bool
 	}{
 		{
-			name:    "empty query",
-			query:   "",
-			want:    OllamaModelsQuery{},
-			wantErr: false,
+			name:  "empty query",
+			query: "",
+			want: domain.OllamaModelsFilter{
+				Status: domain.OllamaModelStatusAny,
+			},
 		},
 		{
-			name:    "onlyPulling parameter present",
-			query:   "onlyPulling",
-			want:    OllamaModelsQuery{OnlyPulling: true},
-			wantErr: false,
+			name:  "status=",
+			query: "status=",
+			want: domain.OllamaModelsFilter{
+				Status: domain.OllamaModelStatusAny,
+			},
 		},
 		{
-			name:    "onlyPulling parameter present",
-			query:   "onlyPulling=",
-			want:    OllamaModelsQuery{OnlyPulling: true},
-			wantErr: false,
+			name:  "pulling",
+			query: "status=pulling",
+			want: domain.OllamaModelsFilter{
+				Status: domain.OllamaModelStatusPulling,
+			},
 		},
 		{
-			name:    "onlyPulling with value",
-			query:   "onlyPulling=true",
-			want:    OllamaModelsQuery{},
+			name:  "available",
+			query: "status=available",
+			want: domain.OllamaModelsFilter{
+				Status: domain.OllamaModelStatusAvailable,
+			},
+		},
+		{
+			name:    "invalid status",
+			query:   "status=any",
 			wantErr: true,
 		},
 		{
-			name:    "onlyPulling with false value",
-			query:   "onlyPulling=false",
-			want:    OllamaModelsQuery{},
+			name:    "invalid status",
+			query:   "status=invalid",
 			wantErr: true,
-		},
-		{
-			name:    "other parameter",
-			query:   "other=param",
-			want:    OllamaModelsQuery{},
-			wantErr: false,
-		},
-		{
-			name:    "invalid query string",
-			query:   "invalid=query&string",
-			want:    OllamaModelsQuery{},
-			wantErr: false,
 		},
 	}
 

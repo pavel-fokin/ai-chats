@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -14,6 +13,7 @@ import (
 type Ollama interface {
 	AllOllamaModels(context.Context) ([]domain.OllamaModel, error)
 	DeleteOllamaModel(context.Context, string) error
+	FindOllamaModels(context.Context, domain.OllamaModelsFilter) ([]domain.OllamaModel, error)
 	FindOllamaModelsAvailable(context.Context) ([]domain.OllamaModel, error)
 	FindOllamaModelsPullingInProgress(context.Context) ([]domain.OllamaModel, error)
 	PullOllamaModelAsync(context.Context, string) error
@@ -24,33 +24,16 @@ func GetOllamaModels(app Ollama) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		query, err := ParseOllamaModelsQuery(r.URL.Query().Encode())
+		filter, err := ParseOllamaModelsQuery(r.URL.Query().Encode())
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to parse ollama models query", "err", err)
 			WriteErrorResponse(w, http.StatusBadRequest, BadRequest)
 			return
 		}
 
-		if query.OnlyPulling {
-			models, err := app.FindOllamaModelsPullingInProgress(ctx)
-			fmt.Println(models)
-			if err != nil {
-				slog.ErrorContext(
-					ctx,
-					"failed to get ollama models with pulling in progress",
-					"err", err,
-				)
-				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
-				return
-			}
-
-			WriteSuccessResponse(w, http.StatusOK, NewGetOllamaModelsResponse(models))
-			return
-		}
-
-		models, err := app.FindOllamaModelsAvailable(ctx)
+		models, err := app.FindOllamaModels(ctx, filter)
 		if err != nil {
-			slog.ErrorContext(ctx, "failed to get ollama models", "err", err)
+			slog.ErrorContext(ctx, "failed to find ollama models", "err", err)
 			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 			return
 		}

@@ -1,30 +1,24 @@
 package api
 
 import (
-	"errors"
+	"ai-chats/internal/domain"
+	"fmt"
 	"net/url"
 )
 
-// OllamaModelsQuery represents the query parameters for Ollama models.
-type OllamaModelsQuery struct {
-	OnlyPulling bool
-}
-
-// ParseOllamaModelsQuery parses the query string and returns the OllamaModelsQuery.
-func ParseOllamaModelsQuery(query string) (OllamaModelsQuery, error) {
+// ParseOllamaModelsQuery parses the query string and returns the OllamaModelsFilter.
+func ParseOllamaModelsQuery(query string) (domain.OllamaModelsFilter, error) {
 	values, err := url.ParseQuery(query)
 	if err != nil {
-		return OllamaModelsQuery{}, err
+		return domain.OllamaModelsFilter{}, fmt.Errorf("failed to parse query string: %w", err)
 	}
 
-	if !values.Has("onlyPulling") {
-		return OllamaModelsQuery{}, nil
+	status := values.Get("status")
+
+	filter, err := domain.NewOllamaModelsFilter(status)
+	if err != nil {
+		return domain.OllamaModelsFilter{}, fmt.Errorf("failed to create ollama models filter: %w", err)
 	}
 
-	pulling := values.Get("onlyPulling")
-	if pulling != "" {
-		return OllamaModelsQuery{}, errors.New("invalid value for 'pulling' parameter")
-	}
-
-	return OllamaModelsQuery{OnlyPulling: true}, nil
+	return filter, nil
 }

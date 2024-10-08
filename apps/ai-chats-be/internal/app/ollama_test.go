@@ -108,3 +108,115 @@ func TestAppOllama_ListModels(t *testing.T) {
 		mockOllamaClient.AssertExpectations(t)
 	})
 }
+
+func TestAppOllama_FindOllamaModels(t *testing.T) {
+	ctx := context.Background()
+
+	t.Run("pulling status", func(t *testing.T) {
+		mockOllamaModels := &MockOllamaModels{}
+		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{
+			{
+				Model: "model1",
+			},
+		}, nil)
+		mockModels := &MockModels{}
+		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
+
+		app := &App{
+			models:       mockModels,
+			ollamaModels: mockOllamaModels,
+		}
+
+		filter := domain.OllamaModelsFilter{
+			Status: domain.OllamaModelStatusPulling,
+		}
+
+		models, err := app.FindOllamaModels(ctx, filter)
+		assert.NoError(t, err)
+		assert.Equal(t, []domain.OllamaModel{
+			{
+				Model:       "model1",
+				Description: "description",
+				IsPulling:   true,
+			},
+		}, models)
+		mockOllamaModels.AssertExpectations(t)
+	})
+
+	t.Run("available status", func(t *testing.T) {
+		mockModels := &MockModels{}
+		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
+
+		mockOllamaClient := &MockOllamaClient{}
+		mockOllamaClient.On("List", ctx).Return([]domain.OllamaClientModel{
+			{
+				Model: "model1",
+			},
+		}, nil)
+
+		app := &App{
+			models:       mockModels,
+			ollamaClient: mockOllamaClient,
+		}
+
+		filter := domain.OllamaModelsFilter{
+			Status: domain.OllamaModelStatusAvailable,
+		}
+
+		models, err := app.FindOllamaModels(ctx, filter)
+		assert.NoError(t, err)
+		assert.Equal(t, []domain.OllamaModel{
+			{
+				Model:       "model1",
+				Description: "description",
+				IsPulling:   false,
+			},
+		}, models)
+		mockOllamaClient.AssertExpectations(t)
+	})
+
+	t.Run("any status", func(t *testing.T) {
+		mockModels := &MockModels{}
+		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
+		mockModels.On("FindDescription", ctx, "model2").Return("description", nil)
+		mockOllamaModels := &MockOllamaModels{}
+		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{
+			{
+				Model: "model1",
+			},
+		}, nil)
+
+		mockOllamaClient := &MockOllamaClient{}
+		mockOllamaClient.On("List", ctx).Return([]domain.OllamaClientModel{
+			{
+				Model: "model2",
+			},
+		}, nil)
+
+		app := &App{
+			models:       mockModels,
+			ollamaModels: mockOllamaModels,
+			ollamaClient: mockOllamaClient,
+		}
+
+		filter := domain.OllamaModelsFilter{
+			Status: domain.OllamaModelStatusAny,
+		}
+
+		models, err := app.FindOllamaModels(ctx, filter)
+		assert.NoError(t, err)
+		assert.Equal(t, []domain.OllamaModel{
+			{
+				Model:       "model1",
+				Description: "description",
+				IsPulling:   true,
+			},
+			{
+				Model:       "model2",
+				Description: "description",
+				IsPulling:   false,
+			},
+		}, models)
+		mockOllamaModels.AssertExpectations(t)
+	})
+}
