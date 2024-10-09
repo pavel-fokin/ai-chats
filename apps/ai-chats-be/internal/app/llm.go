@@ -24,7 +24,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 	}
 
 	streamFunc := func(messageChunk events.MessageChunkReceived) error {
-		if err := a.notifyInChat(ctx, chatID.String(), messageChunk); err != nil {
+		if err := a.notifyChat(ctx, chatID.String(), messageChunk); err != nil {
 			return fmt.Errorf("failed to notify in chat: %w", err)
 		}
 		return nil

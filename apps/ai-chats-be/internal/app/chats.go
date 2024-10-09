@@ -78,7 +78,7 @@ func (a *App) DeleteChat(ctx context.Context, chatID domain.ChatID) error {
 
 // ProcessAddedMessage processes a message added event.
 func (a *App) ProcessAddedMessage(ctx context.Context, event events.MessageAdded) error {
-	if err := a.notifyInChat(ctx, event.ChatID.String(), event); err != nil {
+	if err := a.notifyChat(ctx, event.ChatID.String(), event); err != nil {
 		return fmt.Errorf("failed to notify in chat: %w", err)
 	}
 
