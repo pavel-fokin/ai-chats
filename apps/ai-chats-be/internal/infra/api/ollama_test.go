@@ -64,8 +64,8 @@ func TestGetOllamaModels(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		models := []domain.OllamaModel{
-			domain.NewOllamaModel("model1", "description1"),
-			domain.NewOllamaModel("model2", "description2"),
+			domain.NewOllamaModel("model1"),
+			domain.NewOllamaModel("model2"),
 		}
 
 		mockOllamaApp := &MockOllamaApp{}
@@ -145,7 +145,7 @@ func TestGetOllamaModels(t *testing.T) {
 				domain.OllamaModelsFilter{Status: domain.OllamaModelStatusPulling},
 			).
 			Return([]domain.OllamaModel{
-				domain.NewOllamaModel("model1", "description1"),
+				domain.NewOllamaModel("model1"),
 			}, nil)
 
 		router := chi.NewRouter()

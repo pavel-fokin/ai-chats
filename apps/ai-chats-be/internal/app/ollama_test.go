@@ -14,14 +14,14 @@ type MockOllamaClient struct {
 	mock.Mock
 }
 
-func (m *MockOllamaClient) List(ctx context.Context) ([]domain.OllamaClientModel, error) {
+func (m *MockOllamaClient) List(ctx context.Context) ([]domain.OllamaModel, error) {
 	args := m.Called(ctx)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).([]domain.OllamaClientModel), args.Error(1)
+	return args.Get(0).([]domain.OllamaModel), args.Error(1)
 }
 
 func (m *MockOllamaClient) Pull(ctx context.Context, model string, fn domain.PullingStreamFunc) error {
@@ -66,23 +66,22 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("pulling status", func(t *testing.T) {
+		mockModels := &MockModels{}
+		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
 		mockOllamaModels := &MockOllamaModels{}
 		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{
 			{
 				Model: "model1",
 			},
 		}, nil)
-		mockModels := &MockModels{}
-		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
 
 		app := &App{
 			models:       mockModels,
 			ollamaModels: mockOllamaModels,
 		}
 
-		filter := domain.OllamaModelsFilter{
-			Status: domain.OllamaModelStatusPulling,
-		}
+		filter, err := domain.NewOllamaModelsFilter("pulling")
+		assert.NoError(t, err)
 
 		models, err := app.FindOllamaModels(ctx, filter)
 		assert.NoError(t, err)
@@ -99,9 +98,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 	t.Run("available status", func(t *testing.T) {
 		mockModels := &MockModels{}
 		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
-
 		mockOllamaClient := &MockOllamaClient{}
-		mockOllamaClient.On("List", ctx).Return([]domain.OllamaClientModel{
+		mockOllamaClient.On("List", ctx).Return([]domain.OllamaModel{
 			{
 				Model: "model1",
 			},
@@ -112,9 +110,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 			ollamaClient: mockOllamaClient,
 		}
 
-		filter := domain.OllamaModelsFilter{
-			Status: domain.OllamaModelStatusAvailable,
-		}
+		filter, err := domain.NewOllamaModelsFilter("available")
+		assert.NoError(t, err)
 
 		models, err := app.FindOllamaModels(ctx, filter)
 		assert.NoError(t, err)
@@ -140,7 +137,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		}, nil)
 
 		mockOllamaClient := &MockOllamaClient{}
-		mockOllamaClient.On("List", ctx).Return([]domain.OllamaClientModel{
+		mockOllamaClient.On("List", ctx).Return([]domain.OllamaModel{
 			{
 				Model: "model2",
 			},

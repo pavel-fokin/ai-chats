@@ -22,15 +22,15 @@ func NewOllamaClient() *OllamaClient {
 	return &OllamaClient{client: client}
 }
 
-func (o *OllamaClient) List(ctx context.Context) ([]domain.OllamaClientModel, error) {
+func (o *OllamaClient) List(ctx context.Context) ([]domain.OllamaModel, error) {
 	resp, err := o.client.List(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	models := []domain.OllamaClientModel{}
+	models := []domain.OllamaModel{}
 	for _, model := range resp.Models {
-		models = append(models, domain.NewOllamaClientModel(model.Model))
+		models = append(models, domain.NewOllamaModel(model.Model))
 	}
 
 	return models, nil

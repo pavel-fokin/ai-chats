@@ -38,22 +38,33 @@ func (a *App) FindOllamaModels(ctx context.Context, filter domain.OllamaModelsFi
 	return ollamaModels, nil
 }
 
+func (a *App) createOllamaModel(ctx context.Context, model string, isPulling bool) (domain.OllamaModel, error) {
+	description, err := a.models.FindDescription(ctx, model)
+	if err != nil {
+		description = "Description is not available."
+	}
+
+	ollamaModel := domain.NewOllamaModel(model)
+	ollamaModel.Description = description
+	ollamaModel.IsPulling = isPulling
+
+	return ollamaModel, nil
+}
+
 func (a *App) findPullingOllamaModels(ctx context.Context) ([]domain.OllamaModel, error) {
 	var ollamaModels []domain.OllamaModel
 
-	ollamaModelsPullingInProgress, err := a.ollamaModels.FindOllamaModelsPullingInProgress(ctx)
+	pullingOllamaModels, err := a.ollamaModels.FindOllamaModelsPullingInProgress(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get ollama models with pulling in progress: %w", err)
 	}
 
-	for _, ollamaModel := range ollamaModelsPullingInProgress {
-		description, err := a.models.FindDescription(ctx, ollamaModel.Name())
+	for _, ollamaModel := range pullingOllamaModels {
+		ollamaModel, err := a.createOllamaModel(ctx, ollamaModel.Model, true)
 		if err != nil {
-			description = "Description is not available."
+			return nil, fmt.Errorf("failed to create ollama model: %w", err)
 		}
 
-		ollamaModel := domain.NewOllamaModel(ollamaModel.Model, description)
-		ollamaModel.IsPulling = true
 		ollamaModels = append(ollamaModels, ollamaModel)
 	}
 
@@ -63,18 +74,17 @@ func (a *App) findPullingOllamaModels(ctx context.Context) ([]domain.OllamaModel
 func (a *App) findAvailableOllamaModels(ctx context.Context) ([]domain.OllamaModel, error) {
 	var ollamaModels []domain.OllamaModel
 
-	ollamaClientModels, err := a.ollamaClient.List(ctx)
+	availableOllamaModels, err := a.ollamaClient.List(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to request ollama models from client: %w", err)
 	}
 
-	for _, ollamaClientModel := range ollamaClientModels {
-		description, err := a.models.FindDescription(ctx, ollamaClientModel.Name())
+	for _, ollamaModel := range availableOllamaModels {
+		ollamaModel, err := a.createOllamaModel(ctx, ollamaModel.Model, false)
 		if err != nil {
-			description = "Description is not available."
+			return nil, fmt.Errorf("failed to create ollama model: %w", err)
 		}
 
-		ollamaModel := domain.NewOllamaModel(ollamaClientModel.Model, description)
 		ollamaModels = append(ollamaModels, ollamaModel)
 	}
 
@@ -96,7 +106,7 @@ func (a *App) PullOllamaModelAsync(ctx context.Context, model string) error {
 
 // PullOllamaModelJob pulls an Ollama model.
 func (a *App) PullOllamaModel(ctx context.Context, model string) error {
-	ollamaModel := domain.NewOllamaModel(model, "")
+	ollamaModel := domain.NewOllamaModel(model)
 
 	err := a.ollamaModels.AddModelPullingStarted(ctx, ollamaModel.Model)
 	if err != nil {

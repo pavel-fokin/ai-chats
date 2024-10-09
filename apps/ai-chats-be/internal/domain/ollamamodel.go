@@ -18,10 +18,9 @@ type OllamaModel struct {
 	IsPulling   bool   `json:"isPulling"`
 }
 
-func NewOllamaModel(model, description string) OllamaModel {
+func NewOllamaModel(model string) OllamaModel {
 	return OllamaModel{
-		Model:       model,
-		Description: description,
+		Model: model,
 	}
 }
 

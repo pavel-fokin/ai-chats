@@ -52,7 +52,7 @@ func (m *OllamaModels) FindOllamaModelsPullingInProgress(ctx context.Context) ([
 			return nil, err
 		}
 
-		models = append(models, domain.NewOllamaModel(model, ""))
+		models = append(models, domain.NewOllamaModel(model))
 	}
 	if rows.Err() != nil {
 		return nil, rows.Err()
