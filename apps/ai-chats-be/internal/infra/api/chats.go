@@ -220,25 +220,12 @@ func GetChatEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.H
 		w.Header().Set("Cache-Control", "no-cache")
 		w.Header().Set("Connection", "keep-alive")
 
-		// Channel to signal when the handler should exit
-		done := make(chan struct{})
-
-		// Listen for shutdown signal in a separate goroutine
-		go func() {
-			select {
-			case <-ctx.Done():
-				// Client disconnected
-				close(done)
-			case <-conn.Closed:
-				// Server is shutting down
-				close(done)
-			}
-		}()
-
 		flusher := w.(http.Flusher)
 		for {
 			select {
-			case <-done:
+			case <-ctx.Done():
+				return
+			case <-conn.Closed:
 				return
 			case event := <-events:
 				if err := WriteServerSentEvent(w, event); err != nil {
