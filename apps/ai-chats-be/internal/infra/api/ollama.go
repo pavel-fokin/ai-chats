@@ -11,11 +11,8 @@ import (
 )
 
 type Ollama interface {
-	AllOllamaModels(context.Context) ([]domain.OllamaModel, error)
 	DeleteOllamaModel(context.Context, string) error
 	FindOllamaModels(context.Context, domain.OllamaModelsFilter) ([]domain.OllamaModel, error)
-	FindOllamaModelsAvailable(context.Context) ([]domain.OllamaModel, error)
-	FindOllamaModelsPullingInProgress(context.Context) ([]domain.OllamaModel, error)
 	PullOllamaModelAsync(context.Context, string) error
 }
 

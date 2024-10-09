@@ -62,53 +62,6 @@ func (m *MockOllamaModels) AddModelPullingFinished(ctx context.Context, model st
 	return args.Error(0)
 }
 
-func TestAppOllama_ListModels(t *testing.T) {
-	ctx := context.Background()
-
-	t.Run("success", func(t *testing.T) {
-		models := []domain.OllamaClientModel{
-			domain.NewOllamaClientModel("model1:latest"),
-		}
-
-		mockOllamaClient := &MockOllamaClient{}
-		mockOllamaClient.On("List", ctx).Return(models, nil)
-
-		mockModels := &MockModels{}
-		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
-
-		mockOllamaModels := &MockOllamaModels{}
-		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{}, nil)
-		mockOllamaModels.On("AddModelPullingStarted", ctx, "model1").Return(nil)
-		mockOllamaModels.On("AddModelPullingFinished", ctx, "model1", mock.Anything).Return(nil)
-
-		app := &App{
-			models:       mockModels,
-			ollamaClient: mockOllamaClient,
-			ollamaModels: mockOllamaModels,
-		}
-
-		_, err := app.AllOllamaModels(ctx)
-		assert.NoError(t, err)
-		mockOllamaClient.AssertExpectations(t)
-	})
-
-	t.Run("error", func(t *testing.T) {
-		mockOllamaClient := &MockOllamaClient{}
-		mockOllamaClient.On("List", ctx).Return(nil, assert.AnError)
-		mockOllamaModels := &MockOllamaModels{}
-		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{}, nil)
-
-		app := &App{
-			ollamaClient: mockOllamaClient,
-			ollamaModels: mockOllamaModels,
-		}
-
-		_, err := app.AllOllamaModels(ctx)
-		assert.Error(t, err)
-		mockOllamaClient.AssertExpectations(t)
-	})
-}
-
 func TestAppOllama_FindOllamaModels(t *testing.T) {
 	ctx := context.Background()
 
