@@ -6,7 +6,6 @@ import (
 
 	"ai-chats/internal/domain"
 	"ai-chats/internal/domain/events"
-	"ai-chats/internal/infra/worker"
 )
 
 // AllChats returns all chats for the user.
@@ -59,7 +58,7 @@ func (a *App) CreateChat(ctx context.Context, userID domain.UserID, model, text 
 	}
 
 	messageAdded := events.NewMessageAdded(chat.ID, message)
-	if err := a.pubsub.Publish(ctx, worker.MessageAddedTopic, messageAdded); err != nil {
+	if err := a.pubsub.Publish(ctx, MessageAddedTopic, messageAdded); err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to publish a message added event: %w", err)
 	}
 
@@ -119,7 +118,7 @@ func (a *App) SendMessage(
 	}
 
 	messageAdded := events.NewMessageAdded(chatID, message)
-	if err := a.pubsub.Publish(ctx, worker.MessageAddedTopic, messageAdded); err != nil {
+	if err := a.pubsub.Publish(ctx, MessageAddedTopic, messageAdded); err != nil {
 		return domain.Message{}, fmt.Errorf("failed to publish a message added event: %w", err)
 	}
 

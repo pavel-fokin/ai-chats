@@ -6,8 +6,13 @@ import (
 
 	"ai-chats/internal/app/commands"
 	"ai-chats/internal/domain"
-	"ai-chats/internal/infra/worker"
 )
+
+type Ollama interface {
+	Pull(ctx context.Context, model string, streamFunc PullingStreamFunc) error
+	Delete(ctx context.Context, model string) error
+	FindOllamaModels(ctx context.Context, filter domain.OllamaModelsFilter) ([]domain.OllamaModel, error)
+}
 
 // FindOllamaModels retrieves Ollama models based on the provided filter.
 func (a *App) FindOllamaModels(ctx context.Context, filter domain.OllamaModelsFilter) ([]domain.OllamaModel, error) {
@@ -95,7 +100,7 @@ func (a *App) PullOllamaModelAsync(ctx context.Context, model string) error {
 	pullOllamaModelCommand := commands.NewPullOllamaModel(model)
 	if err := a.pubsub.Publish(
 		ctx,
-		worker.PullOllamaModelTopic,
+		PullOllamaModelTopic,
 		pullOllamaModelCommand,
 	); err != nil {
 		return fmt.Errorf("failed to publish pull ollama model command: %w", err)

@@ -6,21 +6,16 @@ import (
 
 	"github.com/google/uuid"
 
+	appPkg "ai-chats/internal/app"
 	"ai-chats/internal/app/commands"
 	"ai-chats/internal/domain/events"
 	"ai-chats/internal/pkg/types"
 )
 
-const (
-	GenerateChatTitleTopic Topic = "generate-chat-title"
-	MessageAddedTopic      Topic = "message-added"
-	PullOllamaModelTopic   Topic = "pull-ollama-model"
-)
-
 func (w *Worker) SetupHandlers(app App) {
-	w.RegisterHandler(GenerateChatTitleTopic, 1, w.GenerateChatTitle(app))
-	w.RegisterHandler(MessageAddedTopic, 1, w.MessageAdded(app))
-	w.RegisterHandler(PullOllamaModelTopic, 1, w.PullOllamaModel(app))
+	w.RegisterHandler(appPkg.GenerateChatTitleTopic, 1, w.GenerateChatTitle(app))
+	w.RegisterHandler(appPkg.MessageAddedTopic, 1, w.MessageAdded(app))
+	w.RegisterHandler(appPkg.PullOllamaModelTopic, 1, w.PullOllamaModel(app))
 }
 
 func (w *Worker) GenerateChatTitle(app App) HandlerFunc {

@@ -8,7 +8,6 @@ import (
 	"ai-chats/internal/domain"
 	"ai-chats/internal/domain/events"
 	"ai-chats/internal/infra/ollama"
-	"ai-chats/internal/infra/worker"
 )
 
 // GenerateResponse generates a LLM response for the chat.
@@ -40,7 +39,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 	}
 
 	messageAdded := events.NewMessageAdded(chatID, llmMessage)
-	if err := a.pubsub.Publish(ctx, worker.MessageAddedTopic, messageAdded); err != nil {
+	if err := a.pubsub.Publish(ctx, MessageAddedTopic, messageAdded); err != nil {
 		return fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
@@ -52,7 +51,7 @@ func (a *App) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) 
 	generateChatTitleCommand := commands.GenerateChatTitle{ChatID: chatID.String()}
 	if err := a.pubsub.Publish(
 		ctx,
-		worker.GenerateChatTitleTopic,
+		GenerateChatTitleTopic,
 		generateChatTitleCommand,
 	); err != nil {
 		return fmt.Errorf("failed to publish a generate chat title command: %w", err)
