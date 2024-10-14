@@ -51,25 +51,3 @@ func NewChatTitleUpdated(chatID domain.ChatID, title string) ChatTitleUpdated {
 func (t ChatTitleUpdated) Type() types.MessageType {
 	return ChatTitleUpdatedType
 }
-
-// MessageChunkReceived represents a message chunk received event.
-type MessageChunkReceived struct {
-	MessageID uuid.UUID `json:"messageId"`
-	Sender    string    `json:"sender"`
-	Text      string    `json:"text"`
-	Final     bool      `json:"done"`
-}
-
-// NewMessageChunkReceived creates a new message chunk received event.
-func NewMessageChunkReceived(messageID uuid.UUID, sender, text string, final bool) MessageChunkReceived {
-	return MessageChunkReceived{
-		MessageID: messageID,
-		Sender:    sender,
-		Text:      text,
-		Final:     final,
-	}
-}
-
-func (m MessageChunkReceived) Type() types.MessageType {
-	return MessageChunkReceivedType
-}

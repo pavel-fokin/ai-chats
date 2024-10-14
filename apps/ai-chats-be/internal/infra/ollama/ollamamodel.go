@@ -7,15 +7,12 @@ import (
 	"github.com/ollama/ollama/api"
 
 	"ai-chats/internal/domain"
-	"ai-chats/internal/domain/events"
 )
 
 type Model struct {
 	client *api.Client
 	model  domain.OllamaModel
 }
-
-type StreamFunc func(messageChunk events.MessageChunkReceived) error
 
 func NewModel(client *api.Client, model domain.OllamaModel) (*Model, error) {
 	return &Model{client: client, model: model}, nil
