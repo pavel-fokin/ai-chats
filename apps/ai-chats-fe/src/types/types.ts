@@ -8,7 +8,8 @@ export type MessageChunk = {
 export enum EventTypes {
   MESSAGE_ADDED = 'messageAdded',
   MESSAGE_CHUNK_RECEIVED = 'messageChunkReceived',
-  OLLAMA_MODEL_PULLING_PROGRESS = 'ollamaModelPullingProgress',
+  CHAT_MESSAGE = 'chatMessage',
+  OLLAMA_MODEL_PULL_PROGRESS = 'ollamaModelPullProgress',
 }
 
 export type Chat = {

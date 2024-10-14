@@ -17,16 +17,13 @@ export function useChatEvents(chatId: string) {
 
   eventHandlers.set(EventTypes.MESSAGE_ADDED, (event) => {
     const messageAdded = JSON.parse(event.data);
-    invalidateMessages(messageAdded.chatId);
     setMessageChunk(null);
+    invalidateMessages(messageAdded.chatId);
   });
 
-  eventHandlers.set(EventTypes.MESSAGE_CHUNK_RECEIVED, (event) => {
-    const messageChunk = JSON.parse(event.data);
-    if (messageChunk.done) {
-      setMessageChunk(null);
-    }
-    setMessageChunk(messageChunk);
+  eventHandlers.set(EventTypes.CHAT_MESSAGE, (event) => {
+    const message = JSON.parse(event.data);
+    setMessageChunk(message);
   });
 
   useEffect(() => {

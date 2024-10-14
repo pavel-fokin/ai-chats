@@ -6,6 +6,7 @@ import (
 
 	"github.com/ollama/ollama/api"
 
+	"ai-chats/internal/app"
 	"ai-chats/internal/domain"
 )
 
@@ -22,10 +23,12 @@ func NewOllamaClient() *OllamaClient {
 	return &OllamaClient{client: client}
 }
 
+// NewModel creates a new model to interact with the given model.
 func (o *OllamaClient) NewModel(model domain.OllamaModel) (domain.Model, error) {
-	return &LLM{client: o.client, model: model}, nil
+	return NewModel(o.client, model)
 }
 
+// List returns the list of available models.
 func (o *OllamaClient) List(ctx context.Context) ([]domain.OllamaModel, error) {
 	resp, err := o.client.List(ctx)
 	if err != nil {
@@ -41,13 +44,13 @@ func (o *OllamaClient) List(ctx context.Context) ([]domain.OllamaModel, error) {
 }
 
 // Pull sends request to the Ollama server to pull a model and streams the progress to the given function.
-func (o *OllamaClient) Pull(ctx context.Context, model string, fn domain.PullingStreamFunc) error {
+func (o *OllamaClient) Pull(ctx context.Context, model string, fn app.PullProgressFunc) error {
 	req := &api.PullRequest{
 		Model: model,
 	}
 
 	progressFunc := func(resp api.ProgressResponse) error {
-		progress := domain.OllamaModelPullingProgress{
+		progress := app.OllamaModelPullProgress{
 			Status:    resp.Status,
 			Total:     resp.Total,
 			Completed: resp.Completed,
@@ -59,6 +62,7 @@ func (o *OllamaClient) Pull(ctx context.Context, model string, fn domain.Pulling
 	return o.client.Pull(ctx, req, progressFunc)
 }
 
+// Delete deletes the given model.
 func (o *OllamaClient) Delete(ctx context.Context, model string) error {
 	req := &api.DeleteRequest{
 		Model: model,

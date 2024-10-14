@@ -16,21 +16,21 @@ type Config struct {
 }
 
 type App struct {
-	config       Config
-	users        domain.Users
-	chats        domain.Chats
-	models       domain.Models
-	ollamaClient domain.OllamaClient
-	ollamaModels domain.OllamaModels
-	pubsub       PubSub
-	tx           Tx
+	config        Config
+	users         domain.Users
+	chats         domain.Chats
+	modelsLibrary domain.ModelsLibrary
+	ollamaClient  OllamaClient
+	ollamaModels  domain.OllamaModels
+	pubsub        PubSub
+	tx            Tx
 }
 
 func New(
 	chats domain.Chats,
 	users domain.Users,
-	models domain.Models,
-	ollamaClient domain.OllamaClient,
+	modelsLibrary domain.ModelsLibrary,
+	ollamaClient OllamaClient,
 	ollamaModels domain.OllamaModels,
 	pubsub PubSub,
 	tx Tx,
@@ -39,12 +39,12 @@ func New(
 		config: Config{
 			HashCost: 14,
 		},
-		chats:        chats,
-		users:        users,
-		models:       models,
-		ollamaClient: ollamaClient,
-		ollamaModels: ollamaModels,
-		pubsub:       pubsub,
-		tx:           tx,
+		chats:         chats,
+		users:         users,
+		modelsLibrary: modelsLibrary,
+		ollamaClient:  ollamaClient,
+		ollamaModels:  ollamaModels,
+		pubsub:        pubsub,
+		tx:            tx,
 	}
 }

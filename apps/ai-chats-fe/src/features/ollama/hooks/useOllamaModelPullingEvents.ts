@@ -19,7 +19,7 @@ export const useOllamaModelPullingEvents = (model: OllamaModel) => {
   const eventSourceRef = useRef<EventSource | null>(null);
   const accessToken = localStorage.getItem('accessToken') || '';
 
-  eventHandlers.set(EventTypes.OLLAMA_MODEL_PULLING_PROGRESS, (event) => {
+  eventHandlers.set(EventTypes.OLLAMA_MODEL_PULL_PROGRESS, (event) => {
     const progress: ProgressEvent = JSON.parse(event.data);
     if (progress.status === 'success') {
       invalidateOllamaModels();

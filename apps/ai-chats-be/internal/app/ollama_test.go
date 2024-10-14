@@ -14,6 +14,11 @@ type MockOllamaClient struct {
 	mock.Mock
 }
 
+func (m *MockOllamaClient) NewModel(model domain.OllamaModel) (domain.Model, error) {
+	args := m.Called(model)
+	return args.Get(0).(domain.Model), args.Error(1)
+}
+
 func (m *MockOllamaClient) List(ctx context.Context) ([]domain.OllamaModel, error) {
 	args := m.Called(ctx)
 
@@ -24,7 +29,7 @@ func (m *MockOllamaClient) List(ctx context.Context) ([]domain.OllamaModel, erro
 	return args.Get(0).([]domain.OllamaModel), args.Error(1)
 }
 
-func (m *MockOllamaClient) Pull(ctx context.Context, model string, fn domain.PullingStreamFunc) error {
+func (m *MockOllamaClient) Pull(ctx context.Context, model string, fn PullProgressFunc) error {
 	args := m.Called(ctx, model, fn)
 	return args.Error(0)
 }
@@ -34,11 +39,11 @@ func (m *MockOllamaClient) Delete(ctx context.Context, model string) error {
 	return args.Error(0)
 }
 
-type MockModels struct {
+type MockModelsLibrary struct {
 	mock.Mock
 }
 
-func (m *MockModels) FindDescription(ctx context.Context, model string) (string, error) {
+func (m *MockModelsLibrary) FindDescription(ctx context.Context, model string) (string, error) {
 	args := m.Called(ctx, model)
 	return args.String(0), args.Error(1)
 }
@@ -66,18 +71,19 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("pulling status", func(t *testing.T) {
-		mockModels := &MockModels{}
-		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
+		mockModelsLibrary := &MockModelsLibrary{}
+		mockModelsLibrary.On("FindDescription", ctx, "model1").Return("description", nil)
 		mockOllamaModels := &MockOllamaModels{}
 		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{
 			{
-				Model: "model1",
+				Model:     "model1",
+				IsPulling: true,
 			},
 		}, nil)
 
 		app := &App{
-			models:       mockModels,
-			ollamaModels: mockOllamaModels,
+			modelsLibrary: mockModelsLibrary,
+			ollamaModels:  mockOllamaModels,
 		}
 
 		filter, err := domain.NewOllamaModelsFilter("pulling")
@@ -96,8 +102,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 	})
 
 	t.Run("available status", func(t *testing.T) {
-		mockModels := &MockModels{}
-		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
+		mockModelsLibrary := &MockModelsLibrary{}
+		mockModelsLibrary.On("FindDescription", ctx, "model1").Return("description", nil)
 		mockOllamaClient := &MockOllamaClient{}
 		mockOllamaClient.On("List", ctx).Return([]domain.OllamaModel{
 			{
@@ -106,8 +112,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		}, nil)
 
 		app := &App{
-			models:       mockModels,
-			ollamaClient: mockOllamaClient,
+			modelsLibrary: mockModelsLibrary,
+			ollamaClient:  mockOllamaClient,
 		}
 
 		filter, err := domain.NewOllamaModelsFilter("available")
@@ -126,27 +132,29 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 	})
 
 	t.Run("any status", func(t *testing.T) {
-		mockModels := &MockModels{}
-		mockModels.On("FindDescription", ctx, "model1").Return("description", nil)
-		mockModels.On("FindDescription", ctx, "model2").Return("description", nil)
+		mockModelsLibrary := &MockModelsLibrary{}
+		mockModelsLibrary.On("FindDescription", ctx, "model1").Return("description", nil)
+		mockModelsLibrary.On("FindDescription", ctx, "model2").Return("description", nil)
 		mockOllamaModels := &MockOllamaModels{}
 		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{
 			{
-				Model: "model1",
+				Model:     "model1",
+				IsPulling: true,
 			},
 		}, nil)
 
 		mockOllamaClient := &MockOllamaClient{}
 		mockOllamaClient.On("List", ctx).Return([]domain.OllamaModel{
 			{
-				Model: "model2",
+				Model:     "model2",
+				IsPulling: false,
 			},
 		}, nil)
 
 		app := &App{
-			models:       mockModels,
-			ollamaModels: mockOllamaModels,
-			ollamaClient: mockOllamaClient,
+			modelsLibrary: mockModelsLibrary,
+			ollamaModels:  mockOllamaModels,
+			ollamaClient:  mockOllamaClient,
 		}
 
 		filter := domain.OllamaModelsFilter{

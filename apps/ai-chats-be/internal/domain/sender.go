@@ -24,6 +24,11 @@ func NewModelSender(modelID ModelID) Sender {
 	return NewSender(fmt.Sprintf("model:%s", modelID))
 }
 
+// NewSystemSender creates a new system sender.
+func NewSystemSender() Sender {
+	return NewSender("system")
+}
+
 // String returns the string representation of the sender.
 func (s Sender) String() string {
 	return s.sender
@@ -65,4 +70,9 @@ func (s Sender) IsUser() bool {
 // IsModel returns true if the sender is a model.
 func (s Sender) IsModel() bool {
 	return strings.HasPrefix(s.sender, "model:")
+}
+
+// IsSystem returns true if the sender is a system.
+func (s Sender) IsSystem() bool {
+	return s.sender == "system"
 }

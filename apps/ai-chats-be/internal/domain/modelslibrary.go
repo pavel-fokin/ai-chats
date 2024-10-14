@@ -2,6 +2,6 @@ package domain
 
 import "context"
 
-type Models interface {
+type ModelsLibrary interface {
 	FindDescription(context.Context, string) (string, error)
 }

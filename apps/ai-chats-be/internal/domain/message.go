@@ -34,10 +34,18 @@ func NewModelMessage(modelID ModelID, text string) Message {
 	)
 }
 
+func NewSystemMessage(text string) Message {
+	return NewMessage(NewSystemSender(), text)
+}
+
 func (m Message) IsFromUser() bool {
 	return m.Sender.IsUser()
 }
 
 func (m Message) IsFromModel() bool {
 	return m.Sender.IsModel()
+}
+
+func (m Message) IsFromSystem() bool {
+	return m.Sender.IsSystem()
 }

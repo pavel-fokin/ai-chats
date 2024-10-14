@@ -8,27 +8,27 @@ import (
 )
 
 const (
-	OllamaModelPullingProgressType types.MessageType = "ollamaModelPullingProgress"
+	OllamaModelPullProgressType types.MessageType = "ollamaModelPullProgress"
 )
 
-// OllamaModelPullingProgress is a message that represents the progress of a model pulling.
-type OllamaModelPullingProgress struct {
+// OllamaModelPullProgress is a message that represents the progress of a model pulling.
+type OllamaModelPullProgress struct {
 	Status    string `json:"status"`
 	Total     int64  `json:"total"`
 	Completed int64  `json:"completed"`
 }
 
-func (p OllamaModelPullingProgress) Type() types.MessageType {
-	return OllamaModelPullingProgressType
+func (p OllamaModelPullProgress) Type() types.MessageType {
+	return OllamaModelPullProgressType
 }
 
-// PullingFunc is a function that streams the progress of a model pulling.
-type PullingFunc func(progress OllamaModelPullingProgress) error
+// PullProgressFunc is a function that streams the progress of a model pulling.
+type PullProgressFunc func(progress OllamaModelPullProgress) error
 
 // OllamaClient is an interface for the Ollama client.
 type OllamaClient interface {
 	NewModel(domain.OllamaModel) (domain.Model, error)
 	List(context.Context) ([]domain.OllamaModel, error)
-	Pull(context.Context, string, PullingFunc) error
+	Pull(context.Context, string, PullProgressFunc) error
 	Delete(context.Context, string) error
 }

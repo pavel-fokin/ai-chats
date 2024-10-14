@@ -29,7 +29,8 @@ func TestOllamaModels_FindOllamaModelsPullingInProgress(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, []domain.OllamaModel{
 			{
-				Model: "model1",
+				Model:     "model1",
+				IsPulling: true,
 			},
 		}, models)
 	})
