@@ -22,6 +22,10 @@ func NewOllamaClient() *OllamaClient {
 	return &OllamaClient{client: client}
 }
 
+func (o *OllamaClient) NewModel(model domain.OllamaModel) (domain.Model, error) {
+	return &LLM{client: o.client, model: model}, nil
+}
+
 func (o *OllamaClient) List(ctx context.Context) ([]domain.OllamaModel, error) {
 	resp, err := o.client.List(ctx)
 	if err != nil {

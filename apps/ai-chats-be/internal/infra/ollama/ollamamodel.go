@@ -26,6 +26,52 @@ func NewOllama(model domain.OllamaModel) (*LLM, error) {
 	return &LLM{client: client, model: model}, nil
 }
 
+func (l *LLM) ID() domain.ModelID {
+	return domain.NewModelID(l.model.String())
+}
+
+func (l *LLM) Chat(ctx context.Context, messages []domain.Message, fn domain.ChatResponseFunc) (domain.Message, error) {
+	apiMessages := []api.Message{}
+	for _, message := range messages {
+		role := ""
+		switch {
+		case message.IsFromModel():
+			role = "assistant"
+		case message.IsFromUser():
+			role = "user"
+		default:
+			return domain.Message{}, fmt.Errorf("unknown sender: %s", message.Sender)
+		}
+		apiMessages = append(apiMessages, api.Message{
+			Role:    role,
+			Content: message.Text,
+		})
+	}
+
+	req := &api.ChatRequest{
+		Model:    l.model.String(),
+		Messages: apiMessages,
+		Stream:   new(bool),
+	}
+
+	modelID := domain.NewModelID(l.model.String())
+	message := domain.NewModelMessage(modelID, "")
+	respFunc := func(resp api.ChatResponse) error {
+		message.Text += resp.Message.Content
+		if err := fn(message); err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	if err := l.client.Chat(ctx, req, respFunc); err != nil {
+		return domain.Message{}, err
+	}
+
+	return message, nil
+}
+
 func (l *LLM) GenerateResponse(ctx context.Context, history []domain.Message) (domain.Message, error) {
 	messages := []api.Message{}
 	for _, message := range history {

@@ -8,12 +8,6 @@ import (
 	"ai-chats/internal/domain"
 )
 
-type Ollama interface {
-	Pull(ctx context.Context, model string, streamFunc PullingStreamFunc) error
-	Delete(ctx context.Context, model string) error
-	FindOllamaModels(ctx context.Context, filter domain.OllamaModelsFilter) ([]domain.OllamaModel, error)
-}
-
 // FindOllamaModels retrieves Ollama models based on the provided filter.
 func (a *App) FindOllamaModels(ctx context.Context, filter domain.OllamaModelsFilter) ([]domain.OllamaModel, error) {
 	if filter.Status == domain.OllamaModelStatusPulling {
