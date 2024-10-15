@@ -49,19 +49,6 @@ func (a *App) findDescription(ctx context.Context, ollamaModel domain.OllamaMode
 	return ollamaModel, nil
 }
 
-// func (a *App) createOllamaModel(ctx context.Context, model string, isPulling bool) (domain.OllamaModel, error) {
-// 	description, err := a.modelsLibrary.FindDescription(ctx, model)
-// 	if err != nil {
-// 		description = "Description is not available."
-// 	}
-
-// 	ollamaModel := domain.NewOllamaModel(model)
-// 	ollamaModel.Description = description
-// 	ollamaModel.IsPulling = isPulling
-
-// 	return ollamaModel, nil
-// }
-
 func (a *App) findPullingOllamaModels(ctx context.Context) ([]domain.OllamaModel, error) {
 	var ollamaModels []domain.OllamaModel
 

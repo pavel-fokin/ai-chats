@@ -14,6 +14,6 @@ test.describe.serial('new user sign up', () => {
         await page.fill('input[name="username"]', username);
         await page.fill('input[name="password"]', password);
         await page.getByRole('button', { name: 'Create an account' }).click();
-        await expect(page).toHaveURL('/app');
+        await expect(page).toHaveURL('/app/new-chat');
     });
 });
