@@ -1,9 +1,8 @@
-package events
+package domain
 
 import (
 	"github.com/google/uuid"
 
-	"ai-chats/internal/domain"
 	"ai-chats/internal/pkg/types"
 )
 
@@ -13,14 +12,14 @@ const (
 	MessageChunkReceivedType types.MessageType = "messageChunkReceived"
 )
 
-// MessageSent represents a message sent event.
+// MessageAdded represents a message sent event.
 type MessageAdded struct {
-	ID      uuid.UUID      `json:"id"`
-	ChatID  domain.ChatID  `json:"chatId"`
-	Message domain.Message `json:"message"`
+	ID      uuid.UUID `json:"id"`
+	ChatID  ChatID    `json:"chatId"`
+	Message Message   `json:"message"`
 }
 
-func NewMessageAdded(chatID uuid.UUID, m domain.Message) MessageAdded {
+func NewMessageAdded(chatID ChatID, m Message) MessageAdded {
 	return MessageAdded{
 		ID:      uuid.New(),
 		ChatID:  chatID,
@@ -39,8 +38,8 @@ type ChatTitleUpdated struct {
 	Title  string    `json:"title"`
 }
 
-// NewTitleGenerated creates a new title generated event.
-func NewChatTitleUpdated(chatID domain.ChatID, title string) ChatTitleUpdated {
+// NewChatTitleUpdated creates a new title generated event.
+func NewChatTitleUpdated(chatID ChatID, title string) ChatTitleUpdated {
 	return ChatTitleUpdated{
 		ID:     uuid.New(),
 		ChatID: chatID,

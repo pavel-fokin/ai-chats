@@ -6,13 +6,12 @@ import (
 	"log/slog"
 
 	"ai-chats/internal/domain"
-	"ai-chats/internal/domain/events"
 	"ai-chats/internal/pkg/types"
 )
 
 type App interface {
 	GenerateTitle(ctx context.Context, chatID domain.ChatID) error
-	ProcessAddedMessage(ctx context.Context, event events.MessageAdded) error
+	ProcessAddedMessage(ctx context.Context, event domain.MessageAdded) error
 	PullOllamaModel(ctx context.Context, model string) error
 }
 

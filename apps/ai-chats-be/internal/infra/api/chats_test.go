@@ -16,7 +16,6 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"ai-chats/internal/domain"
-	"ai-chats/internal/domain/events"
 	"ai-chats/internal/pkg/types"
 )
 
@@ -335,7 +334,7 @@ func TestApiChats_GetEvents(t *testing.T) {
 		router.Get("/api/chats/{uuid}/events", GetChatEvents(app, sse, eventsMock))
 		go router.ServeHTTP(w, req)
 
-		eventsCh <- events.MessageAdded{}
+		eventsCh <- domain.MessageAdded{}
 		time.Sleep(time.Millisecond)
 
 		resp := w.Result()

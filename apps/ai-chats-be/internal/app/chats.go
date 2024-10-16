@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"ai-chats/internal/domain"
-	"ai-chats/internal/domain/events"
 )
 
 // AllChats returns all chats for the user.
@@ -57,7 +56,7 @@ func (a *App) CreateChat(ctx context.Context, userID domain.UserID, model, text 
 		return chat, nil
 	}
 
-	messageAdded := events.NewMessageAdded(chat.ID, message)
+	messageAdded := domain.NewMessageAdded(chat.ID, message)
 	if err := a.pubsub.Publish(ctx, MessageAddedTopic, messageAdded); err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to publish a message added event: %w", err)
 	}
@@ -76,7 +75,7 @@ func (a *App) DeleteChat(ctx context.Context, chatID domain.ChatID) error {
 }
 
 // ProcessAddedMessage processes a message added event.
-func (a *App) ProcessAddedMessage(ctx context.Context, event events.MessageAdded) error {
+func (a *App) ProcessAddedMessage(ctx context.Context, event domain.MessageAdded) error {
 	if err := a.notifyChat(ctx, event.ChatID.String(), event); err != nil {
 		return fmt.Errorf("failed to notify in chat: %w", err)
 	}
@@ -117,7 +116,7 @@ func (a *App) SendMessage(
 		return domain.Message{}, fmt.Errorf("failed to add a message: %w", err)
 	}
 
-	messageAdded := events.NewMessageAdded(chatID, message)
+	messageAdded := domain.NewMessageAdded(chatID, message)
 	if err := a.pubsub.Publish(ctx, MessageAddedTopic, messageAdded); err != nil {
 		return domain.Message{}, fmt.Errorf("failed to publish a message added event: %w", err)
 	}

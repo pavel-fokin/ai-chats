@@ -8,7 +8,7 @@ import (
 
 	appPkg "ai-chats/internal/app"
 	"ai-chats/internal/app/commands"
-	"ai-chats/internal/domain/events"
+	"ai-chats/internal/domain"
 	"ai-chats/internal/pkg/types"
 )
 
@@ -36,7 +36,7 @@ func (w *Worker) GenerateChatTitle(app App) HandlerFunc {
 
 func (w *Worker) MessageAdded(app App) HandlerFunc {
 	return func(ctx context.Context, e types.Message) error {
-		messageAdded, ok := e.(events.MessageAdded)
+		messageAdded, ok := e.(domain.MessageAdded)
 		if !ok {
 			return fmt.Errorf("failed to cast event to messageadded")
 		}

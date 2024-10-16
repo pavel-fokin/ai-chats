@@ -23,7 +23,7 @@ func TestCreateChat(t *testing.T) {
 		"Publish",
 		ctx,
 		mock.AnythingOfType("string"),
-		mock.AnythingOfType("events.MessageAdded"),
+		mock.AnythingOfType("domain.MessageAdded"),
 	).Return(nil)
 
 	mockMessages := &MockMessages{}

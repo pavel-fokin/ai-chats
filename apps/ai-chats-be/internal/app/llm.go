@@ -6,7 +6,6 @@ import (
 
 	"ai-chats/internal/app/commands"
 	"ai-chats/internal/domain"
-	"ai-chats/internal/domain/events"
 	"ai-chats/internal/pkg/types"
 )
 
@@ -46,7 +45,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 		return fmt.Errorf("failed to add a message: %w", err)
 	}
 
-	messageAdded := events.NewMessageAdded(chatID, llmMessage)
+	messageAdded := domain.NewMessageAdded(chatID, llmMessage)
 	if err := a.pubsub.Publish(ctx, MessageAddedTopic, messageAdded); err != nil {
 		return fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
@@ -101,7 +100,7 @@ Use less than 100 characters. Don't use quotes or special characters.`,
 		return fmt.Errorf("failed to update chat title: %w", err)
 	}
 
-	titleUpdated := events.NewChatTitleUpdated(chatID, generatedTitle.Text)
+	titleUpdated := domain.NewChatTitleUpdated(chatID, generatedTitle.Text)
 	if err := a.notifyApp(ctx, chat.User.ID, titleUpdated); err != nil {
 		return fmt.Errorf("failed to publish a title updated event: %w", err)
 	}
