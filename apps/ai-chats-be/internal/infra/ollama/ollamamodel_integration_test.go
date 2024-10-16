@@ -1,47 +1,53 @@
-//go:build integration
-
 package ollama
 
 import (
 	"ai-chats/internal/domain"
-	"ai-chats/internal/domain/events"
 	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestOllamaGenerateResponse(t *testing.T) {
-	user := domain.NewUser("username", "password")
+func TestOllamaModel_Chat(t *testing.T) {
+	t.Parallel()
+	ollamaClient := NewOllamaClient()
 
-	llm, err := NewOllama(domain.NewOllamaModel("llama3"))
-	assert.NoError(t, err)
+	t.Run("ollama chat", func(t *testing.T) {
+		modelName := "smollm:135m"
 
-	llmResponse, err := llm.GenerateResponse(context.Background(), []domain.Message{
-		{Sender: domain.NewUserSender(user), Text: "Hi"},
+		llm, err := ollamaClient.NewModel(domain.NewOllamaModel(modelName))
+		assert.NoError(t, err)
+
+		llmMessage, err := llm.Chat(
+			context.Background(),
+			[]domain.Message{
+				{Sender: domain.NewUserSender(domain.NewUserID()), Text: "Hi"},
+			},
+			func(msg domain.Message) error {
+				return nil
+			},
+		)
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, llmMessage.Text)
 	})
-	assert.NoError(t, err)
-	assert.NotEmpty(t, llmResponse.Text)
-}
 
-func TestOllamaGenerateResponseWithStream(t *testing.T) {
-	user := domain.NewUser("username", "password")
+	t.Run("model not found", func(t *testing.T) {
+		modelName := "model-not-found"
+		llm, err := ollamaClient.NewModel(domain.NewOllamaModel(modelName))
+		assert.NoError(t, err)
 
-	llm, err := NewOllama(domain.NewOllamaModel("llama3"))
-	assert.NoError(t, err)
+		llmMessage, err := llm.Chat(
+			context.Background(),
+			[]domain.Message{
+				{Sender: domain.NewUserSender(domain.NewUserID()), Text: "Hi"},
+			},
+			func(msg domain.Message) error {
+				return nil
+			},
+		)
 
-	messageChunkReceived := events.MessageChunkReceived{}
-	llmResponse, err := llm.GenerateResponseWithStream(
-		context.Background(),
-		[]domain.Message{
-			{Sender: domain.NewUserSender(user), Text: "Hi"},
-		},
-		func(messageChunk events.MessageChunkReceived) error {
-			messageChunkReceived = messageChunk
-			return nil
-		},
-	)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, llmResponse.Text)
-	assert.True(t, messageChunkReceived.Final)
+		assert.Error(t, err)
+		assert.Empty(t, llmMessage.Text)
+	})
 }

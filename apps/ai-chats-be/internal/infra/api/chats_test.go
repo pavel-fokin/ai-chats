@@ -1,5 +1,3 @@
-//go:build !race
-
 package api
 
 import (
@@ -20,7 +18,6 @@ import (
 	"ai-chats/internal/domain"
 	"ai-chats/internal/domain/events"
 	"ai-chats/internal/pkg/types"
-	// "ai-chats/internal/server"
 )
 
 func matchChiContext(ctx context.Context) bool {

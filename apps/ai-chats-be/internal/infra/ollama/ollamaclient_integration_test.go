@@ -3,7 +3,7 @@
 package ollama
 
 import (
-	"ai-chats/internal/domain"
+	"ai-chats/internal/app"
 	"context"
 	"testing"
 
@@ -11,10 +11,12 @@ import (
 )
 
 func TestOllamaModels(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	assert := assert.New(t)
 
-	ollama := NewOllamaModels()
+	ollama := NewOllamaClient()
+	modelName := "all-minilm"
 
 	t.Run("list", func(t *testing.T) {
 		_, err := ollama.List(ctx)
@@ -22,7 +24,9 @@ func TestOllamaModels(t *testing.T) {
 	})
 
 	t.Run("pull", func(t *testing.T) {
-		err := ollama.Pull(ctx, domain.NewOllamaModel("all-minilm"))
+		err := ollama.Pull(ctx, modelName, func(progress app.OllamaModelPullProgress) error {
+			return nil
+		})
 		assert.NoError(err)
 	})
 
@@ -43,7 +47,7 @@ func TestOllamaModels(t *testing.T) {
 	})
 
 	t.Run("delete", func(t *testing.T) {
-		err := ollama.Delete(ctx, domain.NewOllamaModel("all-minilm"))
+		err := ollama.Delete(ctx, modelName)
 		assert.NoError(err)
 	})
 }
