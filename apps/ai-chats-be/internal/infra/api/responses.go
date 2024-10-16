@@ -15,14 +15,14 @@ import (
 type Chat struct {
 	ID        string `json:"id"`
 	Title     string `json:"title"`
-	CreatedAt string `json:"created_at"`
+	CreatedAt string `json:"createdAt"`
 }
 
 type Message struct {
 	ID        string `json:"id"`
 	Sender    string `json:"sender"`
 	Text      string `json:"text"`
-	CreatedAt string `json:"created_at"`
+	CreatedAt string `json:"createdAt"`
 }
 
 type Error struct {

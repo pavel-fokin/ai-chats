@@ -40,7 +40,7 @@ export const InputMessage = ({
       />
       <Tooltip content="Send a message" side="top">
         <IconButton
-          aria-label="Send a message button"
+          aria-label="Send a message"
           size="3"
           onClick={handleSendMessage}
           highContrast

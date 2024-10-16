@@ -50,9 +50,9 @@ test.describe('user sign up', () => {
         page.getByRole('heading', { name: 'New chat' })
       ).toBeVisible();
       await page.fill('textarea', 'Hello, world!');
-      await page.getByRole('button', { name: /Send a message/, exact: true }).click();
-      await expect(page.getByText(/Hello, world!/)).toBeVisible();
-      await expect(page.getByText(/Model/)).toBeVisible();
+      await page.getByRole('button', { name: 'Send a message', exact: true }).click();
+      await expect(page.getByText('Hello, world!')).toBeVisible();
+      await expect(page.getByText('Model')).toBeVisible();
     });
   });
 

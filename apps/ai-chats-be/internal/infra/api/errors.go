@@ -1,15 +1,5 @@
 package api
 
-import (
-	"errors"
-)
-
-var (
-	ErrInternal   = errors.New("internal error")
-	ErrNotFound   = errors.New("not found")
-	ErrBadRequest = errors.New("bad request")
-)
-
 var (
 	NotFound = Error{
 		Message: "Not found.",
