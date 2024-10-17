@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"ai-chats/internal/pkg/types"
 	"time"
 
 	"github.com/google/uuid"
@@ -19,7 +20,10 @@ type Chat struct {
 	Messages     []Message `json:"messages"`
 	DefaultModel ModelID   `json:"defaultModel"`
 	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
 	DeletedAt    time.Time `json:"deletedAt"`
+
+	Events []types.Message
 }
 
 func NewChat(user User, modelID ModelID) Chat {
@@ -29,9 +33,18 @@ func NewChat(user User, modelID ModelID) Chat {
 		User:         user,
 		DefaultModel: modelID,
 		CreatedAt:    time.Now().UTC(),
+		UpdatedAt:    time.Now().UTC(),
 	}
 }
 
 func (c *Chat) AddMessage(message Message) {
 	c.Messages = append(c.Messages, message)
+	c.UpdatedAt = time.Now().UTC()
+	c.Events = append(c.Events, NewMessageAdded(c.ID, message))
+}
+
+func (c *Chat) UpdateTitle(title string) {
+	c.Title = title
+	c.UpdatedAt = time.Now().UTC()
+	c.Events = append(c.Events, NewChatTitleUpdated(c.ID, title))
 }

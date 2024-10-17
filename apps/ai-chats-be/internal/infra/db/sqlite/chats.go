@@ -16,6 +16,8 @@ type Chats struct {
 	DB
 }
 
+var _ domain.Chats = (*Chats)(nil)
+
 func NewChats(db *sql.DB) *Chats {
 	return &Chats{DB{db: db}}
 }
@@ -23,16 +25,71 @@ func NewChats(db *sql.DB) *Chats {
 func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 	_, err := c.DBTX(ctx).Exec(
 		`INSERT INTO chat
-		(id, title, user_id, default_model_id, created_at)
-		VALUES (?, ?, ?, ?, ?)`,
+		(id, title, user_id, default_model_id, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, ?)`,
 		chat.ID,
 		chat.Title,
 		chat.User.ID,
 		chat.DefaultModel.String(),
 		chat.CreatedAt.Format(time.RFC3339Nano),
+		chat.UpdatedAt.Format(time.RFC3339Nano),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to insert chat: %w", err)
+	}
+
+	for _, message := range chat.Messages {
+		if err := c.AddMessage(ctx, chat.ID, message); err != nil {
+			return fmt.Errorf("failed to add message: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (c *Chats) Update(ctx context.Context, chat domain.Chat) error {
+	tx := NewTx(c.DB.db)
+
+	if err := tx.Tx(ctx, func(ctx context.Context) error {
+		result, err := c.DBTX(ctx).ExecContext(
+			ctx,
+			`UPDATE chat
+			SET updated_at = ?
+			WHERE id = ? AND deleted_at IS NULL`,
+			chat.UpdatedAt.Format(time.RFC3339Nano),
+			chat.ID,
+		)
+		if err != nil {
+			return fmt.Errorf("failed to update chat: %w", err)
+		}
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			return fmt.Errorf("failed to get rows affected: %w", err)
+		}
+		if rowsAffected == 0 {
+			return domain.ErrChatNotFound
+		}
+
+		for _, event := range chat.Events {
+			switch event.Type() {
+			case domain.MessageAddedType:
+				messageAdded := event.(domain.MessageAdded)
+				if err := c.AddMessage(ctx, chat.ID, messageAdded.Message); err != nil {
+					return fmt.Errorf("failed to add message: %w", err)
+				}
+			case domain.ChatTitleUpdatedType:
+				chatTitleUpdated := event.(domain.ChatTitleUpdated)
+				if err := c.UpdateTitle(ctx, chat.ID, chatTitleUpdated.Title); err != nil {
+					return fmt.Errorf("failed to update chat title: %w", err)
+				}
+			default:
+				return fmt.Errorf("unknown event type: %s", event.Type())
+			}
+		}
+		return nil
+	}); err != nil {
+		return fmt.Errorf("failed to update chat: %w", err)
 	}
 
 	return nil

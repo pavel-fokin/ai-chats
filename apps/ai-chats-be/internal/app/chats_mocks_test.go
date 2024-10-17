@@ -18,6 +18,11 @@ func (m *MockChats) Add(ctx context.Context, chat domain.Chat) error {
 	return args.Error(0)
 }
 
+func (m *MockChats) Update(ctx context.Context, chat domain.Chat) error {
+	args := m.Called(ctx, chat)
+	return args.Error(0)
+}
+
 func (m *MockChats) AddMessage(ctx context.Context, chatID domain.ChatID, message domain.Message) error {
 	args := m.Called(ctx, chatID, message)
 	return args.Error(0)

@@ -12,18 +12,18 @@ const (
 	MessageChunkReceivedType types.MessageType = "messageChunkReceived"
 )
 
-// MessageAdded represents a message sent event.
+// MessageAdded represents a message added event.
 type MessageAdded struct {
 	ID      uuid.UUID `json:"id"`
 	ChatID  ChatID    `json:"chatId"`
 	Message Message   `json:"message"`
 }
 
-func NewMessageAdded(chatID ChatID, m Message) MessageAdded {
+func NewMessageAdded(chatID ChatID, message Message) MessageAdded {
 	return MessageAdded{
 		ID:      uuid.New(),
 		ChatID:  chatID,
-		Message: m,
+		Message: message,
 	}
 }
 
@@ -34,11 +34,11 @@ func (m MessageAdded) Type() types.MessageType {
 // ChatTitleUpdated represents a title updated event.
 type ChatTitleUpdated struct {
 	ID     uuid.UUID `json:"id"`
-	ChatID uuid.UUID `json:"chatId"`
+	ChatID ChatID    `json:"chatId"`
 	Title  string    `json:"title"`
 }
 
-// NewChatTitleUpdated creates a new title generated event.
+// NewChatTitleUpdated creates a new title updated event.
 func NewChatTitleUpdated(chatID ChatID, title string) ChatTitleUpdated {
 	return ChatTitleUpdated{
 		ID:     uuid.New(),

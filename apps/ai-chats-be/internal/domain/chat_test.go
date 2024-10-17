@@ -23,11 +23,22 @@ func TestDomainChat(t *testing.T) {
 
 	t.Run("add message", func(t *testing.T) {
 		chat := NewChat(NewUser("username"), NewModelID("model"))
+		assert.Equal(t, 0, len(chat.Events))
 		message := NewMessage(NewSender("user:1"), "Hello, world!")
 
 		chat.AddMessage(message)
 
 		assert.Equal(t, 1, len(chat.Messages))
 		assert.Equal(t, message, chat.Messages[0])
+	})
+
+	t.Run("update title", func(t *testing.T) {
+		chat := NewChat(NewUser("username"), NewModelID("model"))
+		assert.Equal(t, 0, len(chat.Events))
+		assert.Equal(t, "New chat", chat.Title)
+
+		chat.UpdateTitle("Test title")
+		assert.Equal(t, 1, len(chat.Events))
+		assert.Equal(t, "Test title", chat.Title)
 	})
 }

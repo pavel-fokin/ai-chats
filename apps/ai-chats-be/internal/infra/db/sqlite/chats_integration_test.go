@@ -11,7 +11,7 @@ import (
 	"ai-chats/internal/domain"
 )
 
-func TestSqliteAddChat(t *testing.T) {
+func TestSqliteChats_Add(t *testing.T) {
 	ctx := context.Background()
 
 	db := New(":memory:")
@@ -58,7 +58,45 @@ func TestSqliteAddChat(t *testing.T) {
 	})
 }
 
-func TestSqliteDeleteChat(t *testing.T) {
+func TestSqliteChats_Update(t *testing.T) {
+	ctx := context.Background()
+
+	db := New(":memory:")
+	defer db.Close()
+	CreateTables(db)
+
+	users := NewUsers(db)
+	chats := NewChats(db)
+
+	user := domain.NewUserWithPassword("test", "password", 1)
+	err := users.Add(ctx, user)
+	assert.NoError(t, err)
+	modelID := domain.NewModelID("model")
+
+	t.Run("update chat title", func(t *testing.T) {
+		chat := domain.NewChat(user, modelID)
+		err := chats.Add(ctx, chat)
+		assert.NoError(t, err)
+
+		chat.UpdateTitle("New title")
+		err = chats.Update(ctx, chat)
+		assert.NoError(t, err)
+
+		updatedChat, err := chats.FindByID(ctx, chat.ID)
+		assert.NoError(t, err)
+		assert.Equal(t, "New title", updatedChat.Title)
+	})
+
+	t.Run("add message", func(t *testing.T) {
+		chat := domain.NewChat(user, modelID)
+		chats.Add(ctx, chat)
+		chat.AddMessage(domain.NewUserMessage(user, "Hello, model!"))
+		err = chats.Update(ctx, chat)
+		assert.NoError(t, err)
+	})
+}
+
+func TestSqliteChats_Delete(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
@@ -99,7 +137,7 @@ func TestSqliteDeleteChat(t *testing.T) {
 	})
 }
 
-func TestSqliteAllChats(t *testing.T) {
+func TestSqliteChats_AllChats(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
@@ -156,7 +194,7 @@ func TestSqliteAllChats(t *testing.T) {
 	})
 }
 
-func TestSqliteFindChat(t *testing.T) {
+func TestSqliteChats_FindByID(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
@@ -215,7 +253,7 @@ func TestSqliteChats_Exists(t *testing.T) {
 	})
 }
 
-func TestSqliteAddMessages(t *testing.T) {
+func TestSqliteChats_AddMessage(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
@@ -278,7 +316,7 @@ func TestSqliteAddMessages(t *testing.T) {
 	})
 }
 
-func TestSqliteAllMessages(t *testing.T) {
+func TestSqliteChats_AllMessages(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 

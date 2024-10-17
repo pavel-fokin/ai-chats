@@ -6,6 +6,7 @@ import (
 
 type Chats interface {
 	Add(ctx context.Context, chat Chat) error
+	Update(ctx context.Context, chat Chat) error
 	AddMessage(ctx context.Context, chatID ChatID, message Message) error
 	AllChats(ctx context.Context, userID UserID) ([]Chat, error)
 	AllMessages(ctx context.Context, chatID ChatID) ([]Message, error)
