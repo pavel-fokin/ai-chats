@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestCreateChat(t *testing.T) {
+func TestApp_CreateChat(t *testing.T) {
 	ctx := context.Background()
 
 	user := domain.NewUser("username")
@@ -26,25 +26,17 @@ func TestCreateChat(t *testing.T) {
 		mock.AnythingOfType("domain.MessageAdded"),
 	).Return(nil)
 
-	mockMessages := &MockMessages{}
-	mockMessages.On(
-		"Add",
-		ctx,
-		mock.AnythingOfType("uuid.UUID"),
-		mock.AnythingOfType("domain.Message"),
-	).Return(nil)
-
 	mockTx := &MockTx{}
 
 	t.Run("with empty message", func(t *testing.T) {
 		mockChats := &MockChats{}
-		mockChats.On("Add", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
 
 		app := &App{chats: mockChats, users: mockUsers, tx: mockTx}
 
 		chat, err := app.CreateChat(ctx, user.ID, "model", "")
-		assert.NoError(t, err)
-		assert.NotNil(t, chat)
+		assert.Error(t, err)
+		assert.Equal(t, "message text is empty", err.Error())
+		assert.Equal(t, domain.Chat{}, chat)
 
 		mockChats.AssertExpectations(t)
 	})
@@ -52,12 +44,6 @@ func TestCreateChat(t *testing.T) {
 	t.Run("with message", func(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("Add", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
-		mockChats.On(
-			"AddMessage",
-			ctx,
-			mock.AnythingOfType("uuid.UUID"),
-			mock.AnythingOfType("domain.Message"),
-		).Return(nil)
 
 		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
 
@@ -69,7 +55,7 @@ func TestCreateChat(t *testing.T) {
 	})
 }
 
-func TestChat_Delete(t *testing.T) {
+func TestApp_DeleteChat(t *testing.T) {
 	t.Run("chat exists", func(t *testing.T) {
 		ctx := context.Background()
 		assert := assert.New(t)
@@ -107,7 +93,7 @@ func TestChat_Delete(t *testing.T) {
 
 }
 
-func TestChat_FindById(t *testing.T) {
+func TestApp_FindChatByID(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
 
@@ -142,5 +128,55 @@ func TestChat_FindById(t *testing.T) {
 		_, err := app.chats.FindByID(ctx, chatID)
 		assert.Error(err)
 		assert.Equal(expectedErr, err)
+	})
+}
+
+func TestApp_SendMessage(t *testing.T) {
+	ctx := context.Background()
+	assert := assert.New(t)
+
+	user := domain.NewUser("username")
+	mockUsers := &MockUsers{}
+	mockUsers.On("FindByID", mock.Anything, user.ID).Return(user, nil)
+
+	mockPubSub := &MockPubSub{}
+	mockPubSub.On(
+		"Publish",
+		ctx,
+		mock.AnythingOfType("string"),
+		mock.AnythingOfType("domain.MessageAdded"),
+	).Return(nil)
+
+	mockTx := &MockTx{}
+
+	t.Run("chat exists", func(t *testing.T) {
+		chat := domain.NewChat(
+			domain.NewUser("username"),
+			domain.NewModelID("model"),
+		)
+
+		mockChats := &MockChats{}
+		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
+		mockChats.On("Update", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
+
+		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
+
+		_, err := app.SendMessage(ctx, user.ID, chat.ID, "Hello, how are you?")
+		assert.NoError(err)
+		// assert.Equal(chat.Messages[0].Text, message.Text)
+	})
+
+	t.Run("chat does not exist", func(t *testing.T) {
+		chatID := uuid.New()
+		expectedErr := errors.New("chat not found")
+
+		mockChats := &MockChats{}
+		mockChats.On("FindByID", ctx, chatID).Return(domain.Chat{}, expectedErr)
+
+		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
+
+		_, err := app.SendMessage(ctx, user.ID, chatID, "Hello, how are you?")
+		assert.Error(err)
+		assert.ErrorContains(err, expectedErr.Error())
 	})
 }

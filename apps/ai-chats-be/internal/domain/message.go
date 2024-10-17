@@ -22,20 +22,20 @@ func NewMessage(sender Sender, text string) Message {
 	}
 }
 
-func NewUserMessage(user User, text string) Message {
+func NewUserMessage(user User, messageText string) Message {
 	return NewMessage(
-		NewUserSender(user.ID), text,
+		NewUserSender(user.ID), messageText,
 	)
 }
 
-func NewModelMessage(modelID ModelID, text string) Message {
+func NewModelMessage(modelID ModelID, messageText string) Message {
 	return NewMessage(
-		NewModelSender(modelID), text,
+		NewModelSender(modelID), messageText,
 	)
 }
 
-func NewSystemMessage(text string) Message {
-	return NewMessage(NewSystemSender(), text)
+func NewSystemMessage(messageText string) Message {
+	return NewMessage(NewSystemSender(), messageText)
 }
 
 func (m Message) IsFromUser() bool {

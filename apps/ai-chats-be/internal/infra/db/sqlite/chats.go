@@ -22,6 +22,7 @@ func NewChats(db *sql.DB) *Chats {
 	return &Chats{DB{db: db}}
 }
 
+// Add adds a chat to the database.
 func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 	_, err := c.DBTX(ctx).Exec(
 		`INSERT INTO chat
@@ -48,48 +49,41 @@ func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 }
 
 func (c *Chats) Update(ctx context.Context, chat domain.Chat) error {
-	tx := NewTx(c.DB.db)
-
-	if err := tx.Tx(ctx, func(ctx context.Context) error {
-		result, err := c.DBTX(ctx).ExecContext(
-			ctx,
-			`UPDATE chat
+	result, err := c.DBTX(ctx).ExecContext(
+		ctx,
+		`UPDATE chat
 			SET updated_at = ?
 			WHERE id = ? AND deleted_at IS NULL`,
-			chat.UpdatedAt.Format(time.RFC3339Nano),
-			chat.ID,
-		)
-		if err != nil {
-			return fmt.Errorf("failed to update chat: %w", err)
-		}
-
-		rowsAffected, err := result.RowsAffected()
-		if err != nil {
-			return fmt.Errorf("failed to get rows affected: %w", err)
-		}
-		if rowsAffected == 0 {
-			return domain.ErrChatNotFound
-		}
-
-		for _, event := range chat.Events {
-			switch event.Type() {
-			case domain.MessageAddedType:
-				messageAdded := event.(domain.MessageAdded)
-				if err := c.AddMessage(ctx, chat.ID, messageAdded.Message); err != nil {
-					return fmt.Errorf("failed to add message: %w", err)
-				}
-			case domain.ChatTitleUpdatedType:
-				chatTitleUpdated := event.(domain.ChatTitleUpdated)
-				if err := c.UpdateTitle(ctx, chat.ID, chatTitleUpdated.Title); err != nil {
-					return fmt.Errorf("failed to update chat title: %w", err)
-				}
-			default:
-				return fmt.Errorf("unknown event type: %s", event.Type())
-			}
-		}
-		return nil
-	}); err != nil {
+		chat.UpdatedAt.Format(time.RFC3339Nano),
+		chat.ID,
+	)
+	if err != nil {
 		return fmt.Errorf("failed to update chat: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to get rows affected: %w", err)
+	}
+	if rowsAffected == 0 {
+		return domain.ErrChatNotFound
+	}
+
+	for _, event := range chat.Events {
+		switch event.Type() {
+		case domain.MessageAddedType:
+			messageAdded := event.(domain.MessageAdded)
+			if err := c.AddMessage(ctx, chat.ID, messageAdded.Message); err != nil {
+				return fmt.Errorf("failed to add message: %w", err)
+			}
+		case domain.ChatTitleUpdatedType:
+			chatTitleUpdated := event.(domain.ChatTitleUpdated)
+			if err := c.UpdateTitle(ctx, chat.ID, chatTitleUpdated.Title); err != nil {
+				return fmt.Errorf("failed to update chat title: %w", err)
+			}
+		default:
+			return fmt.Errorf("unknown event type: %s", event.Type())
+		}
 	}
 
 	return nil

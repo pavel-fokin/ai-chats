@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"ai-chats/internal/domain"
 )
@@ -23,42 +24,35 @@ func (a *App) ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error
 }
 
 // CreateChat creates a chat for the user.
-func (a *App) CreateChat(ctx context.Context, userID domain.UserID, model, text string) (domain.Chat, error) {
-	user, err := a.users.FindByID(ctx, userID)
-	if err != nil {
-		return domain.Chat{}, fmt.Errorf("failed to find a user: %w", err)
+func (a *App) CreateChat(ctx context.Context, userID domain.UserID, model, messageText string) (domain.Chat, error) {
+	messageText = strings.TrimSpace(messageText)
+	if messageText == "" {
+		return domain.Chat{}, fmt.Errorf("message text is empty")
 	}
 
-	var message domain.Message
-	chat := domain.NewChat(user, domain.NewModelID(model))
+	user, err := a.users.FindByID(ctx, userID)
+	if err != nil {
+		return domain.Chat{}, fmt.Errorf("error finding user: %w", err)
+	}
+
+	var chat domain.Chat
 	if err := a.tx.Tx(ctx, func(ctx context.Context) error {
+		chat = domain.NewChat(user, domain.NewModelID(model))
+		chat.AddMessage(domain.NewUserMessage(user, messageText))
+
 		if err := a.chats.Add(ctx, chat); err != nil {
-			return fmt.Errorf("failed to add a chat: %w", err)
-		}
-
-		// If the message is empty, we don't need to send it.
-		if text == "" {
-			return nil
-		}
-
-		message = domain.NewUserMessage(user, text)
-		if err := a.chats.AddMessage(ctx, chat.ID, message); err != nil {
-			return fmt.Errorf("failed to add a message: %w", err)
+			return fmt.Errorf("error adding a chat: %w", err)
 		}
 
 		return nil
 	}); err != nil {
-		return domain.Chat{}, fmt.Errorf("failed to create a chat: %w", err)
+		return domain.Chat{}, fmt.Errorf("error creating chat: %w", err)
 	}
 
-	// If the message is empty, we don't need to send it.
-	if text == "" {
-		return chat, nil
-	}
-
-	messageAdded := domain.NewMessageAdded(chat.ID, message)
-	if err := a.pubsub.Publish(ctx, MessageAddedTopic, messageAdded); err != nil {
-		return domain.Chat{}, fmt.Errorf("failed to publish a message added event: %w", err)
+	for _, event := range chat.Events {
+		if err := a.pubsub.Publish(ctx, MessageAddedTopic, event); err != nil {
+			return domain.Chat{}, fmt.Errorf("error publishing chat events: %w", err)
+		}
 	}
 
 	return chat, nil
@@ -103,22 +97,37 @@ func (a *App) ProcessAddedMessage(ctx context.Context, event domain.MessageAdded
 
 // SendMessage sends a message to the chat.
 func (a *App) SendMessage(
-	ctx context.Context, userID domain.UserID, chatID domain.ChatID, text string,
+	ctx context.Context, userID domain.UserID, chatID domain.ChatID, messageText string,
 ) (domain.Message, error) {
 	user, err := a.users.FindByID(ctx, userID)
 	if err != nil {
 		return domain.Message{}, fmt.Errorf("failed to find a user: %w", err)
 	}
 
-	message := domain.NewUserMessage(user, text)
+	var (
+		chat    domain.Chat
+		message domain.Message
+	)
+	if err := a.tx.Tx(ctx, func(ctx context.Context) error {
+		chat, err = a.chats.FindByID(ctx, chatID)
+		if err != nil {
+			return fmt.Errorf("error finding chat: %w", err)
+		}
 
-	if err := a.chats.AddMessage(ctx, chatID, message); err != nil {
-		return domain.Message{}, fmt.Errorf("failed to add a message: %w", err)
+		chat.AddMessage(domain.NewUserMessage(user, messageText))
+		if err := a.chats.Update(ctx, chat); err != nil {
+			return fmt.Errorf("error updating chat: %w", err)
+		}
+
+		return nil
+	}); err != nil {
+		return domain.Message{}, fmt.Errorf("error sending message: %w", err)
 	}
 
-	messageAdded := domain.NewMessageAdded(chatID, message)
-	if err := a.pubsub.Publish(ctx, MessageAddedTopic, messageAdded); err != nil {
-		return domain.Message{}, fmt.Errorf("failed to publish a message added event: %w", err)
+	for _, event := range chat.Events {
+		if err := a.pubsub.Publish(ctx, MessageAddedTopic, event); err != nil {
+			return domain.Message{}, fmt.Errorf("error publishing events: %w", err)
+		}
 	}
 
 	return message, nil
