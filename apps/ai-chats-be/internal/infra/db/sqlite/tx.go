@@ -23,6 +23,15 @@ func MaybeHaveTx(ctx context.Context) DBTX {
 	return tx
 }
 
+// ExpectTx checks if the transaction exists in the context. If not, it panics.
+func ExpectTx(ctx context.Context) error {
+	tx := MaybeHaveTx(ctx)
+	if tx == nil {
+		return fmt.Errorf("transaction not found")
+	}
+	return nil
+}
+
 // MustHaveTx checks if the transaction exists in the context. If not, it panics.
 func MustHaveTx(ctx context.Context) {
 	tx := MaybeHaveTx(ctx)
@@ -47,6 +56,12 @@ func (t *Tx) Tx(ctx context.Context, fn func(context.Context) error) error {
 
 	ctx = WithTx(ctx, tx)
 	if err := fn(ctx); err != nil {
+		if r := recover(); r != nil {
+			if err := tx.Rollback(); err != nil {
+				return fmt.Errorf("failed to rollback a transaction: %w", err)
+			}
+			panic(r)
+		}
 		if err := tx.Rollback(); err != nil {
 			return fmt.Errorf("failed to rollback a transaction: %w", err)
 		}

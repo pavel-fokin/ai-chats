@@ -71,20 +71,18 @@ func (a *App) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) 
 func (a *App) GenerateTitle(ctx context.Context, chatID domain.ChatID) error {
 	chat, err := a.chats.FindByIDWithMessages(ctx, chatID)
 	if err != nil {
-		return fmt.Errorf("failed to find a chat: %w", err)
+		return fmt.Errorf("error finding chat %s: %w", chatID, err)
 	}
 
 	model, err := a.ollamaClient.NewModel(chat.DefaultModel.AsOllamaModel())
 	if err != nil {
-		return fmt.Errorf("failed to create a chat model: %w", err)
+		return fmt.Errorf("error creating a chat model for chat %s: %w", chatID, err)
 	}
 
-	messages := make([]domain.Message, 0, len(chat.Messages))
-	messages = append(messages, chat.Messages...)
-	messages = append(
-		messages,
+	messages := append(
+		chat.Messages,
 		domain.NewSystemMessage(
-			`Provide a one-sentence, short title of this following conversation.
+			`Provide a one-sentence, short title of this conversation.
 Use less than 100 characters. Don't use quotes or special characters.`,
 		),
 	)
@@ -93,16 +91,22 @@ Use less than 100 characters. Don't use quotes or special characters.`,
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("failed to generate a title: %w", err)
+		return fmt.Errorf("error generating title for chat %s: %w", chatID, err)
 	}
 
-	if err := a.chats.UpdateTitle(ctx, chatID, generatedTitle.Text); err != nil {
-		return fmt.Errorf("failed to update chat title: %w", err)
+	if err := a.tx.Tx(ctx, func(ctx context.Context) error {
+		chat.UpdateTitle(generatedTitle.Text)
+		if err := a.chats.Update(ctx, chat); err != nil {
+			return fmt.Errorf("error updating title for chat %s: %w", chatID, err)
+		}
+		return nil
+	}); err != nil {
+		return fmt.Errorf("error in transaction while updating title for chat %s: %w", chatID, err)
 	}
 
 	titleUpdated := domain.NewChatTitleUpdated(chatID, generatedTitle.Text)
 	if err := a.notifyApp(ctx, chat.User.ID, titleUpdated); err != nil {
-		return fmt.Errorf("failed to publish a title updated event: %w", err)
+		return fmt.Errorf("error notifying app about title update for chat %s: %w", chatID, err)
 	}
 
 	return nil

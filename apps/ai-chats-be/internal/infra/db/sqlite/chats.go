@@ -78,7 +78,7 @@ func (c *Chats) Update(ctx context.Context, chat domain.Chat) error {
 			}
 		case domain.ChatTitleUpdatedType:
 			chatTitleUpdated := event.(domain.ChatTitleUpdated)
-			if err := c.UpdateTitle(ctx, chat.ID, chatTitleUpdated.Title); err != nil {
+			if err := c.updateTitle(ctx, chat.ID, chatTitleUpdated.Title); err != nil {
 				return fmt.Errorf("failed to update chat title: %w", err)
 			}
 		default:
@@ -182,7 +182,7 @@ func (c *Chats) Delete(ctx context.Context, chatID uuid.UUID) error {
 	return nil
 }
 
-func (c *Chats) UpdateTitle(ctx context.Context, chatID uuid.UUID, title string) error {
+func (c *Chats) updateTitle(ctx context.Context, chatID uuid.UUID, title string) error {
 	_, err := c.DBTX(ctx).ExecContext(
 		ctx,
 		`UPDATE chat
