@@ -103,16 +103,13 @@ func (a *App) ProcessAddedMessage(ctx context.Context, event domain.MessageAdded
 // SendMessage sends a message to the chat.
 func (a *App) SendMessage(
 	ctx context.Context, userID domain.UserID, chatID domain.ChatID, messageText string,
-) (domain.Message, error) {
+) error {
 	user, err := a.users.FindByID(ctx, userID)
 	if err != nil {
-		return domain.Message{}, fmt.Errorf("failed to find a user: %w", err)
+		return fmt.Errorf("failed to find a user: %w", err)
 	}
 
-	var (
-		chat    domain.Chat
-		message domain.Message
-	)
+	var chat domain.Chat
 	if err := a.tx.Tx(ctx, func(ctx context.Context) error {
 		chat, err = a.chats.FindByID(ctx, chatID)
 		if err != nil {
@@ -126,14 +123,14 @@ func (a *App) SendMessage(
 
 		return nil
 	}); err != nil {
-		return domain.Message{}, fmt.Errorf("error sending message: %w", err)
+		return fmt.Errorf("error sending message: %w", err)
 	}
 
 	for _, event := range chat.Events {
 		if err := a.pubsub.Publish(ctx, MessageAddedTopic, event); err != nil {
-			return domain.Message{}, fmt.Errorf("error publishing events: %w", err)
+			return fmt.Errorf("error publishing events: %w", err)
 		}
 	}
 
-	return message, nil
+	return nil
 }

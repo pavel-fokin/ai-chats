@@ -161,9 +161,8 @@ func TestApp_SendMessage(t *testing.T) {
 
 		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
 
-		_, err := app.SendMessage(ctx, user.ID, chat.ID, "Hello, how are you?")
+		err := app.SendMessage(ctx, user.ID, chat.ID, "Hello, how are you?")
 		assert.NoError(err)
-		// assert.Equal(chat.Messages[0].Text, message.Text)
 	})
 
 	t.Run("chat does not exist", func(t *testing.T) {
@@ -175,7 +174,7 @@ func TestApp_SendMessage(t *testing.T) {
 
 		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
 
-		_, err := app.SendMessage(ctx, user.ID, chatID, "Hello, how are you?")
+		err := app.SendMessage(ctx, user.ID, chatID, "Hello, how are you?")
 		assert.Error(err)
 		assert.ErrorContains(err, expectedErr.Error())
 	})

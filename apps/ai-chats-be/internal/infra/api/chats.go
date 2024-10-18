@@ -25,7 +25,7 @@ type Chats interface {
 	FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error)
 	FindChatsByUserID(ctx context.Context, userID domain.UserID) ([]domain.Chat, error)
 	GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) error
-	SendMessage(ctx context.Context, userID domain.UserID, chatID domain.ChatID, message string) (domain.Message, error)
+	SendMessage(ctx context.Context, userID domain.UserID, chatID domain.ChatID, message string) error
 }
 
 // GetChats handles the GET /api/chats endpoint.
@@ -157,7 +157,7 @@ func PostMessages(app Chats) http.HandlerFunc {
 			return
 		}
 
-		_, err := app.SendMessage(ctx, userID, uuid.MustParse(chatID), req.Text)
+		err := app.SendMessage(ctx, userID, uuid.MustParse(chatID), req.Text)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to send a message", "chatID", chatID, "err", err)
 			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)

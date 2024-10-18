@@ -442,7 +442,7 @@ func TestApiGetChat(t *testing.T) {
 	})
 }
 
-func TestApiPostMessages(t *testing.T) {
+func TestApiChats_PostMessages(t *testing.T) {
 	userID := domain.NewUserID()
 	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
@@ -459,8 +459,8 @@ func TestApiPostMessages(t *testing.T) {
 			"FindUserByID", mock.MatchedBy(matchChiContext), mock.AnythingOfType("uuid.UUID"),
 		).Return(domain.User{}, nil)
 		mockChat.On(
-			"SendMessage", mock.MatchedBy(matchChiContext), chatID, "text",
-		).Return(domain.Message{}, nil)
+			"SendMessage", mock.MatchedBy(matchChiContext), userID, chatID, "text",
+		).Return(nil)
 
 		router := chi.NewRouter()
 		router.Post("/api/chats/{uuid}/messages", PostMessages(mockChat))
@@ -483,8 +483,8 @@ func TestApiPostMessages(t *testing.T) {
 			"FindUserByID", mock.MatchedBy(matchChiContext), mock.AnythingOfType("uuid.UUID"),
 		).Return(domain.User{}, nil)
 		mockChat.On(
-			"SendMessage", mock.MatchedBy(matchChiContext), chatID, "text",
-		).Return(domain.Message{}, errors.New("failed to send message"))
+			"SendMessage", mock.MatchedBy(matchChiContext), userID, chatID, "text",
+		).Return(assert.AnError)
 
 		router := chi.NewRouter()
 		router.Post("/api/chats/{uuid}/messages", PostMessages(mockChat))

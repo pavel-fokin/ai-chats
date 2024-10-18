@@ -33,9 +33,9 @@ func (m *MockChat) FindChatByID(ctx context.Context, chatID domain.ChatID) (doma
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
-func (m *MockChat) SendMessage(ctx context.Context, userID domain.UserID, chatID domain.ChatID, message string) (domain.Message, error) {
-	args := m.Called(ctx, chatID, message)
-	return args.Get(0).(domain.Message), args.Error(1)
+func (m *MockChat) SendMessage(ctx context.Context, userID domain.UserID, chatID domain.ChatID, message string) error {
+	args := m.Called(ctx, userID, chatID, message)
+	return args.Error(0)
 }
 
 func (m *MockChat) ChatMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
