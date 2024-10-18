@@ -253,69 +253,6 @@ func TestSqliteChats_Exists(t *testing.T) {
 	})
 }
 
-func TestSqliteChats_AddMessage(t *testing.T) {
-	ctx := context.Background()
-	assert := assert.New(t)
-
-	db := New(":memory:")
-	defer db.Close()
-	CreateTables(db)
-
-	users := NewUsers(db)
-	chats := NewChats(db)
-
-	modelID := domain.NewModelID("model")
-	user := domain.NewUserWithPassword("username", "password", 1)
-	err := users.Add(ctx, user)
-	assert.NoError(err)
-
-	t.Run("success", func(t *testing.T) {
-		chat := domain.NewChat(user, modelID)
-		err := chats.Add(ctx, chat)
-		assert.NoError(err)
-
-		msgs := []domain.Message{
-			domain.NewUserMessage(user, "Hello, model!"),
-			domain.NewModelMessage(modelID, "Hello, user!"),
-		}
-
-		for _, message := range msgs {
-			err := chats.AddMessage(ctx, chat.ID, message)
-			assert.NoError(err)
-		}
-
-		allMessages, err := chats.AllMessages(ctx, chat.ID)
-		assert.NoError(err)
-		assert.Equal(len(msgs), len(allMessages))
-		for i, message := range allMessages {
-			assert.Equal(msgs[i], message)
-		}
-	})
-
-	t.Run("chat does not exist", func(t *testing.T) {
-		err := chats.AddMessage(ctx, uuid.New(), domain.NewUserMessage(user, "Hello, model!"))
-		assert.Error(err)
-	})
-
-	t.Run("empty text", func(t *testing.T) {
-		chat := domain.NewChat(user, modelID)
-		err := chats.Add(ctx, chat)
-		assert.NoError(err)
-
-		err = chats.AddMessage(ctx, chat.ID, domain.NewUserMessage(user, ""))
-		assert.Error(err)
-	})
-
-	t.Run("empty sender", func(t *testing.T) {
-		chat := domain.NewChat(user, modelID)
-		err := chats.Add(ctx, chat)
-		assert.NoError(err)
-
-		err = chats.AddMessage(ctx, chat.ID, domain.NewMessage(domain.Sender{}, "Hello, model!"))
-		assert.Error(err)
-	})
-}
-
 func TestSqliteChats_AllMessages(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
@@ -343,9 +280,11 @@ func TestSqliteChats_AllMessages(t *testing.T) {
 		}
 
 		for _, message := range msgs {
-			err := chats.AddMessage(ctx, chat.ID, message)
-			assert.NoError(err)
+			chat.AddMessage(message)
 		}
+
+		err = chats.Update(ctx, chat)
+		assert.NoError(err)
 
 		allMessages, err := chats.AllMessages(ctx, chat.ID)
 		assert.NoError(err)
@@ -387,9 +326,11 @@ func TestSqliteChats_FindByIDWithMessages(t *testing.T) {
 	}
 
 	for _, message := range msgs {
-		err := chats.AddMessage(ctx, chat.ID, message)
-		assert.NoError(err)
+		chat.AddMessage(message)
 	}
+
+	err = chats.Update(ctx, chat)
+	assert.NoError(err)
 
 	foundChat, err := chats.FindByIDWithMessages(ctx, chat.ID)
 	assert.NoError(err)

@@ -40,7 +40,7 @@ func (c *Chats) Add(ctx context.Context, chat domain.Chat) error {
 	}
 
 	for _, message := range chat.Messages {
-		if err := c.AddMessage(ctx, chat.ID, message); err != nil {
+		if err := c.addMessage(ctx, chat.ID, message); err != nil {
 			return fmt.Errorf("failed to add message: %w", err)
 		}
 	}
@@ -73,7 +73,7 @@ func (c *Chats) Update(ctx context.Context, chat domain.Chat) error {
 		switch event.Type() {
 		case domain.MessageAddedType:
 			messageAdded := event.(domain.MessageAdded)
-			if err := c.AddMessage(ctx, chat.ID, messageAdded.Message); err != nil {
+			if err := c.addMessage(ctx, chat.ID, messageAdded.Message); err != nil {
 				return fmt.Errorf("failed to add message: %w", err)
 			}
 		case domain.ChatTitleUpdatedType:
@@ -89,7 +89,7 @@ func (c *Chats) Update(ctx context.Context, chat domain.Chat) error {
 	return nil
 }
 
-func (m *Chats) AddMessage(ctx context.Context, chatID domain.ChatID, message domain.Message) error {
+func (m *Chats) addMessage(ctx context.Context, chatID domain.ChatID, message domain.Message) error {
 	_, err := m.DBTX(ctx).ExecContext(
 		ctx,
 		`INSERT INTO message

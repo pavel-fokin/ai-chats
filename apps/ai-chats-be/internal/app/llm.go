@@ -41,8 +41,9 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 		return fmt.Errorf("failed to generate a response: %w", err)
 	}
 
-	if err := a.chats.AddMessage(ctx, chatID, llmMessage); err != nil {
-		return fmt.Errorf("failed to add a message: %w", err)
+	chat.AddMessage(llmMessage)
+	if err := a.chats.Update(ctx, chat); err != nil {
+		return fmt.Errorf("error adding a message to chat %s: %w", chatID, err)
 	}
 
 	messageAdded := domain.NewMessageAdded(chatID, llmMessage)
