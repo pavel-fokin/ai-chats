@@ -13,7 +13,7 @@ type MockChat struct {
 	mock.Mock
 }
 
-func (m *MockChat) AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
+func (m *MockChat) FindChatsByUserID(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
 	args := m.Called(ctx, userID)
 	return args.Get(0).([]domain.Chat), args.Error(1)
 }

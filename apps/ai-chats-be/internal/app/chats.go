@@ -8,9 +8,9 @@ import (
 	"ai-chats/internal/domain"
 )
 
-// AllChats returns all chats for the user.
-func (a *App) AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
-	return a.chats.AllChats(ctx, userID)
+// FindChatsByUserID returns all chats for the user.
+func (a *App) FindChatsByUserID(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
+	return a.chats.FindByUserID(ctx, userID)
 }
 
 // ChatMessages returns all messages in the chat.

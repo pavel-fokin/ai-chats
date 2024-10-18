@@ -53,7 +53,7 @@ func (m *MockChats) FindByIDWithMessages(ctx context.Context, chatID domain.Chat
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
-func (m *MockChats) AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
+func (m *MockChats) FindByUserID(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
 	args := m.Called(ctx, userID)
 	return args.Get(0).([]domain.Chat), args.Error(1)
 }

@@ -218,7 +218,7 @@ func TestApiChats_GetChats(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		mockChat := &MockChat{}
-		mockChat.On("AllChats", ctx, userID).Return([]domain.Chat{}, nil)
+		mockChat.On("FindChatsByUserID", ctx, userID).Return([]domain.Chat{}, nil)
 
 		GetChats(mockChat)(w, req)
 
@@ -232,7 +232,7 @@ func TestApiChats_GetChats(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		chat := &MockChat{}
-		chat.On("AllChats", ctx, userID).Return([]domain.Chat{}, errors.New("failed to get chats"))
+		chat.On("FindChatsByUserID", ctx, userID).Return([]domain.Chat{}, assert.AnError)
 
 		GetChats(chat)(w, req)
 

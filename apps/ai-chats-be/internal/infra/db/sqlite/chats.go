@@ -190,7 +190,7 @@ func (c *Chats) updateTitle(ctx context.Context, chatID uuid.UUID, title string)
 	return nil
 }
 
-func (c *Chats) AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
+func (c *Chats) FindByUserID(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
 	rows, err := c.DBTX(ctx).QueryContext(
 		ctx,
 		`SELECT

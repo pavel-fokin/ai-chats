@@ -137,7 +137,7 @@ func TestSqliteChats_Delete(t *testing.T) {
 	})
 }
 
-func TestSqliteChats_AllChats(t *testing.T) {
+func TestSqliteChats_FindByUserID(t *testing.T) {
 	db := New(":memory:")
 	defer db.Close()
 	CreateTables(db)
@@ -150,10 +150,9 @@ func TestSqliteChats_AllChats(t *testing.T) {
 		err := users.Add(context.Background(), user)
 		assert.NoError(t, err)
 
-		// Call the AllChats method.
-		allChats, err := chats.AllChats(context.Background(), user.ID)
+		userChats, err := chats.FindByUserID(context.Background(), user.ID)
 		assert.NoError(t, err)
-		assert.Empty(t, allChats)
+		assert.Empty(t, userChats)
 	})
 
 	t.Run("multiple chats", func(t *testing.T) {
@@ -168,10 +167,10 @@ func TestSqliteChats_AllChats(t *testing.T) {
 			assert.NoError(t, err)
 		}
 
-		// Call the AllChats method.
-		allChats, err := chats.AllChats(context.Background(), user.ID)
+		// Call the FindByUserID method.
+		userChats, err := chats.FindByUserID(context.Background(), user.ID)
 		assert.NoError(t, err)
-		assert.Len(t, allChats, 3)
+		assert.Len(t, userChats, 3)
 	})
 
 	t.Run("multiple users", func(t *testing.T) {
@@ -188,9 +187,9 @@ func TestSqliteChats_AllChats(t *testing.T) {
 			assert.NoError(t, err)
 		}
 
-		allChats, err := chats.AllChats(context.Background(), domain.NewUserID())
+		userChats, err := chats.FindByUserID(context.Background(), domain.NewUserID())
 		assert.NoError(t, err)
-		assert.Empty(t, allChats)
+		assert.Empty(t, userChats)
 	})
 }
 

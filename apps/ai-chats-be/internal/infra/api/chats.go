@@ -18,12 +18,12 @@ type Subscriber interface {
 }
 
 type Chats interface {
-	AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat, error)
-	ChatMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error)
 	ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error)
+	ChatMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error)
 	CreateChat(ctx context.Context, userID domain.UserID, defaultModel, message string) (domain.Chat, error)
 	DeleteChat(ctx context.Context, chatID domain.ChatID) error
 	FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error)
+	FindChatsByUserID(ctx context.Context, userID domain.UserID) ([]domain.Chat, error)
 	GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) error
 	SendMessage(ctx context.Context, userID domain.UserID, chatID domain.ChatID, message string) (domain.Message, error)
 }
@@ -35,7 +35,7 @@ func GetChats(app Chats) http.HandlerFunc {
 
 		userID := MustHaveUserID(ctx)
 
-		chats, err := app.AllChats(ctx, userID)
+		chats, err := app.FindChatsByUserID(ctx, userID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to get chats", "userID", userID, "err", err)
 			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
