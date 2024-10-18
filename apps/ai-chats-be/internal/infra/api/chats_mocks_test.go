@@ -38,7 +38,7 @@ func (m *MockChat) SendMessage(ctx context.Context, userID domain.UserID, chatID
 	return args.Get(0).(domain.Message), args.Error(1)
 }
 
-func (m *MockChat) AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
+func (m *MockChat) ChatMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
 	args := m.Called(ctx, chatID)
 	return args.Get(0).([]domain.Message), args.Error(1)
 }

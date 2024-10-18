@@ -19,7 +19,7 @@ type Subscriber interface {
 
 type Chats interface {
 	AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat, error)
-	AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error)
+	ChatMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error)
 	ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error)
 	CreateChat(ctx context.Context, userID domain.UserID, defaultModel, message string) (domain.Chat, error)
 	DeleteChat(ctx context.Context, chatID domain.ChatID) error
@@ -125,7 +125,7 @@ func GetMessages(app Chats) http.HandlerFunc {
 
 		chatID := chi.URLParam(r, "uuid")
 
-		messages, err := app.AllMessages(ctx, uuid.MustParse(chatID))
+		messages, err := app.ChatMessages(ctx, uuid.MustParse(chatID))
 		if err != nil {
 			switch err {
 			case domain.ErrChatNotFound:

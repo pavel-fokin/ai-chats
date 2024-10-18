@@ -13,9 +13,14 @@ func (a *App) AllChats(ctx context.Context, userID domain.UserID) ([]domain.Chat
 	return a.chats.AllChats(ctx, userID)
 }
 
-// AllMessages returns all messages in the chat.
-func (a *App) AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
-	return a.chats.AllMessages(ctx, chatID)
+// ChatMessages returns all messages in the chat.
+func (a *App) ChatMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
+	chat, err := a.chats.FindByIDWithMessages(ctx, chatID)
+	if err != nil {
+		return nil, fmt.Errorf("error finding chat: %w", err)
+	}
+
+	return chat.Messages, nil
 }
 
 // ChatExists checks if the chat exists.
@@ -83,12 +88,12 @@ func (a *App) ProcessAddedMessage(ctx context.Context, event domain.MessageAdded
 		return fmt.Errorf("unknown message type: %s", event.Message)
 	}
 
-	messages, err := a.chats.AllMessages(ctx, event.ChatID)
+	chat, err := a.chats.FindByIDWithMessages(ctx, event.ChatID)
 	if err != nil {
-		return fmt.Errorf("failed to find a chat: %w", err)
+		return fmt.Errorf("error finding chat: %w", err)
 	}
 
-	if len(messages) == 2 {
+	if len(chat.Messages) == 2 {
 		return a.GenerateTitle(ctx, event.ChatID)
 	}
 

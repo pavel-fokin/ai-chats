@@ -253,7 +253,7 @@ func TestApiChats_GetMessages(t *testing.T) {
 			"ChatExists", mock.MatchedBy(matchChiContext), chatID,
 		).Return(true, nil)
 		chat.On(
-			"AllMessages", mock.MatchedBy(matchChiContext), chatID,
+			"ChatMessages", mock.MatchedBy(matchChiContext), chatID,
 		).Return([]domain.Message{}, nil)
 
 		router := chi.NewRouter()
@@ -275,7 +275,7 @@ func TestApiChats_GetMessages(t *testing.T) {
 			"ChatExists", mock.MatchedBy(matchChiContext), chatID,
 		).Return(false, nil)
 		chat.On(
-			"AllMessages", mock.MatchedBy(matchChiContext), chatID,
+			"ChatMessages", mock.MatchedBy(matchChiContext), chatID,
 		).Return([]domain.Message{}, domain.ErrChatNotFound)
 
 		router := chi.NewRouter()
@@ -297,7 +297,7 @@ func TestApiChats_GetMessages(t *testing.T) {
 			"ChatExists", mock.MatchedBy(matchChiContext), chatID,
 		).Return(true, nil)
 		chat.On(
-			"AllMessages", mock.MatchedBy(matchChiContext), chatID,
+			"ChatMessages", mock.MatchedBy(matchChiContext), chatID,
 		).Return([]domain.Message{}, errors.New("failed to get messages")).Once()
 
 		router := chi.NewRouter()

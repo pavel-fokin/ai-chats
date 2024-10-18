@@ -108,15 +108,7 @@ func (m *Chats) addMessage(ctx context.Context, chatID domain.ChatID, message do
 	return nil
 }
 
-func (c *Chats) AllMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
-	chatExists, err := c.exists(ctx, chatID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to check chat existence: %w", err)
-	}
-	if !chatExists {
-		return nil, domain.ErrChatNotFound
-	}
-
+func (c *Chats) findMessagesByChatID(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
 	rows, err := c.DBTX(ctx).QueryContext(
 		ctx,
 		`SELECT id, sender, text, created_at
@@ -281,7 +273,7 @@ func (c *Chats) FindByIDWithMessages(ctx context.Context, chatID uuid.UUID) (dom
 		return domain.Chat{}, fmt.Errorf("failed to find chat by id: %w", err)
 	}
 
-	messages, err := c.AllMessages(ctx, chatID)
+	messages, err := c.findMessagesByChatID(ctx, chatID)
 	if err != nil {
 		return domain.Chat{}, fmt.Errorf("failed to get messages: %w", err)
 	}
