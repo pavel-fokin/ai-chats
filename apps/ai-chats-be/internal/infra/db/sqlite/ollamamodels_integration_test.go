@@ -30,6 +30,8 @@ func TestOllamaModels_FindOllamaModelsPullingInProgress(t *testing.T) {
 		assert.Equal(t, []domain.OllamaModel{
 			{
 				Model:  "model1",
+				Name:   "model1",
+				Tag:    "latest",
 				Status: domain.OllamaModelStatusPulling,
 			},
 		}, models)

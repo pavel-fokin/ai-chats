@@ -1,3 +1,5 @@
+//go:build integration
+
 package ollama
 
 import (
@@ -13,9 +15,12 @@ func TestOllamaModel_Chat(t *testing.T) {
 	ollamaClient := NewOllamaClient()
 
 	t.Run("ollama chat", func(t *testing.T) {
-		modelName := "smollm:135m"
+		model := "smollm:135m"
 
-		llm, err := ollamaClient.NewModel(domain.NewOllamaModel(modelName))
+		ollamaModel, err := domain.NewOllamaModel(model)
+		assert.NoError(t, err)
+
+		llm, err := ollamaClient.NewModel(ollamaModel)
 		assert.NoError(t, err)
 
 		llmMessage, err := llm.Chat(
@@ -33,8 +38,11 @@ func TestOllamaModel_Chat(t *testing.T) {
 	})
 
 	t.Run("model not found", func(t *testing.T) {
-		modelName := "model-not-found"
-		llm, err := ollamaClient.NewModel(domain.NewOllamaModel(modelName))
+		model := "model-not-found"
+		ollamaModel, err := domain.NewOllamaModel(model)
+		assert.NoError(t, err)
+
+		llm, err := ollamaClient.NewModel(ollamaModel)
 		assert.NoError(t, err)
 
 		llmMessage, err := llm.Chat(

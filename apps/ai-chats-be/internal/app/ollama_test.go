@@ -77,6 +77,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{
 			{
 				Model:  "model1",
+				Name:   "model1",
+				Tag:    "latest",
 				Status: domain.OllamaModelStatusPulling,
 			},
 		}, nil)
@@ -94,6 +96,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		assert.Equal(t, []domain.OllamaModel{
 			{
 				Model:       "model1",
+				Name:        "model1",
+				Tag:         "latest",
 				Description: "description",
 				Status:      domain.OllamaModelStatusPulling,
 			},
@@ -108,6 +112,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		mockOllamaClient.On("List", ctx).Return([]domain.OllamaModel{
 			{
 				Model:  "model1",
+				Name:   "model1",
+				Tag:    "latest",
 				Status: domain.OllamaModelStatusAvailable,
 			},
 		}, nil)
@@ -125,6 +131,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		assert.Equal(t, []domain.OllamaModel{
 			{
 				Model:       "model1",
+				Name:        "model1",
+				Tag:         "latest",
 				Description: "description",
 				Status:      domain.OllamaModelStatusAvailable,
 			},
@@ -140,6 +148,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{
 			{
 				Model:  "model1",
+				Name:   "model1",
+				Tag:    "latest",
 				Status: domain.OllamaModelStatusPulling,
 			},
 		}, nil)
@@ -148,6 +158,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		mockOllamaClient.On("List", ctx).Return([]domain.OllamaModel{
 			{
 				Model:  "model2",
+				Name:   "model2",
+				Tag:    "latest",
 				Status: domain.OllamaModelStatusAvailable,
 			},
 		}, nil)
@@ -165,11 +177,15 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		assert.Equal(t, []domain.OllamaModel{
 			{
 				Model:       "model1",
+				Name:        "model1",
+				Tag:         "latest",
 				Description: "description",
 				Status:      domain.OllamaModelStatusPulling,
 			},
 			{
 				Model:       "model2",
+				Name:        "model2",
+				Tag:         "latest",
 				Description: "description",
 				Status:      domain.OllamaModelStatusAvailable,
 			},
