@@ -105,6 +105,7 @@ func (a *App) PullOllamaModelAsync(ctx context.Context, model string) error {
 // PullOllamaModelJob pulls an Ollama model.
 func (a *App) PullOllamaModel(ctx context.Context, model string) error {
 	ollamaModel := domain.NewOllamaModel(model)
+	ollamaModel.SetStatus(domain.OllamaModelStatusPulling)
 
 	err := a.ollamaModels.AddModelPullingStarted(ctx, ollamaModel.Model)
 	if err != nil {

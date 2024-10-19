@@ -28,11 +28,10 @@ export type Message = {
 export type OllamaModel = {
   model: string;
   description: string;
-  isPulling: boolean;
+  status: OllamaModelStatus;
 };
 
 export enum OllamaModelStatus {
-  ANY = 'any',
   AVAILABLE = 'available',
   PULLING = 'pulling',
 }

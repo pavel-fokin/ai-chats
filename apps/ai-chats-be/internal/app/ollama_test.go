@@ -76,8 +76,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		mockOllamaModels := &MockOllamaModels{}
 		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{
 			{
-				Model:     "model1",
-				IsPulling: true,
+				Model:  "model1",
+				Status: domain.OllamaModelStatusPulling,
 			},
 		}, nil)
 
@@ -95,7 +95,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 			{
 				Model:       "model1",
 				Description: "description",
-				IsPulling:   true,
+				Status:      domain.OllamaModelStatusPulling,
 			},
 		}, models)
 		mockOllamaModels.AssertExpectations(t)
@@ -107,7 +107,8 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		mockOllamaClient := &MockOllamaClient{}
 		mockOllamaClient.On("List", ctx).Return([]domain.OllamaModel{
 			{
-				Model: "model1",
+				Model:  "model1",
+				Status: domain.OllamaModelStatusAvailable,
 			},
 		}, nil)
 
@@ -125,7 +126,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 			{
 				Model:       "model1",
 				Description: "description",
-				IsPulling:   false,
+				Status:      domain.OllamaModelStatusAvailable,
 			},
 		}, models)
 		mockOllamaClient.AssertExpectations(t)
@@ -138,16 +139,16 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		mockOllamaModels := &MockOllamaModels{}
 		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{
 			{
-				Model:     "model1",
-				IsPulling: true,
+				Model:  "model1",
+				Status: domain.OllamaModelStatusPulling,
 			},
 		}, nil)
 
 		mockOllamaClient := &MockOllamaClient{}
 		mockOllamaClient.On("List", ctx).Return([]domain.OllamaModel{
 			{
-				Model:     "model2",
-				IsPulling: false,
+				Model:  "model2",
+				Status: domain.OllamaModelStatusAvailable,
 			},
 		}, nil)
 
@@ -165,12 +166,12 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 			{
 				Model:       "model1",
 				Description: "description",
-				IsPulling:   true,
+				Status:      domain.OllamaModelStatusPulling,
 			},
 			{
 				Model:       "model2",
 				Description: "description",
-				IsPulling:   false,
+				Status:      domain.OllamaModelStatusAvailable,
 			},
 		}, models)
 		mockOllamaModels.AssertExpectations(t)

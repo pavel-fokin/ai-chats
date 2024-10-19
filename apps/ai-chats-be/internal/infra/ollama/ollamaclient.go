@@ -37,7 +37,9 @@ func (o *OllamaClient) List(ctx context.Context) ([]domain.OllamaModel, error) {
 
 	models := []domain.OllamaModel{}
 	for _, model := range resp.Models {
-		models = append(models, domain.NewOllamaModel(model.Model))
+		ollamaModel := domain.NewOllamaModel(model.Model)
+		ollamaModel.SetStatus(domain.OllamaModelStatusAvailable)
+		models = append(models, ollamaModel)
 	}
 
 	return models, nil

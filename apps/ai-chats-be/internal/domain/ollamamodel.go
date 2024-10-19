@@ -11,17 +11,29 @@ const (
 	OllamaPullingFinalStatusFailed  OllamaPullingFinalStatus = "failed"
 )
 
+// OllamaModelStatus is the status of an Ollama model.
+type OllamaModelStatus string
+
+const (
+	OllamaModelStatusPulling   OllamaModelStatus = "pulling"
+	OllamaModelStatusAvailable OllamaModelStatus = "available"
+)
+
 // OllamaModel represents an Ollama model.
 type OllamaModel struct {
-	Model       string `json:"model"`
-	Description string `json:"description"`
-	IsPulling   bool   `json:"isPulling"`
+	Model       string            `json:"model"`
+	Description string            `json:"description"`
+	Status      OllamaModelStatus `json:"status"`
 }
 
 func NewOllamaModel(model string) OllamaModel {
 	return OllamaModel{
 		Model: model,
 	}
+}
+
+func (om *OllamaModel) SetStatus(status OllamaModelStatus) {
+	om.Status = status
 }
 
 func (om OllamaModel) String() string {

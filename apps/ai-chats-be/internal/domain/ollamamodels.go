@@ -15,14 +15,6 @@ type OllamaModels interface {
 	FindOllamaModelsPullingInProgress(ctx context.Context) ([]OllamaModel, error)
 }
 
-// OllamaModelStatus is the status of an Ollama model.
-type OllamaModelStatus string
-
-const (
-	OllamaModelStatusPulling   OllamaModelStatus = "pulling"
-	OllamaModelStatusAvailable OllamaModelStatus = "available"
-)
-
 // OllamaModelsFilter is the filter for Ollama models.
 type OllamaModelsFilter struct {
 	Status OllamaModelStatus

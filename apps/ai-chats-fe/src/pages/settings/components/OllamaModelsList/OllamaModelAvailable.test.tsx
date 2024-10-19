@@ -2,6 +2,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
 
+import { OllamaModelStatus } from 'types';
+
 import { OllamaModelAvailable } from './OllamaModelAvailable';
 
 const queryClient = new QueryClient({
@@ -16,7 +18,7 @@ const mockModel = {
   model: 'llama3:latest',
   description:
     'Meta Llama 3: The most capable openly available LLM to date 8B.',
-  isPulling: false,
+  status: OllamaModelStatus.AVAILABLE,
 };
 
 const renderComponent = (ui: JSX.Element) => {
