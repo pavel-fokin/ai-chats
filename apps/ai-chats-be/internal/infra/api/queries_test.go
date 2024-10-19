@@ -17,16 +17,12 @@ func TestParseOllamaModelsQuery(t *testing.T) {
 		{
 			name:  "empty query",
 			query: "",
-			want: domain.OllamaModelsFilter{
-				Status: domain.OllamaModelStatusAny,
-			},
+			want:  domain.OllamaModelsFilter{},
 		},
 		{
 			name:  "status=",
 			query: "status=",
-			want: domain.OllamaModelsFilter{
-				Status: domain.OllamaModelStatusAny,
-			},
+			want:  domain.OllamaModelsFilter{},
 		},
 		{
 			name:  "pulling",

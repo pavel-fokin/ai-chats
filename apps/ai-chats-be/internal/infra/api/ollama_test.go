@@ -73,7 +73,7 @@ func TestGetOllamaModels(t *testing.T) {
 			On(
 				"FindOllamaModels",
 				mock.MatchedBy(matchChiContext),
-				domain.OllamaModelsFilter{Status: domain.OllamaModelStatusAny},
+				domain.OllamaModelsFilter{},
 			).
 			Return(models, nil)
 
@@ -96,7 +96,7 @@ func TestGetOllamaModels(t *testing.T) {
 			On(
 				"FindOllamaModels",
 				mock.MatchedBy(matchChiContext),
-				domain.OllamaModelsFilter{Status: domain.OllamaModelStatusAny},
+				domain.OllamaModelsFilter{},
 			).
 			Return([]domain.OllamaModel{}, assert.AnError)
 
@@ -119,7 +119,7 @@ func TestGetOllamaModels(t *testing.T) {
 			On(
 				"FindOllamaModels",
 				mock.MatchedBy(matchChiContext),
-				domain.OllamaModelsFilter{Status: domain.OllamaModelStatusAny},
+				domain.OllamaModelsFilter{},
 			).
 			Return([]domain.OllamaModel{}, assert.AnError)
 

@@ -14,7 +14,7 @@ func TestNewOllamaModelsFilter(t *testing.T) {
 		}{
 			{status: "pulling", want: OllamaModelStatusPulling},
 			{status: "available", want: OllamaModelStatusAvailable},
-			{status: "", want: OllamaModelStatusAny},
+			{status: "", want: OllamaModelStatus("")},
 		}
 
 		for _, tt := range tests {

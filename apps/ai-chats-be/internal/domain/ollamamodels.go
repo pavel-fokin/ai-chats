@@ -19,7 +19,6 @@ type OllamaModels interface {
 type OllamaModelStatus string
 
 const (
-	OllamaModelStatusAny       OllamaModelStatus = "any"
 	OllamaModelStatusPulling   OllamaModelStatus = "pulling"
 	OllamaModelStatusAvailable OllamaModelStatus = "available"
 )
@@ -32,7 +31,7 @@ type OllamaModelsFilter struct {
 // NewOllamaModelsFilter creates a new OllamaModelsFilter.
 func NewOllamaModelsFilter(status string) (OllamaModelsFilter, error) {
 	if status == "" {
-		return OllamaModelsFilter{Status: OllamaModelStatusAny}, nil
+		return OllamaModelsFilter{}, nil
 	}
 
 	modelStatus := OllamaModelStatus(status)

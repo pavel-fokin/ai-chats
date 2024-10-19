@@ -157,9 +157,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 			ollamaClient:  mockOllamaClient,
 		}
 
-		filter := domain.OllamaModelsFilter{
-			Status: domain.OllamaModelStatusAny,
-		}
+		filter := domain.OllamaModelsFilter{}
 
 		models, err := app.FindOllamaModels(ctx, filter)
 		assert.NoError(t, err)
