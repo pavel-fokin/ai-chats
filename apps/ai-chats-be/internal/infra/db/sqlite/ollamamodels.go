@@ -29,17 +29,14 @@ func (m *OllamaModels) Save(ctx context.Context, model domain.OllamaModel) error
 
 func (m *OllamaModels) FindOllamaModelsPullInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
 	rows, err := m.DB.db.Query(
-		`SELECT DISTINCT model
-		FROM ollama_model_pull_event
-		WHERE type = ?
-		AND model NOT IN (
-			SELECT model
+		`SELECT model
+		FROM (
+			SELECT model, type, MAX(occurred_at) AS last_occurred_at
 			FROM ollama_model_pull_event
-			WHERE type IN (?, ?)
-		)`,
+			GROUP BY model
+		) AS last_events
+		WHERE type = ?;`,
 		string(domain.OllamaModelPullStartedType),
-		string(domain.OllamaModelPullCompletedType),
-		string(domain.OllamaModelPullFailedType),
 	)
 	if err != nil {
 		return nil, err

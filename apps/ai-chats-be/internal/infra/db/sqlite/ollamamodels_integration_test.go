@@ -40,19 +40,25 @@ func TestOllamaModels_Save(t *testing.T) {
 func TestOllamaModels_FindOllamaModelPullInProgress(t *testing.T) {
 	ctx := context.Background()
 
-	db := New(":memory:")
-	defer db.Close()
-	CreateTables(db)
-
-	ollamaModels := NewOllamaModels(db)
-
 	t.Run("no models", func(t *testing.T) {
+		db := New(":memory:")
+		defer db.Close()
+		CreateTables(db)
+
+		ollamaModels := NewOllamaModels(db)
+
 		models, err := ollamaModels.FindOllamaModelsPullInProgress(ctx)
 		assert.NoError(t, err)
 		assert.Empty(t, models)
 	})
 
 	t.Run("some models", func(t *testing.T) {
+		db := New(":memory:")
+		defer db.Close()
+		CreateTables(db)
+
+		ollamaModels := NewOllamaModels(db)
+
 		modelInProgress, _ := domain.NewOllamaModel("model1")
 		modelInProgress.PullStarted()
 		ollamaModels.Save(ctx, modelInProgress)
@@ -73,6 +79,36 @@ func TestOllamaModels_FindOllamaModelPullInProgress(t *testing.T) {
 			{
 				Model:  "model1",
 				Name:   "model1",
+				Tag:    "latest",
+				Status: domain.OllamaModelStatusPulling,
+			},
+		}, models)
+	})
+
+	t.Run("pull started 3 times", func(t *testing.T) {
+		db := New(":memory:")
+		defer db.Close()
+		CreateTables(db)
+
+		ollamaModels := NewOllamaModels(db)
+
+		model, err := domain.NewOllamaModel("model4")
+		assert.NoError(t, err)
+
+		model.PullStarted()
+		model.PullCompleted()
+		model.PullStarted()
+		model.PullFailed()
+		model.PullStarted()
+		err = ollamaModels.Save(ctx, model)
+		assert.NoError(t, err)
+
+		models, err := ollamaModels.FindOllamaModelsPullInProgress(ctx)
+		assert.NoError(t, err)
+		assert.Equal(t, []domain.OllamaModel{
+			{
+				Model:  "model4",
+				Name:   "model4",
 				Tag:    "latest",
 				Status: domain.OllamaModelStatusPulling,
 			},
