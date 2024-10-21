@@ -10,9 +10,8 @@ var (
 )
 
 type OllamaModels interface {
-	AddModelPullingFinished(ctx context.Context, model string, finalStatus OllamaPullingFinalStatus) error
-	AddModelPullingStarted(ctx context.Context, model string) error
-	FindOllamaModelsPullingInProgress(ctx context.Context) ([]OllamaModel, error)
+	Save(ctx context.Context, model OllamaModel) error
+	FindOllamaModelsPullInProgress(ctx context.Context) ([]OllamaModel, error)
 }
 
 // OllamaModelsFilter is the filter for Ollama models.

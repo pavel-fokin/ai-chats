@@ -30,12 +30,11 @@ CREATE TABLE IF NOT EXISTS model_description (
     PRIMARY KEY (name)
 );
 
-CREATE TABLE IF NOT EXISTS ollama_model_pulling (
+CREATE TABLE IF NOT EXISTS ollama_model_pull_event (
     id TEXT PRIMARY KEY,
-    model TEXT NOT NULL CHECK (length(model) > 0),
-    started_at TEXT NOT NULL CHECK (length(started_at) > 0),
-    finished_at TEXT,
-    final_status TEXT
+    occurred_at TEXT NOT NULL CHECK (length(occurred_at) > 0),
+    type TEXT NOT NULL CHECK (length(type) > 0),
+    model TEXT NOT NULL CHECK (length(model) > 0)
 );
 
 PRAGMA foreign_keys = ON;

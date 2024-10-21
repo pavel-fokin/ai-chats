@@ -9,7 +9,7 @@ import (
 func TestDomainOllamaModel(t *testing.T) {
 	t.Run("empty model", func(t *testing.T) {
 		model, err := NewOllamaModel("")
-		assert.ErrorIs(t, err, ErrOllamaModelInvalidModel)
+		assert.ErrorIs(t, err, ErrOllamaModelEmpty)
 		assert.Equal(t, OllamaModel{}, model)
 	})
 

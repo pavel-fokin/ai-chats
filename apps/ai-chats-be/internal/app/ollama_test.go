@@ -52,6 +52,16 @@ type MockOllamaModels struct {
 	mock.Mock
 }
 
+func (m *MockOllamaModels) Save(ctx context.Context, model domain.OllamaModel) error {
+	args := m.Called(ctx, model)
+	return args.Error(0)
+}
+
+func (m *MockOllamaModels) FindOllamaModelsPullInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
+	args := m.Called(ctx)
+	return args.Get(0).([]domain.OllamaModel), args.Error(1)
+}
+
 func (m *MockOllamaModels) FindOllamaModelsPullingInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
 	args := m.Called(ctx)
 	return args.Get(0).([]domain.OllamaModel), args.Error(1)
@@ -74,7 +84,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		mockModelsLibrary := &MockModelsLibrary{}
 		mockModelsLibrary.On("FindDescription", ctx, "model1").Return("description", nil)
 		mockOllamaModels := &MockOllamaModels{}
-		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{
+		mockOllamaModels.On("FindOllamaModelsPullInProgress", ctx).Return([]domain.OllamaModel{
 			{
 				Model:  "model1",
 				Name:   "model1",
@@ -145,7 +155,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		mockModelsLibrary.On("FindDescription", ctx, "model1").Return("description", nil)
 		mockModelsLibrary.On("FindDescription", ctx, "model2").Return("description", nil)
 		mockOllamaModels := &MockOllamaModels{}
-		mockOllamaModels.On("FindOllamaModelsPullingInProgress", ctx).Return([]domain.OllamaModel{
+		mockOllamaModels.On("FindOllamaModelsPullInProgress", ctx).Return([]domain.OllamaModel{
 			{
 				Model:  "model1",
 				Name:   "model1",

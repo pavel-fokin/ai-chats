@@ -52,7 +52,7 @@ func (a *App) findDescription(ctx context.Context, ollamaModel domain.OllamaMode
 func (a *App) findPullingOllamaModels(ctx context.Context) ([]domain.OllamaModel, error) {
 	var ollamaModels []domain.OllamaModel
 
-	pullingOllamaModels, err := a.ollamaModels.FindOllamaModelsPullingInProgress(ctx)
+	pullingOllamaModels, err := a.ollamaModels.FindOllamaModelsPullInProgress(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get ollama models with pulling in progress: %w", err)
 	}
@@ -105,15 +105,12 @@ func (a *App) PullOllamaModelAsync(ctx context.Context, model string) error {
 
 // PullOllamaModelJob pulls an Ollama model.
 func (a *App) PullOllamaModel(ctx context.Context, model string) error {
-	ollamaModel, err := domain.NewOllamaModel(model)
-	if err != nil {
-		return fmt.Errorf("failed to create ollama model: %w", err)
-	}
-	ollamaModel.SetStatus(domain.OllamaModelStatusPulling)
-
-	if err := a.ollamaModels.AddModelPullingStarted(ctx, ollamaModel.Model); err != nil {
+	ollamaModel, _ := domain.NewOllamaModel(model)
+	ollamaModel.PullStarted()
+	if err := a.ollamaModels.Save(ctx, ollamaModel); err != nil {
 		return fmt.Errorf("failed to add ollama model pulling started: %w", err)
 	}
+	ollamaModel.ClearEvents()
 
 	progressFunc := func(progress OllamaModelPullProgress) error {
 		if err := a.notifyOllamaModelPulling(ctx, model, progress); err != nil {
@@ -123,24 +120,20 @@ func (a *App) PullOllamaModel(ctx context.Context, model string) error {
 	}
 
 	if err := a.ollamaClient.Pull(ctx, model, progressFunc); err != nil {
-		if err := a.ollamaModels.AddModelPullingFinished(
-			ctx,
-			ollamaModel.Model,
-			domain.OllamaPullingFinalStatusFailed,
-		); err != nil {
-			return fmt.Errorf("failed to add ollama model pulling finished: %w", err)
+		ollamaModel.PullFailed()
+		if err := a.ollamaModels.Save(ctx, ollamaModel); err != nil {
+			return fmt.Errorf("failed to add ollama model pulling failed: %w", err)
 		}
+		ollamaModel.ClearEvents()
 
 		return fmt.Errorf("failed to pull ollama model: %w", err)
 	}
 
-	if err := a.ollamaModels.AddModelPullingFinished(
-		ctx,
-		ollamaModel.Model,
-		domain.OllamaPullingFinalStatusSuccess,
-	); err != nil {
-		return fmt.Errorf("failed to add ollama model pulling finished: %w", err)
+	ollamaModel.PullCompleted()
+	if err := a.ollamaModels.Save(ctx, ollamaModel); err != nil {
+		return fmt.Errorf("failed to add ollama model pulling completed: %w", err)
 	}
+	ollamaModel.ClearEvents()
 
 	return nil
 }

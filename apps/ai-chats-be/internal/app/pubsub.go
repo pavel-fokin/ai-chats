@@ -19,3 +19,7 @@ type PubSub interface {
 	Unsubscribe(context.Context, Topic, chan types.Message) error
 	Publish(context.Context, Topic, types.Message) error
 }
+
+func (a *App) PublishEvents(ctx context.Context, events []types.Message) error {
+	return nil
+}

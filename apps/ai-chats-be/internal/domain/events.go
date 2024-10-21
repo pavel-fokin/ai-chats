@@ -7,9 +7,8 @@ import (
 )
 
 const (
-	MessageAddedType         types.MessageType = "messageAdded"
-	ChatTitleUpdatedType     types.MessageType = "chatTitleUpdated"
-	MessageChunkReceivedType types.MessageType = "messageChunkReceived"
+	MessageAddedType     types.MessageType = "messageAdded"
+	ChatTitleUpdatedType types.MessageType = "chatTitleUpdated"
 )
 
 // MessageAdded represents a message added event.

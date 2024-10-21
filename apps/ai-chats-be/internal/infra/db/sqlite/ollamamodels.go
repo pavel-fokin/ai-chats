@@ -3,7 +3,6 @@ package sqlite
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"ai-chats/internal/domain"
 )
@@ -12,34 +11,36 @@ type OllamaModels struct {
 	DB
 }
 
+var _ domain.OllamaModels = (*OllamaModels)(nil)
+
 func NewOllamaModels(db *sql.DB) *OllamaModels {
 	return &OllamaModels{DB{db: db}}
 }
 
-func (m *OllamaModels) AddModelPullingStarted(ctx context.Context, model string) error {
-	startedAt := time.Now().UTC().Format(time.RFC3339Nano)
-
-	_, err := m.DB.db.Exec("INSERT INTO ollama_model_pulling (model, started_at) VALUES (?, ?)", model, startedAt)
-	if err != nil {
-		return err
+func (m *OllamaModels) Save(ctx context.Context, model domain.OllamaModel) error {
+	for _, event := range model.Events {
+		if err := m.saveEvent(ctx, event); err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (m *OllamaModels) AddModelPullingFinished(ctx context.Context, model string, finalStatus domain.OllamaPullingFinalStatus) error {
-	finishedAt := time.Now().UTC().Format(time.RFC3339Nano)
-
-	_, err := m.DB.db.Exec("UPDATE ollama_model_pulling SET finished_at = ?, final_status = ? WHERE model = ?", finishedAt, finalStatus, model)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *OllamaModels) FindOllamaModelsPullingInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
-	rows, err := m.DB.db.Query("SELECT model FROM ollama_model_pulling WHERE finished_at IS NULL")
+func (m *OllamaModels) FindOllamaModelsPullInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
+	rows, err := m.DB.db.Query(
+		`SELECT DISTINCT model
+		FROM ollama_model_pull_event
+		WHERE type = ?
+		AND model NOT IN (
+			SELECT model
+			FROM ollama_model_pull_event
+			WHERE type IN (?, ?)
+		)`,
+		string(domain.OllamaModelPullStartedType),
+		string(domain.OllamaModelPullCompletedType),
+		string(domain.OllamaModelPullFailedType),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -61,4 +62,17 @@ func (m *OllamaModels) FindOllamaModelsPullingInProgress(ctx context.Context) ([
 	}
 
 	return models, nil
+}
+
+// Save OllamaModelPullEvent to the database.
+func (m *OllamaModels) saveEvent(ctx context.Context, event domain.OllamaModelPullEvent) error {
+	_, err := m.DBTX(ctx).Exec(
+		"INSERT INTO ollama_model_pull_event (id, model, occurred_at, type) VALUES (?, ?, ?, ?)",
+		event.ID(), event.Model(), event.OccurredAt(), event.Type(),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

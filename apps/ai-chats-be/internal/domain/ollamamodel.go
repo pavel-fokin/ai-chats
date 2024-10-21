@@ -5,14 +5,7 @@ import (
 	"strings"
 )
 
-var ErrOllamaModelInvalidModel = errors.New("model cannot be empty")
-
-type OllamaPullingFinalStatus string
-
-const (
-	OllamaPullingFinalStatusSuccess OllamaPullingFinalStatus = "success"
-	OllamaPullingFinalStatusFailed  OllamaPullingFinalStatus = "failed"
-)
+var ErrOllamaModelEmpty = errors.New("model cannot be empty")
 
 // OllamaModelStatus is the status of an Ollama model.
 type OllamaModelStatus string
@@ -29,11 +22,14 @@ type OllamaModel struct {
 	Tag         string            `json:"tag"`
 	Description string            `json:"description"`
 	Status      OllamaModelStatus `json:"status"`
+
+	Events []OllamaModelPullEvent
 }
 
+// NewOllamaModel creates a new OllamaModel.
 func NewOllamaModel(model string) (OllamaModel, error) {
 	if model == "" {
-		return OllamaModel{}, ErrOllamaModelInvalidModel
+		return OllamaModel{}, ErrOllamaModelEmpty
 	}
 
 	parts := strings.Split(model, ":")
@@ -56,23 +52,22 @@ func (om *OllamaModel) SetStatus(status OllamaModelStatus) {
 	om.Status = status
 }
 
+func (om *OllamaModel) PullStarted() {
+	om.Events = append(om.Events, NewOllamaModelPullStarted(om.Model))
+}
+
+func (om *OllamaModel) PullCompleted() {
+	om.Events = append(om.Events, NewOllamaModelPullCompleted(om.Model))
+}
+
+func (om *OllamaModel) PullFailed() {
+	om.Events = append(om.Events, NewOllamaModelPullFailed(om.Model))
+}
+
+func (om *OllamaModel) ClearEvents() {
+	om.Events = []OllamaModelPullEvent{}
+}
+
 func (om OllamaModel) String() string {
 	return om.Model
 }
-
-// func (om OllamaModel) Name() string {
-// 	parts := strings.Split(om.Model, ":")
-// 	if len(parts) == 2 {
-// 		return parts[0]
-// 	}
-// 	return om.Model
-// }
-
-// func (om *OllamaModel) Scan(value any) error {
-// 	*om = *NewOllamaModel(value.(string))
-// 	return nil
-// }
-
-// func (om OllamaModel) Value() (any, error) {
-// 	return om.String(), nil
-// }
