@@ -28,14 +28,14 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}
 
-	streamFunc := func(message domain.Message) error {
+	chatResponseFunc := func(message domain.Message) error {
 		if err := a.notifyChat(ctx, chatID.String(), ChatMessage{Message: message}); err != nil {
 			return fmt.Errorf("failed to notify in chat: %w", err)
 		}
 		return nil
 	}
 
-	llmMessage, err := model.Chat(ctx, chat.Messages, streamFunc)
+	llmMessage, err := model.Chat(ctx, chat.Messages, chatResponseFunc)
 	if err != nil {
 		return fmt.Errorf("failed to generate a response: %w", err)
 	}
