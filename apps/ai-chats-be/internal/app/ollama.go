@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"ai-chats/internal/app/commands"
 	"ai-chats/internal/domain"
 )
 
@@ -91,7 +90,7 @@ func (a *App) findAvailableOllamaModels(ctx context.Context) ([]domain.OllamaMod
 }
 
 func (a *App) PullOllamaModelAsync(ctx context.Context, model string) error {
-	pullOllamaModelCommand := commands.NewPullOllamaModel(model)
+	pullOllamaModelCommand := NewPullOllamaModel(model)
 	if err := a.pubsub.Publish(
 		ctx,
 		PullOllamaModelTopic,

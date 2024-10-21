@@ -1,4 +1,4 @@
-package commands
+package app
 
 import (
 	"ai-chats/internal/pkg/types"

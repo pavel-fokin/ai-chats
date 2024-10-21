@@ -6,26 +6,25 @@ import (
 
 	"github.com/google/uuid"
 
-	appPkg "ai-chats/internal/app"
-	"ai-chats/internal/app/commands"
+	"ai-chats/internal/app"
 	"ai-chats/internal/domain"
 	"ai-chats/internal/pkg/types"
 )
 
-func (w *Worker) SetupHandlers(app App) {
-	w.RegisterHandler(appPkg.GenerateChatTitleTopic, 1, w.GenerateChatTitle(app))
-	w.RegisterHandler(appPkg.MessageAddedTopic, 1, w.MessageAdded(app))
-	w.RegisterHandler(appPkg.PullOllamaModelTopic, 1, w.PullOllamaModel(app))
+func (w *Worker) SetupHandlers(a App) {
+	w.RegisterHandler(app.GenerateChatTitleTopic, 1, w.GenerateChatTitle(a))
+	w.RegisterHandler(app.MessageAddedTopic, 1, w.MessageAdded(a))
+	w.RegisterHandler(app.PullOllamaModelTopic, 1, w.PullOllamaModel(a))
 }
 
-func (w *Worker) GenerateChatTitle(app App) HandlerFunc {
+func (w *Worker) GenerateChatTitle(a App) HandlerFunc {
 	return func(ctx context.Context, e types.Message) error {
-		generateChatTitle, ok := e.(commands.GenerateChatTitle)
+		generateChatTitle, ok := e.(app.GenerateChatTitle)
 		if !ok {
 			return fmt.Errorf("failed to cast event to generatechatTitle")
 		}
 
-		err := app.GenerateTitle(ctx, uuid.MustParse(generateChatTitle.ChatID))
+		err := a.GenerateTitle(ctx, uuid.MustParse(generateChatTitle.ChatID))
 		if err != nil {
 			return fmt.Errorf("failed to generate title: %w", err)
 		}
@@ -34,14 +33,14 @@ func (w *Worker) GenerateChatTitle(app App) HandlerFunc {
 	}
 }
 
-func (w *Worker) MessageAdded(app App) HandlerFunc {
+func (w *Worker) MessageAdded(a App) HandlerFunc {
 	return func(ctx context.Context, e types.Message) error {
 		messageAdded, ok := e.(domain.MessageAdded)
 		if !ok {
 			return fmt.Errorf("failed to cast event to messageadded")
 		}
 
-		err := app.ProcessAddedMessage(ctx, messageAdded)
+		err := a.ProcessAddedMessage(ctx, messageAdded)
 		if err != nil {
 			return fmt.Errorf("failed to handle a message added event: %w", err)
 		}
@@ -50,14 +49,14 @@ func (w *Worker) MessageAdded(app App) HandlerFunc {
 	}
 }
 
-func (w *Worker) PullOllamaModel(app App) HandlerFunc {
+func (w *Worker) PullOllamaModel(a App) HandlerFunc {
 	return func(ctx context.Context, e types.Message) error {
-		pullOllamaModel, ok := e.(commands.PullOllamaModel)
+		pullOllamaModel, ok := e.(app.PullOllamaModel)
 		if !ok {
 			return fmt.Errorf("failed to cast event to pullollamamodel")
 		}
 
-		err := app.PullOllamaModel(ctx, pullOllamaModel.Model)
+		err := a.PullOllamaModel(ctx, pullOllamaModel.Model)
 		if err != nil {
 			return fmt.Errorf("failed to pull ollama model: %w", err)
 		}

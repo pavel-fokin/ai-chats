@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"ai-chats/internal/app/commands"
 	"ai-chats/internal/domain"
 	"ai-chats/internal/pkg/types"
 )
@@ -56,7 +55,7 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 
 // GenerateChatTitle generates a chat title.
 func (a *App) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) error {
-	generateChatTitleCommand := commands.GenerateChatTitle{ChatID: chatID.String()}
+	generateChatTitleCommand := NewGenerateChatTitle(chatID.String())
 	if err := a.pubsub.Publish(
 		ctx,
 		GenerateChatTitleTopic,

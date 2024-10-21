@@ -26,7 +26,7 @@ type PubSub interface {
 
 type HandlerFunc func(ctx context.Context, event types.Message) error
 
-func (hf HandlerFunc) Handle(ctx context.Context, pubsub PubSub, topic string, concurrency int) error {
+func (fn HandlerFunc) Handle(ctx context.Context, pubsub PubSub, topic string, concurrency int) error {
 	channel, err := pubsub.Subscribe(ctx, topic)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to subscribe to events", "err", err)
@@ -39,7 +39,7 @@ func (hf HandlerFunc) Handle(ctx context.Context, pubsub PubSub, topic string, c
 		case <-ctx.Done():
 			return nil
 		case e := <-channel:
-			if err := hf(ctx, e); err != nil {
+			if err := fn(ctx, e); err != nil {
 				slog.ErrorContext(ctx, "failed to handle event", "err", err)
 			}
 		}
