@@ -19,7 +19,7 @@ type Subscriber interface {
 
 type Chats interface {
 	CreateChat(ctx context.Context, userID domain.UserID, defaultModel, message string) (domain.Chat, error)
-	DeleteChat(ctx context.Context, chatID domain.ChatID) error
+	DeleteChat(ctx context.Context, userID domain.UserID, chatID domain.ChatID) error
 	FindChatByID(ctx context.Context, userID domain.UserID, chatID domain.ChatID) (domain.Chat, error)
 	FindChatByIDWithMessages(ctx context.Context, userID domain.UserID, chatID domain.ChatID) (domain.Chat, error)
 	FindChatsByUserID(ctx context.Context, userID domain.UserID) ([]domain.Chat, error)
@@ -31,7 +31,6 @@ type Chats interface {
 func GetChats(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
 		userID := MustHaveUserID(ctx)
 
 		chats, err := app.FindChatsByUserID(ctx, userID)
@@ -73,7 +72,6 @@ func PostChats(app Chats) http.HandlerFunc {
 func GetChat(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
 		userID := MustHaveUserID(ctx)
 		chatID := chi.URLParam(r, "uuid")
 
@@ -91,10 +89,10 @@ func GetChat(app Chats) http.HandlerFunc {
 func DeleteChat(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
+		userID := MustHaveUserID(ctx)
 		chatID := chi.URLParam(r, "uuid")
 
-		if err := app.DeleteChat(ctx, uuid.MustParse(chatID)); err != nil {
+		if err := app.DeleteChat(ctx, userID, uuid.MustParse(chatID)); err != nil {
 			handleChatErrors(w, ctx, err)
 			return
 		}
@@ -107,7 +105,6 @@ func DeleteChat(app Chats) http.HandlerFunc {
 func GetMessages(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
 		userID := MustHaveUserID(ctx)
 		chatID := chi.URLParam(r, "uuid")
 
@@ -125,7 +122,6 @@ func GetMessages(app Chats) http.HandlerFunc {
 func PostMessages(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
 		chatID := chi.URLParam(r, "uuid")
 		userID := MustHaveUserID(ctx)
 
@@ -150,7 +146,6 @@ func PostMessages(app Chats) http.HandlerFunc {
 func PostGenerateChatTitle(app Chats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
 		chatID := chi.URLParam(r, "uuid")
 
 		err := app.GenerateChatTitleAsync(ctx, uuid.MustParse(chatID))
@@ -168,7 +163,6 @@ func PostGenerateChatTitle(app Chats) http.HandlerFunc {
 func GetChatEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
 		chatID := chi.URLParam(r, "uuid")
 		userID := MustHaveUserID(ctx)
 

@@ -23,8 +23,8 @@ func (m *MockChats) CreateChat(ctx context.Context, userID domain.UserID, defaul
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
-func (m *MockChats) DeleteChat(ctx context.Context, chatID domain.ChatID) error {
-	args := m.Called(ctx, chatID)
+func (m *MockChats) DeleteChat(ctx context.Context, userID domain.UserID, chatID domain.ChatID) error {
+	args := m.Called(ctx, userID, chatID)
 	return args.Error(0)
 }
 

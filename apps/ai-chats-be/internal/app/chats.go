@@ -77,7 +77,16 @@ func (a *App) FindChatByID(ctx context.Context, userID domain.UserID, chatID dom
 }
 
 // DeleteChat deletes the chat.
-func (a *App) DeleteChat(ctx context.Context, chatID domain.ChatID) error {
+func (a *App) DeleteChat(ctx context.Context, userID domain.UserID, chatID domain.ChatID) error {
+	chat, err := a.chats.FindByID(ctx, chatID)
+	if err != nil {
+		return fmt.Errorf("error finding chat: %w", err)
+	}
+
+	if err := chat.CanUserAccess(userID); err != nil {
+		return fmt.Errorf("error checking chat access: %w", err)
+	}
+
 	return a.chats.Delete(ctx, chatID)
 }
 

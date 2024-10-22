@@ -145,16 +145,17 @@ func TestApiChats_CreateChat(t *testing.T) {
 }
 
 func TestApiChats_DeleteChat(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
-		chatID := uuid.New()
-		ctx := context.WithValue(context.Background(), UserIDCtxKey, domain.NewUserID())
+	chatID := domain.NewChatID()
+	userID := domain.NewUserID()
+	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
+	t.Run("success", func(t *testing.T) {
 		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/chats/%s", chatID), nil)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		mockChats := &MockChats{}
-		mockChats.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(nil)
+		mockChats.On("DeleteChat", mock.MatchedBy(matchChiContext), userID, chatID).Return(nil)
 
 		router := chi.NewRouter()
 		router.Delete("/api/chats/{uuid}", DeleteChat(mockChats))
@@ -166,15 +167,12 @@ func TestApiChats_DeleteChat(t *testing.T) {
 	})
 
 	t.Run("internal error", func(t *testing.T) {
-		chatID := uuid.New()
-		ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
-
 		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/chats/%s", chatID), nil)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		mockChats := &MockChats{}
-		mockChats.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(errors.New("failed to delete chat"))
+		mockChats.On("DeleteChat", mock.MatchedBy(matchChiContext), userID, chatID).Return(assert.AnError)
 
 		router := chi.NewRouter()
 		router.Delete("/api/chats/{uuid}", DeleteChat(mockChats))
@@ -186,15 +184,12 @@ func TestApiChats_DeleteChat(t *testing.T) {
 	})
 
 	t.Run("chat not found", func(t *testing.T) {
-		chatID := uuid.New()
-		ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
-
 		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/chats/%s", chatID), nil)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		mockChats := &MockChats{}
-		mockChats.On("DeleteChat", mock.MatchedBy(matchChiContext), chatID).Return(domain.ErrChatNotFound)
+		mockChats.On("DeleteChat", mock.MatchedBy(matchChiContext), userID, chatID).Return(domain.ErrChatNotFound)
 
 		router := chi.NewRouter()
 		router.Delete("/api/chats/{uuid}", DeleteChat(mockChats))

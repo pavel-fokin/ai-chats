@@ -3,7 +3,6 @@ package app
 import (
 	"ai-chats/internal/domain"
 	"context"
-	"errors"
 	"testing"
 
 	"github.com/google/uuid"
@@ -56,41 +55,53 @@ func TestApp_CreateChat(t *testing.T) {
 }
 
 func TestApp_DeleteChat(t *testing.T) {
-	t.Run("chat exists", func(t *testing.T) {
-		ctx := context.Background()
-		assert := assert.New(t)
+	ctx := context.Background()
 
+	t.Run("chat exists", func(t *testing.T) {
+		user := domain.NewUser("username")
 		chat := domain.NewChat(
-			domain.NewUser("username"),
+			user,
 			domain.NewModelID("model"),
 		)
 
 		mockChats := &MockChats{}
+		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
 		mockChats.On("Delete", ctx, chat.ID).Return(nil)
 
 		app := &App{chats: mockChats}
 
-		err := app.DeleteChat(ctx, chat.ID)
-		assert.NoError(err)
+		err := app.DeleteChat(ctx, user.ID, chat.ID)
+		assert.NoError(t, err)
+		mockChats.AssertExpectations(t)
 	})
 
 	t.Run("chat does not exist", func(t *testing.T) {
-		ctx := context.Background()
-		assert := assert.New(t)
-
-		chatID := uuid.New()
-		expectedErr := errors.New("chat not found")
+		chatID := domain.NewChatID()
+		userID := domain.NewUserID()
 
 		mockChats := &MockChats{}
-		mockChats.On("Delete", ctx, chatID).Return(expectedErr)
+		mockChats.On("FindByID", ctx, chatID).Return(domain.Chat{}, domain.ErrChatNotFound)
 
 		app := &App{chats: mockChats}
 
-		err := app.DeleteChat(ctx, chatID)
-		assert.Error(err)
-		assert.Equal(expectedErr, err)
+		err := app.DeleteChat(ctx, userID, chatID)
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, domain.ErrChatNotFound)
+		mockChats.AssertExpectations(t)
 	})
 
+	t.Run("chat access denied", func(t *testing.T) {
+		chat := domain.NewChat(domain.NewUser("otheruser"), domain.NewModelID("model"))
+
+		mockChats := &MockChats{}
+		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
+
+		app := &App{chats: mockChats}
+
+		err := app.DeleteChat(ctx, domain.NewUserID(), chat.ID)
+		assert.ErrorIs(t, err, domain.ErrChatAccessDenied)
+		mockChats.AssertExpectations(t)
+	})
 }
 
 func TestApp_FindChatByID(t *testing.T) {
