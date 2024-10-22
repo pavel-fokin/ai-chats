@@ -8,25 +8,6 @@ import (
 	"ai-chats/internal/domain"
 )
 
-// FindChatsByUserID returns all chats for the user.
-func (a *App) FindChatsByUserID(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
-	return a.chats.FindByUserID(ctx, userID)
-}
-
-// FindChatByIDWithMessages returns a chat with messages.
-func (a *App) FindChatByIDWithMessages(ctx context.Context, userID domain.UserID, chatID domain.ChatID) (domain.Chat, error) {
-	chat, err := a.chats.FindByIDWithMessages(ctx, chatID)
-	if err != nil {
-		return domain.Chat{}, fmt.Errorf("error finding chat: %w", err)
-	}
-
-	if err := chat.CanUserAccess(userID); err != nil {
-		return domain.Chat{}, fmt.Errorf("error checking chat access: %w", err)
-	}
-
-	return chat, nil
-}
-
 // CreateChat creates a chat for the user.
 func (a *App) CreateChat(ctx context.Context, userID domain.UserID, model, messageText string) (domain.Chat, error) {
 	messageText = strings.TrimSpace(messageText)
@@ -57,6 +38,25 @@ func (a *App) CreateChat(ctx context.Context, userID domain.UserID, model, messa
 		if err := a.pubsub.Publish(ctx, MessageAddedTopic, event); err != nil {
 			return domain.Chat{}, fmt.Errorf("error publishing chat events: %w", err)
 		}
+	}
+
+	return chat, nil
+}
+
+// FindChatsByUserID returns all chats for the user.
+func (a *App) FindChatsByUserID(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
+	return a.chats.FindByUserID(ctx, userID)
+}
+
+// FindChatByIDWithMessages returns a chat with messages.
+func (a *App) FindChatByIDWithMessages(ctx context.Context, userID domain.UserID, chatID domain.ChatID) (domain.Chat, error) {
+	chat, err := a.chats.FindByIDWithMessages(ctx, chatID)
+	if err != nil {
+		return domain.Chat{}, fmt.Errorf("error finding chat: %w", err)
+	}
+
+	if err := chat.CanUserAccess(userID); err != nil {
+		return domain.Chat{}, fmt.Errorf("error checking chat access: %w", err)
 	}
 
 	return chat, nil

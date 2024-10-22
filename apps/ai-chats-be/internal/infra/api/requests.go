@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -10,12 +11,12 @@ import (
 var validate = validator.New(validator.WithRequiredStructEnabled())
 
 type PostChatsRequest struct {
-	DefaultModel string `json:"defaultModel"`
-	Message      string `json:"message"`
+	DefaultModel string `json:"defaultModel" validate:"required"`
+	Message      string `json:"message" validate:"required"`
 }
 
 type PostMessagesRequest struct {
-	Text string `json:"text"`
+	Text string `json:"text" validate:"required"`
 }
 
 type UserCredentials struct {
@@ -37,6 +38,10 @@ type PostOllamaModelsRequest struct {
 
 // ParseJSON validates and parses the request body into the given interface.
 func ParseJSON(r *http.Request, v any) error {
+	if r.Body == nil {
+		return errors.New("request body is empty")
+	}
+
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(v); err != nil {
 		return err

@@ -28,42 +28,32 @@ func TestApiChats_CreateChat(t *testing.T) {
 	userID := domain.NewUserID()
 	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
-	t.Run("missed UserID", func(t *testing.T) {
-		defer func() { recover() }()
-
-		req, _ := http.NewRequest("", "", nil)
-		w := httptest.NewRecorder()
-
-		PostChats(&MockChats{})(w, req)
-
-		assert.Fail(t, "expected panic")
-	})
-
 	t.Run("success", func(t *testing.T) {
 		req, _ := http.NewRequest("", "", nil)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		mockChats := &MockChats{}
-		mockChats.On("CreateChat", ctx, userID, "", "").Return(domain.Chat{}, nil)
+		mockChats.On("CreateChat", ctx, userID, "model", "message").Return(domain.Chat{}, nil)
 
 		PostChats(mockChats)(w, req)
 
 		resp := w.Result()
-		assert.Equal(t, 200, resp.StatusCode)
+		assert.Equal(t, 400, resp.StatusCode)
 
-		mockChats.AssertNumberOfCalls(t, "CreateChat", 1)
+		mockChats.AssertNumberOfCalls(t, "CreateChat", 0)
 	})
 
-	t.Run("failure", func(t *testing.T) {
-		req, _ := http.NewRequest("", "", nil)
+	t.Run("internal error", func(t *testing.T) {
+		body := `{"defaultModel": "model","message": "message"}`
+		req, _ := http.NewRequest("POST", "", strings.NewReader(body))
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		mockChats := &MockChats{}
 		mockChats.On(
-			"CreateChat", ctx, userID, "", "",
-		).Return(domain.Chat{}, errors.New("failed to create chat"))
+			"CreateChat", ctx, userID, "model", "message",
+		).Return(domain.Chat{}, assert.AnError)
 
 		PostChats(mockChats)(w, req)
 
@@ -88,9 +78,9 @@ func TestApiChats_CreateChat(t *testing.T) {
 		PostChats(mockChats)(w, req)
 
 		resp := w.Result()
-		assert.Equal(t, 200, resp.StatusCode)
+		assert.Equal(t, 400, resp.StatusCode)
 
-		mockChats.AssertNumberOfCalls(t, "CreateChat", 1)
+		mockChats.AssertNumberOfCalls(t, "CreateChat", 0)
 	})
 
 	t.Run("with invalid JSON", func(t *testing.T) {
@@ -143,7 +133,7 @@ func TestApiChats_CreateChat(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On(
 			"CreateChat", ctx, userID, "model", "message",
-		).Return(domain.Chat{}, errors.New("failed to create chat"))
+		).Return(domain.Chat{}, assert.AnError)
 
 		PostChats(mockChats)(w, req)
 

@@ -51,20 +51,14 @@ func PostChats(app Chats) http.HandlerFunc {
 		ctx := r.Context()
 		userID := MustHaveUserID(ctx)
 
-		defaultModel := ""
-		message := ""
-		if r.Body != nil {
-			var req PostChatsRequest
-			if err := ParseJSON(r, &req); err != nil {
-				slog.ErrorContext(ctx, "failed to parse the request", "err", err)
-				WriteErrorResponse(w, http.StatusBadRequest, BadRequest)
-				return
-			}
-			defaultModel = req.DefaultModel
-			message = req.Message
+		var req PostChatsRequest
+		if err := ParseJSON(r, &req); err != nil {
+			slog.ErrorContext(ctx, "failed to parse the request", "err", err)
+			WriteErrorResponse(w, http.StatusBadRequest, BadRequest)
+			return
 		}
 
-		chat, err := app.CreateChat(ctx, userID, defaultModel, message)
+		chat, err := app.CreateChat(ctx, userID, req.DefaultModel, req.Message)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to create a chat", "err", err)
 			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
@@ -217,6 +211,7 @@ func GetChatEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.H
 	}
 }
 
+// handleChatErrors handles chat errors.
 func handleChatErrors(w http.ResponseWriter, ctx context.Context, err error) {
 	switch err {
 	case domain.ErrChatNotFound:
