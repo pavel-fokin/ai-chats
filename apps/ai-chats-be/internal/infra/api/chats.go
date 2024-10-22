@@ -85,17 +85,7 @@ func GetChat(app Chats) http.HandlerFunc {
 
 		chat, err := app.FindChatByID(ctx, userID, uuid.MustParse(chatID))
 		if err != nil {
-			switch err {
-			case domain.ErrChatNotFound:
-				slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
-				WriteErrorResponse(w, http.StatusNotFound, NotFound)
-			case domain.ErrChatAccessDenied:
-				slog.ErrorContext(ctx, "chat access denied", "chatID", chatID)
-				WriteErrorResponse(w, http.StatusForbidden, Forbidden)
-			default:
-				slog.ErrorContext(ctx, "failed to get a chat", "err", err)
-				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
-			}
+			handleChatErrors(w, ctx, err)
 			return
 		}
 
@@ -111,14 +101,7 @@ func DeleteChat(app Chats) http.HandlerFunc {
 		chatID := chi.URLParam(r, "uuid")
 
 		if err := app.DeleteChat(ctx, uuid.MustParse(chatID)); err != nil {
-			switch err {
-			case domain.ErrChatNotFound:
-				slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
-				WriteErrorResponse(w, http.StatusNotFound, NotFound)
-			default:
-				slog.ErrorContext(ctx, "failed to delete a chat", "err", err)
-				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
-			}
+			handleChatErrors(w, ctx, err)
 			return
 		}
 
@@ -136,17 +119,7 @@ func GetMessages(app Chats) http.HandlerFunc {
 
 		chat, err := app.FindChatByIDWithMessages(ctx, userID, uuid.MustParse(chatID))
 		if err != nil {
-			switch err {
-			case domain.ErrChatNotFound:
-				slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
-				WriteErrorResponse(w, http.StatusNotFound, NotFound)
-			case domain.ErrChatAccessDenied:
-				slog.ErrorContext(ctx, "chat access denied", "chatID", chatID)
-				WriteErrorResponse(w, http.StatusForbidden, Forbidden)
-			default:
-				slog.ErrorContext(ctx, "failed to get a chat", "err", err)
-				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
-			}
+			handleChatErrors(w, ctx, err)
 			return
 		}
 
@@ -171,8 +144,7 @@ func PostMessages(app Chats) http.HandlerFunc {
 
 		err := app.SendMessage(ctx, userID, uuid.MustParse(chatID), req.Text)
 		if err != nil {
-			slog.ErrorContext(ctx, "failed to send a message", "chatID", chatID, "err", err)
-			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
+			handleChatErrors(w, ctx, err)
 			return
 		}
 
@@ -208,17 +180,7 @@ func GetChatEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.H
 
 		_, err := app.FindChatByID(ctx, userID, uuid.MustParse(chatID))
 		if err != nil {
-			switch err {
-			case domain.ErrChatNotFound:
-				slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
-				WriteErrorResponse(w, http.StatusNotFound, NotFound)
-			case domain.ErrChatAccessDenied:
-				slog.ErrorContext(ctx, "chat access denied", "chatID", chatID)
-				WriteErrorResponse(w, http.StatusForbidden, Forbidden)
-			default:
-				slog.ErrorContext(ctx, "failed to get a chat", "err", err)
-				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
-			}
+			handleChatErrors(w, ctx, err)
 			return
 		}
 
@@ -252,5 +214,19 @@ func GetChatEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.H
 				flusher.Flush()
 			}
 		}
+	}
+}
+
+func handleChatErrors(w http.ResponseWriter, ctx context.Context, err error) {
+	switch err {
+	case domain.ErrChatNotFound:
+		slog.ErrorContext(ctx, "chat not found", "err", err)
+		WriteErrorResponse(w, http.StatusNotFound, NotFound)
+	case domain.ErrChatAccessDenied:
+		slog.ErrorContext(ctx, "chat access denied", "err", err)
+		WriteErrorResponse(w, http.StatusForbidden, Forbidden)
+	default:
+		slog.ErrorContext(ctx, "failed to handle a chat error", "err", err)
+		WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
 	}
 }

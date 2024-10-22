@@ -28,7 +28,7 @@ func TestApiChats_CreateChat(t *testing.T) {
 	userID := domain.NewUserID()
 	ctx := context.WithValue(context.Background(), UserIDCtxKey, userID)
 
-	t.Run("Missed UserID", func(t *testing.T) {
+	t.Run("missed UserID", func(t *testing.T) {
 		defer func() { recover() }()
 
 		req, _ := http.NewRequest("", "", nil)
@@ -39,7 +39,7 @@ func TestApiChats_CreateChat(t *testing.T) {
 		assert.Fail(t, "expected panic")
 	})
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
 		req, _ := http.NewRequest("", "", nil)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
@@ -55,7 +55,7 @@ func TestApiChats_CreateChat(t *testing.T) {
 		mockChats.AssertNumberOfCalls(t, "CreateChat", 1)
 	})
 
-	t.Run("Failure", func(t *testing.T) {
+	t.Run("failure", func(t *testing.T) {
 		req, _ := http.NewRequest("", "", nil)
 		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
@@ -73,7 +73,7 @@ func TestApiChats_CreateChat(t *testing.T) {
 		mockChats.AssertNumberOfCalls(t, "CreateChat", 1)
 	})
 
-	t.Run("With empty JSON", func(t *testing.T) {
+	t.Run("with empty JSON", func(t *testing.T) {
 		body := `{}`
 		req, err := http.NewRequest("POST", "", strings.NewReader(body))
 		assert.NoError(t, err)
@@ -93,7 +93,7 @@ func TestApiChats_CreateChat(t *testing.T) {
 		mockChats.AssertNumberOfCalls(t, "CreateChat", 1)
 	})
 
-	t.Run("With invalid JSON", func(t *testing.T) {
+	t.Run("with invalid JSON", func(t *testing.T) {
 		body := `{"12312"}`
 		req, err := http.NewRequest("POST", "", strings.NewReader(body))
 		assert.NoError(t, err)
@@ -541,7 +541,51 @@ func TestApiChats_PostMessages(t *testing.T) {
 		mockChats.AssertExpectations(t)
 	})
 
-	t.Run("failure", func(t *testing.T) {
+	t.Run("chat not found", func(t *testing.T) {
+		chatID := uuid.New()
+
+		body := `{"text": "text"}`
+		req, _ := http.NewRequest("POST", fmt.Sprintf("/api/chats/%s/messages", chatID), strings.NewReader(body))
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockChats := &MockChats{}
+		mockChats.On(
+			"SendMessage", mock.MatchedBy(matchChiContext), userID, chatID, "text",
+		).Return(domain.ErrChatNotFound)
+
+		router := chi.NewRouter()
+		router.Post("/api/chats/{uuid}/messages", PostMessages(mockChats))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 404, resp.StatusCode)
+		mockChats.AssertExpectations(t)
+	})
+
+	t.Run("chat access denied", func(t *testing.T) {
+		chatID := uuid.New()
+
+		body := `{"text": "text"}`
+		req, _ := http.NewRequest("POST", fmt.Sprintf("/api/chats/%s/messages", chatID), strings.NewReader(body))
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockChats := &MockChats{}
+		mockChats.On(
+			"SendMessage", mock.MatchedBy(matchChiContext), userID, chatID, "text",
+		).Return(domain.ErrChatAccessDenied)
+
+		router := chi.NewRouter()
+		router.Post("/api/chats/{uuid}/messages", PostMessages(mockChats))
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 403, resp.StatusCode)
+		mockChats.AssertExpectations(t)
+	})
+
+	t.Run("internal error", func(t *testing.T) {
 		chatID := uuid.New()
 
 		body := `{"text": "text"}`

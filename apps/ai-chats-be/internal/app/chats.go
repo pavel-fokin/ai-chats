@@ -124,6 +124,10 @@ func (a *App) SendMessage(
 			return fmt.Errorf("error finding chat: %w", err)
 		}
 
+		if err := chat.CanUserAccess(userID); err != nil {
+			return fmt.Errorf("error checking chat access: %w", err)
+		}
+
 		chat.AddMessage(domain.NewUserMessage(user, messageText))
 		if err := a.chats.Update(ctx, chat); err != nil {
 			return fmt.Errorf("error updating chat: %w", err)

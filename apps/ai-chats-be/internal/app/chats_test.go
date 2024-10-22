@@ -165,7 +165,7 @@ func TestApp_SendMessage(t *testing.T) {
 
 	t.Run("chat exists", func(t *testing.T) {
 		chat := domain.NewChat(
-			domain.NewUser("username"),
+			user,
 			domain.NewModelID("model"),
 		)
 
@@ -177,19 +177,31 @@ func TestApp_SendMessage(t *testing.T) {
 
 		err := app.SendMessage(ctx, user.ID, chat.ID, "Hello, how are you?")
 		assert.NoError(err)
+		mockChats.AssertExpectations(t)
 	})
 
 	t.Run("chat does not exist", func(t *testing.T) {
-		chatID := uuid.New()
-		expectedErr := errors.New("chat not found")
+		chatID := domain.NewChatID()
 
 		mockChats := &MockChats{}
-		mockChats.On("FindByID", ctx, chatID).Return(domain.Chat{}, expectedErr)
+		mockChats.On("FindByID", ctx, chatID).Return(domain.Chat{}, domain.ErrChatNotFound)
 
 		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
 
 		err := app.SendMessage(ctx, user.ID, chatID, "Hello, how are you?")
 		assert.Error(err)
-		assert.ErrorContains(err, expectedErr.Error())
+		assert.ErrorContains(err, domain.ErrChatNotFound.Error())
+	})
+
+	t.Run("chat access denied", func(t *testing.T) {
+		chat := domain.NewChat(domain.NewUser("otheruser"), domain.NewModelID("model"))
+
+		mockChats := &MockChats{}
+		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
+
+		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
+
+		err := app.SendMessage(ctx, user.ID, chat.ID, "Hello, how are you?")
+		assert.ErrorIs(err, domain.ErrChatAccessDenied)
 	})
 }
