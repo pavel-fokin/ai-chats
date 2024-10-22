@@ -43,11 +43,6 @@ func (m *MockChats) SendMessage(ctx context.Context, userID domain.UserID, chatI
 	return args.Error(0)
 }
 
-func (m *MockChats) ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error) {
-	args := m.Called(ctx, chatID)
-	return args.Bool(0), args.Error(1)
-}
-
 func (m *MockChats) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) error {
 	args := m.Called(ctx, chatID)
 	return args.Error(0)

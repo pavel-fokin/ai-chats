@@ -18,7 +18,6 @@ type Subscriber interface {
 }
 
 type Chats interface {
-	ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error)
 	CreateChat(ctx context.Context, userID domain.UserID, defaultModel, message string) (domain.Chat, error)
 	DeleteChat(ctx context.Context, chatID domain.ChatID) error
 	FindChatByID(ctx context.Context, userID domain.UserID, chatID domain.ChatID) (domain.Chat, error)
@@ -205,16 +204,21 @@ func GetChatEvents(app Chats, sse *SSEConnections, subscriber Subscriber) http.H
 		ctx := r.Context()
 
 		chatID := chi.URLParam(r, "uuid")
+		userID := MustHaveUserID(ctx)
 
-		chatExists, err := app.ChatExists(ctx, uuid.MustParse(chatID))
+		_, err := app.FindChatByID(ctx, userID, uuid.MustParse(chatID))
 		if err != nil {
-			slog.ErrorContext(ctx, "failed to check if the chat exists", "err", err)
-			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
-			return
-		}
-		if !chatExists {
-			slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
-			WriteErrorResponse(w, http.StatusNotFound, NotFound)
+			switch err {
+			case domain.ErrChatNotFound:
+				slog.ErrorContext(ctx, "chat not found", "chatID", chatID)
+				WriteErrorResponse(w, http.StatusNotFound, NotFound)
+			case domain.ErrChatAccessDenied:
+				slog.ErrorContext(ctx, "chat access denied", "chatID", chatID)
+				WriteErrorResponse(w, http.StatusForbidden, Forbidden)
+			default:
+				slog.ErrorContext(ctx, "failed to get a chat", "err", err)
+				WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
+			}
 			return
 		}
 

@@ -27,11 +27,6 @@ func (a *App) FindChatByIDWithMessages(ctx context.Context, userID domain.UserID
 	return chat, nil
 }
 
-// ChatExists checks if the chat exists.
-func (a *App) ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error) {
-	return a.chats.Exists(ctx, chatID)
-}
-
 // CreateChat creates a chat for the user.
 func (a *App) CreateChat(ctx context.Context, userID domain.UserID, model, messageText string) (domain.Chat, error) {
 	messageText = strings.TrimSpace(messageText)
