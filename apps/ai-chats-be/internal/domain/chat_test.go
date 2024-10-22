@@ -41,4 +41,12 @@ func TestDomainChat(t *testing.T) {
 		assert.Equal(t, 1, len(chat.Events))
 		assert.Equal(t, "Test title", chat.Title)
 	})
+
+	t.Run("can user access", func(t *testing.T) {
+		user := NewUser("username")
+
+		chat := NewChat(user, NewModelID("model"))
+		assert.NoError(t, chat.CanUserAccess(user.ID))
+		assert.ErrorIs(t, chat.CanUserAccess(NewUserID()), ErrChatAccessDenied)
+	})
 }

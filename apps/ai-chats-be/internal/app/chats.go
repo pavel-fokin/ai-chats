@@ -13,14 +13,18 @@ func (a *App) FindChatsByUserID(ctx context.Context, userID domain.UserID) ([]do
 	return a.chats.FindByUserID(ctx, userID)
 }
 
-// ChatMessages returns all messages in the chat.
-func (a *App) ChatMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
+// FindChatByIDWithMessages returns a chat with messages.
+func (a *App) FindChatByIDWithMessages(ctx context.Context, userID domain.UserID, chatID domain.ChatID) (domain.Chat, error) {
 	chat, err := a.chats.FindByIDWithMessages(ctx, chatID)
 	if err != nil {
-		return nil, fmt.Errorf("error finding chat: %w", err)
+		return domain.Chat{}, fmt.Errorf("error finding chat: %w", err)
 	}
 
-	return chat.Messages, nil
+	if err := chat.CanUserAccess(userID); err != nil {
+		return domain.Chat{}, fmt.Errorf("error checking chat access: %w", err)
+	}
+
+	return chat, nil
 }
 
 // ChatExists checks if the chat exists.
@@ -64,8 +68,17 @@ func (a *App) CreateChat(ctx context.Context, userID domain.UserID, model, messa
 }
 
 // FindChatByID finds a chat by ID.
-func (a *App) FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error) {
-	return a.chats.FindByID(ctx, chatID)
+func (a *App) FindChatByID(ctx context.Context, userID domain.UserID, chatID domain.ChatID) (domain.Chat, error) {
+	chat, err := a.chats.FindByID(ctx, chatID)
+	if err != nil {
+		return domain.Chat{}, fmt.Errorf("error finding chat: %w", err)
+	}
+
+	if err := chat.CanUserAccess(userID); err != nil {
+		return domain.Chat{}, fmt.Errorf("error checking chat access: %w", err)
+	}
+
+	return chat, nil
 }
 
 // DeleteChat deletes the chat.

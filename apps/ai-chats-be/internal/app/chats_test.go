@@ -98,8 +98,10 @@ func TestApp_FindChatByID(t *testing.T) {
 	assert := assert.New(t)
 
 	t.Run("chat exists", func(t *testing.T) {
+		user := domain.NewUser("username")
+
 		chat := domain.NewChat(
-			domain.NewUser("username"),
+			user,
 			domain.NewModelID("model"),
 		)
 
@@ -108,7 +110,7 @@ func TestApp_FindChatByID(t *testing.T) {
 
 		app := &App{chats: mockChats}
 
-		foundChat, err := app.chats.FindByID(ctx, chat.ID)
+		foundChat, err := app.FindChatByID(ctx, user.ID, chat.ID)
 		assert.NoError(err)
 
 		assert.Equal(chat.ID, foundChat.ID)
@@ -118,16 +120,28 @@ func TestApp_FindChatByID(t *testing.T) {
 
 	t.Run("chat does not exist", func(t *testing.T) {
 		chatID := uuid.New()
-		expectedErr := errors.New("chat not found")
+		userID := domain.NewUserID()
 
 		mockChats := &MockChats{}
-		mockChats.On("FindByID", ctx, chatID).Return(domain.Chat{}, expectedErr)
+		mockChats.On("FindByID", ctx, chatID).Return(domain.Chat{}, domain.ErrChatNotFound)
 
 		app := &App{chats: mockChats}
 
-		_, err := app.chats.FindByID(ctx, chatID)
+		_, err := app.FindChatByID(ctx, userID, chatID)
 		assert.Error(err)
-		assert.Equal(expectedErr, err)
+		assert.ErrorIs(err, domain.ErrChatNotFound)
+	})
+
+	t.Run("chat access denied", func(t *testing.T) {
+		userID := domain.NewUserID()
+		chat := domain.NewChat(domain.NewUser("username"), domain.NewModelID("model"))
+
+		mockChats := &MockChats{}
+		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
+		app := &App{chats: mockChats}
+
+		_, err := app.FindChatByID(ctx, userID, chat.ID)
+		assert.ErrorIs(err, domain.ErrChatAccessDenied)
 	})
 }
 

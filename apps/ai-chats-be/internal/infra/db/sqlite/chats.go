@@ -239,7 +239,8 @@ func (c *Chats) FindByUserID(ctx context.Context, userID domain.UserID) ([]domai
 	return chats, nil
 }
 
-func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, error) {
+// FindByID returns a chat from the database.
+func (c *Chats) FindByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error) {
 	var (
 		chat      domain.Chat
 		createdAt string
@@ -255,6 +256,9 @@ func (c *Chats) FindByID(ctx context.Context, chatID uuid.UUID) (domain.Chat, er
 		chatID,
 	).Scan(&chat.ID, &chat.Title, &modelID, &createdAt, &chat.User.ID, &chat.User.Username)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return domain.Chat{}, domain.ErrChatNotFound
+		}
 		return domain.Chat{}, fmt.Errorf("failed to find chat by id: %w", err)
 	}
 

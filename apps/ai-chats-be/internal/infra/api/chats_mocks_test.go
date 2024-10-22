@@ -9,46 +9,46 @@ import (
 	"ai-chats/internal/pkg/types"
 )
 
-type MockChat struct {
+type MockChats struct {
 	mock.Mock
 }
 
-func (m *MockChat) FindChatsByUserID(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
+func (m *MockChats) FindChatsByUserID(ctx context.Context, userID domain.UserID) ([]domain.Chat, error) {
 	args := m.Called(ctx, userID)
 	return args.Get(0).([]domain.Chat), args.Error(1)
 }
 
-func (m *MockChat) CreateChat(ctx context.Context, userID domain.UserID, defaultModel, message string) (domain.Chat, error) {
+func (m *MockChats) CreateChat(ctx context.Context, userID domain.UserID, defaultModel, message string) (domain.Chat, error) {
 	args := m.Called(ctx, userID, defaultModel, message)
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
-func (m *MockChat) DeleteChat(ctx context.Context, chatID domain.ChatID) error {
+func (m *MockChats) DeleteChat(ctx context.Context, chatID domain.ChatID) error {
 	args := m.Called(ctx, chatID)
 	return args.Error(0)
 }
 
-func (m *MockChat) FindChatByID(ctx context.Context, chatID domain.ChatID) (domain.Chat, error) {
-	args := m.Called(ctx, chatID)
+func (m *MockChats) FindChatByID(ctx context.Context, userID domain.UserID, chatID domain.ChatID) (domain.Chat, error) {
+	args := m.Called(ctx, userID, chatID)
 	return args.Get(0).(domain.Chat), args.Error(1)
 }
 
-func (m *MockChat) SendMessage(ctx context.Context, userID domain.UserID, chatID domain.ChatID, message string) error {
+func (m *MockChats) FindChatByIDWithMessages(ctx context.Context, userID domain.UserID, chatID domain.ChatID) (domain.Chat, error) {
+	args := m.Called(ctx, userID, chatID)
+	return args.Get(0).(domain.Chat), args.Error(1)
+}
+
+func (m *MockChats) SendMessage(ctx context.Context, userID domain.UserID, chatID domain.ChatID, message string) error {
 	args := m.Called(ctx, userID, chatID, message)
 	return args.Error(0)
 }
 
-func (m *MockChat) ChatMessages(ctx context.Context, chatID domain.ChatID) ([]domain.Message, error) {
-	args := m.Called(ctx, chatID)
-	return args.Get(0).([]domain.Message), args.Error(1)
-}
-
-func (m *MockChat) ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error) {
+func (m *MockChats) ChatExists(ctx context.Context, chatID domain.ChatID) (bool, error) {
 	args := m.Called(ctx, chatID)
 	return args.Bool(0), args.Error(1)
 }
 
-func (m *MockChat) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) error {
+func (m *MockChats) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) error {
 	args := m.Called(ctx, chatID)
 	return args.Error(0)
 }

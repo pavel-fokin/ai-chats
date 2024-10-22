@@ -48,3 +48,10 @@ func (c *Chat) UpdateTitle(title string) {
 	c.UpdatedAt = time.Now().UTC()
 	c.Events = append(c.Events, NewChatTitleUpdated(c.ID, title))
 }
+
+func (c Chat) CanUserAccess(userID UserID) error {
+	if c.User.ID != userID {
+		return ErrChatAccessDenied
+	}
+	return nil
+}

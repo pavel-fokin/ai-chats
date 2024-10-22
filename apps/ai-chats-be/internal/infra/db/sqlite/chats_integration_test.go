@@ -218,8 +218,8 @@ func TestSqliteChats_FindByID(t *testing.T) {
 	})
 
 	t.Run("chat does not exist", func(t *testing.T) {
-		_, err := chats.FindByID(context.Background(), uuid.New())
-		assert.Error(t, err)
+		_, err := chats.FindByID(context.Background(), domain.NewChatID())
+		assert.ErrorIs(t, err, domain.ErrChatNotFound)
 	})
 }
 

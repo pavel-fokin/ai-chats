@@ -32,6 +32,7 @@ export type OllamaModel = {
 };
 
 export enum OllamaModelStatus {
+  ANY = 'any',
   AVAILABLE = 'available',
   PULLING = 'pulling',
 }

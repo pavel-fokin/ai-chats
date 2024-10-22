@@ -13,6 +13,9 @@ var (
 	InternalError = Error{
 		Message: "Internal error.",
 	}
+	Forbidden = Error{
+		Message: "Forbidden.",
+	}
 	UsernameIsTaken = Error{
 		Message: "That username is already taken. Try another one.",
 	}
