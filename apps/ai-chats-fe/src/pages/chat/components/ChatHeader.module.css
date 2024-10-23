@@ -9,8 +9,16 @@
 .chatHeaderDesktop {
   display: flex;
   flex: 1;
-  flex-direction: row;
-  align-items: center;
   justify-content: center;
   gap: var(--spacing-3);
+  margin: 0 auto;
+  max-width: 688px;
+}
+
+.chatHeaderTitle {
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
 }
