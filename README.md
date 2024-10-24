@@ -1,3 +1,7 @@
 # AI Chats
 
-This is a repo to try AI LLM models.
+**AI Chats** is a project that aims to help effective chatting with Ollama models.
+
+## Documentation
+
+- [Decisions Log](./docs/decisions-log/README.md)
