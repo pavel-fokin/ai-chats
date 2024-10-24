@@ -35,12 +35,12 @@ export const Chat = () => {
     <PageLayout>
       <ChatHeader chatId={chatId} />
       <Main>
-        <div className={styles.scrollable}>
-          <section className={styles.messagesList}>
+        <section className={styles.scrollable}>
+          <div className={styles.messagesList}>
             <MessagesList messages={messages.data ?? []} />
             <ModelResponseMessage />
-          </section>
-        </div>
+          </div>
+        </section>
         <section className={styles.inputMessage}>
           <InputMessage onSendMessage={handleSendMessage} />
         </section>
