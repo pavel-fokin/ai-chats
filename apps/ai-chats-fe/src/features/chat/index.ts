@@ -1,10 +1,11 @@
 export {
+  ChatHeader,
   ChatMenu,
-  ChatMenuProvider,
   InputMessage,
   Message,
+  MessagesList,
+  ModelResponseMessage,
   NewChatIconButton,
-  useChatMenu,
 } from './components';
-export { ChatContextProvider, useChatContext } from './contexts';
-export { useChatEvents } from './hooks/useChatEvents';
+export { ChatContextProvider } from './contexts';
+export { useChatEvents, useChatLogic } from './hooks';

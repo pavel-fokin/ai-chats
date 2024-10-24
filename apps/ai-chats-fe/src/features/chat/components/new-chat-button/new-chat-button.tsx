@@ -4,9 +4,9 @@ import { IconButton } from 'components';
 import { ChatIcon } from 'components/icons';
 import { useSidebarContext } from 'features/sidebar';
 
-import styles from './NewChatIconButton.module.css';
+import styles from './new-chat-button.module.css';
 
-export const NewChatIconButton: React.FC = () => {
+export const NewChatIconButton = (): JSX.Element => {
   const navigate = useNavigate();
   const { closeSidebar } = useSidebarContext();
 

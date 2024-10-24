@@ -1,12 +1,15 @@
 import { useParams } from 'react-router-dom';
 
-import { InputMessage } from 'features/chat';
-import { PageLayout, Main } from 'components/layout';
+import { Main, PageLayout } from 'components/layout';
+import {
+  ChatHeader,
+  InputMessage,
+  MessagesList,
+  ModelResponseMessage,
+} from 'features/chat/components';
+import { useChatLogic } from 'features/chat/hooks';
 
-import { ChatHeader, MessageChunk, MessagesList } from './components';
-import { useChatLogic } from './hooks/useChatLogic';
-
-import styles from './Chat.module.css';
+import styles from './chat.module.css';
 
 export const Chat = () => {
   const { chatId } = useParams();
@@ -35,7 +38,7 @@ export const Chat = () => {
         <div className={styles.scrollable}>
           <section className={styles.messagesList}>
             <MessagesList messages={messages.data ?? []} />
-            <MessageChunk />
+            <ModelResponseMessage />
           </section>
         </div>
         <section className={styles.inputMessage}>

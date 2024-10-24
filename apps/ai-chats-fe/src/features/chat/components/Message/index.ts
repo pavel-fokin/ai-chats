@@ -1,1 +1,1 @@
-export * from './Message';
+export { Message } from './message';

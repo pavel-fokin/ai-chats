@@ -1,18 +1,24 @@
-import { ChatMenu, ChatMenuProvider, NewChatIconButton } from 'features/chat';
-import { OpenSidebarButton } from 'features/sidebar';
 import { OnlyDesktop, OnlyMobile } from 'components';
-import { useChat } from 'hooks';
 import { Header } from 'components/layout';
+import { ChatMenu, NewChatIconButton } from 'features/chat';
+import { OpenSidebarButton } from 'features/sidebar';
+import { useChat } from 'hooks';
 
-import { ChatTitleMenuButton } from './ChatTitleMenuButton';
-import { MenuButton } from './MenuButton';
+import { ChatMenuProvider } from '../../contexts';
+import { ChatTitleMenuButton } from './chat-title-menu-button';
+import { MenuButton } from './menu-button';
 
-import styles from './ChatHeader.module.css';
+import styles from './chat-header.module.css';
 
 interface ChatHeaderProps {
   chatId: string;
 }
 
+/**
+ * Chat header component.
+ * @param {string} chatId - The ID of the chat.
+ * @returns {JSX.Element} - The chat header component.
+ */
 export const ChatHeader = ({ chatId }: ChatHeaderProps): JSX.Element => {
   const chat = useChat(chatId);
 

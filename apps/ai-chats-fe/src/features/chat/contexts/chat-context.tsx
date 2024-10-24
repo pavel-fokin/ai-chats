@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState } from 'react';
 
 import { MessageChunk } from 'types';
 
@@ -7,16 +7,7 @@ interface ChatContextValue {
   setMessageChunk: (messageChunk: MessageChunk | null) => void;
 }
 
-const ChatContext = createContext<ChatContextValue | null>(null);
-
-// eslint-disable-next-line
-export const useChatContext = () => {
-  const context = useContext(ChatContext);
-  if (!context) {
-    throw new Error('useChatContext must be used within a ChatContextProvider');
-  }
-  return context;
-};
+export const ChatContext = createContext<ChatContextValue | null>(null);
 
 export const ChatContextProvider = ({
   children,

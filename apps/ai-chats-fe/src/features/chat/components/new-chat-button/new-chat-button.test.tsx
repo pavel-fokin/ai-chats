@@ -2,8 +2,9 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { NewChatIconButton } from './NewChatIconButton';
 import { SidebarProvider } from 'features/sidebar';
+
+import { NewChatIconButton } from './new-chat-button';
 
 const renderWithRouter = (ui: JSX.Element) => {
   return render(

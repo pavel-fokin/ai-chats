@@ -1,14 +1,20 @@
 import { Avatar, Flex, Text } from '@radix-ui/themes';
 import Markdown from 'react-markdown';
 
-import styles from './Message.module.css';
+import styles from './message.module.css';
 
 interface MessageProps {
   sender: string;
   text: string;
 }
 
-export const Message: React.FC<MessageProps> = ({ sender, text }) => {
+/**
+ * Message component.
+ * @param {MessageProps} sender - The sender of the message.
+ * @param {string} text - The text of the message.
+ * @returns {JSX.Element} - The message component.
+ */
+export const Message = ({ sender, text }: MessageProps): JSX.Element => {
   return (
     <Flex direction="column" gap="1" p="2">
       <Flex gap="2">

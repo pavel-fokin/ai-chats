@@ -2,11 +2,11 @@ import { useState } from 'react';
 
 import { DropdownMenu, Flex } from '@radix-ui/themes';
 
-import { useGenerateChatTitle } from 'hooks';
 import { AIActionIcon, DeleteIcon } from 'components/icons';
+import { useGenerateChatTitle } from 'hooks';
 
-import { DeleteChatDialog } from './DeleteChatDialog';
-import { useChatMenu } from './ChatMenyContext';
+import { useChatMenu } from '../../hooks';
+import { DeleteChatDialog } from './delete-chat-dialog';
 
 interface ChatMenuProps {
   chatId: string;

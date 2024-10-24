@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
 import { vi } from 'vitest';
 
-import { InputMessage } from './InputMessage';
+import { InputMessage } from './input-message';
 
 const renderComponent = (children: React.ReactNode) => {
   return render(<Theme>{children}</Theme>);

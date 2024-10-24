@@ -1,14 +1,14 @@
 import { DropdownMenu } from '@radix-ui/themes';
 
-import { useChatMenu } from 'features/chat';
-
 import { Button } from 'components';
 
-interface ChatTitleButtonProps {
+import { useChatMenu } from '../../hooks';
+
+interface ChatTitleMenuButtonProps {
   title: string;
 }
 
-export const ChatTitleMenuButton = ({ title }: ChatTitleButtonProps) => {
+export const ChatTitleMenuButton = ({ title }: ChatTitleMenuButtonProps) => {
   const { isOpen, setIsOpen } = useChatMenu();
 
   return (

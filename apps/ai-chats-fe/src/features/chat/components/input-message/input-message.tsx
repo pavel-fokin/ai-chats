@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { IconButton, TextArea, Tooltip } from 'components';
 import { SendIcon } from 'components/icons';
 
-import styles from './InputMessage.module.css';
+import styles from './input-message.module.css';
 
 interface InputMessageProps {
   onSendMessage: (message: string) => void;
