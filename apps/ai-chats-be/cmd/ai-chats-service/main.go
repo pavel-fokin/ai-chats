@@ -45,7 +45,7 @@ func main() {
 	sqlite.LoadFixtures(db)
 
 	pubsub := pubsub.New()
-	// defer pubsub.CloseAll()
+	defer pubsub.Close()
 
 	app := app.New(
 		sqlite.NewChats(db),

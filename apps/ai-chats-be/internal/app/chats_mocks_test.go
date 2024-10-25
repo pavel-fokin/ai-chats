@@ -67,17 +67,17 @@ type MockPubSub struct {
 	mock.Mock
 }
 
-func (m *MockPubSub) Subscribe(ctx context.Context, topic string) (chan types.Message, error) {
+func (m *MockPubSub) Subscribe(ctx context.Context, topic TopicName) (chan types.Message, error) {
 	args := m.Called(ctx, topic)
 	return args.Get(0).(chan types.Message), args.Error(1)
 }
 
-func (m *MockPubSub) Unsubscribe(ctx context.Context, topic string, channel chan types.Message) error {
+func (m *MockPubSub) Unsubscribe(ctx context.Context, topic TopicName, channel chan types.Message) error {
 	args := m.Called(ctx, topic, channel)
 	return args.Error(0)
 }
 
-func (m *MockPubSub) Publish(ctx context.Context, topic string, data types.Message) error {
+func (m *MockPubSub) Publish(ctx context.Context, topic TopicName, data types.Message) error {
 	args := m.Called(ctx, topic, data)
 	return args.Error(0)
 }

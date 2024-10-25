@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	"ai-chats/internal/app"
 	"ai-chats/internal/domain"
 	"ai-chats/internal/pkg/types"
 )
@@ -51,13 +52,12 @@ type handler struct {
 	fn          HandlerFunc
 }
 
-type Topic = string
-
+type TopicName = string
 type Worker struct {
 	pubsub   PubSub
 	ctx      context.Context
 	stop     context.CancelFunc
-	handlers map[Topic]handler
+	handlers map[TopicName]handler
 }
 
 func New(pubsub PubSub) *Worker {
@@ -67,11 +67,11 @@ func New(pubsub PubSub) *Worker {
 		pubsub:   pubsub,
 		ctx:      ctx,
 		stop:     stop,
-		handlers: make(map[Topic]handler),
+		handlers: make(map[TopicName]handler),
 	}
 }
 
-func (w *Worker) RegisterHandler(topic string, concurrency int, fn HandlerFunc) {
+func (w *Worker) RegisterHandler(topic app.TopicName, concurrency int, fn HandlerFunc) {
 	w.handlers[topic] = handler{concurrency: concurrency, fn: fn}
 }
 

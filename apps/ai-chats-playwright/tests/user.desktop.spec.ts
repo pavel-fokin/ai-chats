@@ -1,4 +1,4 @@
-import { test, expect, devices } from '@playwright/test';
+import { test, expect, devices, BrowserContext, Page } from '@playwright/test';
 
 import { randomString } from './utils';
 
@@ -6,8 +6,8 @@ const username = `testuser-${randomString()}`;
 const password = 'password';
 
 test.describe('user sign up', () => {
-  let context;
-  let page;
+  let context: BrowserContext;
+  let page: Page;
 
   test.beforeAll(async ({ browser }) => {
     context = await browser.newContext();
