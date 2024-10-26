@@ -7,11 +7,11 @@ import { Message } from '../message';
  * @returns {JSX.Element | null} - The model response message component.
  */
 export const ModelResponseMessage = (): JSX.Element | null => {
-  const { messageChunk } = useChatContext();
+  const { modelResponse } = useChatContext();
 
-  if (!messageChunk) {
+  if (!modelResponse) {
     return null;
   }
 
-  return <Message sender={messageChunk.sender} text={messageChunk.text} />;
+  return <Message sender={modelResponse.sender} text={modelResponse.text} />;
 };

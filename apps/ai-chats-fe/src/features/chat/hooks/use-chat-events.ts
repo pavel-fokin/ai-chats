@@ -10,20 +10,20 @@ const eventHandlers = new Map<string, EventHandler>();
 
 export function useChatEvents(chatId: string) {
   const eventSourceRef = useRef<EventSource | null>(null);
-  const { setMessageChunk } = useChatContext();
+  const { setModelResponse } = useChatContext();
   const invalidateMessages = useInvalidateMessages();
 
   const accessToken = localStorage.getItem('accessToken') || '';
 
   eventHandlers.set(EventTypes.MESSAGE_ADDED, (event) => {
     const messageAdded = JSON.parse(event.data);
-    setMessageChunk(null);
+    setModelResponse(null);
     invalidateMessages(messageAdded.chatId);
   });
 
   eventHandlers.set(EventTypes.CHAT_MESSAGE, (event) => {
     const message = JSON.parse(event.data);
-    setMessageChunk(message);
+    setModelResponse(message);
   });
 
   useEffect(() => {

@@ -1,9 +1,4 @@
-export type MessageChunk = {
-  id: string;
-  sender: string;
-  text: string;
-  done: boolean;
-};
+export type ModelResponse = Message;
 
 export enum EventTypes {
   MESSAGE_ADDED = 'messageAdded',
