@@ -1,12 +1,13 @@
 import { useParams } from 'react-router-dom';
 
-import { Main, PageLayout } from 'components/layout';
+import { Header, Main, PageLayout } from 'components/layout';
 import {
   ChatHeader,
   InputMessage,
   MessagesList,
   ModelResponseMessage,
 } from 'features/chat/components';
+import { ChatMenuProvider } from 'features/chat/contexts';
 import { useChatLogic } from 'features/chat/hooks';
 
 import styles from './chat.module.css';
@@ -33,7 +34,11 @@ export const Chat = () => {
 
   return (
     <PageLayout>
-      <ChatHeader chatId={chatId} />
+      <Header>
+        <ChatMenuProvider>
+          <ChatHeader chatId={chatId} />
+        </ChatMenuProvider>
+      </Header>
       <Main>
         <section className={styles.scrollable}>
           <div className={styles.messagesList}>

@@ -1,10 +1,8 @@
 import { OnlyDesktop, OnlyMobile } from 'components';
-import { Header } from 'components/layout';
 import { ChatMenu, NewChatIconButton } from 'features/chat';
 import { OpenSidebarButton } from 'features/sidebar';
 import { useChat } from 'hooks';
 
-import { ChatMenuProvider } from '../../contexts';
 import { ChatTitleMenuButton } from './chat-title-menu-button';
 import { MenuButton } from './menu-button';
 
@@ -25,27 +23,23 @@ export const ChatHeader = ({ chatId }: ChatHeaderProps): JSX.Element => {
   const title = chat.data?.title || 'Chat';
 
   return (
-    <Header>
+    <>
       <OnlyMobile>
         <div className={styles.chatHeaderMobile}>
           <OpenSidebarButton />
-          <ChatMenuProvider>
-            <ChatMenu
-              chatId={chatId}
-              trigger={<ChatTitleMenuButton title={title} />}
-            />
-          </ChatMenuProvider>
+          <ChatMenu
+            chatId={chatId}
+            trigger={<ChatTitleMenuButton title={title} />}
+          />
           <NewChatIconButton />
         </div>
       </OnlyMobile>
       <OnlyDesktop>
         <div className={styles.chatHeaderDesktop}>
           <span className={styles.chatHeaderTitle}>{title}</span>
-          <ChatMenuProvider>
-            <ChatMenu chatId={chatId} trigger={<MenuButton />} />
-          </ChatMenuProvider>
+          <ChatMenu chatId={chatId} trigger={<MenuButton />} />
         </div>
       </OnlyDesktop>
-    </Header>
+    </>
   );
 };
