@@ -1,9 +1,9 @@
 import { useOllamaModels } from 'hooks';
 import { OllamaModelStatus } from 'types';
-import { OllamaModelAvailable } from './OllamaModelAvailable';
-import { OllamaModelPulling } from './OllamaModelPulling';
+import { OllamaModelAvailable } from './ollama-model-available';
+import { OllamaModelPulling } from './ollama-model-pulling';
 
-import classes from './OllamaModelsList.module.css';
+import classes from './ollama-models-list.module.css';
 
 export const OllamaModelsList = () => {
   const ollamaModelsAvailable = useOllamaModels(OllamaModelStatus.AVAILABLE);

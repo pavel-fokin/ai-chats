@@ -1,6 +1,6 @@
 import { Badge } from '@radix-ui/themes';
 
-import styles from './OllamaStatus.module.css';
+import styles from './ollama-status.module.css';
 
 export const OllamaStatus = (): JSX.Element => {
   return (

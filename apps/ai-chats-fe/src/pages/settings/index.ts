@@ -1,1 +1,1 @@
-export { OllamaSettings } from './OllamaSettings';
+export { OllamaSettings } from './ollama-settings';

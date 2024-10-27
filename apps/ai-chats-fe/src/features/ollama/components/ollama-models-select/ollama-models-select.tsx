@@ -3,19 +3,19 @@ import { useEffect } from 'react';
 
 import { OllamaModel } from 'types';
 
-import { ModelItem } from './ModelItem';
+import { OllamaModelItem } from './ollama-model-item';
 
-interface ModelsListProps {
+interface OllamaModelsSelectProps {
   models: OllamaModel[];
   selectedModel: OllamaModel | null;
   setSelectedModel: (model: OllamaModel) => void;
 }
 
-export const ModelsList: React.FC<ModelsListProps> = ({
+export const OllamaModelsSelect = ({
   models: ollamaModels,
   selectedModel,
   setSelectedModel,
-}) => {
+}: OllamaModelsSelectProps): JSX.Element => {
   const onModelClick = (model: OllamaModel) => {
     setSelectedModel(model);
   };
@@ -30,7 +30,7 @@ export const ModelsList: React.FC<ModelsListProps> = ({
   return (
     <Flex direction="column" gap="3">
       {ollamaModels.map((model) => (
-        <ModelItem
+        <OllamaModelItem
           key={`${model.model}}`}
           model={model}
           isSelected={

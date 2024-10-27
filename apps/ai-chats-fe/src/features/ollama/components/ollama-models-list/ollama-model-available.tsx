@@ -2,7 +2,7 @@ import { Flex, Heading, Text } from '@radix-ui/themes';
 
 import { OllamaModel } from 'types';
 
-import { DeleteOllamaModelDialog } from './DeleteOllamaModelDialog';
+import { DeleteOllamaModelDialog } from './delete-ollama-model-dialog';
 
 interface OllamaModelAvailableProps {
   model: OllamaModel;

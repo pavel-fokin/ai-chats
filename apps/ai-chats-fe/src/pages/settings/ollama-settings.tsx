@@ -1,12 +1,11 @@
 import { Box, Flex, Heading, IconButton, TextField } from '@radix-ui/themes';
 
-import { NewChatIconButton } from 'features/chat';
-import { OpenSidebarButton } from 'features/sidebar';
 import { DownloadIcon } from 'components/icons';
 import { Header, PageLayout } from 'components/layout';
+import { NewChatIconButton } from 'features/chat';
+import { OllamaModelsList, OllamaStatus } from 'features/ollama/components';
+import { OpenSidebarButton } from 'features/sidebar';
 import { usePullOllamaModel } from 'hooks';
-
-import { OllamaStatus, OllamaModelsList } from './components';
 
 export const OllamaSettings: React.FC = () => {
   const pullModel = usePullOllamaModel();

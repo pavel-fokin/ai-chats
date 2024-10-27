@@ -8,9 +8,9 @@ interface DeleteOllamaModelDialogProps {
   model: OllamaModel;
 }
 
-export const DeleteOllamaModelDialog: React.FC<
-  DeleteOllamaModelDialogProps
-> = ({ model }) => {
+export const DeleteOllamaModelDialog = ({
+  model,
+}: DeleteOllamaModelDialogProps): JSX.Element => {
   const deleteModel = useDeleteOllamaModel();
 
   const handleDelete = (model: string) => {

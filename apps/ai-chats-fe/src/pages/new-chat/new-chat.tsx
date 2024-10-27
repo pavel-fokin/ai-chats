@@ -3,15 +3,14 @@ import { useNavigate } from 'react-router-dom';
 
 import { Box, Code, Flex, Heading } from '@radix-ui/themes';
 
-import { InputMessage, NewChatIconButton } from 'features/chat';
-import { OpenSidebarButton } from 'features/sidebar';
 import { Header, PageLayout } from 'components/layout';
+import { InputMessage, NewChatIconButton } from 'features/chat';
+import { OllamaModelsSelect } from 'features/ollama/components';
+import { OpenSidebarButton } from 'features/sidebar';
 import { useCreateChat, useOllamaModels } from 'hooks';
 import { OllamaModel } from 'types';
 
-import { ModelsList } from './components';
-
-export const NewChat: React.FC = () => {
+export const NewChat = () => {
   const [selectedModel, setSelectedModel] = useState<OllamaModel | null>(null);
   const createChat = useCreateChat();
   const navigate = useNavigate();
@@ -49,7 +48,7 @@ export const NewChat: React.FC = () => {
               Choose a model <Code variant="ghost">[*_*]</Code>
             </Heading>
           </Box>
-          <ModelsList
+          <OllamaModelsSelect
             models={ollamaModels.data || []}
             selectedModel={selectedModel}
             setSelectedModel={setSelectedModel}

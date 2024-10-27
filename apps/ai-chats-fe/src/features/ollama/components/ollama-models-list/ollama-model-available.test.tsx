@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 import { OllamaModelStatus } from 'types';
 
-import { OllamaModelAvailable } from './OllamaModelAvailable';
+import { OllamaModelAvailable } from './ollama-model-available';
 
 const queryClient = new QueryClient({
   defaultOptions: {

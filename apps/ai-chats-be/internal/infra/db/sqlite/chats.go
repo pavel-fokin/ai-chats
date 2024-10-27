@@ -70,15 +70,13 @@ func (c *Chats) Update(ctx context.Context, chat domain.Chat) error {
 	}
 
 	for _, event := range chat.Events {
-		switch event.Type() {
-		case domain.MessageAddedType:
-			messageAdded := event.(domain.MessageAdded)
-			if err := c.addMessage(ctx, chat.ID, messageAdded.Message); err != nil {
+		switch event := event.(type) {
+		case domain.MessageAdded:
+			if err := c.addMessage(ctx, chat.ID, event.Message); err != nil {
 				return fmt.Errorf("failed to add message: %w", err)
 			}
-		case domain.ChatTitleUpdatedType:
-			chatTitleUpdated := event.(domain.ChatTitleUpdated)
-			if err := c.updateTitle(ctx, chat.ID, chatTitleUpdated.Title); err != nil {
+		case domain.ChatTitleUpdated:
+			if err := c.updateTitle(ctx, chat.ID, event.Title); err != nil {
 				return fmt.Errorf("failed to update chat title: %w", err)
 			}
 		default:

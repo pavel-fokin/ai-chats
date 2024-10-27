@@ -7,7 +7,9 @@ interface OllamaModelPullingProps {
   model: OllamaModel;
 }
 
-export const OllamaModelPulling = ({ model }: OllamaModelPullingProps) => {
+export const OllamaModelPulling = ({
+  model,
+}: OllamaModelPullingProps): JSX.Element => {
   const { progress } = useOllamaModelPullingEvents(model);
 
   return (
