@@ -1,4 +1,5 @@
-export * from './Aside';
-export * from './Header';
-export * from './Main';
-export * from './PageLayout';
+export { Aside } from './aside';
+export { Header } from './header';
+export { Main } from './main';
+export { Page } from './page';
+

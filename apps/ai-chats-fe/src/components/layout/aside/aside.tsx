@@ -1,12 +1,12 @@
 import { useSidebarContext } from 'features/sidebar';
 
-import styles from './Aside.module.css';
+import styles from './aside.module.css';
 
 interface AsideProps {
   children: React.ReactNode;
 }
 
-export const Aside: React.FC<AsideProps> = ({ children }) => {
+export const Aside = ({ children }: AsideProps): JSX.Element => {
   const { isOpen } = useSidebarContext();
 
   let asideStyles = styles.Aside;

@@ -1,10 +1,10 @@
 import { Box, Flex, Heading, IconButton, TextField } from '@radix-ui/themes';
 
 import { DownloadIcon } from 'components/icons';
-import { Header, PageLayout } from 'components/layout';
+import { Aside,Header, Page } from 'components/layout';
 import { NewChatIconButton } from 'features/chat';
 import { OllamaModelsList, OllamaStatus } from 'features/ollama/components';
-import { OpenSidebarButton } from 'features/sidebar';
+import { OpenSidebarButton, Sidebar } from 'features/sidebar';
 import { usePullOllamaModel } from 'hooks';
 
 export const OllamaSettings: React.FC = () => {
@@ -17,7 +17,10 @@ export const OllamaSettings: React.FC = () => {
   };
 
   return (
-    <PageLayout>
+    <Page>
+      <Aside>
+        <Sidebar />
+      </Aside>
       <Header>
         <OpenSidebarButton />
         <Heading as="h2" size="3" weight="regular">
@@ -60,6 +63,6 @@ export const OllamaSettings: React.FC = () => {
           <OllamaModelsList />
         </Flex>
       </Box>
-    </PageLayout>
+    </Page>
   );
 };

@@ -1,0 +1,11 @@
+@media only screen and (min-width: 768px) {
+    .Root {
+      --root-flex-direction: row;
+    }
+  }
+
+  .Root {
+    display: flex;
+    flex-direction: var(--root-flex-direction, column);
+    height: 100vh;
+  }

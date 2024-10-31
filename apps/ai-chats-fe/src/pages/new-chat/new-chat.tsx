@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { Box, Code, Flex, Heading } from '@radix-ui/themes';
 
-import { Header, PageLayout } from 'components/layout';
+import { Aside, Header, Page } from 'components/layout';
 import { InputMessage, NewChatIconButton } from 'features/chat';
 import { OllamaModelsSelect } from 'features/ollama/components';
-import { OpenSidebarButton } from 'features/sidebar';
+import { OpenSidebarButton, Sidebar } from 'features/sidebar';
 import { useCreateChat, useOllamaModels } from 'hooks';
 import { OllamaModel } from 'types';
 
@@ -33,7 +33,10 @@ export const NewChat = () => {
   };
 
   return (
-    <PageLayout>
+    <Page>
+      <Aside>
+        <Sidebar />
+      </Aside>
       <Header>
         <OpenSidebarButton />
         <Heading as="h2" size="3" weight="regular">
@@ -58,6 +61,6 @@ export const NewChat = () => {
           <InputMessage onSendMessage={handleSendMessage} />
         </Box>
       </Flex>
-    </PageLayout>
+    </Page>
   );
 };
