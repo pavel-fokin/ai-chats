@@ -1,1 +1,0 @@
-export { OnlyMobile } from './OnlyMobile';

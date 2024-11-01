@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-import styles from './TextArea.module.css';
+import styles from './text-area.module.css';
 
 interface TextAreaProps {
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;

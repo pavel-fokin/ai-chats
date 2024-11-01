@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { IconButton } from 'components';
+import { IconButton } from 'components/ui';
 import { ChatIcon } from 'components/icons';
 import { useSidebarContext } from 'features/sidebar';
 

@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
-import { Flex, Heading, Tooltip } from '@radix-ui/themes';
+import { Flex, Heading } from '@radix-ui/themes';
 
-import { IconButton } from 'components';
+import { IconButton, Tooltip } from 'components/ui';
 import { ChatIcon } from 'components/icons';
 
 import { CloseSidebarButton } from '../CloseSidebarButton';

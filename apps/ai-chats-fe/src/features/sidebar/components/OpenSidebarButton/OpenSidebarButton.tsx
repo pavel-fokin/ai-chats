@@ -1,5 +1,5 @@
 import { useSidebarContext } from 'features/sidebar';
-import { IconButton } from 'components';
+import { IconButton } from 'components/ui';
 import { HamburgerMenuIcon } from 'components/icons';
 
 import styles from './OpenSidebarButton.module.css';

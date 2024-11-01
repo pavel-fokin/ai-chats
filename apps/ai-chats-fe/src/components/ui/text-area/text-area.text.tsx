@@ -1,7 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import { TextArea } from './TextArea';
+
+import { TextArea } from './text-area';
 
 test('renders TextArea component', () => {
   render(<TextArea placeholder="Enter text" value="" onChange={() => {}} />);

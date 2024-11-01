@@ -1,6 +1,6 @@
 import { DropdownMenu } from '@radix-ui/themes';
 
-import { Button } from 'components';
+import { Button } from 'components/ui';
 
 import { useChatMenu } from '../../hooks';
 

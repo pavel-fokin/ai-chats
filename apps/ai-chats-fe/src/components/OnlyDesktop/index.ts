@@ -1,1 +1,0 @@
-export { OnlyDesktop } from './OnlyDesktop';

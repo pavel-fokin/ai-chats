@@ -1,4 +1,4 @@
-import { OnlyDesktop, OnlyMobile } from 'components';
+import { OnlyDesktop, OnlyMobile } from 'components/layout';
 import { ChatMenu, NewChatIconButton } from 'features/chat';
 import { OpenSidebarButton } from 'features/sidebar';
 import { useChat } from 'hooks';
