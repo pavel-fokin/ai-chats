@@ -14,7 +14,9 @@ export const ChatContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [modelResponse, setModelResponse] = useState<ModelResponse | null>(null);
+  const [modelResponse, setModelResponse] = useState<ModelResponse | null>(
+    null,
+  );
 
   return (
     <ChatContext.Provider value={{ modelResponse, setModelResponse }}>

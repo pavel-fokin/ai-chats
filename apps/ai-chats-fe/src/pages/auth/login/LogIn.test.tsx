@@ -5,7 +5,7 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { AuthContextProvider } from 'features/auth';
+import { AuthProvider } from 'features/auth';
 import { LogIn } from 'pages';
 
 import { generateToken } from 'utils/utilsTests';
@@ -31,7 +31,7 @@ const queryClient = new QueryClient({
 // Render a component with required providers and routing.
 export function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
   return render(
-    <AuthContextProvider>
+    <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={[route]}>
           <Routes>
@@ -40,7 +40,7 @@ export function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
           </Routes>
         </MemoryRouter>
       </QueryClientProvider>
-    </AuthContextProvider>,
+    </AuthProvider>,
   );
 }
 

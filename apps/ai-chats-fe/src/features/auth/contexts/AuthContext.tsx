@@ -18,7 +18,7 @@ export const AuthContext = createContext<AuthContextValue>(
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuthContext = () => useContext(AuthContext);
 
-export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem('accessToken') ? true : false,
   );

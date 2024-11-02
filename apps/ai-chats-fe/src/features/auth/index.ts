@@ -3,5 +3,5 @@ export {
   UserCredentialsForm,
   type UserCredentials,
 } from './components';
-export { AuthContext, AuthContextProvider, useAuthContext } from './contexts';
+export { AuthContext, AuthProvider, useAuthContext } from './contexts';
 export { useLogIn, useSignUp, useSignOut } from './hooks';

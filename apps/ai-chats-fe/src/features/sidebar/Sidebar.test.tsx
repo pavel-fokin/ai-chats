@@ -6,7 +6,7 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { AuthContextProvider } from 'features/auth';
+import { AuthProvider } from 'features/auth';
 import { Sidebar } from './Sidebar';
 
 const server = setupServer(
@@ -47,7 +47,7 @@ const queryClient = new QueryClient({
 function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
   return render(
     <Theme>
-      <AuthContextProvider>
+      <AuthProvider>
         <QueryClientProvider client={queryClient}>
           <MemoryRouter initialEntries={[route]}>
             <Routes>
@@ -60,7 +60,7 @@ function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
             </Routes>
           </MemoryRouter>
         </QueryClientProvider>
-      </AuthContextProvider>
+      </AuthProvider>
     </Theme>,
   );
 }

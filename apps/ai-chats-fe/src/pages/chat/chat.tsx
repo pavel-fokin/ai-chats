@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-import { Aside, Header, Main, Page } from 'components/layout';
+import { Header, Main } from 'components/layout';
 import {
   ChatHeader,
   InputMessage,
@@ -9,7 +9,6 @@ import {
 } from 'features/chat/components';
 import { ChatMenuProvider } from 'features/chat/contexts';
 import { useChatLogic } from 'features/chat/hooks';
-import { Sidebar } from 'features/sidebar';
 
 import styles from './chat.module.css';
 
@@ -34,10 +33,7 @@ export const Chat = () => {
   }
 
   return (
-    <Page>
-      <Aside>
-        <Sidebar />
-      </Aside>
+    <>
       <Header>
         <ChatMenuProvider>
           <ChatHeader chatId={chatId} />
@@ -54,6 +50,6 @@ export const Chat = () => {
           <InputMessage onSendMessage={handleSendMessage} />
         </section>
       </Main>
-    </Page>
+    </>
   );
 };

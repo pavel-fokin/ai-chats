@@ -1,5 +1,5 @@
 export {
   AuthContext,
-  AuthContextProvider,
+  AuthProvider,
   useAuthContext,
 } from './AuthContext';

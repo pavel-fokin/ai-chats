@@ -6,9 +6,5 @@ interface PageProps {
 
 // Page layout component.
 export const Page = ({ children }: PageProps): JSX.Element => {
-  return (
-    <div className={styles.Root}>
-      {children}
-    </div>
-  );
+  return <div className={styles.Root}>{children}</div>;
 };
