@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
-import { IconButton } from 'components/ui';
-import { ChatIcon } from 'components/icons';
-import { useSidebarContext } from 'features/sidebar';
+import { IconButton } from '@/components/ui';
+import { ChatIcon } from '@/components/icons';
+import { useSidebarContext } from '@/features/sidebar';
 
 import styles from './new-chat-button.module.css';
 

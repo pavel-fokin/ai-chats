@@ -5,10 +5,9 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { AuthProvider } from 'features/auth';
-import { LogIn } from 'pages';
-
-import { generateToken } from 'utils/utilsTests';
+import { AuthProvider } from '@/features/auth';
+import { LogIn } from '@/pages';
+import { generateToken } from '@/utils/utilsTests';
 
 const server = setupServer(
   http.post('/api/auth/login', () => {

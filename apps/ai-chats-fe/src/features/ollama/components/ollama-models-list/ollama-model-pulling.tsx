@@ -1,8 +1,8 @@
 import { Flex, Heading, Text } from '@radix-ui/themes';
 
-import { Progress } from 'components/ui';
-import { useOllamaModelPullingEvents } from 'features/ollama';
-import { OllamaModel } from 'types';
+import { Progress } from '@/components/ui';
+import { useOllamaModelPullingEvents } from '@/features/ollama';
+import { OllamaModel } from '@/types';
 
 interface OllamaModelPullingProps {
   model: OllamaModel;

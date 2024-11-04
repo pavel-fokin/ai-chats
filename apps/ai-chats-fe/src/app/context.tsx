@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { useAppEvents } from 'hooks';
+import { useAppEvents } from '@/hooks';
 
 // App context.
 const AppContext = createContext(null);

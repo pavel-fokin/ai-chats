@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { Box, Code, Flex, Heading } from '@radix-ui/themes';
 
-import { Header, Main } from 'components/layout';
-import { InputMessage, NewChatIconButton } from 'features/chat';
-import { OllamaModelsSelect } from 'features/ollama/components';
-import { OpenSidebarButton } from 'features/sidebar';
-import { useCreateChat, useOllamaModels } from 'hooks';
-import { OllamaModel } from 'types';
+import { Header, Main } from '@/components/layout';
+import { InputMessage, NewChatIconButton } from '@/features/chat';
+import { OllamaModelsSelect } from '@/features/ollama/components';
+import { OpenSidebarButton } from '@/features/sidebar';
+import { useCreateChat, useOllamaModels } from '@/hooks';
+import { OllamaModel } from '@/types';
 
 export const NewChat = () => {
   const [selectedModel, setSelectedModel] = useState<OllamaModel | null>(null);

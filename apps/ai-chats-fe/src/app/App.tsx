@@ -1,8 +1,8 @@
 import { Outlet } from 'react-router-dom';
 
-import { Aside, Page } from 'components/layout';
-import { AuthRequired } from 'features/auth';
-import { Sidebar, SidebarProvider } from 'features/sidebar';
+import { Aside, Page } from '@/components/layout';
+import { AuthRequired } from '@/features/auth';
+import { Sidebar, SidebarProvider } from '@/features/sidebar';
 
 import { AppProvider } from './context';
 

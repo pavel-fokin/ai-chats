@@ -1,10 +1,10 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-import { Chat, Landing, LogIn, NewChat, OllamaSettings, SignUp } from 'pages';
+import { AuthRequired } from '@/features/auth';
+import { ChatContextProvider } from '@/features/chat';
+import { Chat, Landing, LogIn, NewChat, OllamaSettings, SignUp } from '@/pages';
 
 import { App } from './app';
-import { AuthRequired } from 'features/auth';
-import { ChatContextProvider } from 'features/chat';
 
 export const Router = createBrowserRouter([
   {

@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useInvalidateOllamaModels } from 'hooks';
-
-import { EventTypes, OllamaModel } from 'types';
+import { useInvalidateOllamaModels } from '@/hooks';
+import { EventTypes, OllamaModel } from '@/types';
 
 type EventHandler = (event: MessageEvent) => void;
 const eventHandlers = new Map<string, EventHandler>();

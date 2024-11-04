@@ -1,6 +1,6 @@
 import { Badge, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
-import { OllamaModel } from 'types';
+import { OllamaModel } from '@/types';
 
 interface OllamaModelItemProps {
   model: OllamaModel;

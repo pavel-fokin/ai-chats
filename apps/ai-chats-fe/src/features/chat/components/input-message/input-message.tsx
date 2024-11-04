@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { SendIcon } from 'components/icons';
-import { IconButton, Tooltip, TextArea } from 'components/ui';
+import { SendIcon } from '@/components/icons';
+import { IconButton, Tooltip, TextArea } from '@/components/ui';
 
 import styles from './input-message.module.css';
 

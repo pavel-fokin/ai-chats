@@ -1,5 +1,5 @@
-import { IconButton } from 'components/ui';
-import { MenuIcon } from 'components/icons';
+import { IconButton } from '@/components/ui';
+import { MenuIcon } from '@/components/icons';
 
 export const MenuButton = () => {
   return (

@@ -1,7 +1,7 @@
 import { Flex } from '@radix-ui/themes';
 import { useEffect } from 'react';
 
-import { OllamaModel } from 'types';
+import { OllamaModel } from '@/types';
 
 import { OllamaModelItem } from './ollama-model-item';
 

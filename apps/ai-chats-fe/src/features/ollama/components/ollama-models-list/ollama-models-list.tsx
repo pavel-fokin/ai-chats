@@ -1,5 +1,6 @@
-import { useOllamaModels } from 'hooks';
-import { OllamaModelStatus } from 'types';
+import { useOllamaModels } from '@/hooks';
+import { OllamaModelStatus } from '@/types';
+
 import { OllamaModelAvailable } from './ollama-model-available';
 import { OllamaModelPulling } from './ollama-model-pulling';
 
