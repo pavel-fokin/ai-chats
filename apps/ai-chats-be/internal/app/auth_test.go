@@ -38,25 +38,24 @@ func TestAppSignUp(t *testing.T) {
 	mockUsers := &MockUsers{}
 	mockUsers.On("Add", ctx, mock.AnythingOfType("User")).Return(nil)
 
-	app := &App{
-		users: mockUsers,
-	}
-	app.config.HashCost = 1
+	config := AuthConfig{HashCost: 1}
 
-	user, err := app.SignUp(ctx, "username", "password")
-	assert.NoError(err)
-	assert.NotNil(user)
+	t.Run("success", func(t *testing.T) {
+		auth := NewAuth(config, mockUsers)
 
-	// Verify that password is not stored in plain text.
-	assert.NotEqual("password", user.PasswordHash)
+		user, err := auth.SignUp(ctx, "username", "password")
+		assert.NoError(err)
+		assert.NotNil(user)
+
+		// Verify that password is not stored in plain text.
+		assert.NotEqual("password", user.PasswordHash)
+	})
 
 	t.Run("failed to set up a password", func(t *testing.T) {
 		t.Skip("This test is not implemented yet")
-		app := &App{
-			users: mockUsers,
-		}
+		auth := NewAuth(config, mockUsers)
 
-		user, err := app.SignUp(ctx, "username", "")
+		user, err := auth.SignUp(ctx, "username", "")
 		assert.ErrorContains(err, "failed to set up a password")
 		assert.Equal(domain.User{}, user)
 	})
@@ -66,11 +65,9 @@ func TestAppSignUp(t *testing.T) {
 		mockUsers.On("Add", ctx, mock.AnythingOfType("User")).
 			Return(errors.New("failed to add a user"))
 
-		app := &App{
-			users: mockUsers,
-		}
+		auth := NewAuth(config, mockUsers)
 
-		user, err := app.SignUp(ctx, "username", "password")
+		user, err := auth.SignUp(ctx, "username", "password")
 		assert.ErrorContains(err, "failed to add a user")
 		assert.Equal(domain.User{}, user)
 	})
@@ -79,17 +76,16 @@ func TestAppSignUp(t *testing.T) {
 func TestAppLogIn(t *testing.T) {
 	ctx := context.Background()
 	assert := assert.New(t)
+	config := AuthConfig{HashCost: 1}
 
 	t.Run("user not found", func(t *testing.T) {
 		mockUsers := &MockUsers{}
 		mockUsers.On("FindByUsernameWithPassword", ctx, "username").
 			Return(domain.User{}, domain.ErrUserNotFound)
 
-		app := &App{
-			users: mockUsers,
-		}
+		auth := NewAuth(config, mockUsers)
 
-		user, err := app.LogIn(ctx, "username", "password")
+		user, err := auth.LogIn(ctx, "username", "password")
 		assert.ErrorIs(err, domain.ErrUserNotFound)
 		assert.Equal(domain.User{}, user)
 	})
@@ -102,11 +98,9 @@ func TestAppLogIn(t *testing.T) {
 		mockUsers.On("FindByUsernameWithPassword", ctx, "username").
 			Return(domain.User{PasswordHash: hashedPassword}, nil)
 
-		app := &App{
-			users: mockUsers,
-		}
+		auth := NewAuth(config, mockUsers)
 
-		user, err := app.LogIn(ctx, "username", "password")
+		user, err := auth.LogIn(ctx, "username", "password")
 		assert.NoError(err)
 		assert.NotNil(user)
 	})
@@ -119,11 +113,9 @@ func TestAppLogIn(t *testing.T) {
 		mockUsers.On("FindByUsernameWithPassword", ctx, "username").
 			Return(domain.User{PasswordHash: hashedPassword}, nil)
 
-		app := &App{
-			users: mockUsers,
-		}
+		auth := NewAuth(config, mockUsers)
 
-		user, err := app.LogIn(ctx, "username", "wrong_password")
+		user, err := auth.LogIn(ctx, "username", "wrong_password")
 		assert.ErrorContains(err, "failed to verify password")
 		assert.Equal(domain.User{}, user)
 	})

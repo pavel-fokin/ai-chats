@@ -11,12 +11,8 @@ type Tx interface {
 	Tx(context.Context, func(context.Context) error) error
 }
 
-type Config struct {
-	HashCost int
-}
-
 type App struct {
-	config        Config
+	*Auth
 	users         domain.Users
 	chats         domain.Chats
 	modelsLibrary domain.ModelsLibrary
@@ -27,6 +23,7 @@ type App struct {
 }
 
 func New(
+	auth *Auth,
 	chats domain.Chats,
 	users domain.Users,
 	modelsLibrary domain.ModelsLibrary,
@@ -36,9 +33,7 @@ func New(
 	tx Tx,
 ) *App {
 	return &App{
-		config: Config{
-			HashCost: 14,
-		},
+		Auth:          auth,
 		chats:         chats,
 		users:         users,
 		modelsLibrary: modelsLibrary,

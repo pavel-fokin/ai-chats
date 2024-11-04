@@ -48,6 +48,7 @@ func main() {
 	defer pubsub.Close()
 
 	app := app.New(
+		app.NewAuth(app.AuthConfig{HashCost: 14}, sqlite.NewUsers(db)),
 		sqlite.NewChats(db),
 		sqlite.NewUsers(db),
 		sqlite.NewModels(db),
