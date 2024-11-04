@@ -4,7 +4,7 @@ import { AuthRequired } from '@/features/auth';
 import { ChatContextProvider } from '@/features/chat';
 import { Chat, Landing, LogIn, NewChat, OllamaSettings, SignUp } from '@/pages';
 
-import { App } from './app';
+import { AppMain } from './app-main';
 
 export const Router = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ export const Router = createBrowserRouter([
     path: '/app',
     element: (
       <AuthRequired>
-        <App />
+        <AppMain />
       </AuthRequired>
     ),
     children: [

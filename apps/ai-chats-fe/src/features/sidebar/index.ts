@@ -1,4 +1,4 @@
 export { OpenSidebarButton } from './components/OpenSidebarButton';
-export { SidebarProvider } from './contexts/SidebarContext';
-export { useSidebarContext } from './hooks/useSidebarContext';
-export { Sidebar } from './Sidebar';
+export { Sidebar } from './sidebar';
+export { SidebarProvider } from './sidebar-provider';
+export { useSidebarContext } from './use-sidebar-context';

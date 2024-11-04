@@ -4,20 +4,20 @@ import { Aside, Page } from '@/components/layout';
 import { AuthRequired } from '@/features/auth';
 import { Sidebar, SidebarProvider } from '@/features/sidebar';
 
-import { AppProvider } from './context';
+import { AppProvider } from './app-context';
 
 // Main app component.
-export const App = () => {
+export const AppMain = () => {
   return (
     <AuthRequired>
       <AppProvider>
         <Page>
-          <Aside>
-            <SidebarProvider>
+          <SidebarProvider>
+            <Aside>
               <Sidebar />
-            </SidebarProvider>
-          </Aside>
-          <Outlet />
+            </Aside>
+            <Outlet />
+          </SidebarProvider>
         </Page>
       </AppProvider>
     </AuthRequired>

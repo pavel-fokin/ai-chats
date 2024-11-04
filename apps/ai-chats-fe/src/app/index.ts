@@ -1,1 +1,1 @@
-export { AppRoot } from './root';
+export { AppRoot } from './app-root';

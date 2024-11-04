@@ -2,7 +2,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 
-import { useSidebarContext } from '../../hooks/useSidebarContext';
+import { useSidebarContext } from '../../use-sidebar-context';
 
 import styles from './Link.module.css';
 

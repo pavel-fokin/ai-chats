@@ -4,17 +4,18 @@ import { Flex, Text } from '@radix-ui/themes';
 import { SettingsIcon } from '@/components/icons';
 
 import {
-  Link,
-  SidebarHeader,
   ChatsList,
+  Link,
   MenuList,
+  SidebarHeader,
   SignOutButton,
 } from './components';
-import styles from './Sidebar.module.css';
+
+import styles from './sidebar.module.css';
 
 export const Sidebar = () => {
   return (
-    <Flex direction="column" gap="2" height="100%" justify="between">
+      <Flex direction="column" gap="2" height="100%" justify="between">
       <Flex direction="column" flexGrow="1">
         <SidebarHeader />
         <NavigationMenu.Root
@@ -39,7 +40,7 @@ export const Sidebar = () => {
             </NavigationMenu.Item>
           </MenuList>
         </NavigationMenu.Root>
+        </Flex>
       </Flex>
-    </Flex>
   );
 };
