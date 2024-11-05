@@ -7,7 +7,6 @@ import {
   MessagesList,
   ModelResponseMessage,
 } from '@/features/chat/components';
-import { ChatMenuProvider } from '@/features/chat/contexts';
 import { useChatLogic } from '@/features/chat/hooks';
 
 import styles from './chat.module.css';
@@ -35,9 +34,7 @@ export const Chat = () => {
   return (
     <>
       <Header>
-        <ChatMenuProvider>
-          <ChatHeader chatId={chatId} />
-        </ChatMenuProvider>
+        <ChatHeader chatId={chatId} />
       </Header>
       <Main>
         <section className={styles.scrollable}>

@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { ChatMenuContext } from '../contexts/chat-menu-context';
+import { ChatMenuContext } from './chat-menu-context';
 
 export const useChatMenu = () => {
   const context = useContext(ChatMenuContext);

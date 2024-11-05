@@ -5,6 +5,7 @@ import { useChat } from '@/hooks';
 
 import { ChatTitleMenuButton } from './chat-title-menu-button';
 import { MenuButton } from './menu-button';
+import { ChatMenuProvider } from '../chat-menu/chat-menu-provider';
 
 import styles from './chat-header.module.css';
 
@@ -12,11 +13,7 @@ interface ChatHeaderProps {
   chatId: string;
 }
 
-/**
- * Chat header component.
- * @param {string} chatId - The ID of the chat.
- * @returns {JSX.Element} - The chat header component.
- */
+// Chat header component.
 export const ChatHeader = ({ chatId }: ChatHeaderProps): JSX.Element => {
   const chat = useChat(chatId);
 
@@ -27,17 +24,21 @@ export const ChatHeader = ({ chatId }: ChatHeaderProps): JSX.Element => {
       <OnlyMobile>
         <div className={styles.chatHeaderMobile}>
           <OpenSidebarButton />
-          <ChatMenu
-            chatId={chatId}
+          <ChatMenuProvider>
+            <ChatMenu
+              chatId={chatId}
             trigger={<ChatTitleMenuButton title={title} />}
-          />
+            />
+          </ChatMenuProvider>
           <NewChatIconButton />
         </div>
       </OnlyMobile>
       <OnlyDesktop>
         <div className={styles.chatHeaderDesktop}>
           <span className={styles.chatHeaderTitle}>{title}</span>
-          <ChatMenu chatId={chatId} trigger={<MenuButton />} />
+          <ChatMenuProvider>
+            <ChatMenu chatId={chatId} trigger={<MenuButton />} />
+          </ChatMenuProvider>
         </div>
       </OnlyDesktop>
     </>
