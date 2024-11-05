@@ -9,4 +9,3 @@ export const ChatMenuContext = createContext<ChatMenuContextValue>({
   isOpen: false,
   setIsOpen: () => {},
 });
-

@@ -6,11 +6,7 @@ interface MessagesListProps {
   messages: types.Message[];
 }
 
-/**
- * Messages list component.
- * @param {MessagesListProps} messages - The messages to display.
- * @returns {JSX.Element} - The messages list component.
- */
+// Messages list component.
 export const MessagesList = ({ messages }: MessagesListProps): JSX.Element => {
   return (
     <>

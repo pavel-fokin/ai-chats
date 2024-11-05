@@ -1,12 +1,12 @@
 .scrollable {
   flex: 1;
   overflow: auto;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
 }
 
 .messagesList {
   display: flex;
   flex-direction: column;
-  height: 100%;
   margin: 0 auto;
   max-width: 688px;
   margin-top: var(--spacing-8);

@@ -15,16 +15,18 @@ import styles from './sidebar.module.css';
 
 export const Sidebar = () => {
   return (
-      <Flex direction="column" gap="2" height="100%" justify="between">
-      <Flex direction="column" flexGrow="1">
+    <Flex direction="column" gap="2" height="100%" justify="between">
+      <Flex direction="column" flexGrow="1" height="100%">
         <SidebarHeader />
         <NavigationMenu.Root
           className={styles.NavigationMenuRoot}
           orientation="vertical"
         >
-          <MenuList>
-            <ChatsList />
-          </MenuList>
+          <div className={styles.sidebarScrollable}>
+            <MenuList>
+              <ChatsList />
+            </MenuList>
+          </div>
 
           <MenuList>
             <NavigationMenu.Item>
@@ -40,7 +42,7 @@ export const Sidebar = () => {
             </NavigationMenu.Item>
           </MenuList>
         </NavigationMenu.Root>
-        </Flex>
       </Flex>
+    </Flex>
   );
 };

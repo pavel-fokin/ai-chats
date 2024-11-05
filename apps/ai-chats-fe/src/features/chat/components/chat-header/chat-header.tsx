@@ -27,7 +27,7 @@ export const ChatHeader = ({ chatId }: ChatHeaderProps): JSX.Element => {
           <ChatMenuProvider>
             <ChatMenu
               chatId={chatId}
-            trigger={<ChatTitleMenuButton title={title} />}
+              trigger={<ChatTitleMenuButton title={title} />}
             />
           </ChatMenuProvider>
           <NewChatIconButton />
