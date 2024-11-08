@@ -2,10 +2,14 @@ package pubsub
 
 import (
 	"context"
+	"log/slog"
 	"sync"
 
 	"ai-chats/internal/pkg/types"
 )
+
+// Constant for subscriber's channel capacity.
+const defaultChannelCapacity = 50
 
 type TopicName = string
 
@@ -26,7 +30,7 @@ func New() *PubSub {
 }
 
 func (ps *PubSub) Subscribe(ctx context.Context, topicName TopicName) (chan types.Message, error) {
-	ch := make(chan types.Message, 1)
+	ch := make(chan types.Message, defaultChannelCapacity)
 	ps.mu.Lock()
 	topic, exists := ps.topics[topicName]
 	if !exists {
@@ -79,6 +83,7 @@ func (ps *PubSub) Publish(ctx context.Context, topicName TopicName, message type
 			return ctx.Err()
 		default:
 			// Optionally handle full channels.
+			slog.InfoContext(ctx, "channel is full, dropping message for topic", "topic", topicName, "message", message)
 		}
 	}
 

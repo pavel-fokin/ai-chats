@@ -21,10 +21,6 @@ type PubSub interface {
 	Unsubscribe(ctx context.Context, topic string, channel chan types.Message) error
 }
 
-// type Handler interface {
-// 	Handle(ctx context.Context, events Events, topic string, concurrency int, handler HandlerFunc) error
-// }
-
 type HandlerFunc func(ctx context.Context, event types.Message) error
 
 func (fn HandlerFunc) Handle(ctx context.Context, pubsub PubSub, topic string, concurrency int) error {

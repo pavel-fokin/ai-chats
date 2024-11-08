@@ -27,7 +27,7 @@ func (m *EventsMock) Unsubscribe(ctx context.Context, topic string, channel chan
 }
 
 func TestWorker(t *testing.T) {
-	t.Run("TestWorker", func(t *testing.T) {
+	t.Run("start and shutdown", func(t *testing.T) {
 		eventsMock := &EventsMock{}
 		eventsMock.On("Subscribe", mock.Anything, mock.Anything).Return(make(chan types.Message), nil)
 		eventsMock.On("Unsubscribe", mock.Anything, mock.Anything, mock.Anything).Return(nil)

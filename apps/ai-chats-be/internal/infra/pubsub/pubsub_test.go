@@ -3,6 +3,7 @@ package pubsub
 import (
 	"ai-chats/internal/pkg/types"
 	"context"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -43,6 +44,39 @@ func TestPubSub(t *testing.T) {
 		assert.NoError(t, err)
 
 		msg := <-ch
+		assert.Equal(t, Event1{}, msg)
+	})
+
+	t.Run("subscribe and 2 concurrent publishers", func(t *testing.T) {
+		ctx := context.Background()
+		ps := New()
+
+		ch, err := ps.Subscribe(ctx, "test")
+		defer ps.Unsubscribe(ctx, "test", ch)
+		assert.NoError(t, err)
+		assert.NotNil(t, ch)
+
+		wg := sync.WaitGroup{}
+		wg.Add(2)
+
+		go func() {
+			defer wg.Done()
+			err := ps.Publish(ctx, "test", Event1{})
+			assert.NoError(t, err)
+		}()
+
+		go func() {
+			defer wg.Done()
+			err := ps.Publish(ctx, "test", Event1{})
+			assert.NoError(t, err)
+		}()
+
+		wg.Wait()
+
+		msg := <-ch
+		assert.Equal(t, Event1{}, msg)
+
+		msg = <-ch
 		assert.Equal(t, Event1{}, msg)
 	})
 }
