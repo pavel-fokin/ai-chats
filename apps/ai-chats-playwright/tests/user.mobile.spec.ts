@@ -2,7 +2,7 @@ import { test, expect, devices } from '@playwright/test';
 
 import { randomString } from './utils';
 
-test.describe.serial('new user sign up', () => {
+test.describe('new user sign up', () => {
     const username = `testuser-${randomString()}`;
     const password = 'password';
 

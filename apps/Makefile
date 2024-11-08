@@ -13,9 +13,9 @@ tests:
 test-integration:
 	${MAKE} -C ai-chats-be test-integration
 
-.PHONY: test-e2e
-test-e2e:
-	${MAKE} -C ai-chats-playwright test-e2e
+.PHONY: tests-e2e
+tests-e2e:
+	${MAKE} -C ai-chats-playwright tests-e2e
 
 .PHONY: format
 format:
