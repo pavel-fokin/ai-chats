@@ -15,7 +15,7 @@ test-integration:
 
 .PHONY: tests-e2e
 tests-e2e:
-	${MAKE} -C ai-chats-playwright tests-e2e
+	${MAKE} -C ai-chats-e2e tests-e2e
 
 .PHONY: format
 format:
