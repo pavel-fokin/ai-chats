@@ -105,5 +105,6 @@ test.describe('user is chatting', () => {
     await page.getByRole('button', { name: 'Delete chat' }).click();
 
     await expect(page).toHaveURL('/app/new-chat');
+    await expect(page.getByRole('list', { name: 'Chats list' })).toBeEmpty();
   });
 });

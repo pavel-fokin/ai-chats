@@ -1,7 +1,7 @@
 import { AlertDialog, Flex, Strong, Text } from '@radix-ui/themes';
 import { useNavigate } from 'react-router-dom';
 
-import { useChat, useDeleteChat } from '@/hooks';
+import { useChat, useDeleteChat, useInvalidateChats } from '@/hooks';
 import { Button } from '@/components/ui';
 
 interface DeleteChatDialogProps {
@@ -19,11 +19,13 @@ export const DeleteChatDialog: React.FC<DeleteChatDialogProps> = ({
 }) => {
   const chat = useChat(chatId);
   const deleteChat = useDeleteChat();
+  const invalidateChats = useInvalidateChats();
   const navigate = useNavigate();
 
   const handleDelete = () => {
     deleteChat.mutate(chatId, {
       onSuccess: () => {
+        invalidateChats();
         navigate('/app');
       },
     });

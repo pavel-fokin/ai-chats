@@ -82,8 +82,12 @@ func (ps *PubSub) Publish(ctx context.Context, topicName TopicName, message type
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			// Optionally handle full channels.
-			slog.InfoContext(ctx, "channel is full, dropping message for topic", "topic", topicName, "message", message)
+			slog.WarnContext(
+				ctx,
+				"channel is full, dropping message for topic",
+				"topic", topicName,
+				"message", message,
+			)
 		}
 	}
 

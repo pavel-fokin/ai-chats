@@ -46,7 +46,7 @@ export const NewChat = () => {
           <Flex direction="column" align="center" justify="center" flexGrow="1">
             <Box mb="4">
               <Heading as="h2" size="6" weight="bold">
-                Choose a model <Code variant="ghost">[*_*]</Code>
+                Choose a model 🤖
               </Heading>
             </Box>
             <OllamaModelsSelect

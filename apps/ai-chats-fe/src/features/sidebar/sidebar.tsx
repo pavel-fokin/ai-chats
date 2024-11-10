@@ -23,12 +23,12 @@ export const Sidebar = () => {
           orientation="vertical"
         >
           <div className={styles.sidebarScrollable}>
-            <MenuList>
+            <MenuList ariaLabel="Chats list">
               <ChatsList />
             </MenuList>
           </div>
 
-          <MenuList>
+          <MenuList ariaLabel="Settings list">
             <NavigationMenu.Item>
               <Link aria-label="Ollama settings" to="/app/settings">
                 <Flex align="center" gap="3">

@@ -25,7 +25,7 @@ export default defineConfig({
   timeout: 10 * 1000,
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.AICHATS_PLAYWRIGHT_BASE_URL || 'http://localhost:8080',
+    baseURL: process.env.AICHATS_PLAYWRIGHT_BASE_URL || 'http://localhost:5173',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
