@@ -1,10 +1,10 @@
-.scrollable {
+.chat__messagesContainer {
   flex: 1;
   overflow: auto;
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
 }
 
-.messagesList {
+.chat__messagesList {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
@@ -13,7 +13,7 @@
   width: 100%;
 }
 
-.inputMessage {
+.chat__inputMessage {
   margin: 0 auto;
   max-width: 688px;
   width: 100%;

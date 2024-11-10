@@ -16,8 +16,12 @@ export const Message = ({ sender, text }: MessageProps) => {
   return (
     <article className={styles.message__container}>
       <header className={styles.message__headerContainer}>
-        <Avatar aria-label={`Avatar for ${sender}`} size="1" fallback={fallback} />
-        <h3>{sender}</h3>
+        <Avatar
+          aria-label={`Avatar for ${sender}`}
+          size="1"
+          fallback={fallback}
+        />
+        <h2>{sender}</h2>
       </header>
       <Markdown className={styles.message__markdownPre}>{text}</Markdown>
     </article>

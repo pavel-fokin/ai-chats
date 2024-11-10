@@ -10,7 +10,7 @@
   gap: var(--spacing-2);
 }
 
-.message__headerContainer h3 {
+.message__headerContainer h2 {
   font-size: var(--font-size-3);
   font-weight: var(--font-weight-4);
 }
@@ -18,4 +18,3 @@
 .message__markdownPre pre {
   overflow: auto;
 }
-

@@ -30,7 +30,7 @@ export const NewChat = () => {
         onSuccess: ({ data }) => {
           navigate(`/app/chats/${data.chat.id}`);
         },
-      }
+      },
     );
   };
 
@@ -44,19 +44,19 @@ export const NewChat = () => {
         <NewChatIconButton />
       </Header>
       <Main>
-          <section className={styles.newChat__modelSelect}>
-            <Heading as="h2" size="6" weight="bold" mb="4">
-              Choose a model 🤖
-            </Heading>
-            <OllamaModelsSelect
-              models={ollamaModels.data || []}
-              selectedModel={selectedModel}
-              setSelectedModel={setSelectedModel}
-            />
-          </section>
-          <section className={styles.newChat__inputMessage}>
-            <InputMessage onSendMessage={handleSendMessage} />
-          </section>
+        <section className={styles.newChat__modelSelect}>
+          <Heading as="h2" size="6" weight="bold" mb="4">
+            Choose a model 🤖
+          </Heading>
+          <OllamaModelsSelect
+            models={ollamaModels.data || []}
+            selectedModel={selectedModel}
+            setSelectedModel={setSelectedModel}
+          />
+        </section>
+        <section className={styles.newChat__inputMessage}>
+          <InputMessage onSendMessage={handleSendMessage} />
+        </section>
       </Main>
     </>
   );
