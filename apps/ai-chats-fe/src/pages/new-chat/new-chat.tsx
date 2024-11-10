@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Box, Code, Flex, Heading } from '@radix-ui/themes';
+import { Heading } from '@radix-ui/themes';
 
 import { Header, Main } from '@/components/layout';
 import { InputMessage, NewChatIconButton } from '@/features/chat';
@@ -9,6 +9,8 @@ import { OllamaModelsSelect } from '@/features/ollama/components';
 import { OpenSidebarButton } from '@/features/sidebar';
 import { useCreateChat, useOllamaModels } from '@/hooks';
 import { OllamaModel } from '@/types';
+
+import styles from './new-chat.module.css';
 
 export const NewChat = () => {
   const [selectedModel, setSelectedModel] = useState<OllamaModel | null>(null);
@@ -28,7 +30,7 @@ export const NewChat = () => {
         onSuccess: ({ data }) => {
           navigate(`/app/chats/${data.chat.id}`);
         },
-      },
+      }
     );
   };
 
@@ -42,23 +44,19 @@ export const NewChat = () => {
         <NewChatIconButton />
       </Header>
       <Main>
-        <Flex direction="column" height="100%" width="100%">
-          <Flex direction="column" align="center" justify="center" flexGrow="1">
-            <Box mb="4">
-              <Heading as="h2" size="6" weight="bold">
-                Choose a model 🤖
-              </Heading>
-            </Box>
+          <section className={styles.newChat__modelSelect}>
+            <Heading as="h2" size="6" weight="bold" mb="4">
+              Choose a model 🤖
+            </Heading>
             <OllamaModelsSelect
               models={ollamaModels.data || []}
               selectedModel={selectedModel}
               setSelectedModel={setSelectedModel}
             />
-          </Flex>
-          <Box style={{ maxWidth: '688px', width: '100%', margin: '0 auto' }}>
+          </section>
+          <section className={styles.newChat__inputMessage}>
             <InputMessage onSendMessage={handleSendMessage} />
-          </Box>
-        </Flex>
+          </section>
       </Main>
     </>
   );
