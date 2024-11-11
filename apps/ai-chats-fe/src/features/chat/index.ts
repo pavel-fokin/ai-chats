@@ -1,6 +1,5 @@
 export {
   ChatHeader,
-  ChatMenu,
   InputMessage,
   Message,
   MessagesList,

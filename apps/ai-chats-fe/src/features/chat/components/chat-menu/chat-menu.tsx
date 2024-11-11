@@ -5,8 +5,7 @@ import { DropdownMenu, Flex } from '@radix-ui/themes';
 import { AIActionIcon, DeleteIcon } from '@/components/icons';
 import { useGenerateChatTitle } from '@/hooks';
 
-import { DeleteChatDialog } from './delete-chat-dialog';
-import { useChatMenu } from './use-chat-menu';
+import { ChatDeleteDialog } from './chat-delete-dialog';
 
 interface ChatMenuProps {
   chatId: string;
@@ -15,11 +14,10 @@ interface ChatMenuProps {
 
 export const ChatMenu = ({ chatId, trigger }: ChatMenuProps): JSX.Element => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { isOpen, setIsOpen } = useChatMenu();
   const generateChatTitle = useGenerateChatTitle();
 
   return (
-    <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu.Root>
       <DropdownMenu.Trigger>
         <div>{trigger}</div>
       </DropdownMenu.Trigger>
@@ -51,7 +49,7 @@ export const ChatMenu = ({ chatId, trigger }: ChatMenuProps): JSX.Element => {
           </Flex>
         </DropdownMenu.Item>
       </DropdownMenu.Content>
-      <DeleteChatDialog
+      <ChatDeleteDialog
         chatId={chatId}
         open={isDeleteDialogOpen}
         setOpen={setIsDeleteDialogOpen}
