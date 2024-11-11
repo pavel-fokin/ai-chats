@@ -1,9 +1,12 @@
-export type ModelResponse = Message;
+export type ModelResponse = {
+  text: string;
+  sender: string;
+};
 
 export enum EventTypes {
   MESSAGE_ADDED = 'messageAdded',
-  MESSAGE_CHUNK_RECEIVED = 'messageChunkReceived',
   CHAT_MESSAGE = 'chatMessage',
+  MODEL_STREAM_RESPONSE = 'ModelStreamResponse',
   OLLAMA_MODEL_PULL_PROGRESS = 'ollamaModelPullProgress',
 }
 

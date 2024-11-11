@@ -8,12 +8,14 @@ import (
 	"ai-chats/internal/pkg/types"
 )
 
-type ChatMessage struct {
-	domain.Message
+// ModelStreamResponse is a message that represents streamed response of a model.
+type ModelStreamResponse struct {
+	Text   string `json:"text"`
+	Sender string `json:"sender"`
 }
 
-func (m ChatMessage) Type() types.MessageType {
-	return types.MessageType("chatMessage")
+func (m ModelStreamResponse) Type() types.MessageType {
+	return types.MessageType("ModelStreamResponse")
 }
 
 // GenerateResponse generates a LLM response for the chat.
@@ -28,8 +30,11 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}
 
-	chatResponseFunc := func(message domain.Message) error {
-		if err := a.notifyChat(ctx, chatID.String(), ChatMessage{Message: message}); err != nil {
+	chatResponseFunc := func(message domain.ModelStreamMessage) error {
+		if err := a.notifyChat(ctx, chatID.String(), ModelStreamResponse{
+			Text:   message.Text,
+			Sender: message.Sender.Format(),
+		}); err != nil {
 			return fmt.Errorf("failed to notify in chat: %w", err)
 		}
 		return nil
@@ -87,9 +92,13 @@ Use less than 100 characters. Don't use quotes or special characters.`,
 		),
 	)
 
-	generatedTitle, err := model.Chat(ctx, messages, func(message domain.Message) error {
-		return nil
-	})
+	generatedTitle, err := model.Chat(
+		ctx,
+		messages,
+		func(message domain.ModelStreamMessage) error {
+			return nil
+		},
+	)
 	if err != nil {
 		return fmt.Errorf("error generating title for chat %s: %w", chatID, err)
 	}

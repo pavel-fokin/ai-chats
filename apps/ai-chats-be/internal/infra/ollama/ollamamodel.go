@@ -18,7 +18,11 @@ func NewModel(client *api.Client, model domain.OllamaModel) (*Model, error) {
 	return &Model{client: client, model: model}, nil
 }
 
-func (m *Model) Chat(ctx context.Context, messages []domain.Message, fn domain.ChatResponseFunc) (domain.Message, error) {
+func (m *Model) Chat(
+	ctx context.Context,
+	messages []domain.Message,
+	fn domain.ModelResponseFunc,
+) (domain.Message, error) {
 	apiMessages := []api.Message{}
 	for _, message := range messages {
 		role := ""
@@ -44,10 +48,11 @@ func (m *Model) Chat(ctx context.Context, messages []domain.Message, fn domain.C
 	}
 
 	modelID := domain.NewModelID(m.model.String())
-	message := domain.NewModelMessage(modelID, "")
+	sender := domain.NewModelSender(modelID)
+	modelStreamMessage := domain.NewModelStreamMessage(sender, "")
 	respFunc := func(resp api.ChatResponse) error {
-		message.Text += resp.Message.Content
-		if err := fn(message); err != nil {
+		modelStreamMessage.Text += resp.Message.Content
+		if err := fn(modelStreamMessage); err != nil {
 			return err
 		}
 
@@ -58,5 +63,5 @@ func (m *Model) Chat(ctx context.Context, messages []domain.Message, fn domain.C
 		return domain.Message{}, err
 	}
 
-	return message, nil
+	return domain.NewMessage(sender, modelStreamMessage.Text), nil
 }

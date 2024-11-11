@@ -28,7 +28,7 @@ func TestOllamaModel_Chat(t *testing.T) {
 			[]domain.Message{
 				{Sender: domain.NewUserSender(domain.NewUserID()), Text: "Hi"},
 			},
-			func(msg domain.Message) error {
+			func(msg domain.ModelStreamMessage) error {
 				return nil
 			},
 		)
@@ -50,7 +50,7 @@ func TestOllamaModel_Chat(t *testing.T) {
 			[]domain.Message{
 				{Sender: domain.NewUserSender(domain.NewUserID()), Text: "Hi"},
 			},
-			func(msg domain.Message) error {
+			func(msg domain.ModelStreamMessage) error {
 				return nil
 			},
 		)

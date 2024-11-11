@@ -18,7 +18,11 @@ func (m *MockModel) ID() domain.ModelID {
 	return args.Get(0).(domain.ModelID)
 }
 
-func (m *MockModel) Chat(ctx context.Context, messages []domain.Message, fn domain.ChatResponseFunc) (domain.Message, error) {
+func (m *MockModel) Chat(
+	ctx context.Context,
+	messages []domain.Message,
+	fn domain.ModelResponseFunc,
+) (domain.Message, error) {
 	args := m.Called(ctx, messages, fn)
 	return args.Get(0).(domain.Message), args.Error(1)
 }
