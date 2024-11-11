@@ -1,0 +1,8 @@
+.chatDeleteDialog__buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: end;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-4);
+}

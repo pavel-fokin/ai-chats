@@ -1,21 +1,20 @@
-import { AlertDialog, Flex, Strong, Text } from '@radix-ui/themes';
 import { useNavigate } from 'react-router-dom';
 
 import { useChat, useDeleteChat, useInvalidateChats } from '@/hooks';
-import { Button } from '@/components/ui';
+import { AlertDialog, Button } from '@/components/ui';
+
+import styles from './chat-delete-dialog.module.css';
 
 interface ChatDeleteDialogProps {
   chatId: string;
   open: boolean;
   setOpen: (open: boolean) => void;
-  onCancelClick: () => void;
 }
 
 export const ChatDeleteDialog = ({
   chatId,
   open,
   setOpen,
-  onCancelClick,
 }: ChatDeleteDialogProps) => {
   const chat = useChat(chatId);
   const deleteChat = useDeleteChat();
@@ -31,20 +30,22 @@ export const ChatDeleteDialog = ({
     });
   };
 
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
   return (
     <AlertDialog.Root open={open} onOpenChange={setOpen}>
       <AlertDialog.Content maxWidth="450px">
         <AlertDialog.Title>Delete chat?</AlertDialog.Title>
         <AlertDialog.Description size="2">
-          <Flex direction="column" gap="2">
-            <Text>
-              This will delete <Strong>{`${chat.data?.title}`}</Strong>.
-            </Text>
-          </Flex>
+          <p>
+            This will delete <strong>{`${chat.data?.title}`}</strong>.
+          </p>
         </AlertDialog.Description>
-        <Flex gap="4" mt="4" align="center" justify="end">
+        <div className={styles.chatDeleteDialog__buttons}>
           <AlertDialog.Cancel>
-            <Button variant="ghost" onClick={onCancelClick}>
+            <Button variant="ghost" onClick={handleCancel}>
               Cancel
             </Button>
           </AlertDialog.Cancel>
@@ -53,7 +54,7 @@ export const ChatDeleteDialog = ({
               Delete chat
             </Button>
           </AlertDialog.Action>
-        </Flex>
+        </div>
       </AlertDialog.Content>
     </AlertDialog.Root>
   );
