@@ -90,33 +90,6 @@ func (a *App) DeleteChat(ctx context.Context, userID domain.UserID, chatID domai
 	return a.chats.Delete(ctx, chatID)
 }
 
-// ProcessAddedMessage processes a message added event.
-func (a *App) ProcessAddedMessage(ctx context.Context, event domain.MessageAdded) error {
-	if err := a.notifyChat(ctx, event.ChatID.String(), event); err != nil {
-		return fmt.Errorf("failed to notify in chat: %w", err)
-	}
-
-	switch {
-	case event.Message.IsFromUser():
-		a.GenerateResponse(ctx, event.ChatID)
-	case event.Message.IsFromModel():
-		// Ignore messages from models.
-	default:
-		return fmt.Errorf("unknown message type: %s", event.Message)
-	}
-
-	chat, err := a.chats.FindByIDWithMessages(ctx, event.ChatID)
-	if err != nil {
-		return fmt.Errorf("error finding chat: %w", err)
-	}
-
-	if len(chat.Messages) == 2 {
-		return a.GenerateTitle(ctx, event.ChatID)
-	}
-
-	return nil
-}
-
 // SendMessage sends a message to the chat.
 func (a *App) SendMessage(
 	ctx context.Context, userID domain.UserID, chatID domain.ChatID, messageText string,

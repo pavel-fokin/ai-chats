@@ -20,6 +20,6 @@ type PubSub interface {
 	Publish(context.Context, TopicName, types.Message) error
 }
 
-func (a *App) PublishEvents(ctx context.Context, events []types.Message) error {
+func (a *App) PublishEvents(ctx context.Context, events ...[]types.Message) error {
 	return nil
 }

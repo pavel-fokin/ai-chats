@@ -5,15 +5,15 @@ import (
 	"database/sql"
 )
 
-type Models struct {
+type ModelsLibrary struct {
 	DB
 }
 
-func NewModels(db *sql.DB) *Models {
-	return &Models{DB{db: db}}
+func NewModelsLibrary(db *sql.DB) *ModelsLibrary {
+	return &ModelsLibrary{DB{db: db}}
 }
 
-func (m *Models) FindDescription(ctx context.Context, name string) (string, error) {
+func (m *ModelsLibrary) FindDescription(ctx context.Context, name string) (string, error) {
 	var description string
 	err := m.DB.db.QueryRow("SELECT description FROM model_description WHERE name = ?", name).Scan(&description)
 	if err != nil {

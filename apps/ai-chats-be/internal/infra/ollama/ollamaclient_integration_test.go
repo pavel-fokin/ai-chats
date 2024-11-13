@@ -3,7 +3,7 @@
 package ollama
 
 import (
-	"ai-chats/internal/app"
+	"ai-chats/internal/domain"
 	"context"
 	"testing"
 
@@ -24,7 +24,7 @@ func TestOllamaModels(t *testing.T) {
 	})
 
 	t.Run("pull", func(t *testing.T) {
-		err := ollama.Pull(ctx, modelName, func(progress app.OllamaModelPullProgress) error {
+		err := ollama.Pull(ctx, modelName, func(progress domain.OllamaModelPullProgress) error {
 			return nil
 		})
 		assert.NoError(err)

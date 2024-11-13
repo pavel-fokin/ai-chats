@@ -13,33 +13,27 @@ type Tx interface {
 
 type App struct {
 	*Auth
-	users         domain.Users
-	chats         domain.Chats
-	modelsLibrary domain.ModelsLibrary
-	ollamaClient  OllamaClient
-	ollamaModels  domain.OllamaModels
-	pubsub        PubSub
-	tx            Tx
+	*Ollama
+	*LLM
+	chats  domain.Chats
+	pubsub PubSub
+	tx     Tx
 }
 
 func New(
 	auth *Auth,
+	ollama *Ollama,
+	llm *LLM,
 	chats domain.Chats,
-	users domain.Users,
-	modelsLibrary domain.ModelsLibrary,
-	ollamaClient OllamaClient,
-	ollamaModels domain.OllamaModels,
 	pubsub PubSub,
 	tx Tx,
 ) *App {
 	return &App{
-		Auth:          auth,
-		chats:         chats,
-		users:         users,
-		modelsLibrary: modelsLibrary,
-		ollamaClient:  ollamaClient,
-		ollamaModels:  ollamaModels,
-		pubsub:        pubsub,
-		tx:            tx,
+		Auth:   auth,
+		Ollama: ollama,
+		LLM:    llm,
+		chats:  chats,
+		pubsub: pubsub,
+		tx:     tx,
 	}
 }

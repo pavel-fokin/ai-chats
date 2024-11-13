@@ -1,9 +1,8 @@
-package app
+package domain
 
 import (
 	"context"
 
-	"ai-chats/internal/domain"
 	"ai-chats/internal/pkg/types"
 )
 
@@ -27,8 +26,8 @@ type PullProgressFunc func(progress OllamaModelPullProgress) error
 
 // OllamaClient is an interface for the Ollama client.
 type OllamaClient interface {
-	NewModel(domain.OllamaModel) (domain.Model, error)
-	List(context.Context) ([]domain.OllamaModel, error)
+	NewModel(OllamaModel) (Model, error)
+	List(context.Context) ([]OllamaModel, error)
 	Pull(context.Context, string, PullProgressFunc) error
 	Delete(context.Context, string) error
 }

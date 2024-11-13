@@ -6,7 +6,6 @@ import (
 
 	"github.com/ollama/ollama/api"
 
-	"ai-chats/internal/app"
 	"ai-chats/internal/domain"
 )
 
@@ -46,13 +45,13 @@ func (o *OllamaClient) List(ctx context.Context) ([]domain.OllamaModel, error) {
 }
 
 // Pull sends request to the Ollama server to pull a model and streams the progress to the given function.
-func (o *OllamaClient) Pull(ctx context.Context, model string, fn app.PullProgressFunc) error {
+func (o *OllamaClient) Pull(ctx context.Context, model string, fn domain.PullProgressFunc) error {
 	req := &api.PullRequest{
 		Model: model,
 	}
 
 	progressFunc := func(resp api.ProgressResponse) error {
-		progress := app.OllamaModelPullProgress{
+		progress := domain.OllamaModelPullProgress{
 			Status:    resp.Status,
 			Total:     resp.Total,
 			Completed: resp.Completed,

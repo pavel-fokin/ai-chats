@@ -30,7 +30,7 @@ func TestApp_CreateChat(t *testing.T) {
 	t.Run("with empty message", func(t *testing.T) {
 		mockChats := &MockChats{}
 
-		app := &App{chats: mockChats, users: mockUsers, tx: mockTx}
+		app := &App{chats: mockChats, tx: mockTx}
 
 		chat, err := app.CreateChat(ctx, user.ID, "model", "")
 		assert.Error(t, err)
@@ -44,7 +44,7 @@ func TestApp_CreateChat(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("Add", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
 
-		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
+		app := &App{chats: mockChats, pubsub: mockPubSub, tx: mockTx}
 
 		chat, err := app.CreateChat(ctx, user.ID, "message", "model")
 		assert.NoError(t, err)
@@ -184,7 +184,7 @@ func TestApp_SendMessage(t *testing.T) {
 		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
 		mockChats.On("Update", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
 
-		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
+		app := &App{chats: mockChats, pubsub: mockPubSub, tx: mockTx}
 
 		err := app.SendMessage(ctx, user.ID, chat.ID, "Hello, how are you?")
 		assert.NoError(err)
@@ -197,7 +197,7 @@ func TestApp_SendMessage(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("FindByID", ctx, chatID).Return(domain.Chat{}, domain.ErrChatNotFound)
 
-		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
+		app := &App{chats: mockChats, pubsub: mockPubSub, tx: mockTx}
 
 		err := app.SendMessage(ctx, user.ID, chatID, "Hello, how are you?")
 		assert.Error(err)
@@ -210,7 +210,7 @@ func TestApp_SendMessage(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
 
-		app := &App{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
+		app := &App{chats: mockChats, pubsub: mockPubSub, tx: mockTx}
 
 		err := app.SendMessage(ctx, user.ID, chat.ID, "Hello, how are you?")
 		assert.ErrorIs(err, domain.ErrChatAccessDenied)

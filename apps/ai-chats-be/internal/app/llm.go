@@ -18,20 +18,31 @@ func (m ModelStreamResponse) Type() types.MessageType {
 	return types.MessageType("ModelStreamResponse")
 }
 
+type LLM struct {
+	chats        domain.Chats
+	ollamaClient domain.OllamaClient
+	pubsub       PubSub
+	tx           Tx
+}
+
+func NewLLM(chats domain.Chats, ollamaClient domain.OllamaClient, pubsub PubSub, tx Tx) *LLM {
+	return &LLM{chats: chats, ollamaClient: ollamaClient, pubsub: pubsub, tx: tx}
+}
+
 // GenerateResponse generates a LLM response for the chat.
-func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error {
-	chat, err := a.chats.FindByIDWithMessages(ctx, chatID)
+func (l *LLM) GenerateResponse(ctx context.Context, chatID domain.ChatID) error {
+	chat, err := l.chats.FindByIDWithMessages(ctx, chatID)
 	if err != nil {
 		return fmt.Errorf("failed to find a chat: %w", err)
 	}
 
-	model, err := a.ollamaClient.NewModel(chat.DefaultModel.AsOllamaModel())
+	model, err := l.ollamaClient.NewModel(chat.DefaultModel.AsOllamaModel())
 	if err != nil {
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}
 
 	chatResponseFunc := func(message domain.ModelStreamMessage) error {
-		if err := a.notifyChat(ctx, chatID.String(), ModelStreamResponse{
+		if err := l.notifyChat(ctx, chatID.String(), ModelStreamResponse{
 			Text:   message.Text,
 			Sender: message.Sender.Format(),
 		}); err != nil {
@@ -46,12 +57,12 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 	}
 
 	chat.AddMessage(llmMessage)
-	if err := a.chats.Update(ctx, chat); err != nil {
+	if err := l.chats.Update(ctx, chat); err != nil {
 		return fmt.Errorf("error adding a message to chat %s: %w", chatID, err)
 	}
 
 	messageAdded := domain.NewMessageAdded(chatID, llmMessage)
-	if err := a.pubsub.Publish(ctx, MessageAddedTopic, messageAdded); err != nil {
+	if err := l.pubsub.Publish(ctx, MessageAddedTopic, messageAdded); err != nil {
 		return fmt.Errorf("failed to publish a message sent event: %w", err)
 	}
 
@@ -59,9 +70,9 @@ func (a *App) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 }
 
 // GenerateChatTitle generates a chat title.
-func (a *App) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) error {
+func (l *LLM) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) error {
 	generateChatTitleCommand := NewGenerateChatTitle(chatID.String())
-	if err := a.pubsub.Publish(
+	if err := l.pubsub.Publish(
 		ctx,
 		GenerateChatTitleTopic,
 		generateChatTitleCommand,
@@ -73,13 +84,13 @@ func (a *App) GenerateChatTitleAsync(ctx context.Context, chatID domain.ChatID) 
 }
 
 // GenerateTitle generates a LLM title for the chat.
-func (a *App) GenerateTitle(ctx context.Context, chatID domain.ChatID) error {
-	chat, err := a.chats.FindByIDWithMessages(ctx, chatID)
+func (l *LLM) GenerateTitle(ctx context.Context, chatID domain.ChatID) error {
+	chat, err := l.chats.FindByIDWithMessages(ctx, chatID)
 	if err != nil {
 		return fmt.Errorf("error finding chat %s: %w", chatID, err)
 	}
 
-	model, err := a.ollamaClient.NewModel(chat.DefaultModel.AsOllamaModel())
+	model, err := l.ollamaClient.NewModel(chat.DefaultModel.AsOllamaModel())
 	if err != nil {
 		return fmt.Errorf("error creating a chat model for chat %s: %w", chatID, err)
 	}
@@ -103,9 +114,9 @@ Use less than 100 characters. Don't use quotes or special characters.`,
 		return fmt.Errorf("error generating title for chat %s: %w", chatID, err)
 	}
 
-	if err := a.tx.Tx(ctx, func(ctx context.Context) error {
+	if err := l.tx.Tx(ctx, func(ctx context.Context) error {
 		chat.UpdateTitle(generatedTitle.Text)
-		if err := a.chats.Update(ctx, chat); err != nil {
+		if err := l.chats.Update(ctx, chat); err != nil {
 			return fmt.Errorf("error updating title for chat %s: %w", chatID, err)
 		}
 		return nil
@@ -114,8 +125,35 @@ Use less than 100 characters. Don't use quotes or special characters.`,
 	}
 
 	titleUpdated := domain.NewChatTitleUpdated(chatID, generatedTitle.Text)
-	if err := a.notifyApp(ctx, chat.User.ID, titleUpdated); err != nil {
+	if err := l.notifyApp(ctx, chat.User.ID, titleUpdated); err != nil {
 		return fmt.Errorf("error notifying app about title update for chat %s: %w", chatID, err)
+	}
+
+	return nil
+}
+
+// ProcessAddedMessage processes a message added event.
+func (l *LLM) ProcessAddedMessage(ctx context.Context, event domain.MessageAdded) error {
+	if err := l.notifyChat(ctx, event.ChatID.String(), event); err != nil {
+		return fmt.Errorf("failed to notify in chat: %w", err)
+	}
+
+	switch {
+	case event.Message.IsFromUser():
+		l.GenerateResponse(ctx, event.ChatID)
+	case event.Message.IsFromModel():
+		// Ignore messages from models.
+	default:
+		return fmt.Errorf("unknown message type: %s", event.Message)
+	}
+
+	chat, err := l.chats.FindByIDWithMessages(ctx, event.ChatID)
+	if err != nil {
+		return fmt.Errorf("error finding chat: %w", err)
+	}
+
+	if len(chat.Messages) == 2 {
+		return l.GenerateTitle(ctx, event.ChatID)
 	}
 
 	return nil

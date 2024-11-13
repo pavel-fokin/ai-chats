@@ -50,14 +50,14 @@ func TestApp_GenerateTitle(t *testing.T) {
 
 	mockTx := &MockTx{}
 
-	app := &App{
+	llm := &LLM{
 		chats:        mockChats,
 		pubsub:       mockPubSub,
 		ollamaClient: mockOllamaClient,
 		tx:           mockTx,
 	}
 
-	app.GenerateTitle(context.Background(), chat.ID)
+	llm.GenerateTitle(context.Background(), chat.ID)
 
 	mockChats.AssertExpectations(t)
 	mockPubSub.AssertExpectations(t)

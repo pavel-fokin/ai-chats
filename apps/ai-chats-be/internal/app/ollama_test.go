@@ -29,7 +29,7 @@ func (m *MockOllamaClient) List(ctx context.Context) ([]domain.OllamaModel, erro
 	return args.Get(0).([]domain.OllamaModel), args.Error(1)
 }
 
-func (m *MockOllamaClient) Pull(ctx context.Context, model string, fn PullProgressFunc) error {
+func (m *MockOllamaClient) Pull(ctx context.Context, model string, fn domain.PullProgressFunc) error {
 	args := m.Called(ctx, model, fn)
 	return args.Error(0)
 }
@@ -93,7 +93,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 			},
 		}, nil)
 
-		app := &App{
+		ollama := &Ollama{
 			modelsLibrary: mockModelsLibrary,
 			ollamaModels:  mockOllamaModels,
 		}
@@ -101,7 +101,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		filter, err := domain.NewOllamaModelsFilter("pulling")
 		assert.NoError(t, err)
 
-		models, err := app.FindOllamaModels(ctx, filter)
+		models, err := ollama.FindOllamaModels(ctx, filter)
 		assert.NoError(t, err)
 		assert.Equal(t, []domain.OllamaModel{
 			{
@@ -128,7 +128,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 			},
 		}, nil)
 
-		app := &App{
+		ollama := &Ollama{
 			modelsLibrary: mockModelsLibrary,
 			ollamaClient:  mockOllamaClient,
 		}
@@ -136,7 +136,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 		filter, err := domain.NewOllamaModelsFilter("available")
 		assert.NoError(t, err)
 
-		models, err := app.FindOllamaModels(ctx, filter)
+		models, err := ollama.FindOllamaModels(ctx, filter)
 		assert.NoError(t, err)
 		assert.Equal(t, []domain.OllamaModel{
 			{
@@ -174,7 +174,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 			},
 		}, nil)
 
-		app := &App{
+		ollama := &Ollama{
 			modelsLibrary: mockModelsLibrary,
 			ollamaModels:  mockOllamaModels,
 			ollamaClient:  mockOllamaClient,
@@ -182,7 +182,7 @@ func TestAppOllama_FindOllamaModels(t *testing.T) {
 
 		filter := domain.OllamaModelsFilter{}
 
-		models, err := app.FindOllamaModels(ctx, filter)
+		models, err := ollama.FindOllamaModels(ctx, filter)
 		assert.NoError(t, err)
 		assert.Equal(t, []domain.OllamaModel{
 			{

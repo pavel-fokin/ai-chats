@@ -47,15 +47,20 @@ func main() {
 	pubsub := pubsub.New()
 	defer pubsub.Close()
 
+	users := sqlite.NewUsers(db)
+	ollamaClient := ollama.NewOllamaClient()
+	ollamaModels := sqlite.NewOllamaModels(db)
+	modelsLibrary := sqlite.NewModelsLibrary(db)
+	tx := sqlite.NewTx(db)
+
 	app := app.New(
-		app.NewAuth(app.AuthConfig{HashCost: 14}, sqlite.NewUsers(db)),
+		app.NewAuth(app.AuthConfig{HashCost: 14}, users),
+		app.NewOllama(ollamaClient, ollamaModels, modelsLibrary, pubsub),
+		app.NewLLM(sqlite.NewChats(db), ollamaClient, pubsub, tx),
 		sqlite.NewChats(db),
-		sqlite.NewUsers(db),
-		sqlite.NewModels(db),
-		ollama.NewOllamaClient(),
-		sqlite.NewOllamaModels(db),
+		// users,
 		pubsub,
-		sqlite.NewTx(db),
+		tx,
 	)
 
 	// Setup the server.
