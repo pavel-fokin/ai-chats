@@ -30,9 +30,9 @@ func TestApp_CreateChat(t *testing.T) {
 	t.Run("with empty message", func(t *testing.T) {
 		mockChats := &MockChats{}
 
-		app := &App{chats: mockChats, tx: mockTx}
+		chats := &Chats{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
 
-		chat, err := app.CreateChat(ctx, user.ID, "model", "")
+		chat, err := chats.CreateChat(ctx, user.ID, "model", "")
 		assert.Error(t, err)
 		assert.Equal(t, "message text is empty", err.Error())
 		assert.Equal(t, domain.Chat{}, chat)
@@ -44,9 +44,9 @@ func TestApp_CreateChat(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("Add", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
 
-		app := &App{chats: mockChats, pubsub: mockPubSub, tx: mockTx}
+		chats := &Chats{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
 
-		chat, err := app.CreateChat(ctx, user.ID, "message", "model")
+		chat, err := chats.CreateChat(ctx, user.ID, "message", "model")
 		assert.NoError(t, err)
 		assert.NotNil(t, chat)
 
@@ -68,9 +68,9 @@ func TestApp_DeleteChat(t *testing.T) {
 		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
 		mockChats.On("Delete", ctx, chat.ID).Return(nil)
 
-		app := &App{chats: mockChats}
+		chats := &Chats{chats: mockChats}
 
-		err := app.DeleteChat(ctx, user.ID, chat.ID)
+		err := chats.DeleteChat(ctx, user.ID, chat.ID)
 		assert.NoError(t, err)
 		mockChats.AssertExpectations(t)
 	})
@@ -82,9 +82,9 @@ func TestApp_DeleteChat(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("FindByID", ctx, chatID).Return(domain.Chat{}, domain.ErrChatNotFound)
 
-		app := &App{chats: mockChats}
+		chats := &Chats{chats: mockChats}
 
-		err := app.DeleteChat(ctx, userID, chatID)
+		err := chats.DeleteChat(ctx, userID, chatID)
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, domain.ErrChatNotFound)
 		mockChats.AssertExpectations(t)
@@ -96,9 +96,9 @@ func TestApp_DeleteChat(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
 
-		app := &App{chats: mockChats}
+		chats := &Chats{chats: mockChats}
 
-		err := app.DeleteChat(ctx, domain.NewUserID(), chat.ID)
+		err := chats.DeleteChat(ctx, domain.NewUserID(), chat.ID)
 		assert.ErrorIs(t, err, domain.ErrChatAccessDenied)
 		mockChats.AssertExpectations(t)
 	})
@@ -119,9 +119,9 @@ func TestApp_FindChatByID(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
 
-		app := &App{chats: mockChats}
+		chats := &Chats{chats: mockChats}
 
-		foundChat, err := app.FindChatByID(ctx, user.ID, chat.ID)
+		foundChat, err := chats.FindChatByID(ctx, user.ID, chat.ID)
 		assert.NoError(err)
 
 		assert.Equal(chat.ID, foundChat.ID)
@@ -136,9 +136,9 @@ func TestApp_FindChatByID(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("FindByID", ctx, chatID).Return(domain.Chat{}, domain.ErrChatNotFound)
 
-		app := &App{chats: mockChats}
+		chats := &Chats{chats: mockChats}
 
-		_, err := app.FindChatByID(ctx, userID, chatID)
+		_, err := chats.FindChatByID(ctx, userID, chatID)
 		assert.Error(err)
 		assert.ErrorIs(err, domain.ErrChatNotFound)
 	})
@@ -149,9 +149,10 @@ func TestApp_FindChatByID(t *testing.T) {
 
 		mockChats := &MockChats{}
 		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
-		app := &App{chats: mockChats}
 
-		_, err := app.FindChatByID(ctx, userID, chat.ID)
+		chats := &Chats{chats: mockChats}
+
+		_, err := chats.FindChatByID(ctx, userID, chat.ID)
 		assert.ErrorIs(err, domain.ErrChatAccessDenied)
 	})
 }
@@ -184,9 +185,9 @@ func TestApp_SendMessage(t *testing.T) {
 		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
 		mockChats.On("Update", ctx, mock.AnythingOfType("domain.Chat")).Return(nil)
 
-		app := &App{chats: mockChats, pubsub: mockPubSub, tx: mockTx}
+		chats := &Chats{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
 
-		err := app.SendMessage(ctx, user.ID, chat.ID, "Hello, how are you?")
+		err := chats.SendMessage(ctx, user.ID, chat.ID, "Hello, how are you?")
 		assert.NoError(err)
 		mockChats.AssertExpectations(t)
 	})
@@ -197,9 +198,9 @@ func TestApp_SendMessage(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("FindByID", ctx, chatID).Return(domain.Chat{}, domain.ErrChatNotFound)
 
-		app := &App{chats: mockChats, pubsub: mockPubSub, tx: mockTx}
+		chats := &Chats{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
 
-		err := app.SendMessage(ctx, user.ID, chatID, "Hello, how are you?")
+		err := chats.SendMessage(ctx, user.ID, chatID, "Hello, how are you?")
 		assert.Error(err)
 		assert.ErrorContains(err, domain.ErrChatNotFound.Error())
 	})
@@ -210,9 +211,9 @@ func TestApp_SendMessage(t *testing.T) {
 		mockChats := &MockChats{}
 		mockChats.On("FindByID", ctx, chat.ID).Return(chat, nil)
 
-		app := &App{chats: mockChats, pubsub: mockPubSub, tx: mockTx}
+		chats := &Chats{chats: mockChats, users: mockUsers, pubsub: mockPubSub, tx: mockTx}
 
-		err := app.SendMessage(ctx, user.ID, chat.ID, "Hello, how are you?")
+		err := chats.SendMessage(ctx, user.ID, chat.ID, "Hello, how are you?")
 		assert.ErrorIs(err, domain.ErrChatAccessDenied)
 	})
 }

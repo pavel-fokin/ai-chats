@@ -55,12 +55,9 @@ func main() {
 
 	app := app.New(
 		app.NewAuth(app.AuthConfig{HashCost: 14}, users),
-		app.NewOllama(ollamaClient, ollamaModels, modelsLibrary, pubsub),
+		app.NewChats(sqlite.NewChats(db), users, pubsub, tx),
 		app.NewLLM(sqlite.NewChats(db), ollamaClient, pubsub, tx),
-		sqlite.NewChats(db),
-		// users,
-		pubsub,
-		tx,
+		app.NewOllama(ollamaClient, ollamaModels, modelsLibrary, pubsub),
 	)
 
 	// Setup the server.
