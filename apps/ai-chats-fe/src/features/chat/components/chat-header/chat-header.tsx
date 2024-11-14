@@ -1,5 +1,5 @@
 import { OnlyDesktop, OnlyMobile } from '@/components/layout';
-import { useChat } from '@/hooks';
+import { useGetChat } from '@/hooks';
 
 import { ChatHeaderMobile } from './chat-header-mobile';
 import { ChatHeaderDesktop } from './chat-header-desktop';
@@ -10,7 +10,7 @@ interface ChatHeaderProps {
 
 // Chat header component.
 export const ChatHeader = ({ chatId }: ChatHeaderProps) => {
-  const chat = useChat(chatId);
+  const chat = useGetChat(chatId);
 
   const title = chat.data?.title || 'Chat';
 

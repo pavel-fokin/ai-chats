@@ -7,7 +7,7 @@ import {
 
 import { getMessages, postMessages } from 'api';
 
-export const useMessages = (chatId: string | undefined) => {
+export const useGetMessages = (chatId: string | undefined) => {
   return useQuery({
     queryKey: ['messages', chatId],
     queryFn: chatId ? () => getMessages(chatId) : skipToken,

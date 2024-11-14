@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { useChat, useDeleteChat, useInvalidateChats } from '@/hooks';
+import { useGetChat, useDeleteChat, useInvalidateChats } from '@/hooks';
 import { AlertDialog, Button } from '@/components/ui';
 
 import styles from './chat-delete-dialog.module.css';
@@ -16,7 +16,7 @@ export const ChatDeleteDialog = ({
   open,
   setOpen,
 }: ChatDeleteDialogProps) => {
-  const chat = useChat(chatId);
+  const chat = useGetChat(chatId);
   const deleteChat = useDeleteChat();
   const invalidateChats = useInvalidateChats();
   const navigate = useNavigate();

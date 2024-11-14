@@ -1,13 +1,11 @@
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 
-import { useChats } from 'hooks';
+import { useGetChats } from 'hooks';
 
 import { Link } from '../Link';
 
-// import styles from './chats-list.module.css';
-
 export const ChatsList = () => {
-  const chats = useChats();
+  const chats = useGetChats();
 
   return (
     <div>

@@ -14,7 +14,7 @@ import {
 } from 'api';
 import { PostChatsRequest } from 'api/requests';
 
-export const useChats = () => {
+export const useGetChats = () => {
   return useQuery({
     queryKey: ['chats'],
     queryFn: getChats,
@@ -22,7 +22,7 @@ export const useChats = () => {
   });
 };
 
-export const useChat = (chatId: string | undefined) => {
+export const useGetChat = (chatId: string | undefined) => {
   return useQuery({
     queryKey: ['chat', chatId],
     queryFn: chatId ? () => getChatById(chatId) : skipToken,
