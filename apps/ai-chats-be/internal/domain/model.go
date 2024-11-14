@@ -1,6 +1,8 @@
 package domain
 
-import "context"
+import (
+	"context"
+)
 
 // ModelStreamMessage is a struct that streams the response of a model.
 type ModelStreamMessage struct {

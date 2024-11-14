@@ -21,7 +21,7 @@ export function useChatEvents(chatId: string) {
     invalidateMessages(messageAdded.chatId);
   });
 
-  eventHandlers.set(EventTypes.MODEL_STREAM_RESPONSE, (event) => {
+  eventHandlers.set(EventTypes.MODEL_STREAM_MESSAGE, (event) => {
     const message = JSON.parse(event.data);
     setModelResponse(message);
   });

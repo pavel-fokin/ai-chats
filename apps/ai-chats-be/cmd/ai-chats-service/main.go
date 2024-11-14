@@ -52,11 +52,12 @@ func main() {
 	ollamaModels := sqlite.NewOllamaModels(db)
 	modelsLibrary := sqlite.NewModelsLibrary(db)
 	tx := sqlite.NewTx(db)
+	notificator := app.NewNotificator(pubsub)
 
 	app := app.New(
 		app.NewAuth(app.AuthConfig{HashCost: 14}, users),
 		app.NewChats(sqlite.NewChats(db), users, pubsub, tx),
-		app.NewLLM(sqlite.NewChats(db), ollamaClient, pubsub, tx),
+		app.NewLLM(sqlite.NewChats(db), ollamaClient, pubsub, tx, notificator),
 		app.NewOllama(ollamaClient, ollamaModels, modelsLibrary, pubsub),
 	)
 

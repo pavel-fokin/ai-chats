@@ -12,7 +12,7 @@ export function useAppEvents() {
   const invalidateChat = useInvalidateChat();
   const invalidateChats = useInvalidateChats();
 
-  eventHandlers.set('chatTitleUpdated', (event) => {
+  eventHandlers.set('ChatTitleUpdatedNotification', (event) => {
     const chatTitleUpdated = JSON.parse(event.data);
 
     invalidateChat(chatTitleUpdated.chatId);

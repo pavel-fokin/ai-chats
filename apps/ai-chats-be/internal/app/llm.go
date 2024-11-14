@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"ai-chats/internal/app/notifications"
 	"ai-chats/internal/domain"
 	"ai-chats/internal/pkg/types"
 )
@@ -23,10 +24,17 @@ type LLM struct {
 	ollamaClient domain.OllamaClient
 	pubsub       PubSub
 	tx           Tx
+	notificator  Notificator
 }
 
-func NewLLM(chats domain.Chats, ollamaClient domain.OllamaClient, pubsub PubSub, tx Tx) *LLM {
-	return &LLM{chats: chats, ollamaClient: ollamaClient, pubsub: pubsub, tx: tx}
+func NewLLM(
+	chats domain.Chats,
+	ollamaClient domain.OllamaClient,
+	pubsub PubSub,
+	tx Tx,
+	notificator Notificator,
+) *LLM {
+	return &LLM{chats: chats, ollamaClient: ollamaClient, pubsub: pubsub, tx: tx, notificator: notificator}
 }
 
 // GenerateResponse generates a LLM response for the chat.
@@ -41,11 +49,12 @@ func (l *LLM) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 		return fmt.Errorf("failed to create a chat model: %w", err)
 	}
 
-	chatResponseFunc := func(message domain.ModelStreamMessage) error {
-		if err := l.notifyChat(ctx, chatID.String(), ModelStreamResponse{
-			Text:   message.Text,
-			Sender: message.Sender.Format(),
-		}); err != nil {
+	chatResponseFunc := func(modelStreamMessage domain.ModelStreamMessage) error {
+		if err := l.notificator.Notify(ctx, notifications.NewModelStreamMessage(
+			chatID,
+			modelStreamMessage.Text,
+			modelStreamMessage.Sender.Format(),
+		)); err != nil {
 			return fmt.Errorf("failed to notify in chat: %w", err)
 		}
 		return nil
@@ -124,8 +133,8 @@ Use less than 100 characters. Don't use quotes or special characters.`,
 		return fmt.Errorf("error in transaction while updating title for chat %s: %w", chatID, err)
 	}
 
-	titleUpdated := domain.NewChatTitleUpdated(chatID, generatedTitle.Text)
-	if err := l.notifyApp(ctx, chat.User.ID, titleUpdated); err != nil {
+	chatTitleUpdated := notifications.NewChatTitleUpdated(chatID, chat.User.ID)
+	if err := l.notificator.Notify(ctx, chatTitleUpdated); err != nil {
 		return fmt.Errorf("error notifying app about title update for chat %s: %w", chatID, err)
 	}
 
@@ -134,7 +143,8 @@ Use less than 100 characters. Don't use quotes or special characters.`,
 
 // ProcessAddedMessage processes a message added event.
 func (l *LLM) ProcessAddedMessage(ctx context.Context, event domain.MessageAdded) error {
-	if err := l.notifyChat(ctx, event.ChatID.String(), event); err != nil {
+	messageAdded := notifications.NewMessageAdded(event.ChatID)
+	if err := l.notificator.Notify(ctx, messageAdded); err != nil {
 		return fmt.Errorf("failed to notify in chat: %w", err)
 	}
 
