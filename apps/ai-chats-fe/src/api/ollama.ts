@@ -1,10 +1,16 @@
-import { OllamaModel, OllamaModelStatus } from 'types';
+import { OllamaModel, OllamaModelCard, OllamaModelStatus } from 'types';
 
 import { client } from './baseAxios';
 
 type GetOllamaResponse = {
   data: {
     models: OllamaModel[];
+  };
+};
+
+type GetOllamaModelsLibraryResponse = {
+  data: {
+    modelCards: OllamaModelCard[];
   };
 };
 
@@ -15,6 +21,11 @@ export const getOllamaModels = async (
   const resp = await client.get<GetOllamaResponse>('/ollama/models', {
     params,
   });
+  return resp.data;
+};
+
+export const getOllamaModelsLibrary = async (): Promise<GetOllamaModelsLibraryResponse> => {
+  const resp = await client.get('/ollama/models-library');
   return resp.data;
 };
 

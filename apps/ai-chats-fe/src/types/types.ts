@@ -29,6 +29,12 @@ export type OllamaModel = {
   status: OllamaModelStatus;
 };
 
+export type OllamaModelCard = {
+  model: string;
+  description: string;
+  tags: string[];
+};
+
 export enum OllamaModelStatus {
   ANY = 'any',
   AVAILABLE = 'available',

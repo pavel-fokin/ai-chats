@@ -1,13 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { deleteOllamaModels, getOllamaModels, postOllamaModels } from 'api';
+import { deleteOllamaModels, getOllamaModels, getOllamaModelsLibrary, postOllamaModels } from 'api';
 import { OllamaModelStatus } from 'types';
 
-export const useOllamaModels = (status?: OllamaModelStatus) => {
+export const useGetOllamaModels = (status?: OllamaModelStatus) => {
   return useQuery({
     queryKey: ['ollama-models', status],
     queryFn: () => getOllamaModels(status ?? OllamaModelStatus.ANY),
     select: (data) => data.data.models,
+  });
+};
+
+export const useGetOllamaModelsLibrary = () => {
+  return useQuery({
+    queryKey: ['ollama-models-library'],
+    queryFn: () => getOllamaModelsLibrary(),
+    select: (data) => data.data.modelCards,
   });
 };
 

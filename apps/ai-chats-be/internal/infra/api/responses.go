@@ -131,6 +131,22 @@ func NewGetOllamaModelsResponse(models []domain.OllamaModel) GetOllamaModelsResp
 	return GetOllamaModelsResponse{Models: models}
 }
 
+type GetOllamaModelsLibraryResponse struct {
+	ModelCards []domain.ModelCard `json:"modelCards"`
+}
+
+func NewGetOllamaModelsLibraryResponse(modelCards []*domain.ModelCard) GetOllamaModelsLibraryResponse {
+	var res GetOllamaModelsLibraryResponse
+	for _, modelCard := range modelCards {
+		res.ModelCards = append(res.ModelCards, domain.ModelCard{
+			Model:       modelCard.Model,
+			Description: modelCard.Description,
+			Tags:        modelCard.Tags,
+		})
+	}
+	return res
+}
+
 // WriteSuccessResponse writes a JSON response.
 func WriteSuccessResponse(w http.ResponseWriter, statusCode int, data any) {
 	w.Header().Set("Content-Type", "application/json")

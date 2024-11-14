@@ -7,7 +7,7 @@ import { Header, Main } from '@/components/layout';
 import { InputMessage, NewChatIconButton } from '@/features/chat';
 import { OllamaModelsSelect } from '@/features/ollama/components';
 import { OpenSidebarButton } from '@/features/sidebar';
-import { useCreateChat, useOllamaModels } from '@/hooks';
+import { useCreateChat, useGetOllamaModels } from '@/hooks';
 import { OllamaModel } from '@/types';
 
 import styles from './new-chat.module.css';
@@ -16,7 +16,7 @@ export const NewChat = () => {
   const [selectedModel, setSelectedModel] = useState<OllamaModel | null>(null);
   const createChat = useCreateChat();
   const navigate = useNavigate();
-  const ollamaModels = useOllamaModels();
+  const ollamaModels = useGetOllamaModels();
 
   const handleSendMessage = async (text: string) => {
     if (!selectedModel) return;

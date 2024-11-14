@@ -11,6 +11,7 @@ import (
 )
 
 type Ollama interface {
+	GetOllamaModelsLibrary(context.Context) ([]*domain.ModelCard, error)
 	DeleteOllamaModel(context.Context, string) error
 	FindOllamaModels(context.Context, domain.OllamaModelsFilter) ([]domain.OllamaModel, error)
 	PullOllamaModelAsync(context.Context, string) error
@@ -36,6 +37,22 @@ func GetOllamaModels(app Ollama) http.HandlerFunc {
 		}
 
 		WriteSuccessResponse(w, http.StatusOK, NewGetOllamaModelsResponse(models))
+	}
+}
+
+// GetOllamaModelsLibrary handles the GET /api/ollama/models-library endpoint.
+func GetOllamaModelsLibrary(app Ollama) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		models, err := app.GetOllamaModelsLibrary(ctx)
+		if err != nil {
+			slog.ErrorContext(ctx, "failed to get ollama models library", "err", err)
+			WriteErrorResponse(w, http.StatusInternalServerError, InternalError)
+			return
+		}
+
+		WriteSuccessResponse(w, http.StatusOK, NewGetOllamaModelsLibraryResponse(models))
 	}
 }
 

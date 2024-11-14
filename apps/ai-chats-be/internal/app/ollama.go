@@ -25,6 +25,11 @@ func NewOllama(
 	return &Ollama{ollamaClient: ollamaClient, ollamaModels: ollamaModels, modelsLibrary: modelsLibrary, pubsub: pubsub}
 }
 
+// GetOllamaModelsLibrary retrieves the library of Ollama models.
+func (o *Ollama) GetOllamaModelsLibrary(ctx context.Context) ([]*domain.ModelCard, error) {
+	return o.modelsLibrary.FindAll(ctx)
+}
+
 // FindOllamaModels retrieves Ollama models based on the provided filter.
 func (o *Ollama) FindOllamaModels(ctx context.Context, filter domain.OllamaModelsFilter) ([]domain.OllamaModel, error) {
 	if filter.Status == domain.OllamaModelStatusPulling {

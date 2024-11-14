@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
-
 	"testing"
 
 	"github.com/go-chi/chi/v5"
@@ -20,28 +19,13 @@ type MockOllamaApp struct {
 	mock.Mock
 }
 
-func (m *MockOllamaApp) AllOllamaModels(ctx context.Context) ([]domain.OllamaModel, error) {
+func (m *MockOllamaApp) GetOllamaModelsLibrary(ctx context.Context) ([]*domain.ModelCard, error) {
 	args := m.Called(ctx)
-
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-
-	return args.Get(0).([]domain.OllamaModel), args.Error(1)
+	return args.Get(0).([]*domain.ModelCard), args.Error(1)
 }
 
 func (m *MockOllamaApp) FindOllamaModels(ctx context.Context, filter domain.OllamaModelsFilter) ([]domain.OllamaModel, error) {
 	args := m.Called(ctx, filter)
-	return args.Get(0).([]domain.OllamaModel), args.Error(1)
-}
-
-func (m *MockOllamaApp) FindOllamaModelsAvailable(ctx context.Context) ([]domain.OllamaModel, error) {
-	args := m.Called(ctx)
-	return args.Get(0).([]domain.OllamaModel), args.Error(1)
-}
-
-func (m *MockOllamaApp) FindOllamaModelsPullingInProgress(ctx context.Context) ([]domain.OllamaModel, error) {
-	args := m.Called(ctx)
 	return args.Get(0).([]domain.OllamaModel), args.Error(1)
 }
 
@@ -71,13 +55,11 @@ func TestGetOllamaModels(t *testing.T) {
 		}
 
 		mockOllamaApp := &MockOllamaApp{}
-		mockOllamaApp.
-			On(
-				"FindOllamaModels",
-				mock.MatchedBy(matchChiContext),
-				domain.OllamaModelsFilter{},
-			).
-			Return(models, nil)
+		mockOllamaApp.On(
+			"FindOllamaModels",
+			mock.MatchedBy(matchChiContext),
+			domain.OllamaModelsFilter{},
+		).Return(models, nil)
 
 		router := chi.NewRouter()
 		router.Get("/api/ollama/models", GetOllamaModels(mockOllamaApp))
@@ -160,6 +142,46 @@ func TestGetOllamaModels(t *testing.T) {
 
 		resp := w.Result()
 		assert.Equal(t, 200, resp.StatusCode)
+		mockOllamaApp.AssertExpectations(t)
+	})
+}
+
+func TestApiOllama_GetOllamaModelsLibrary(t *testing.T) {
+	ctx := context.WithValue(context.Background(), UserIDCtxKey, uuid.New())
+
+	t.Run("success", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/ollama/models-library", nil)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockOllamaApp := &MockOllamaApp{}
+		mockOllamaApp.On("GetOllamaModelsLibrary", mock.MatchedBy(matchChiContext)).Return([]*domain.ModelCard{}, nil)
+
+		router := chi.NewRouter()
+		router.Get("/api/ollama/models-library", GetOllamaModelsLibrary(mockOllamaApp))
+
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 200, resp.StatusCode)
+		mockOllamaApp.AssertExpectations(t)
+	})
+
+	t.Run("error", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/ollama/models-library", nil)
+		req = req.WithContext(ctx)
+		w := httptest.NewRecorder()
+
+		mockOllamaApp := &MockOllamaApp{}
+		mockOllamaApp.On("GetOllamaModelsLibrary", mock.MatchedBy(matchChiContext)).Return([]*domain.ModelCard{}, assert.AnError)
+
+		router := chi.NewRouter()
+		router.Get("/api/ollama/models-library", GetOllamaModelsLibrary(mockOllamaApp))
+
+		router.ServeHTTP(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, 500, resp.StatusCode)
 		mockOllamaApp.AssertExpectations(t)
 	})
 }

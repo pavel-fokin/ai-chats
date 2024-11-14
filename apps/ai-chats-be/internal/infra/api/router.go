@@ -48,6 +48,7 @@ func (s *Server) SetupRoutes(app App, pubsub Subscriber) {
 	r.Group(func(r chi.Router) {
 		r.Use(AuthHeader(s.config.TokenSigningKey))
 		r.Get("/api/ollama/models", GetOllamaModels(app))
+		r.Get("/api/ollama/models-library", GetOllamaModelsLibrary(app))
 		r.Post("/api/ollama/models", PostOllamaModels(app))
 		r.Delete("/api/ollama/models/{model}", DeleteOllamaModel(app))
 	})

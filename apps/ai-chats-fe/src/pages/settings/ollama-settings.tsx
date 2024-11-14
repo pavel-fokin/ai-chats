@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { Box, Flex, Heading, IconButton, TextField } from '@radix-ui/themes';
 
 import { DownloadIcon } from '@/components/icons';
@@ -5,10 +7,15 @@ import { Header, Main } from '@/components/layout';
 import { NewChatIconButton } from '@/features/chat';
 import { OllamaModelsList, OllamaStatus } from '@/features/ollama/components';
 import { OpenSidebarButton } from '@/features/sidebar';
-import { usePullOllamaModel } from '@/hooks';
+import { usePullOllamaModel, useGetOllamaModelsLibrary } from '@/hooks';
 
 export const OllamaSettings: React.FC = () => {
   const pullModel = usePullOllamaModel();
+  const modelCards = useGetOllamaModelsLibrary();
+
+  useEffect(() => {
+    console.log(modelCards.data);
+  }, [modelCards.data]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

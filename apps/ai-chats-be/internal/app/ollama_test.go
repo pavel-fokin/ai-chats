@@ -48,6 +48,16 @@ func (m *MockModelsLibrary) FindDescription(ctx context.Context, model string) (
 	return args.String(0), args.Error(1)
 }
 
+func (m *MockModelsLibrary) FindAll(ctx context.Context) ([]*domain.ModelCard, error) {
+	args := m.Called(ctx)
+	return args.Get(0).([]*domain.ModelCard), args.Error(1)
+}
+
+func (m *MockModelsLibrary) FindByName(ctx context.Context, model string) (*domain.ModelCard, error) {
+	args := m.Called(ctx, model)
+	return args.Get(0).(*domain.ModelCard), args.Error(1)
+}
+
 type MockOllamaModels struct {
 	mock.Mock
 }

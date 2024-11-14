@@ -30,6 +30,13 @@ CREATE TABLE IF NOT EXISTS model_description (
     PRIMARY KEY (name)
 );
 
+CREATE TABLE IF NOT EXISTS model_tag (
+    model TEXT NOT NULL CHECK (length(model) > 0),
+    tag TEXT NOT NULL CHECK (length(tag) > 0),
+    FOREIGN KEY (model) REFERENCES model_description(name),
+    PRIMARY KEY (model, tag)
+);
+
 CREATE TABLE IF NOT EXISTS ollama_model_pull_event (
     id TEXT PRIMARY KEY,
     occurred_at TEXT NOT NULL CHECK (length(occurred_at) > 0),
