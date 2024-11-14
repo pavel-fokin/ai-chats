@@ -1,11 +1,11 @@
 package domain
 
 type ModelCard struct {
-	Model       string   `json:"model"`
+	ModelName   string   `json:"modelName"`
 	Description string   `json:"description"`
 	Tags        []string `json:"tags"`
 }
 
-func NewModelCard(model, description string, tags []string) *ModelCard {
-	return &ModelCard{Model: model, Description: description, Tags: tags}
+func NewModelCard(modelName, description string, tags []string) *ModelCard {
+	return &ModelCard{ModelName: modelName, Description: description, Tags: tags}
 }

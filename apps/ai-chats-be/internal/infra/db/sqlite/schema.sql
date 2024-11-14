@@ -24,17 +24,17 @@ CREATE TABLE IF NOT EXISTS message (
     FOREIGN KEY (chat_id) REFERENCES chat(id)
 );
 
-CREATE TABLE IF NOT EXISTS model_description (
-    name TEXT NOT NULL CHECK (length(name) > 0),
+CREATE TABLE IF NOT EXISTS ollama_model_description (
+    model_name TEXT NOT NULL CHECK (length(model_name) > 0),
     description TEXT NOT NULL CHECK (length(description) > 0),
-    PRIMARY KEY (name)
+    PRIMARY KEY (model_name)
 );
 
-CREATE TABLE IF NOT EXISTS model_tag (
-    model TEXT NOT NULL CHECK (length(model) > 0),
+CREATE TABLE IF NOT EXISTS ollama_model_tag (
+    model_name TEXT NOT NULL CHECK (length(model_name) > 0),
     tag TEXT NOT NULL CHECK (length(tag) > 0),
-    FOREIGN KEY (model) REFERENCES model_description(name),
-    PRIMARY KEY (model, tag)
+    FOREIGN KEY (model_name) REFERENCES ollama_model_description(model_name),
+    PRIMARY KEY (model_name, tag)
 );
 
 CREATE TABLE IF NOT EXISTS ollama_model_pull_event (

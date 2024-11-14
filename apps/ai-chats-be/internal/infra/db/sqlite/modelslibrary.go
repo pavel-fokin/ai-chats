@@ -16,9 +16,9 @@ func NewModelsLibrary(db *sql.DB) *ModelsLibrary {
 	return &ModelsLibrary{DB{db: db}}
 }
 
-func (m *ModelsLibrary) FindDescription(ctx context.Context, name string) (string, error) {
+func (m *ModelsLibrary) FindDescription(ctx context.Context, modelName string) (string, error) {
 	var description string
-	err := m.DB.db.QueryRow("SELECT description FROM model_description WHERE name = ?", name).Scan(&description)
+	err := m.DB.db.QueryRow("SELECT description FROM ollama_model_description WHERE model_name = ?", modelName).Scan(&description)
 	if err != nil {
 		return "", err
 	}
@@ -33,10 +33,10 @@ func (m *ModelsLibrary) FindAll(ctx context.Context) ([]*domain.ModelCard, error
 	)
 
 	rows, err := m.DB.db.Query(`
-		SELECT name, description, GROUP_CONCAT(tag) AS tags
-		FROM model_description
-		LEFT JOIN model_tag ON model_description.name = model_tag.model
-		GROUP BY model_description.name`)
+		SELECT ollama_model_description.model_name, description, GROUP_CONCAT(tag) AS tags
+		FROM ollama_model_description
+		LEFT JOIN ollama_model_tag ON ollama_model_description.model_name = ollama_model_tag.model_name
+		GROUP BY ollama_model_description.model_name`)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (m *ModelsLibrary) FindAll(ctx context.Context) ([]*domain.ModelCard, error
 
 	for rows.Next() {
 		var modelCard domain.ModelCard
-		err := rows.Scan(&modelCard.Model, &modelCard.Description, &tags)
+		err := rows.Scan(&modelCard.ModelName, &modelCard.Description, &tags)
 		if err != nil {
 			return nil, err
 		}
@@ -59,17 +59,17 @@ func (m *ModelsLibrary) FindAll(ctx context.Context) ([]*domain.ModelCard, error
 	return modelCards, nil
 }
 
-func (m *ModelsLibrary) FindByName(ctx context.Context, name string) (*domain.ModelCard, error) {
+func (m *ModelsLibrary) FindByName(ctx context.Context, modelName string) (*domain.ModelCard, error) {
 	var (
 		modelCard domain.ModelCard
 		tags      string
 	)
 	err := m.DB.db.QueryRow(`
-		SELECT name, description, GROUP_CONCAT(tag) AS tags
-		FROM model_description
-		LEFT JOIN model_tag ON model_description.name = model_tag.model
-		WHERE model_description.name = ?
-		GROUP BY model_description.name`, name).Scan(&modelCard.Model, &modelCard.Description, &tags)
+		SELECT ollama_model_description.model_name, description, GROUP_CONCAT(tag) AS tags
+		FROM ollama_model_description
+		LEFT JOIN ollama_model_tag ON ollama_model_description.model_name = ollama_model_tag.model_name
+		WHERE ollama_model_description.model_name = ?
+		GROUP BY ollama_model_description.model_name`, modelName).Scan(&modelCard.ModelName, &modelCard.Description, &tags)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:

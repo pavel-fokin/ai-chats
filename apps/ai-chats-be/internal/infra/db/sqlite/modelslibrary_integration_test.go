@@ -39,7 +39,7 @@ func TestSqliteModelsLibrary_FindByName(t *testing.T) {
 		assert.NotNil(t, modelCard)
 		assert.NoError(t, err)
 
-		assert.Equal(t, "llama3", modelCard.Model)
+		assert.Equal(t, "llama3", modelCard.ModelName)
 		assert.Equal(t, "Meta Llama 3: The most capable openly available LLM to date.", modelCard.Description)
 		assert.Equal(t, []string{"70b", "8b"}, modelCard.Tags)
 	})

@@ -30,7 +30,7 @@ export type OllamaModel = {
 };
 
 export type OllamaModelCard = {
-  model: string;
+  modelName: string;
   description: string;
   tags: string[];
 };

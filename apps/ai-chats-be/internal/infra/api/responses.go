@@ -139,7 +139,7 @@ func NewGetOllamaModelsLibraryResponse(modelCards []*domain.ModelCard) GetOllama
 	var res GetOllamaModelsLibraryResponse
 	for _, modelCard := range modelCards {
 		res.ModelCards = append(res.ModelCards, domain.ModelCard{
-			Model:       modelCard.Model,
+			ModelName:   modelCard.ModelName,
 			Description: modelCard.Description,
 			Tags:        modelCard.Tags,
 		})
