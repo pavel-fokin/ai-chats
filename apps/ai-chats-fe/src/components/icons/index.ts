@@ -12,4 +12,5 @@ export {
   SlidersHorizontal as ConfigurationIcon,
   Trash as DeleteIcon,
   X as CloseIcon,
+  Stack as OllamaLibraryIcon,
 } from '@phosphor-icons/react';

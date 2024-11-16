@@ -15,7 +15,7 @@ interface ModelPullButtonProps {
   onPull: () => void;
 }
 
-interface ModelTagSelectorProps {
+interface ModelTagSelectProps {
   tags: string[];
   onSelect: (tag: string) => void;
 }
@@ -38,15 +38,15 @@ const OllamaModelCard = ({
       <h2 className={classes.ollamaModelCard__title}>{modelName}</h2>
       <p>{description}</p>
       <div className={classes.ollamaModelCard__actions}>
-        <ModelTagSelector tags={tags} onSelect={setSelectedTag} />
+        <ModelTagSelect tags={tags} onSelect={setSelectedTag} />
         <ModelPullButton onPull={handlePullModel} />
       </div>
     </article>
   );
 };
 
-const ModelTagSelector = React.memo(
-  ({ tags, onSelect }: ModelTagSelectorProps) => {
+const ModelTagSelect = React.memo(
+  ({ tags, onSelect }: ModelTagSelectProps) => {
     return (
       <Select.Root defaultValue={tags[0]} onValueChange={onSelect}>
         <Select.Trigger aria-label="Select a tag" />

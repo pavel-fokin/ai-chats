@@ -46,7 +46,7 @@ export const NewChat = () => {
       <Main>
         <section className={styles.newChat__modelSelect}>
           <Heading as="h2" size="6" weight="bold" mb="4">
-            Choose a model 🤖
+            Choose a model to chat with 🤖
           </Heading>
           <OllamaModelsSelect
             models={ollamaModels.data || []}

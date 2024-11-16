@@ -1,7 +1,7 @@
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { Flex, Text } from '@radix-ui/themes';
 
-import { SettingsIcon } from '@/components/icons';
+import { OllamaLibraryIcon } from '@/components/icons';
 
 import {
   ChatsList,
@@ -30,10 +30,10 @@ export const Sidebar = () => {
 
           <MenuList ariaLabel="Settings list">
             <NavigationMenu.Item>
-              <Link aria-label="Ollama settings" to="/app/settings">
+              <Link aria-label="Ollama library" to="/app/ollama-library">
                 <Flex align="center" gap="3">
-                  <SettingsIcon size={24} />{' '}
-                  <Text size="2">Ollama Settings</Text>
+                  <OllamaLibraryIcon size={24} />{' '}
+                  <Text size="2">Ollama Library</Text>
                 </Flex>
               </Link>
             </NavigationMenu.Item>

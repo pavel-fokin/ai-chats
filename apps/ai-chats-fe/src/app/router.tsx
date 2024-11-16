@@ -2,7 +2,14 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { AuthRequired } from '@/features/auth';
 import { ChatContextProvider } from '@/features/chat';
-import { Chat, Landing, LogIn, NewChat, OllamaSettings, SignUp } from '@/pages';
+import {
+  Chat,
+  Landing,
+  LogIn,
+  NewChat,
+  OllamaLibraryPage,
+  SignUp,
+} from '@/pages';
 
 import { AppMain } from './app-main';
 
@@ -44,8 +51,8 @@ export const Router = createBrowserRouter([
         ),
       },
       {
-        path: 'settings',
-        element: <OllamaSettings />,
+        path: 'ollama-library',
+        element: <OllamaLibraryPage />,
       },
     ],
   },
