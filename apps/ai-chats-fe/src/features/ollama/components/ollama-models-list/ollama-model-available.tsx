@@ -1,6 +1,7 @@
 import { Flex, Heading, Text } from '@radix-ui/themes';
 
-import { OllamaModel } from 'types';
+import { Button } from '@/components/ui';
+import { OllamaModel } from '@/types';
 
 import { DeleteOllamaModelDialog } from './delete-ollama-model-dialog';
 
@@ -17,6 +18,7 @@ export const OllamaModelAvailable = ({
       <Text>{model.description}</Text>
       <Flex align="center" justify="end" flexGrow="1" mt="4" gap="4">
         <DeleteOllamaModelDialog model={model} />
+        <Button variant="soft" size="2" highContrast>Chat</Button>
       </Flex>
     </Flex>
   );

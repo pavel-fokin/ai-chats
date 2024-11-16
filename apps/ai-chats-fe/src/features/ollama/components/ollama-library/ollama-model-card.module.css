@@ -1,0 +1,17 @@
+.ollamaModelCard__container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: 100%;
+}
+
+.ollamaModelCard__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-4);
+}
+
+.ollamaModelCard__title {
+  font-size: var(--font-size-3);
+  font-weight: var(--font-weight-7);
+}

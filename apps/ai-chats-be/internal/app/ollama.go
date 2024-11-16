@@ -148,7 +148,7 @@ func (o *Ollama) PullOllamaModel(ctx context.Context, model string) error {
 		}
 		ollamaModel.ClearEvents()
 
-		return fmt.Errorf("failed to pull ollama model: %w", err)
+		return fmt.Errorf("failed to pull ollama model %s: %w", model, err)
 	}
 
 	ollamaModel.PullCompleted()

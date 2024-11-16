@@ -1,21 +1,15 @@
-import { useEffect } from 'react';
-
 import { Box, Flex, Heading, IconButton, TextField } from '@radix-ui/themes';
 
 import { DownloadIcon } from '@/components/icons';
 import { Header, Main } from '@/components/layout';
 import { NewChatIconButton } from '@/features/chat';
-import { OllamaModelsList, OllamaStatus } from '@/features/ollama/components';
+import { OllamaLibrary, OllamaModelsList } from '@/features/ollama/components';
 import { OpenSidebarButton } from '@/features/sidebar';
-import { usePullOllamaModel, useGetOllamaModelsLibrary } from '@/hooks';
+import { useGetOllamaModelsLibrary, usePullOllamaModel } from '@/hooks';
 
-export const OllamaSettings: React.FC = () => {
+export const OllamaSettings = () => {
   const pullModel = usePullOllamaModel();
   const modelCards = useGetOllamaModelsLibrary();
-
-  useEffect(() => {
-    console.log(modelCards.data);
-  }, [modelCards.data]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,7 +37,6 @@ export const OllamaSettings: React.FC = () => {
             mt="9"
             px="4"
           >
-            <OllamaStatus />
             <form onSubmit={handleSubmit} style={{ width: '100%' }}>
               <Flex
                 gap="3"
@@ -66,6 +59,7 @@ export const OllamaSettings: React.FC = () => {
               </Flex>
             </form>
             <OllamaModelsList />
+            <OllamaLibrary modelCards={modelCards.data ?? []} />
           </Flex>
         </Box>
       </Main>

@@ -21,7 +21,7 @@ func TestSqliteModelsLibrary_FindAll(t *testing.T) {
 		modelsLibrary := NewModelsLibrary(db)
 		modelCards, err := modelsLibrary.FindAll(ctx)
 		assert.NoError(t, err)
-		assert.Len(t, modelCards, 2)
+		assert.Len(t, modelCards, 3)
 	})
 }
 
