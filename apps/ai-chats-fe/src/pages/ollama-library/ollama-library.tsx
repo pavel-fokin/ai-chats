@@ -1,9 +1,12 @@
-import { Box, Flex, Heading, TextField } from '@radix-ui/themes';
+import { Box, Flex, Heading } from '@radix-ui/themes';
 
-import { SearchIcon } from '@/components/icons';
 import { Header, Main } from '@/components/layout';
 import { NewChatIconButton } from '@/features/chat';
-import { OllamaLibrary, OllamaModelsList } from '@/features/ollama/components';
+import {
+  OllamaLibrary,
+  OllamaModelSearch,
+  OllamaModelsList,
+} from '@/features/ollama/components';
 import { OpenSidebarButton } from '@/features/sidebar';
 import { useGetOllamaModelsLibrary } from '@/hooks';
 
@@ -40,15 +43,7 @@ export const OllamaLibraryPage = () => {
               width="100%"
             >
               <Box flexGrow="1">
-                <TextField.Root
-                  id="model"
-                  size="3"
-                  placeholder="Search model"
-                >
-                <TextField.Slot>
-                  <SearchIcon />
-                  </TextField.Slot>
-                </TextField.Root>
+                <OllamaModelSearch />
               </Box>
             </Flex>
             <OllamaModelsList />

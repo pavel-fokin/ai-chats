@@ -6,3 +6,4 @@ export { Progress } from './progress';
 export { TextArea } from './text-area';
 export { Tooltip } from './tooltip';
 export { Select } from './select';
+export { TextField } from './text-field';
