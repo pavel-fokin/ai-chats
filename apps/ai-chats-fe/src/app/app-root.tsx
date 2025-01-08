@@ -18,7 +18,12 @@ export const AppRoot = () => {
     <Theme appearance="light" accentColor="gray" grayColor="slate">
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
-          <RouterProvider router={Router} />
+          <RouterProvider
+            router={Router}
+            future={{
+              v7_startTransition: true,
+            }}
+          />
         </QueryClientProvider>
       </AuthProvider>
     </Theme>

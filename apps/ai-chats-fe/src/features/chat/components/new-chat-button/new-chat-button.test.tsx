@@ -9,7 +9,13 @@ import { NewChatIconButton } from './new-chat-button';
 const renderWithRouter = (ui: JSX.Element) => {
   return render(
     <SidebarProvider>
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter
+        initialEntries={['/']}
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <Routes>
           <Route path="/" element={ui} />
           <Route path="/app/new-chat" element={<div>Start a new chat</div>} />

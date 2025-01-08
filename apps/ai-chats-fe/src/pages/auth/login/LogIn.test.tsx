@@ -32,7 +32,13 @@ export function renderWithRouter(ui: JSX.Element, { route = '/app' } = {}) {
   return render(
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={[route]}>
+        <MemoryRouter
+          initialEntries={[route]}
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
           <Routes>
             <Route path="/app" element={<div>App</div>} />
             <Route path="/app/login" element={ui} />
