@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 
 import { Aside, Page } from '@/components/layout';
 import { AuthRequired } from '@/features/auth';

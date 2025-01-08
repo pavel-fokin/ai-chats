@@ -1,4 +1,4 @@
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider } from 'react-router/dom';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Theme } from '@radix-ui/themes';
@@ -18,12 +18,7 @@ export const AppRoot = () => {
     <Theme appearance="light" accentColor="gray" grayColor="slate">
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
-          <RouterProvider
-            router={Router}
-            future={{
-              v7_startTransition: true,
-            }}
-          />
+          <RouterProvider router={Router} />
         </QueryClientProvider>
       </AuthProvider>
     </Theme>

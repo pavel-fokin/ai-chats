@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { Container, Flex, Heading, Link, Text } from '@radix-ui/themes';
 import { AxiosError } from 'axios';

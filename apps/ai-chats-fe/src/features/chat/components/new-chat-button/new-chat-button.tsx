@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { IconButton } from '@/components/ui';
 import { ChatIcon } from '@/components/icons';

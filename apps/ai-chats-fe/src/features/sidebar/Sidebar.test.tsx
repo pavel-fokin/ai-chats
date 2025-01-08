@@ -4,7 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router';
 
 import { AuthProvider } from 'features/auth';
 import { Sidebar } from './sidebar';
@@ -29,7 +29,7 @@ const server = setupServer(
         },
       },
     });
-  }),
+  })
 );
 
 beforeAll(() => server.listen());
@@ -49,13 +49,7 @@ function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
     <Theme>
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
-          <MemoryRouter
-            initialEntries={[route]}
-            future={{
-              v7_startTransition: true,
-              v7_relativeSplatPath: true,
-            }}
-          >
+          <MemoryRouter initialEntries={[route]}>
             <Routes>
               <Route path="/" element={ui} />
               <Route
@@ -67,7 +61,7 @@ function renderWithRouter(ui: JSX.Element, { route = '/' } = {}) {
           </MemoryRouter>
         </QueryClientProvider>
       </AuthProvider>
-    </Theme>,
+    </Theme>
   );
 }
 

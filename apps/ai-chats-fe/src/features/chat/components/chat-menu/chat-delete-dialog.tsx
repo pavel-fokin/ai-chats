@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { useGetChat, useDeleteChat, useInvalidateChats } from '@/hooks';
 import { AlertDialog, Button } from '@/components/ui';
