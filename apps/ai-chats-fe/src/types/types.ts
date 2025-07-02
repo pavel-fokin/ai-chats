@@ -4,8 +4,7 @@ export type ModelResponse = {
 };
 
 export enum EventTypes {
-  MESSAGE_ADDED = 'messageAdded',
-  CHAT_MESSAGE = 'chatMessage',
+  MESSAGE_ADDED = 'MessageAddedNotification',
   MODEL_STREAM_MESSAGE = 'ModelStreamMessageNotification',
   OLLAMA_MODEL_PULL_PROGRESS = 'ollamaModelPullProgress',
 }
