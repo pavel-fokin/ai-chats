@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
-	"ai-chats/internal/app/notifications"
 	"ai-chats/internal/domain"
 	"ai-chats/internal/pkg/types"
 )
@@ -24,7 +24,6 @@ type LLM struct {
 	ollamaClient domain.OllamaClient
 	pubsub       PubSub
 	tx           Tx
-	notificator  Notificator
 }
 
 func NewLLM(
@@ -32,9 +31,8 @@ func NewLLM(
 	ollamaClient domain.OllamaClient,
 	pubsub PubSub,
 	tx Tx,
-	notificator Notificator,
 ) *LLM {
-	return &LLM{chats: chats, ollamaClient: ollamaClient, pubsub: pubsub, tx: tx, notificator: notificator}
+	return &LLM{chats: chats, ollamaClient: ollamaClient, pubsub: pubsub, tx: tx}
 }
 
 // GenerateResponse generates a LLM response for the chat.
@@ -50,14 +48,12 @@ func (l *LLM) GenerateResponse(ctx context.Context, chatID domain.ChatID) error 
 	}
 
 	chatResponseFunc := func(modelStreamMessage domain.ModelStreamMessage) error {
-		if err := l.notificator.Notify(ctx, notifications.NewModelStreamMessage(
-			chatID,
-			modelStreamMessage.Text,
-			modelStreamMessage.Sender.Format(),
-		)); err != nil {
-			return fmt.Errorf("failed to notify in chat: %w", err)
+		event := domain.ModelStreamedMessageEvent{
+			ChatID: chatID,
+			Text:   modelStreamMessage.Text,
+			Sender: modelStreamMessage.Sender.Format(),
 		}
-		return nil
+		return l.pubsub.Publish(ctx, event.Channel(), event)
 	}
 
 	llmMessage, err := model.Chat(ctx, chat.Messages, chatResponseFunc)
@@ -123,19 +119,25 @@ Use less than 100 characters. Don't use quotes or special characters.`,
 		return fmt.Errorf("error generating title for chat %s: %w", chatID, err)
 	}
 
+	var events []types.Message
 	if err := l.tx.Tx(ctx, func(ctx context.Context) error {
 		chat.UpdateTitle(generatedTitle.Text)
 		if err := l.chats.Update(ctx, chat); err != nil {
 			return fmt.Errorf("error updating title for chat %s: %w", chatID, err)
 		}
+		events = chat.Events
+		chat.Events = nil
 		return nil
 	}); err != nil {
 		return fmt.Errorf("error in transaction while updating title for chat %s: %w", chatID, err)
 	}
 
-	chatTitleUpdated := notifications.NewChatTitleUpdated(chatID, chat.User.ID)
-	if err := l.notificator.Notify(ctx, chatTitleUpdated); err != nil {
-		return fmt.Errorf("error notifying app about title update for chat %s: %w", chatID, err)
+	for _, event := range events {
+		if domainEvent, ok := event.(domain.Event); ok {
+			if err := l.pubsub.Publish(ctx, domainEvent.Channel(), domainEvent); err != nil {
+				slog.ErrorContext(ctx, "failed to publish event", "event", domainEvent.Type(), "err", err)
+			}
+		}
 	}
 
 	return nil
@@ -143,8 +145,7 @@ Use less than 100 characters. Don't use quotes or special characters.`,
 
 // ProcessAddedMessage processes a message added event.
 func (l *LLM) ProcessAddedMessage(ctx context.Context, event domain.MessageAdded) error {
-	messageAdded := notifications.NewMessageAdded(event.ChatID)
-	if err := l.notificator.Notify(ctx, messageAdded); err != nil {
+	if err := l.pubsub.Publish(ctx, event.Channel(), event); err != nil {
 		return fmt.Errorf("failed to notify in chat: %w", err)
 	}
 

@@ -3,9 +3,11 @@ package app
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"ai-chats/internal/domain"
+	"ai-chats/internal/pkg/types"
 )
 
 // Chats is an service for managing chats.
@@ -47,11 +49,7 @@ func (c *Chats) CreateChat(ctx context.Context, userID domain.UserID, model, mes
 		return domain.Chat{}, fmt.Errorf("error creating chat: %w", err)
 	}
 
-	for _, event := range chat.Events {
-		if err := c.pubsub.Publish(ctx, MessageAddedTopic, event); err != nil {
-			return domain.Chat{}, fmt.Errorf("error publishing chat events: %w", err)
-		}
-	}
+	c.publishEvents(ctx, chat.Events)
 
 	return chat, nil
 }
@@ -133,11 +131,26 @@ func (c *Chats) SendMessage(
 		return fmt.Errorf("error sending message: %w", err)
 	}
 
-	for _, event := range chat.Events {
-		if err := c.pubsub.Publish(ctx, MessageAddedTopic, event); err != nil {
-			return fmt.Errorf("error publishing events: %w", err)
-		}
-	}
+	c.publishEvents(ctx, chat.Events)
 
 	return nil
+}
+
+func (c *Chats) publishEvents(ctx context.Context, events []types.Message) {
+	for _, event := range events {
+		// Publish to worker topics
+		switch event.Type() {
+		case domain.MessageAddedType:
+			if err := c.pubsub.Publish(ctx, MessageAddedTopic, event); err != nil {
+				slog.ErrorContext(ctx, "failed to publish event to worker", "event", event.Type(), "err", err)
+			}
+		}
+
+		// Publish to notification channels
+		if domainEvent, ok := event.(domain.Event); ok {
+			if err := c.pubsub.Publish(ctx, domainEvent.Channel(), domainEvent); err != nil {
+				slog.ErrorContext(ctx, "failed to publish event for notification", "event", domainEvent.Type(), "err", err)
+			}
+		}
+	}
 }
