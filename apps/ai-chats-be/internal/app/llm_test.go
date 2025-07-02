@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ai-chats/internal/app/notifications"
 	"ai-chats/internal/domain"
 )
 
@@ -29,15 +28,6 @@ func (m *MockModel) Chat(
 	return args.Get(0).(domain.Message), args.Error(1)
 }
 
-type MockNotificator struct {
-	mock.Mock
-}
-
-func (m *MockNotificator) Notify(ctx context.Context, notification notifications.Notification) error {
-	args := m.Called(ctx, notification)
-	return args.Error(0)
-}
-
 func TestLLM_GenerateTitle(t *testing.T) {
 	user := domain.NewUser("user1")
 	chat := domain.NewChat(user, domain.NewModelID("model1"))
@@ -56,16 +46,16 @@ func TestLLM_GenerateTitle(t *testing.T) {
 	mockOllamaClient := &MockOllamaClient{}
 	mockOllamaClient.On("NewModel", mock.Anything).Return(mockModel, nil)
 
-	mockNotificator := &MockNotificator{}
-	mockNotificator.On("Notify", mock.Anything, mock.Anything).Return(nil)
+	mockPubSub := &MockPubSub{}
+	mockPubSub.On("Publish", mock.Anything, user.ID.String(), mock.AnythingOfType("domain.ChatTitleUpdated")).Return(nil)
 
 	mockTx := &MockTx{}
 
 	llm := &LLM{
 		chats:        mockChats,
 		ollamaClient: mockOllamaClient,
+		pubsub:       mockPubSub,
 		tx:           mockTx,
-		notificator:  mockNotificator,
 	}
 
 	err := llm.GenerateTitle(context.Background(), chat.ID)
@@ -73,5 +63,5 @@ func TestLLM_GenerateTitle(t *testing.T) {
 
 	mockChats.AssertExpectations(t)
 	mockOllamaClient.AssertExpectations(t)
-	mockNotificator.AssertExpectations(t)
+	mockPubSub.AssertExpectations(t)
 }

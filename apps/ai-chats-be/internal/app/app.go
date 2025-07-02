@@ -1,18 +1,12 @@
 package app
 
 import (
-	"ai-chats/internal/app/notifications"
 	"context"
 )
 
 // Tx is a transaction interface.
 type Tx interface {
 	Tx(context.Context, func(context.Context) error) error
-}
-
-// Notificator is an interface that notifies about an event.
-type Notificator interface {
-	Notify(ctx context.Context, notification notifications.Notification) error
 }
 
 // App is the application.

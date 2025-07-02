@@ -46,7 +46,7 @@ func (c *Chat) AddMessage(message Message) {
 func (c *Chat) UpdateTitle(title string) {
 	c.Title = title
 	c.UpdatedAt = time.Now().UTC()
-	c.Events = append(c.Events, NewChatTitleUpdated(c.ID, title))
+	c.Events = append(c.Events, NewChatTitleUpdated(c.ID, c.User.ID, title))
 }
 
 func (c Chat) CanUserAccess(userID UserID) error {
